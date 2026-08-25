@@ -5,87 +5,58 @@ import {
   Menu,
   X,
   Wrench,
+  FileText,
+  Image as ImageIcon,
+  Code2,
+  Globe2,
+  Calculator,
   ArrowRight,
+  ShieldCheck,
+  Zap,
+  Sparkles,
+  Copy,
+  Check,
   Moon,
   Sun,
   Heart,
   ChevronLeft,
-  Sparkles,
-  ShieldCheck,
-  LayoutDashboard,
+  Trash2,
   RefreshCw,
-  ExternalLink,
 } from "lucide-react";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "./supabase";
 import "./styles.css";
 
 /* =========================================================
-   SUPABASE
+   CATEGORY ICONS
 ========================================================= */
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-const supabase =
-  supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : null;
-
-/* =========================================================
-   FALLBACK DATA
-========================================================= */
-
-const fallbackCategories = [
-  "Network Tools",
-  "Converter Tools",
-  "Calculator Tools",
-  "SEO & Marketing",
-  "Utility Tools",
-  "AI & Education",
-  "AI & Video",
-  "Security Tools",
-  "AI Tools",
-  "Image Tools",
-  "PDF Tools",
-  "Text Tools",
-  "Developer Tools",
-  "Productivity",
-];
-
-const categoryIcons = {
-  "Network Tools": Wrench,
+const iconFor = {
+  "PDF Tools": FileText,
+  "Image Tools": ImageIcon,
+  "SEO & Marketing": Globe2,
+  "Text Tools": FileText,
+  "Developer Tools": Code2,
+  "Calculator Tools": Calculator,
   "Converter Tools": Wrench,
-  "Calculator Tools": Wrench,
-  "SEO & Marketing": Wrench,
+  "Security Tools": ShieldCheck,
+  "Network Tools": Globe2,
   "Utility Tools": Wrench,
   "AI & Education": Sparkles,
   "AI & Video": Sparkles,
-  "Security Tools": ShieldCheck,
   "AI Tools": Sparkles,
-  "Image Tools": Wrench,
-  "PDF Tools": Wrench,
-  "Text Tools": Wrench,
-  "Developer Tools": Wrench,
-  Productivity: Wrench,
+  "Productivity": Wrench,
 };
 
 /* =========================================================
-   HELPERS
+   LOCAL STORAGE
 ========================================================= */
 
-function getFavorites() {
+function getSaved(key, fallback) {
   try {
-    return JSON.parse(localStorage.getItem("tm-favorites") || "[]");
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
   } catch {
-    return [];
-  }
-}
-
-function getTheme() {
-  try {
-    return JSON.parse(localStorage.getItem("tm-theme") || "false");
-  } catch {
-    return false;
+    return fallback;
   }
 }
 
@@ -94,9 +65,8 @@ function getTheme() {
 ========================================================= */
 
 function App() {
-  const [categories, setCategories] = useState([]);
   const [tools, setTools] = useState([]);
-
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -105,96 +75,114 @@ function App() {
   const [selectedTool, setSelectedTool] = useState(null);
 
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [dark, setDark] = useState(getTheme);
-  const [favorites, setFavorites] = useState(getFavorites);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  const [dark, setDark] = useState(() =>
+    getSaved("tm-theme", false)
+  );
+
+  const [favorites, setFavorites] = useState(() =>
+    getSaved("tm-favorites", [])
+  );
+
+  /* =======================================================
+     LOAD SUPABASE DATA
+  ======================================================= */
 
   async function loadData() {
     setLoading(true);
     setError("");
 
-    if (!supabase) {
+    try {
+      const [toolsResult, categoriesResult] =
+        await Promise.all([
+          supabase
+            .from("tools")
+            .select("*")
+            .eq("is_active", true)
+            .order("sort_order", {
+              ascending: true,
+            }),
+
+          supabase
+            .from("categories")
+            .select("*")
+            .order("name", {
+              ascending: true,
+            }),
+        ]);
+
+      if (toolsResult.error) {
+        throw toolsResult.error;
+      }
+
+      if (categoriesResult.error) {
+        throw categoriesResult.error;
+      }
+
+      setTools(toolsResult.data || []);
+      setCategories(categoriesResult.data || []);
+    } catch (err) {
+      console.error(err);
+
       setError(
-        "Supabase environment variables are missing. Check Vercel settings."
+        "Supabase se data load nahi ho saka. Database table names aur permissions check karein."
       );
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const [categoryResult, toolResult] = await Promise.all([
-      supabase
-        .from("categories")
-        .select(
-          "id,name,slug,description,icon,is_active,sort_order,created_at"
-        )
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true }),
-
-      supabase
-        .from("tools")
-        .select(
-          "id,name,slug,description,category_id,long_description,icon_url,tool_type,tool_url,is_active,is_featured,sort_order,created_at,updated_at"
-        )
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true }),
-    ]);
-
-    if (categoryResult.error) {
-      console.error(categoryResult.error);
-      setError(
-        "Categories load nahi ho rahi. Supabase table permissions/RLS check karein."
-      );
-    }
-
-    if (toolResult.error) {
-      console.error(toolResult.error);
-      setError(
-        "Tools load nahi ho rahe. Supabase table permissions/RLS check karein."
-      );
-    }
-
-    setCategories(
-      categoryResult.data?.length
-        ? categoryResult.data
-        : fallbackCategories.map((name, index) => ({
-            id: `fallback-${index}`,
-            name,
-            slug: name.toLowerCase().replace(/\s+/g, "-"),
-            sort_order: index,
-          }))
-    );
-
-    setTools(toolResult.data || []);
-    setLoading(false);
   }
 
-  function toggleTheme() {
-    const next = !dark;
-    setDark(next);
-    localStorage.setItem("tm-theme", JSON.stringify(next));
-  }
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  function toggleFavorite(id) {
-    const next = favorites.includes(id)
-      ? favorites.filter((x) => x !== id)
-      : [...favorites, id];
+  /* =======================================================
+     CATEGORY LIST
+  ======================================================= */
 
-    setFavorites(next);
-    localStorage.setItem("tm-favorites", JSON.stringify(next));
-  }
+  const categoryList = useMemo(() => {
+    const result = [
+      {
+        id: "all",
+        name: "All Tools",
+        count: tools.length,
+        icon: Wrench,
+      },
+    ];
+
+    categories.forEach((cat) => {
+      const count = tools.filter(
+        (tool) =>
+          tool.category_id === cat.id
+      ).length;
+
+      result.push({
+        id: cat.id,
+        name: cat.name,
+        count,
+        icon:
+          iconFor[cat.name] || Wrench,
+      });
+    });
+
+    return result;
+  }, [categories, tools]);
+
+  /* =======================================================
+     FILTER
+  ======================================================= */
 
   const filteredTools = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = query.toLowerCase().trim();
 
     return tools.filter((tool) => {
-      const categoryData = categories.find(
-        (c) => c.id === tool.category_id
-      );
+      const cat =
+        categories.find(
+          (c) => c.id === tool.category_id
+        );
 
-      const categoryName = categoryData?.name || "";
+      const categoryName =
+        cat?.name || "";
 
       const categoryMatch =
         category === "All Tools" ||
@@ -202,36 +190,93 @@ function App() {
 
       const searchMatch =
         !q ||
-        tool.name?.toLowerCase().includes(q) ||
-        tool.description?.toLowerCase().includes(q) ||
-        categoryName.toLowerCase().includes(q);
+        tool.name
+          ?.toLowerCase()
+          .includes(q) ||
+        tool.slug
+          ?.toLowerCase()
+          .includes(q) ||
+        tool.description
+          ?.toLowerCase()
+          .includes(q) ||
+        categoryName
+          .toLowerCase()
+          .includes(q);
 
-      return categoryMatch && searchMatch;
+      return (
+        categoryMatch && searchMatch
+      );
     });
-  }, [tools, categories, category, query]);
+  }, [
+    tools,
+    categories,
+    category,
+    query,
+  ]);
 
-  if (selectedTool) {
-    return (
-      <div className={dark ? "app dark" : "app"}>
-        <ToolPage
-          tool={selectedTool}
-          categories={categories}
-          back={() => setSelectedTool(null)}
-        />
-      </div>
+  /* =======================================================
+     THEME
+  ======================================================= */
+
+  function toggleTheme() {
+    const next = !dark;
+
+    setDark(next);
+
+    localStorage.setItem(
+      "tm-theme",
+      JSON.stringify(next)
     );
   }
 
+  /* =======================================================
+     FAVORITES
+  ======================================================= */
+
+  function toggleFavorite(id) {
+    const next = favorites.includes(id)
+      ? favorites.filter(
+          (item) => item !== id
+        )
+      : [...favorites, id];
+
+    setFavorites(next);
+
+    localStorage.setItem(
+      "tm-favorites",
+      JSON.stringify(next)
+    );
+  }
+
+  /* =======================================================
+     OPEN TOOL
+  ======================================================= */
+
+  function openTool(tool) {
+    setSelectedTool(tool);
+    setMobileMenu(false);
+  }
+
+  /* =======================================================
+     UI
+  ======================================================= */
+
   return (
-    <div className={dark ? "app dark" : "app"}>
+    <div
+      className={
+        dark ? "app dark" : "app"
+      }
+    >
+      {/* HEADER */}
+
       <header className="header">
         <div className="nav">
           <button
             className="brand"
             onClick={() => {
+              setSelectedTool(null);
               setCategory("All Tools");
               setQuery("");
-              window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
             <div className="brandIcon">
@@ -239,20 +284,42 @@ function App() {
             </div>
 
             <span>
-              ToolMaster<span>Pro</span>
+              ToolMaster
+              <span>Pro</span>
             </span>
           </button>
 
-          <nav className={mobileMenu ? "navLinks show" : "navLinks"}>
-            <a href="#tools" onClick={() => setMobileMenu(false)}>
+          <nav
+            className={
+              mobileMenu
+                ? "navLinks show"
+                : "navLinks"
+            }
+          >
+            <a
+              href="#tools"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
               Tools
             </a>
 
-            <a href="#categories" onClick={() => setMobileMenu(false)}>
+            <a
+              href="#categories"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
               Categories
             </a>
 
-            <a href="#about" onClick={() => setMobileMenu(false)}>
+            <a
+              href="#about"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
               About
             </a>
           </nav>
@@ -263,220 +330,319 @@ function App() {
               onClick={toggleTheme}
               title="Toggle theme"
             >
-              {dark ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-
-            <button
-              className="adminBtn"
-              onClick={() =>
-                document
-                  .getElementById("admin")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              <LayoutDashboard size={17} />
-              Admin
+              {dark ? (
+                <Sun size={18} />
+              ) : (
+                <Moon size={18} />
+              )}
             </button>
 
             <button
               className="mobileBtn"
-              onClick={() => setMobileMenu(!mobileMenu)}
+              onClick={() =>
+                setMobileMenu(
+                  !mobileMenu
+                )
+              }
             >
-              {mobileMenu ? <X /> : <Menu />}
+              {mobileMenu ? (
+                <X />
+              ) : (
+                <Menu />
+              )}
             </button>
           </div>
         </div>
       </header>
 
-      <section className="hero">
-        <div className="pill">
-          <Sparkles size={15} />
-          {tools.length}+ Free Online Tools
-        </div>
+      {selectedTool ? (
+        <ToolPage
+          tool={selectedTool}
+          categories={categories}
+          back={() =>
+            setSelectedTool(null)
+          }
+        />
+      ) : (
+        <>
+          {/* HERO */}
 
-        <h1>
-          One place for <span>every tool</span> you need.
-        </h1>
+          <section className="hero">
+            <div className="pill">
+              <Sparkles size={15} />
 
-        <p>
-          Fast, simple and privacy-friendly tools for PDF, images,
-          SEO, text, developers, calculators and AI.
-        </p>
-
-        <div className="searchBox">
-          <Search size={20} />
-
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for a tool..."
-          />
-
-          {query && (
-            <button onClick={() => setQuery("")}>
-              <X size={18} />
-            </button>
-          )}
-        </div>
-
-        <div className="stats">
-          <div>
-            <b>{tools.length}</b>
-            <small>Tools</small>
-          </div>
-
-          <div>
-            <b>{categories.length}</b>
-            <small>Categories</small>
-          </div>
-
-          <div>
-            <b>100%</b>
-            <small>Browser Friendly</small>
-          </div>
-        </div>
-      </section>
-
-      <main id="tools" className="container">
-        <section id="categories" className="categories">
-          <button
-            className={
-              category === "All Tools" ? "cat active" : "cat"
-            }
-            onClick={() => setCategory("All Tools")}
-          >
-            <Wrench size={18} />
-            <span>All Tools</span>
-            <em>{tools.length}</em>
-          </button>
-
-          {categories.map((item) => {
-            const Icon =
-              categoryIcons[item.name] || Wrench;
-
-            const count = tools.filter(
-              (tool) => tool.category_id === item.id
-            ).length;
-
-            return (
-              <button
-                key={item.id}
-                className={
-                  category === item.name
-                    ? "cat active"
-                    : "cat"
-                }
-                onClick={() => setCategory(item.name)}
-              >
-                <Icon size={18} />
-                <span>{item.name}</span>
-                <em>{count}</em>
-              </button>
-            );
-          })}
-        </section>
-
-        <div className="sectionHead">
-          <div>
-            <h2>{category}</h2>
-            <p>{filteredTools.length} tools available</p>
-          </div>
-
-          {favorites.length > 0 && (
-            <div className="favoriteInfo">
-              <Heart size={16} fill="currentColor" />
-              {favorites.length} favorites
+              {loading
+                ? "Loading tools..."
+                : `${tools.length}+ Free Online Tools`}
             </div>
-          )}
-        </div>
 
-        {loading ? (
-          <div className="empty">
-            <RefreshCw size={40} className="spin" />
-            <h3>Loading tools...</h3>
-            <p>Supabase se tools load ho rahe hain.</p>
-          </div>
-        ) : error ? (
-          <div className="empty">
-            <ShieldCheck size={40} />
-            <h3>Connection problem</h3>
-            <p>{error}</p>
+            <h1>
+              One place for{" "}
+              <span>
+                every tool
+              </span>{" "}
+              you need.
+            </h1>
 
-            <button className="primary" onClick={loadData}>
-              <RefreshCw size={17} />
-              Try Again
-            </button>
-          </div>
-        ) : filteredTools.length ? (
-          <div className="grid">
-            {filteredTools.map((tool) => (
-              <ToolCard
-                key={tool.id}
-                tool={tool}
-                category={
-                  categories.find(
-                    (c) => c.id === tool.category_id
-                  )?.name || "Tools"
+            <p>
+              Fast, simple and
+              privacy-friendly tools
+              for PDF, images, SEO,
+              text, developers,
+              calculators and more.
+            </p>
+
+            <div className="searchBox">
+              <Search size={20} />
+
+              <input
+                value={query}
+                onChange={(e) =>
+                  setQuery(
+                    e.target.value
+                  )
                 }
-                favorite={favorites.includes(tool.id)}
-                toggleFavorite={() =>
-                  toggleFavorite(tool.id)
-                }
-                open={() => setSelectedTool(tool)}
+                placeholder="Search for a tool..."
               />
-            ))}
-          </div>
-        ) : (
-          <div className="empty">
-            <Search size={40} />
-            <h3>No tools found</h3>
-            <p>Try another keyword or category.</p>
 
-            <button
-              className="primary"
-              onClick={() => {
-                setQuery("");
-                setCategory("All Tools");
-              }}
-            >
-              Reset Search
-            </button>
-          </div>
-        )}
-      </main>
+              {query && (
+                <button
+                  onClick={() =>
+                    setQuery("")
+                  }
+                >
+                  <X size={18} />
+                </button>
+              )}
+            </div>
 
-      <section id="admin" className="adminPreview container">
-        <div>
-          <div className="pill">
-            <LayoutDashboard size={15} />
-            Admin
-          </div>
+            <div className="stats">
+              <div>
+                <b>{tools.length}</b>
+                <small>Tools</small>
+              </div>
 
-          <h2>ToolMaster Pro Dashboard</h2>
+              <div>
+                <b>
+                  {categories.length}
+                </b>
+                <small>
+                  Categories
+                </small>
+              </div>
 
-          <p>
-            Your tools and categories are now connected directly
-            with Supabase.
-          </p>
-        </div>
+              <div>
+                <b>100%</b>
+                <small>
+                  Browser Friendly
+                </small>
+              </div>
+            </div>
+          </section>
 
-        <div className="adminStats">
-          <div>
-            <b>{tools.length}</b>
-            <span>Active Tools</span>
-          </div>
+          <main
+            id="tools"
+            className="container"
+          >
+            {/* ERROR */}
 
-          <div>
-            <b>{categories.length}</b>
-            <span>Categories</span>
-          </div>
+            {error && (
+              <div className="notice">
+                <ShieldCheck
+                  size={20}
+                />
 
-          <div>
-            <b>{favorites.length}</b>
-            <span>Favorites</span>
-          </div>
-        </div>
-      </section>
+                <div>
+                  <b>
+                    Supabase connection
+                    problem
+                  </b>
+
+                  <p>{error}</p>
+
+                  <button
+                    className="secondary"
+                    onClick={
+                      loadData
+                    }
+                  >
+                    <RefreshCw
+                      size={16}
+                    />
+                    Retry
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* LOADING */}
+
+            {loading ? (
+              <div className="empty">
+                <RefreshCw
+                  size={40}
+                  className="spin"
+                />
+
+                <h3>
+                  Loading tools...
+                </h3>
+
+                <p>
+                  Supabase se tools
+                  load ho rahe hain.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* CATEGORIES */}
+
+                <section
+                  id="categories"
+                  className="categories"
+                >
+                  {categoryList.map(
+                    (cat) => {
+                      const Icon =
+                        cat.icon;
+
+                      return (
+                        <button
+                          key={cat.id}
+                          className={
+                            category ===
+                            cat.name
+                              ? "cat active"
+                              : "cat"
+                          }
+                          onClick={() =>
+                            setCategory(
+                              cat.name
+                            )
+                          }
+                        >
+                          <Icon
+                            size={18}
+                          />
+
+                          <span>
+                            {cat.name}
+                          </span>
+
+                          <em>
+                            {
+                              cat.count
+                            }
+                          </em>
+                        </button>
+                      );
+                    }
+                  )}
+                </section>
+
+                {/* SECTION HEADER */}
+
+                <div className="sectionHead">
+                  <div>
+                    <h2>
+                      {category}
+                    </h2>
+
+                    <p>
+                      {
+                        filteredTools.length
+                      }{" "}
+                      tools available
+                    </p>
+                  </div>
+
+                  {favorites.length >
+                    0 && (
+                    <div className="favoriteInfo">
+                      <Heart
+                        size={16}
+                        fill="currentColor"
+                      />
+
+                      {
+                        favorites.length
+                      }{" "}
+                      favorites
+                    </div>
+                  )}
+                </div>
+
+                {/* TOOL GRID */}
+
+                <div className="grid">
+                  {filteredTools.map(
+                    (tool) => (
+                      <ToolCard
+                        key={tool.id}
+                        tool={tool}
+                        category={
+                          categories.find(
+                            (c) =>
+                              c.id ===
+                              tool.category_id
+                          )
+                        }
+                        open={() =>
+                          openTool(
+                            tool
+                          )
+                        }
+                        favorite={favorites.includes(
+                          tool.id
+                        )}
+                        toggleFavorite={() =>
+                          toggleFavorite(
+                            tool.id
+                          )
+                        }
+                      />
+                    )
+                  )}
+                </div>
+
+                {/* EMPTY */}
+
+                {!filteredTools.length && (
+                  <div className="empty">
+                    <Search size={40} />
+
+                    <h3>
+                      No tools found
+                    </h3>
+
+                    <p>
+                      Try another
+                      keyword or
+                      category.
+                    </p>
+
+                    <button
+                      className="primary"
+                      onClick={() => {
+                        setQuery(
+                          ""
+                        );
+                        setCategory(
+                          "All Tools"
+                        );
+                      }}
+                    >
+                      Reset Search
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </main>
+        </>
+      )}
+
+      {/* FOOTER */}
 
       <footer id="about">
         <div className="footerInner">
@@ -487,16 +653,22 @@ function App() {
               </div>
 
               <span>
-                ToolMaster<span>Pro</span>
+                ToolMaster
+                <span>Pro</span>
               </span>
             </div>
 
-            <p>Powerful online tools, made simple.</p>
+            <p>
+              Powerful online tools,
+              made simple.
+            </p>
           </div>
 
           <small>
-            © 2026 ToolMaster Pro. Built with React, Vite,
-            Supabase and Vercel.
+            © 2026 ToolMaster Pro.
+            Built for fast
+            browser-based
+            utilities.
           </small>
         </div>
       </footer>
@@ -511,15 +683,21 @@ function App() {
 function ToolCard({
   tool,
   category,
+  open,
   favorite,
   toggleFavorite,
-  open,
 }) {
+  const Icon =
+    iconFor[category?.name] ||
+    Wrench;
+
   return (
     <article className="card">
       <button
         className={
-          favorite ? "favorite active" : "favorite"
+          favorite
+            ? "favorite active"
+            : "favorite"
         }
         onClick={(e) => {
           e.stopPropagation();
@@ -528,30 +706,42 @@ function ToolCard({
       >
         <Heart
           size={16}
-          fill={favorite ? "currentColor" : "none"}
+          fill={
+            favorite
+              ? "currentColor"
+              : "none"
+          }
         />
       </button>
 
-      <div className="cardClick" onClick={open}>
+      <div
+        className="cardClick"
+        onClick={open}
+      >
         <div className="toolIcon">
-          {tool.icon_url ? (
-            <img
-              src={tool.icon_url}
-              alt=""
-              className="toolImage"
-            />
-          ) : (
-            <Wrench size={21} />
-          )}
+          <Icon size={21} />
         </div>
 
         <div className="cardBody">
-          <span>{category}</span>
-          <h3>{tool.name}</h3>
-          <p>{tool.description || "Explore this tool."}</p>
+          <span>
+            {category?.name ||
+              "Tool"}
+          </span>
+
+          <h3>
+            {tool.name}
+          </h3>
+
+          <p>
+            {tool.description ||
+              "Online tool"}
+          </p>
         </div>
 
-        <ArrowRight className="arrow" size={19} />
+        <ArrowRight
+          className="arrow"
+          size={19}
+        />
       </div>
     </article>
   );
@@ -561,104 +751,278 @@ function ToolCard({
    TOOL PAGE
 ========================================================= */
 
-function ToolPage({ tool, categories, back }) {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [copied, setCopied] = useState(false);
+function ToolPage({
+  tool,
+  categories,
+  back,
+}) {
+  const [input, setInput] =
+    useState("");
+
+  const [output, setOutput] =
+    useState("");
+
+  const [copied, setCopied] =
+    useState(false);
 
   const category =
-    categories.find((c) => c.id === tool.category_id)?.name ||
-    "Tool";
+    categories.find(
+      (c) =>
+        c.id ===
+        tool.category_id
+    );
+
+  const Icon =
+    iconFor[category?.name] ||
+    Wrench;
 
   function runTool() {
+    const id = tool.slug;
+
     let result = input;
 
-    switch (tool.slug) {
-      case "word-counter":
-        result = `Words: ${
-          input.trim() ? input.trim().split(/\s+/).length : 0
-        }\nCharacters: ${input.length}`;
-        break;
+    try {
+      switch (id) {
+        case "word-counter": {
+          const words = input.trim()
+            ? input
+                .trim()
+                .split(/\s+/)
+                .length
+            : 0;
 
-      case "text-cleaner":
-        result = input.replace(/\s+/g, " ").trim();
-        break;
+          const sentences = input
+            ? input
+                .split(
+                  /[.!?]+/
+                )
+                .filter(Boolean)
+                .length
+            : 0;
 
-      case "text-reverser":
-        result = [...input].reverse().join("");
-        break;
+          result =
+            `Words: ${words}\n` +
+            `Characters: ${input.length}\n` +
+            `Characters without spaces: ${
+              input.replace(
+                /\s/g,
+                ""
+              ).length
+            }\n` +
+            `Sentences: ${sentences}`;
 
-      case "case-converter":
-        result = input.toLowerCase();
-        break;
-
-      case "slug":
-      case "url-slug-generator":
-        result = input
-          .toLowerCase()
-          .trim()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "");
-        break;
-
-      case "url-encoder":
-        result = encodeURIComponent(input);
-        break;
-
-      case "json-formatter":
-        try {
-          result = JSON.stringify(
-            JSON.parse(input),
-            null,
-            2
-          );
-        } catch {
-          result = "Invalid JSON.";
+          break;
         }
-        break;
 
-      case "json-minifier":
-        try {
-          result = JSON.stringify(JSON.parse(input));
-        } catch {
-          result = "Invalid JSON.";
+        case "characters":
+          result =
+            `Characters: ${input.length}\n` +
+            `Without spaces: ${
+              input.replace(
+                /\s/g,
+                ""
+              ).length
+            }`;
+          break;
+
+        case "case-converter":
+          result =
+            input.toLowerCase();
+          break;
+
+        case "text-cleaner":
+          result =
+            input
+              .replace(
+                /\s+/g,
+                " "
+              )
+              .trim();
+          break;
+
+        case "text-reverser":
+          result = [
+            ...input,
+          ]
+            .reverse()
+            .join("");
+          break;
+
+        case "slug":
+        case "url-slug":
+          result = input
+            .toLowerCase()
+            .trim()
+            .replace(
+              /[^a-z0-9]+/g,
+              "-"
+            )
+            .replace(
+              /^-+|-+$/g,
+              "");
+          break;
+
+        case "url-encoder":
+          result =
+            encodeURIComponent(
+              input
+            );
+          break;
+
+        case "base64-encode":
+          result =
+            btoa(
+              unescape(
+                encodeURIComponent(
+                  input
+                )
+              )
+            );
+          break;
+
+        case "base64-decode":
+          result =
+            decodeURIComponent(
+              escape(
+                atob(input)
+              )
+            );
+          break;
+
+        case "json-formatter":
+          result =
+            JSON.stringify(
+              JSON.parse(input),
+              null,
+              2
+            );
+          break;
+
+        case "json-minifier":
+          result =
+            JSON.stringify(
+              JSON.parse(input)
+            );
+          break;
+
+        case "uuid":
+          result =
+            crypto.randomUUID();
+          break;
+
+        case "password":
+        case "random-password":
+          result =
+            generatePassword(18);
+          break;
+
+        case "binary":
+          result = [
+            ...input,
+          ]
+            .map((c) =>
+              c.charCodeAt(0)
+                .toString(2)
+                .padStart(
+                  8,
+                  "0"
+                )
+            )
+            .join(" ");
+          break;
+
+        case "ascii":
+          result = [
+            ...input,
+          ]
+            .map((c) =>
+              c.charCodeAt(0)
+            )
+            .join(" ");
+          break;
+
+        case "morse":
+          result =
+            textToMorse(input);
+          break;
+
+        case "palindrome": {
+          const clean =
+            input
+              .toLowerCase()
+              .replace(
+                /[^a-z0-9]/g,
+                ""
+              );
+
+          result =
+            clean ===
+            [
+              ...clean,
+            ]
+              .reverse()
+              .join("")
+              ? "Yes — this is a palindrome."
+              : "No — this is not a palindrome.";
+
+          break;
         }
-        break;
 
-      case "uuid":
-        result = crypto.randomUUID();
-        break;
+        case "reading-time": {
+          const words =
+            input.trim()
+              ? input
+                  .trim()
+                  .split(/\s+/)
+                  .length
+              : 0;
 
-      case "binary":
-        result = [...input]
-          .map((c) =>
-            c.charCodeAt(0)
-              .toString(2)
-              .padStart(8, "0")
-          )
-          .join(" ");
-        break;
+          result = `Approximately ${Math.max(
+            1,
+            Math.ceil(
+              words / 200
+            )
+          )} minute(s)`;
 
-      case "base64-encode":
-        result = btoa(
-          unescape(encodeURIComponent(input))
-        );
-        break;
-
-      case "base64-decode":
-        try {
-          result = decodeURIComponent(
-            escape(atob(input))
-          );
-        } catch {
-          result = "Invalid Base64.";
+          break;
         }
-        break;
 
-      default:
-        result =
-          input ||
-          `This is the ${tool.name} tool. Connect its processing API or add its browser-side logic here.`;
+        case "text-sorter":
+          result = input
+            .split("\n")
+            .filter(Boolean)
+            .sort((a, b) =>
+              a.localeCompare(
+                b
+              )
+            )
+            .join("\n");
+          break;
+
+        case "duplicate-lines":
+          result = [
+            ...new Set(
+              input
+                .split("\n")
+                .filter(Boolean)
+            ),
+          ].join("\n");
+          break;
+
+        case "percentage":
+          result =
+            calculatePercentage(
+              input
+            );
+          break;
+
+        default:
+          result =
+            `Tool "${tool.name}" is connected successfully.\n\nFull processing engine can be connected to this tool next.`;
+      }
+    } catch {
+      result =
+        "Invalid input. Please check your data and try again.";
     }
 
     setOutput(result);
@@ -667,121 +1031,276 @@ function ToolPage({ tool, categories, back }) {
   async function copyResult() {
     if (!output) return;
 
-    await navigator.clipboard?.writeText(output);
-    setCopied(true);
+    try {
+      await navigator.clipboard.writeText(
+        output
+      );
 
-    setTimeout(() => setCopied(false), 1500);
+      setCopied(true);
+
+      setTimeout(
+        () =>
+          setCopied(false),
+        1500
+      );
+    } catch {
+      setCopied(false);
+    }
   }
 
   return (
     <main className="toolPage container">
-      <button className="back" onClick={back}>
+      <button
+        className="back"
+        onClick={back}
+      >
         <ChevronLeft size={18} />
         Back to tools
       </button>
 
       <div className="toolHero">
         <div className="toolIcon big">
-          {tool.icon_url ? (
-            <img
-              src={tool.icon_url}
-              alt=""
-              className="toolImage"
-            />
-          ) : (
-            <Wrench />
-          )}
+          <Icon />
         </div>
 
         <div>
-          <span>{category}</span>
+          <span>
+            {category?.name ||
+              "Tool"}
+          </span>
 
-          <h1>{tool.name}</h1>
+          <h1>
+            {tool.name}
+          </h1>
 
           <p>
             {tool.long_description ||
               tool.description ||
-              "Use this online tool quickly and easily."}
+              "Use this online tool."}
           </p>
         </div>
       </div>
 
-      {tool.tool_url ? (
-        <div className="externalTool">
-          <h3>External Tool</h3>
+      <div className="workspace">
+        <div className="panel">
+          <label>
+            Input
+          </label>
 
-          <p>
-            This tool is provided through an external service.
-          </p>
+          <textarea
+            value={input}
+            onChange={(e) =>
+              setInput(
+                e.target.value
+              )
+            }
+            placeholder="Enter or paste your content here..."
+          />
 
-          <a
-            href={tool.tool_url}
-            target="_blank"
-            rel="noreferrer"
-            className="primary linkButton"
-          >
-            Open Tool
-            <ExternalLink size={17} />
-          </a>
-        </div>
-      ) : (
-        <div className="workspace">
-          <div className="panel">
-            <label>Input</label>
-
-            <textarea
-              value={input}
-              onChange={(e) =>
-                setInput(e.target.value)
-              }
-              placeholder={`Enter content for ${tool.name}...`}
-            />
-
+          <div className="actions">
             <button
               className="primary"
-              onClick={runTool}
+              onClick={
+                runTool
+              }
             >
-              <Sparkles size={17} />
+              <Zap size={17} />
               Run Tool
             </button>
-          </div>
-
-          <div className="panel">
-            <label>Result</label>
-
-            <textarea
-              value={output}
-              readOnly
-              placeholder="Your result will appear here..."
-            />
 
             <button
-              className="secondary full"
-              onClick={copyResult}
+              className="secondary"
+              onClick={() => {
+                setInput("");
+                setOutput("");
+              }}
             >
-              {copied ? "Copied!" : "Copy Result"}
+              <Trash2 size={17} />
+              Clear
             </button>
           </div>
         </div>
-      )}
+
+        <div className="panel">
+          <label>
+            Result
+          </label>
+
+          <textarea
+            value={output}
+            readOnly
+            placeholder="Your result will appear here..."
+          />
+
+          <button
+            className="secondary full"
+            onClick={
+              copyResult
+            }
+          >
+            {copied ? (
+              <>
+                <Check
+                  size={17}
+                />
+                Copied
+              </>
+            ) : (
+              <>
+                <Copy
+                  size={17}
+                />
+                Copy Result
+              </>
+            )}
+          </button>
+        </div>
+      </div>
 
       <div className="notice">
-        <ShieldCheck size={20} />
-        ToolMaster Pro uses Supabase for tool and category
-        data. Never put private API keys in frontend code.
+        <ShieldCheck
+          size={20}
+        />
+
+        <div>
+          Most text processing
+          happens locally in your
+          browser. Sensitive data
+          should not be sent to
+          untrusted services.
+        </div>
       </div>
     </main>
   );
 }
 
 /* =========================================================
+   HELPERS
+========================================================= */
+
+function generatePassword(
+  length = 18
+) {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+
+  const values =
+    crypto.getRandomValues(
+      new Uint32Array(length)
+    );
+
+  return [
+    ...values,
+  ]
+    .map(
+      (v) =>
+        chars[
+          v % chars.length
+        ]
+    )
+    .join("");
+}
+
+function textToMorse(text) {
+  const map = {
+    a: ".-",
+    b: "-...",
+    c: "-.-.",
+    d: "-..",
+    e: ".",
+    f: "..-.",
+    g: "--.",
+    h: "....",
+    i: "..",
+    j: ".---",
+    k: "-.-",
+    l: ".-..",
+    m: "--",
+    n: "-.",
+    o: "---",
+    p: ".--.",
+    q: "--.-",
+    r: ".-.",
+    s: "...",
+    t: "-",
+    u: "..-",
+    v: "...-",
+    w: ".--",
+    x: "-..-",
+    y: "-.--",
+    z: "--..",
+    "0": "-----",
+    "1": ".----",
+    "2": "..---",
+    "3": "...--",
+    "4": "....-",
+    "5": ".....",
+    "6": "-....",
+    "7": "--...",
+    "8": "---..",
+    "9": "----.",
+  };
+
+  return text
+    .toLowerCase()
+    .split("")
+    .map((char) => {
+      if (char === " ")
+        return "/";
+
+      return (
+        map[char] || char
+      );
+    })
+    .join(" ");
+}
+
+function calculatePercentage(
+  value
+) {
+  const match = String(
+    value
+  ).match(
+    /([\d.]+)\s*%?\s*(?:of)?\s*([\d.]+)?/i
+  );
+
+  if (!match) {
+    return "Example: 20% of 500";
+  }
+
+  const percent =
+    Number(match[1]);
+
+  const total =
+    Number(match[2]);
+
+  if (
+    !Number.isFinite(
+      percent
+    ) ||
+    !Number.isFinite(total)
+  ) {
+    return "Example: 20% of 500";
+  }
+
+  return `${percent}% of ${total} = ${
+    (percent / 100) * total
+  }`;
+}
+
+/* =========================================================
    MOUNT
 ========================================================= */
 
-const root = document.getElementById("root");
+const root =
+  document.getElementById(
+    "root"
+  );
 
 if (!root) {
-  throw new Error("Root element not found.");
+  throw new Error(
+    "Root element not found. Check index.html."
+  );
 }
 
 createRoot(root).render(
