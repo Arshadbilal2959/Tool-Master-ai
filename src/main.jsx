@@ -1,5 +1,11 @@
- import React, { useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import { createRoot } from "react-dom/client";
+
 import {
   Search,
   Menu,
@@ -25,130 +31,24 @@ import {
   Heart,
   ChevronLeft,
   Trash2,
-  Plus,
   RefreshCw,
 } from "lucide-react";
+
+import { createClient } from "@supabase/supabase-js";
+
 import "./styles.css";
 
 /* =========================================================
-   TOOLS
+   SUPABASE
 ========================================================= */
 
-const tools = [
-  ["Text to Video", "AI & Video", "Create an AI video project from a text prompt.", "text-to-video"],
-  ["Student AI Helper", "AI & Education", "Get step-by-step help with study questions.", "student-ai-helper"],
-
-  ["PDF to Word", "PDF Tools", "Convert PDF documents into editable Word files.", "pdf-word"],
-  ["Word to PDF", "PDF Tools", "Convert Word documents into PDF.", "word-pdf"],
-  ["PDF to JPG", "PDF Tools", "Convert PDF pages into JPG images.", "pdf-jpg"],
-  ["JPG to PDF", "PDF Tools", "Create a PDF from JPG images.", "jpg-pdf"],
-  ["Merge PDF", "PDF Tools", "Combine multiple PDF files.", "merge-pdf"],
-  ["Split PDF", "PDF Tools", "Split a PDF into separate files.", "split-pdf"],
-  ["Compress PDF", "PDF Tools", "Reduce PDF file size.", "compress-pdf"],
-  ["Rotate PDF", "PDF Tools", "Rotate PDF pages.", "rotate-pdf"],
-  ["PDF Unlock", "PDF Tools", "Unlock supported PDF files.", "pdf-unlock"],
-  ["PDF Watermark", "PDF Tools", "Add watermarks to PDF pages.", "pdf-watermark"],
-
-  ["Image Compressor", "Image Tools", "Compress JPG, PNG and WebP images.", "image-compressor"],
-  ["Image Resizer", "Image Tools", "Resize images to exact dimensions.", "image-resizer"],
-  ["Image Cropper", "Image Tools", "Crop images online.", "image-cropper"],
-  ["JPG to PNG", "Image Tools", "Convert JPG images to PNG.", "jpg-png"],
-  ["PNG to JPG", "Image Tools", "Convert PNG images to JPG.", "png-jpg"],
-  ["WebP Converter", "Image Tools", "Convert images to and from WebP.", "webp-converter"],
-  ["Image Background Remover", "Image Tools", "Remove simple image backgrounds.", "background-remover"],
-  ["Image to Text", "Image Tools", "Extract text from images.", "image-text"],
-
-  ["QR Code Generator", "SEO & Marketing", "Create QR codes from links or text.", "qr-generator"],
-  ["Meta Tag Generator", "SEO & Marketing", "Generate SEO meta tags.", "meta-tags"],
-  ["Sitemap Generator", "SEO & Marketing", "Create an XML sitemap.", "sitemap"],
-  ["Robots.txt Generator", "SEO & Marketing", "Generate robots.txt.", "robots"],
-  ["Keyword Density Checker", "SEO & Marketing", "Analyze keyword frequency.", "keyword-density"],
-  ["URL Encoder", "SEO & Marketing", "Encode URLs safely.", "url-encoder"],
-  ["Open Graph Generator", "SEO & Marketing", "Generate Open Graph tags.", "open-graph"],
-  ["Schema Markup Generator", "SEO & Marketing", "Generate JSON-LD schema.", "schema"],
-  ["Favicon Generator", "SEO & Marketing", "Prepare favicon assets.", "favicon"],
-  ["UTM Builder", "SEO & Marketing", "Build UTM campaign URLs.", "utm"],
-  ["URL Slug Generator", "SEO & Marketing", "Create clean SEO slugs.", "slug"],
-
-  ["Word Counter", "Text Tools", "Count words and characters.", "word-counter"],
-  ["Case Converter", "Text Tools", "Convert text case.", "case-converter"],
-  ["Text Cleaner", "Text Tools", "Clean unnecessary spaces.", "text-cleaner"],
-  ["Lorem Ipsum Generator", "Text Tools", "Generate placeholder text.", "lorem"],
-  ["Duplicate Line Remover", "Text Tools", "Remove duplicate lines.", "duplicate-lines"],
-  ["Text Sorter", "Text Tools", "Sort lines alphabetically.", "text-sorter"],
-  ["Text Reverser", "Text Tools", "Reverse text.", "text-reverser"],
-  ["Palindrome Checker", "Text Tools", "Check if text is a palindrome.", "palindrome"],
-  ["Reading Time Calculator", "Text Tools", "Estimate reading time.", "reading-time"],
-  ["Character Counter", "Text Tools", "Count characters.", "characters"],
-  ["Morse Code Converter", "Text Tools", "Convert text to Morse code.", "morse"],
-
-  ["JSON Formatter", "Developer Tools", "Format and validate JSON.", "json-formatter"],
-  ["JSON Minifier", "Developer Tools", "Minify JSON.", "json-minifier"],
-  ["Base64 Encoder", "Developer Tools", "Encode text to Base64.", "base64-encode"],
-  ["Base64 Decoder", "Developer Tools", "Decode Base64 text.", "base64-decode"],
-  ["HTML Formatter", "Developer Tools", "Format HTML.", "html-formatter"],
-  ["CSS Formatter", "Developer Tools", "Format CSS.", "css-formatter"],
-  ["JavaScript Minifier", "Developer Tools", "Compact JavaScript text.", "js-minifier"],
-  ["UUID Generator", "Developer Tools", "Generate UUID values.", "uuid"],
-  ["Hash Generator", "Developer Tools", "Create text hashes.", "hash"],
-  ["Timestamp Converter", "Developer Tools", "Convert Unix timestamps.", "timestamp"],
-  ["Color Converter", "Developer Tools", "Convert HEX, RGB and HSL.", "color"],
-  ["Regex Tester", "Developer Tools", "Test regular expressions.", "regex"],
-  ["Cron Expression Helper", "Developer Tools", "Build cron expressions.", "cron"],
-  ["HTML Entity Encoder", "Developer Tools", "Encode HTML entities.", "html-entities"],
-  ["URL Parser", "Developer Tools", "Parse URL components.", "url-parser"],
-  ["HTML Previewer", "Developer Tools", "Preview HTML.", "html-preview"],
-  ["Markdown Previewer", "Developer Tools", "Preview Markdown.", "markdown"],
-  ["SQL Formatter", "Developer Tools", "Format SQL statements.", "sql"],
-  ["CSV to JSON", "Developer Tools", "Convert CSV to JSON.", "csv-json"],
-  ["JSON to CSV", "Developer Tools", "Convert JSON to CSV.", "json-csv"],
-  ["XML Formatter", "Developer Tools", "Format XML.", "xml"],
-  ["YAML to JSON", "Developer Tools", "Convert YAML-like data to JSON.", "yaml-json"],
-  ["CSS Color Picker", "Developer Tools", "Pick a CSS color.", "color-picker"],
-  ["Binary Converter", "Developer Tools", "Convert text to binary.", "binary"],
-  ["ASCII Converter", "Developer Tools", "Convert text to ASCII.", "ascii"],
-
-  ["Percentage Calculator", "Calculator Tools", "Calculate percentages.", "percentage"],
-  ["Age Calculator", "Calculator Tools", "Calculate age.", "age"],
-  ["BMI Calculator", "Calculator Tools", "Calculate BMI.", "bmi"],
-  ["Discount Calculator", "Calculator Tools", "Calculate discounts.", "discount"],
-  ["Loan Calculator", "Calculator Tools", "Estimate loan payments.", "loan"],
-  ["GST Calculator", "Calculator Tools", "Calculate GST.", "gst"],
-  ["Tip Calculator", "Calculator Tools", "Calculate tips.", "tip"],
-  ["Time Calculator", "Calculator Tools", "Calculate time.", "time"],
-  ["Aspect Ratio Calculator", "Calculator Tools", "Calculate image dimensions.", "aspect"],
-  ["Compound Interest Calculator", "Calculator Tools", "Calculate compound interest.", "compound-interest"],
-  ["Scientific Calculator", "Calculator Tools", "Perform scientific calculations.", "scientific"],
-  ["Date Calculator", "Calculator Tools", "Add days to dates.", "date-add"],
-
-  ["Unit Converter", "Converter Tools", "Convert common units.", "units"],
-  ["Length Converter", "Converter Tools", "Convert length.", "length"],
-  ["Weight Converter", "Converter Tools", "Convert weight.", "weight"],
-  ["Temperature Converter", "Converter Tools", "Convert temperature.", "temperature"],
-  ["Currency Converter", "Converter Tools", "Convert currencies using your rate.", "currency"],
-  ["Data Storage Converter", "Converter Tools", "Convert bytes and storage units.", "storage"],
-
-  ["Password Generator", "Security Tools", "Generate strong passwords.", "password"],
-  ["Password Strength Checker", "Security Tools", "Check password strength.", "password-strength"],
-  ["SHA-256 Generator", "Security Tools", "Generate SHA-256 hashes.", "sha256"],
-  ["MD5 Hash Generator", "Security Tools", "Generate MD5-style hash placeholder.", "md5"],
-  ["Random Password Generator", "Security Tools", "Generate random passwords.", "random-password"],
-
-  ["IP Address Info", "Network Tools", "View browser-visible IP information.", "ip-info"],
-  ["HTTP Status Checker", "Network Tools", "Explain HTTP status codes.", "http-status"],
-
-  ["Email Validator", "Utility Tools", "Validate email format.", "email-validator"],
-  ["Phone Number Formatter", "Utility Tools", "Format phone numbers.", "phone"],
-  ["Date Difference Calculator", "Utility Tools", "Calculate date differences.", "date-difference"],
-  ["Random Number Generator", "Utility Tools", "Generate random numbers.", "random-number"],
-  ["Number to Words", "Utility Tools", "Convert numbers to English words.", "number-words"],
-  ["Roman Numeral Converter", "Utility Tools", "Convert numbers to Roman numerals.", "roman"],
-  ["Business Name Generator", "Utility Tools", "Generate business name ideas.", "business-name"],
-  ["Username Generator", "Utility Tools", "Generate username ideas.", "username"],
-];
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 /* =========================================================
-   HELPERS
+   ICONS
 ========================================================= */
 
 const iconFor = {
@@ -160,87 +60,339 @@ const iconFor = {
   "Calculator Tools": Calculator,
   "Converter Tools": Wrench,
   "Security Tools": ShieldCheck,
+  "Network Tools": Globe2,
+  "Utility Tools": Wrench,
+  "AI & Education": Sparkles,
+  "AI & Video": Sparkles,
+  "AI Tools": Sparkles,
+  "Productivity": LayoutDashboard,
 };
 
-const getSaved = (key, fallback) => {
+/* =========================================================
+   LOCAL STORAGE
+========================================================= */
+
+function getSaved(key, fallback) {
   try {
-    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+    return JSON.parse(
+      localStorage.getItem(key)
+    ) ?? fallback;
   } catch {
     return fallback;
   }
-};
+}
 
 /* =========================================================
    APP
 ========================================================= */
 
 function App() {
-  const [category, setCategory] = useState("All Tools");
-  const [query, setQuery] = useState("");
-  const [selectedTool, setSelectedTool] = useState(null);
-  const [admin, setAdmin] = useState(false);
-  const [mobileMenu, setMobileMenu] = useState(false);
-  const [dark, setDark] = useState(() => getSaved("tm-theme", false));
-  const [favorites, setFavorites] = useState(() =>
-    getSaved("tm-favorites", [])
-  );
+  const [category, setCategory] =
+    useState("All Tools");
 
-  const categories = useMemo(() => {
-    const names = [...new Set(tools.map((t) => t[1]))];
+  const [query, setQuery] =
+    useState("");
 
-    return [
-      ["All Tools", tools.length, Wrench],
-      ...names.map((name) => [
-        name,
-        tools.filter((t) => t[1] === name).length,
-        iconFor[name] || Wrench,
-      ]),
-    ];
+  const [selectedTool, setSelectedTool] =
+    useState(null);
+
+  const [admin, setAdmin] =
+    useState(false);
+
+  const [mobileMenu, setMobileMenu] =
+    useState(false);
+
+  const [dark, setDark] =
+    useState(() =>
+      getSaved("tm-theme", false)
+    );
+
+  const [favorites, setFavorites] =
+    useState(() =>
+      getSaved("tm-favorites", [])
+    );
+
+  const [tools, setTools] =
+    useState([]);
+
+  const [categoriesData, setCategoriesData] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  /* =======================================================
+     LOAD SUPABASE DATA
+  ======================================================= */
+
+  useEffect(() => {
+    loadData();
   }, []);
 
-  const filtered = useMemo(() => {
-    const q = query.toLowerCase().trim();
+  async function loadData() {
+    setLoading(true);
+    setError("");
 
-    return tools.filter((t) => {
+    try {
+      const [
+        categoriesResult,
+        toolsResult,
+      ] = await Promise.all([
+        supabase
+          .from("categories")
+          .select(
+            "id,name,slug,description,icon,is_active,sort_order,created_at"
+          )
+          .eq("is_active", true)
+          .order("sort_order", {
+            ascending: true,
+          }),
+
+        supabase
+          .from("tools")
+          .select(
+            "id,name,slug,description,long_description,category_id,icon_url,tool_type,tool_url,is_active,is_featured,sort_order,created_at,updated_at"
+          )
+          .eq("is_active", true)
+          .order("sort_order", {
+            ascending: true,
+          }),
+      ]);
+
+      if (categoriesResult.error) {
+        throw categoriesResult.error;
+      }
+
+      if (toolsResult.error) {
+        throw toolsResult.error;
+      }
+
+      setCategoriesData(
+        categoriesResult.data || []
+      );
+
+      setTools(
+        toolsResult.data || []
+      );
+    } catch (err) {
+      console.error(
+        "Supabase loading error:",
+        err
+      );
+
+      setError(
+        err?.message ||
+          "Unable to load tools from Supabase."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  /* =======================================================
+     CATEGORY LIST
+  ======================================================= */
+
+  const categories = useMemo(() => {
+    const all = [
+      [
+        "All Tools",
+        tools.length,
+        Wrench,
+      ],
+    ];
+
+    const dbCategories =
+      categoriesData.map((cat) => {
+        const count =
+          tools.filter(
+            (tool) =>
+              tool.category_id === cat.id
+          ).length;
+
+        return [
+          cat.name,
+          count,
+          iconFor[cat.name] || Wrench,
+        ];
+      });
+
+    return [
+      ...all,
+      ...dbCategories,
+    ];
+  }, [tools, categoriesData]);
+
+  /* =======================================================
+     FILTER TOOLS
+  ======================================================= */
+
+  const filtered = useMemo(() => {
+    const q =
+      query.toLowerCase().trim();
+
+    return tools.filter((tool) => {
+      const cat =
+        categoriesData.find(
+          (c) =>
+            c.id === tool.category_id
+        );
+
+      const categoryName =
+        cat?.name || "";
+
       const categoryMatch =
-        category === "All Tools" || t[1] === category;
+        category === "All Tools" ||
+        categoryName === category;
 
       const searchMatch =
         !q ||
-        t[0].toLowerCase().includes(q) ||
-        t[1].toLowerCase().includes(q) ||
-        t[2].toLowerCase().includes(q);
+        tool.name
+          ?.toLowerCase()
+          .includes(q) ||
+        categoryName
+          .toLowerCase()
+          .includes(q) ||
+        tool.description
+          ?.toLowerCase()
+          .includes(q);
 
-      return categoryMatch && searchMatch;
+      return (
+        categoryMatch &&
+        searchMatch
+      );
     });
-  }, [category, query]);
+  }, [
+    tools,
+    categoriesData,
+    category,
+    query,
+  ]);
+
+  /* =======================================================
+     THEME
+  ======================================================= */
 
   const toggleTheme = () => {
     const next = !dark;
+
     setDark(next);
-    localStorage.setItem("tm-theme", JSON.stringify(next));
+
+    localStorage.setItem(
+      "tm-theme",
+      JSON.stringify(next)
+    );
   };
+
+  /* =======================================================
+     FAVORITES
+  ======================================================= */
 
   const toggleFavorite = (id) => {
-    const next = favorites.includes(id)
-      ? favorites.filter((x) => x !== id)
-      : [...favorites, id];
+    const next =
+      favorites.includes(id)
+        ? favorites.filter(
+            (x) => x !== id
+          )
+        : [...favorites, id];
 
     setFavorites(next);
-    localStorage.setItem("tm-favorites", JSON.stringify(next));
+
+    localStorage.setItem(
+      "tm-favorites",
+      JSON.stringify(next)
+    );
   };
+
+  /* =======================================================
+     OPEN TOOL
+  ======================================================= */
 
   const openTool = (tool) => {
     setSelectedTool(tool);
-    const stats = getSaved("tm-stats", { visits: 0, toolUses: 0 });
+
+    const stats = getSaved(
+      "tm-stats",
+      {
+        visits: 0,
+        toolUses: 0,
+      }
+    );
+
     stats.visits += 1;
-    localStorage.setItem("tm-stats", JSON.stringify(stats));
+
+    localStorage.setItem(
+      "tm-stats",
+      JSON.stringify(stats)
+    );
   };
 
+  /* =======================================================
+     LOADING
+  ======================================================= */
+
+  if (loading) {
+    return (
+      <div
+        className={
+          dark
+            ? "app dark"
+            : "app"
+        }
+      >
+        <header className="header">
+          <div className="nav">
+            <div className="brand">
+              <div className="brandIcon">
+                <Wrench size={21} />
+              </div>
+
+              <span>
+                ToolMaster
+                <span>Pro</span>
+              </span>
+            </div>
+          </div>
+        </header>
+
+        <main className="container">
+          <div className="empty">
+            <RefreshCw
+              size={40}
+              className="spin"
+            />
+
+            <h3>
+              Loading tools...
+            </h3>
+
+            <p>
+              Connecting to Supabase.
+            </p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  /* =======================================================
+     MAIN
+  ======================================================= */
+
   return (
-    <div className={dark ? "app dark" : "app"}>
+    <div
+      className={
+        dark
+          ? "app dark"
+          : "app"
+      }
+    >
       <header className="header">
         <div className="nav">
+
           <button
             className="brand"
             onClick={() => {
@@ -251,26 +403,59 @@ function App() {
             <div className="brandIcon">
               <Wrench size={21} />
             </div>
+
             <span>
-              ToolMaster<span>Pro</span>
+              ToolMaster
+              <span>Pro</span>
             </span>
           </button>
 
-          <nav className={mobileMenu ? "navLinks show" : "navLinks"}>
-            <a href="#tools" onClick={() => setMobileMenu(false)}>
+          <nav
+            className={
+              mobileMenu
+                ? "navLinks show"
+                : "navLinks"
+            }
+          >
+            <a
+              href="#tools"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
               Tools
             </a>
-            <a href="#categories" onClick={() => setMobileMenu(false)}>
+
+            <a
+              href="#categories"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
               Categories
             </a>
-            <a href="#about" onClick={() => setMobileMenu(false)}>
+
+            <a
+              href="#about"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
               About
             </a>
           </nav>
 
           <div className="navActions">
-            <button className="iconBtn" onClick={toggleTheme}>
-              {dark ? <Sun size={18} /> : <Moon size={18} />}
+
+            <button
+              className="iconBtn"
+              onClick={toggleTheme}
+            >
+              {dark ? (
+                <Sun size={18} />
+              ) : (
+                <Moon size={18} />
+              )}
             </button>
 
             <button
@@ -280,157 +465,318 @@ function App() {
                 setSelectedTool(null);
               }}
             >
-              <LayoutDashboard size={17} />
+              <LayoutDashboard
+                size={17}
+              />
               Admin
             </button>
 
             <button
               className="mobileBtn"
-              onClick={() => setMobileMenu(!mobileMenu)}
+              onClick={() =>
+                setMobileMenu(
+                  !mobileMenu
+                )
+              }
             >
-              {mobileMenu ? <X /> : <Menu />}
+              {mobileMenu ? (
+                <X />
+              ) : (
+                <Menu />
+              )}
             </button>
           </div>
         </div>
       </header>
 
+      {error && (
+        <div className="container">
+          <div className="notice">
+            <ShieldCheck size={20} />
+
+            <div>
+              <b>
+                Supabase connection error
+              </b>
+
+              <p>{error}</p>
+
+              <button
+                className="secondary"
+                onClick={loadData}
+              >
+                <RefreshCw
+                  size={16}
+                />
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {admin ? (
         <AdminPanel
-          onClose={() => setAdmin(false)}
+          onClose={() =>
+            setAdmin(false)
+          }
           tools={tools}
+          categories={
+            categoriesData
+          }
+          reload={loadData}
         />
       ) : selectedTool ? (
         <ToolPage
           tool={selectedTool}
-          back={() => setSelectedTool(null)}
+          categories={
+            categoriesData
+          }
+          back={() =>
+            setSelectedTool(null)
+          }
         />
       ) : (
         <>
           <section className="hero">
+
             <div className="pill">
               <Sparkles size={15} />
-              {tools.length}+ Free Online Tools
+              {tools.length}+
+              Free Online Tools
             </div>
 
             <h1>
-              One place for <span>every tool</span> you need.
+              One place for{" "}
+              <span>
+                every tool
+              </span>{" "}
+              you need.
             </h1>
 
             <p>
-              Fast, simple and privacy-friendly tools for PDF, images,
-              SEO, text, developers, calculators and more.
+              Fast, simple and
+              privacy-friendly tools
+              for PDF, images, SEO,
+              text, developers,
+              calculators and more.
             </p>
 
             <div className="searchBox">
               <Search size={20} />
+
               <input
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) =>
+                  setQuery(
+                    e.target.value
+                  )
+                }
                 placeholder="Search for a tool..."
               />
+
               {query && (
-                <button onClick={() => setQuery("")}>
+                <button
+                  onClick={() =>
+                    setQuery("")
+                  }
+                >
                   <X size={18} />
                 </button>
               )}
             </div>
 
             <div className="stats">
+
               <div>
-                <b>{tools.length}+</b>
-                <small>Tools</small>
+                <b>
+                  {tools.length}+
+                </b>
+
+                <small>
+                  Tools
+                </small>
               </div>
+
               <div>
-                <b>{categories.length - 1}</b>
-                <small>Categories</small>
+                <b>
+                  {categoriesData.length}
+                </b>
+
+                <small>
+                  Categories
+                </small>
               </div>
+
               <div>
-                <b>100%</b>
-                <small>Browser Tools</small>
+                <b>
+                  100%
+                </b>
+
+                <small>
+                  Browser Tools
+                </small>
               </div>
+
             </div>
           </section>
 
-          <main id="tools" className="container">
-            <section id="categories" className="categories">
-              {categories.map(([name, count, Icon]) => (
-                <button
-                  key={name}
-                  className={
-                    category === name ? "cat active" : "cat"
-                  }
-                  onClick={() => setCategory(name)}
-                >
-                  <Icon size={18} />
-                  <span>{name}</span>
-                  <em>{count}</em>
-                </button>
-              ))}
+          <main
+            id="tools"
+            className="container"
+          >
+
+            <section
+              id="categories"
+              className="categories"
+            >
+              {categories.map(
+                ([
+                  name,
+                  count,
+                  Icon,
+                ]) => (
+                  <button
+                    key={name}
+                    className={
+                      category === name
+                        ? "cat active"
+                        : "cat"
+                    }
+                    onClick={() =>
+                      setCategory(
+                        name
+                      )
+                    }
+                  >
+                    <Icon size={18} />
+
+                    <span>
+                      {name}
+                    </span>
+
+                    <em>
+                      {count}
+                    </em>
+                  </button>
+                )
+              )}
             </section>
 
             <div className="sectionHead">
+
               <div>
-                <h2>{category}</h2>
-                <p>{filtered.length} tools available</p>
+                <h2>
+                  {category}
+                </h2>
+
+                <p>
+                  {filtered.length}{" "}
+                  tools available
+                </p>
               </div>
 
-              {favorites.length > 0 && (
+              {favorites.length >
+                0 && (
                 <div className="favoriteInfo">
-                  <Heart size={16} fill="currentColor" />
-                  {favorites.length} favorites
+                  <Heart
+                    size={16}
+                    fill="currentColor"
+                  />
+
+                  {favorites.length}{" "}
+                  favorites
                 </div>
               )}
             </div>
 
             <div className="grid">
-              {filtered.map((tool) => (
-                <ToolCard
-                  key={tool[3]}
-                  tool={tool}
-                  open={() => openTool(tool)}
-                  favorite={favorites.includes(tool[3])}
-                  toggleFavorite={() => toggleFavorite(tool[3])}
-                />
-              ))}
+
+              {filtered.map(
+                (tool) => (
+                  <ToolCard
+                    key={tool.id}
+                    tool={tool}
+                    categories={
+                      categoriesData
+                    }
+                    open={() =>
+                      openTool(tool)
+                    }
+                    favorite={favorites.includes(
+                      tool.id
+                    )}
+                    toggleFavorite={() =>
+                      toggleFavorite(
+                        tool.id
+                      )
+                    }
+                  />
+                )
+              )}
+
             </div>
 
             {!filtered.length && (
               <div className="empty">
                 <Search size={40} />
-                <h3>No tools found</h3>
-                <p>Try another keyword or category.</p>
+
+                <h3>
+                  No tools found
+                </h3>
+
+                <p>
+                  Try another keyword
+                  or category.
+                </p>
+
                 <button
                   className="primary"
                   onClick={() => {
                     setQuery("");
-                    setCategory("All Tools");
+                    setCategory(
+                      "All Tools"
+                    );
                   }}
                 >
                   Reset Search
                 </button>
               </div>
             )}
+
           </main>
         </>
       )}
 
       <footer id="about">
         <div className="footerInner">
+
           <div>
             <div className="brand">
+
               <div className="brandIcon">
                 <Wrench size={19} />
               </div>
+
               <span>
-                ToolMaster<span>Pro</span>
+                ToolMaster
+                <span>Pro</span>
               </span>
+
             </div>
-            <p>Powerful online tools, made simple.</p>
+
+            <p>
+              Powerful online tools,
+              made simple.
+            </p>
           </div>
 
           <small>
-            © 2026 ToolMaster Pro. Built for fast browser-based utilities.
+            © 2026 ToolMaster Pro.
+            Built for fast
+            browser-based utilities.
           </small>
+
         </div>
       </footer>
     </div>
@@ -443,17 +789,34 @@ function App() {
 
 function ToolCard({
   tool,
+  categories,
   open,
   favorite,
   toggleFavorite,
 }) {
-  const Icon = iconFor[tool[1]] || Wrench;
+  const category =
+    categories.find(
+      (c) =>
+        c.id ===
+        tool.category_id
+    );
+
+  const categoryName =
+    category?.name ||
+    "Tools";
+
+  const Icon =
+    iconFor[categoryName] ||
+    Wrench;
 
   return (
     <article className="card">
+
       <button
         className={
-          favorite ? "favorite active" : "favorite"
+          favorite
+            ? "favorite active"
+            : "favorite"
         }
         onClick={(e) => {
           e.stopPropagation();
@@ -463,22 +826,60 @@ function ToolCard({
       >
         <Heart
           size={16}
-          fill={favorite ? "currentColor" : "none"}
+          fill={
+            favorite
+              ? "currentColor"
+              : "none"
+          }
         />
       </button>
 
-      <div className="cardClick" onClick={open}>
+      <div
+        className="cardClick"
+        onClick={open}
+      >
+
         <div className="toolIcon">
-          <Icon size={21} />
+
+          {tool.icon_url ? (
+            <img
+              src={tool.icon_url}
+              alt=""
+              style={{
+                width: 28,
+                height: 28,
+                objectFit:
+                  "contain",
+              }}
+            />
+          ) : (
+            <Icon size={21} />
+          )}
+
         </div>
 
         <div className="cardBody">
-          <span>{tool[1]}</span>
-          <h3>{tool[0]}</h3>
-          <p>{tool[2]}</p>
+
+          <span>
+            {categoryName}
+          </span>
+
+          <h3>
+            {tool.name}
+          </h3>
+
+          <p>
+            {tool.description ||
+              "Useful online tool."}
+          </p>
+
         </div>
 
-        <ArrowRight className="arrow" size={19} />
+        <ArrowRight
+          className="arrow"
+          size={19}
+        />
+
       </div>
     </article>
   );
@@ -488,179 +889,294 @@ function ToolCard({
    TOOL PAGE
 ========================================================= */
 
-function ToolPage({ tool, back }) {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [copied, setCopied] = useState(false);
+function ToolPage({
+  tool,
+  categories,
+  back,
+}) {
+  const [input, setInput] =
+    useState("");
+
+  const [output, setOutput] =
+    useState("");
+
+  const [copied, setCopied] =
+    useState(false);
+
+  const category =
+    categories.find(
+      (c) =>
+        c.id ===
+        tool.category_id
+    );
+
+  const categoryName =
+    category?.name ||
+    "Tools";
 
   const runTool = () => {
-    const id = tool[3];
+    const id = tool.slug;
+
     let result = input;
 
     try {
       switch (id) {
         case "word-counter": {
-          const words = input.trim()
-            ? input.trim().split(/\s+/).length
-            : 0;
-          const sentences = input
-            ? input.split(/[.!?]+/).filter(Boolean).length
-            : 0;
+          const words =
+            input.trim()
+              ? input
+                  .trim()
+                  .split(/\s+/)
+                  .length
+              : 0;
+
+          const sentences =
+            input
+              ? input
+                  .split(/[.!?]+/)
+                  .filter(Boolean)
+                  .length
+              : 0;
 
           result =
             `Words: ${words}\n` +
             `Characters: ${input.length}\n` +
-            `Characters without spaces: ${input.replace(/\s/g, "").length}\n` +
+            `Characters without spaces: ${
+              input.replace(
+                /\s/g,
+                ""
+              ).length
+            }\n` +
             `Sentences: ${sentences}`;
+
           break;
         }
 
         case "characters":
           result =
             `Characters: ${input.length}\n` +
-            `Without spaces: ${input.replace(/\s/g, "").length}`;
+            `Without spaces: ${
+              input.replace(
+                /\s/g,
+                ""
+              ).length
+            }`;
+
           break;
 
         case "case-converter":
-          result = input.toLowerCase();
+          result =
+            input.toLowerCase();
+
           break;
 
         case "text-cleaner":
-          result = input.replace(/\s+/g, " ").trim();
+          result =
+            input
+              .replace(/\s+/g, " ")
+              .trim();
+
           break;
 
         case "text-reverser":
-          result = [...input].reverse().join("");
+          result =
+            [...input]
+              .reverse()
+              .join("");
+
           break;
 
         case "slug":
-          result = input
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-+|-+$/g, "");
+        case "url-slug":
+          result =
+            input
+              .toLowerCase()
+              .trim()
+              .replace(
+                /[^a-z0-9]+/g,
+                "-"
+              )
+              .replace(
+                /^-+|-+$/g,
+                "");
+
           break;
 
         case "url-encoder":
-          result = encodeURIComponent(input);
+          result =
+            encodeURIComponent(
+              input
+            );
+
           break;
 
         case "base64-encode":
           result = btoa(
-            unescape(encodeURIComponent(input))
+            unescape(
+              encodeURIComponent(
+                input
+              )
+            )
           );
+
           break;
 
         case "base64-decode":
-          result = decodeURIComponent(
-            escape(atob(input))
-          );
+          result =
+            decodeURIComponent(
+              escape(
+                atob(input)
+              )
+            );
+
           break;
 
         case "json-formatter":
-          result = JSON.stringify(
-            JSON.parse(input),
-            null,
-            2
-          );
+          result =
+            JSON.stringify(
+              JSON.parse(input),
+              null,
+              2
+            );
+
           break;
 
         case "json-minifier":
-          result = JSON.stringify(JSON.parse(input));
+          result =
+            JSON.stringify(
+              JSON.parse(input)
+            );
+
           break;
 
         case "uuid":
-          result = crypto.randomUUID();
+          result =
+            crypto.randomUUID();
+
           break;
 
         case "password":
         case "random-password":
-          result = generatePassword(18);
+          result =
+            generatePassword(18);
+
           break;
 
         case "binary":
-          result = [...input]
-            .map((c) =>
-              c.charCodeAt(0)
-                .toString(2)
-                .padStart(8, "0")
-            )
-            .join(" ");
+          result =
+            [...input]
+              .map((c) =>
+                c.charCodeAt(0)
+                  .toString(2)
+                  .padStart(
+                    8,
+                    "0"
+                  )
+              )
+              .join(" ");
+
           break;
 
         case "ascii":
-          result = [...input]
-            .map((c) => c.charCodeAt(0))
-            .join(" ");
+          result =
+            [...input]
+              .map((c) =>
+                c.charCodeAt(0)
+              )
+              .join(" ");
+
           break;
 
         case "morse":
-          result = textToMorse(input);
+          result =
+            textToMorse(input);
+
           break;
 
         case "palindrome": {
-          const clean = input
-            .toLowerCase()
-            .replace(/[^a-z0-9]/g, "");
+          const clean =
+            input
+              .toLowerCase()
+              .replace(
+                /[^a-z0-9]/g,
+                ""
+              );
 
           result =
-            clean === [...clean].reverse().join("")
+            clean ===
+            [...clean]
+              .reverse()
+              .join("")
               ? "Yes — this is a palindrome."
               : "No — this is not a palindrome.";
+
           break;
         }
 
         case "reading-time": {
-          const words = input.trim()
-            ? input.trim().split(/\s+/).length
-            : 0;
+          const words =
+            input.trim()
+              ? input
+                  .trim()
+                  .split(/\s+/)
+                  .length
+              : 0;
 
           result = `Approximately ${Math.max(
             1,
-            Math.ceil(words / 200)
+            Math.ceil(
+              words / 200
+            )
           )} minute(s)`;
+
           break;
         }
 
         case "text-sorter":
-          result = input
-            .split("\n")
-            .filter(Boolean)
-            .sort((a, b) =>
-              a.localeCompare(b)
-            )
-            .join("\n");
+          result =
+            input
+              .split("\n")
+              .filter(Boolean)
+              .sort(
+                (a, b) =>
+                  a.localeCompare(b)
+              )
+              .join("\n");
+
           break;
 
         case "duplicate-lines":
           result = [
             ...new Set(
-              input.split("\n").filter(Boolean)
+              input
+                .split("\n")
+                .filter(Boolean)
             ),
           ].join("\n");
-          break;
 
-        case "percentage":
-          result =
-            input || "Enter a value such as 20% of 500.";
           break;
 
         default:
           result =
-            "This tool interface is ready. This utility can be connected to its full processing engine next.";
+            "This tool is connected to ToolMaster Pro. Its full processing engine can be added next.";
       }
     } catch {
-      result = "Invalid input. Please check your data and try again.";
+      result =
+        "Invalid input. Please check your data and try again.";
     }
 
     setOutput(result);
 
-    const stats = getSaved("tm-stats", {
-      visits: 0,
-      toolUses: 0,
-    });
+    const stats = getSaved(
+      "tm-stats",
+      {
+        visits: 0,
+        toolUses: 0,
+      }
+    );
 
     stats.toolUses += 1;
+
     localStorage.setItem(
       "tm-stats",
       JSON.stringify(stats)
@@ -670,52 +1186,124 @@ function ToolPage({ tool, back }) {
   const copy = async () => {
     if (!output) return;
 
-    await navigator.clipboard?.writeText(output);
+    await navigator.clipboard?.writeText(
+      output
+    );
+
     setCopied(true);
 
-    setTimeout(() => setCopied(false), 1500);
+    setTimeout(
+      () => setCopied(false),
+      1500
+    );
   };
 
-  if (tool[3] === "student-ai-helper") {
-    return <StudentAIHelper back={back} />;
+  /* SPECIAL AI TOOLS */
+
+  if (
+    tool.slug ===
+    "student-ai-helper"
+  ) {
+    return (
+      <StudentAIHelper
+        back={back}
+      />
+    );
   }
 
-  if (tool[3] === "text-to-video") {
-    return <TextToVideo back={back} />;
+  if (
+    tool.slug ===
+    "text-to-video"
+  ) {
+    return (
+      <TextToVideo
+        tool={tool}
+        back={back}
+      />
+    );
+  }
+
+  if (
+    tool.slug ===
+    "ai-video-generator"
+  ) {
+    return (
+      <TextToVideo
+        tool={tool}
+        back={back}
+      />
+    );
   }
 
   return (
     <main className="toolPage container">
-      <button className="back" onClick={back}>
+
+      <button
+        className="back"
+        onClick={back}
+      >
         <ChevronLeft size={18} />
         Back to tools
       </button>
 
       <div className="toolHero">
+
         <div className="toolIcon big">
-          <Wrench />
+          {tool.icon_url ? (
+            <img
+              src={tool.icon_url}
+              alt=""
+              style={{
+                width: 45,
+                height: 45,
+                objectFit:
+                  "contain",
+              }}
+            />
+          ) : (
+            <Wrench />
+          )}
         </div>
 
         <div>
-          <span>{tool[1]}</span>
-          <h1>{tool[0]}</h1>
-          <p>{tool[2]}</p>
+
+          <span>
+            {categoryName}
+          </span>
+
+          <h1>
+            {tool.name}
+          </h1>
+
+          <p>
+            {tool.long_description ||
+              tool.description}
+          </p>
+
         </div>
+
       </div>
 
       <div className="workspace">
+
         <div className="panel">
-          <label>Input</label>
+
+          <label>
+            Input
+          </label>
 
           <textarea
             value={input}
             onChange={(e) =>
-              setInput(e.target.value)
+              setInput(
+                e.target.value
+              )
             }
             placeholder="Enter or paste your content here..."
           />
 
           <div className="actions">
+
             <button
               className="primary"
               onClick={runTool}
@@ -734,11 +1322,15 @@ function ToolPage({ tool, back }) {
               <Trash2 size={17} />
               Clear
             </button>
+
           </div>
         </div>
 
         <div className="panel">
-          <label>Result</label>
+
+          <label>
+            Result
+          </label>
 
           <textarea
             value={output}
@@ -762,66 +1354,103 @@ function ToolPage({ tool, back }) {
               </>
             )}
           </button>
+
         </div>
+
       </div>
 
       <div className="notice">
+
         <ShieldCheck size={20} />
-        Most text processing happens locally in your browser.
-        Do not upload sensitive information to services you do
-        not trust.
+
+        Most text processing happens
+        locally in your browser. Do
+        not upload sensitive
+        information to services you
+        do not trust.
+
       </div>
+
     </main>
   );
 }
 
 /* =========================================================
-   AI TOOLS
+   TEXT TO VIDEO
 ========================================================= */
 
-function TextToVideo({ back }) {
-  const [prompt, setPrompt] = useState("");
-  const [status, setStatus] = useState("");
+function TextToVideo({
+  tool,
+  back,
+}) {
+  const [prompt, setPrompt] =
+    useState("");
+
+  const [status, setStatus] =
+    useState("");
 
   const generate = () => {
     if (!prompt.trim()) {
-      setStatus("Please enter a video prompt first.");
+      setStatus(
+        "Please enter a video prompt first."
+      );
       return;
     }
 
     setStatus(
-      "Prompt prepared. Connect a server-side video AI provider to generate the actual video."
+      "Prompt prepared. Connect your secure server-side video AI provider to render the actual video."
     );
   };
 
   return (
     <main className="toolPage container">
-      <button className="back" onClick={back}>
+
+      <button
+        className="back"
+        onClick={back}
+      >
         <ChevronLeft size={18} />
         Back to tools
       </button>
 
       <div className="toolHero">
+
         <div className="toolIcon big">
           <Sparkles />
         </div>
+
         <div>
-          <span>AI & Video</span>
-          <h1>Text to Video</h1>
+          <span>
+            AI & Video
+          </span>
+
+          <h1>
+            {tool?.name ||
+              "Text to Video"}
+          </h1>
+
           <p>
-            Turn your idea into a production-ready video prompt.
+            {tool?.description ||
+              "Create an AI video from a text prompt."}
           </p>
         </div>
+
       </div>
 
       <div className="aiGrid">
+
         <div className="aiCard">
-          <h3>🎬 Video Prompt</h3>
+
+          <h3>
+            🎬 Video Prompt
+          </h3>
 
           <textarea
             value={prompt}
             onChange={(e) =>
-              setPrompt(e.target.value)
+              setPrompt(
+                e.target.value
+              )
             }
             placeholder="Example: A cinematic drone shot of a futuristic city at sunset..."
           />
@@ -833,75 +1462,133 @@ function TextToVideo({ back }) {
             <Sparkles size={17} />
             Generate Video
           </button>
+
         </div>
 
         <div className="aiCard preview">
-          <h3>🎥 Preview</h3>
+
+          <h3>
+            🎥 Preview
+          </h3>
 
           <div className="videoPlaceholder">
+
             <Sparkles size={40} />
-            <b>Video preview</b>
+
+            <b>
+              Video preview
+            </b>
+
             <small>
-              Connect a secure video AI API for rendering.
+              Secure server-side
+              video rendering can
+              be connected here.
             </small>
 
-            {status && <p>{status}</p>}
+            {status && (
+              <p>
+                {status}
+              </p>
+            )}
+
           </div>
+
         </div>
+
       </div>
 
       <div className="notice">
+
         <ShieldCheck size={20} />
-        API keys must stay on a secure server and should never
-        be placed inside frontend React code.
+
+        API keys must stay on a
+        secure server and should
+        never be placed inside
+        frontend React code.
+
       </div>
+
     </main>
   );
 }
 
-function StudentAIHelper({ back }) {
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
+/* =========================================================
+   STUDENT AI
+========================================================= */
+
+function StudentAIHelper({
+  back,
+}) {
+  const [question, setQuestion] =
+    useState("");
+
+  const [answer, setAnswer] =
+    useState("");
 
   const solve = () => {
     if (!question.trim()) {
-      setAnswer("Please enter your question first.");
+      setAnswer(
+        "Please enter your question first."
+      );
+
       return;
     }
 
     setAnswer(
-      "Your AI backend is not connected yet. This frontend is ready for OpenAI or another secure AI provider through a server-side API route."
+      "Your AI backend is not connected yet. The frontend is ready for a secure server-side AI provider."
     );
   };
 
   return (
     <main className="toolPage container">
-      <button className="back" onClick={back}>
+
+      <button
+        className="back"
+        onClick={back}
+      >
         <ChevronLeft size={18} />
         Back to tools
       </button>
 
       <div className="toolHero">
+
         <div className="toolIcon big">
           <Sparkles />
         </div>
+
         <div>
-          <span>AI & Education</span>
-          <h1>Student AI Helper</h1>
+
+          <span>
+            AI & Education
+          </span>
+
+          <h1>
+            Student AI Helper
+          </h1>
+
           <p>
-            Ask questions and get step-by-step explanations.
+            Ask questions and get
+            step-by-step explanations.
           </p>
+
         </div>
+
       </div>
 
       <div className="aiGrid">
+
         <div className="aiCard">
-          <h3>📚 Your Question</h3>
+
+          <h3>
+            📚 Your Question
+          </h3>
 
           <textarea
             value={question}
             onChange={(e) =>
-              setQuestion(e.target.value)
+              setQuestion(
+                e.target.value
+              )
             }
             placeholder="Example: Explain photosynthesis in simple words..."
           />
@@ -913,10 +1600,14 @@ function StudentAIHelper({ back }) {
             <Sparkles size={17} />
             Get AI Help
           </button>
+
         </div>
 
         <div className="aiCard">
-          <h3>🤖 AI Answer</h3>
+
+          <h3>
+            🤖 AI Answer
+          </h3>
 
           <div className="answer">
             {answer ||
@@ -927,59 +1618,80 @@ function StudentAIHelper({ back }) {
             <button
               className="secondary"
               onClick={() =>
-                navigator.clipboard?.writeText(answer)
+                navigator.clipboard?.writeText(
+                  answer
+                )
               }
             >
               <Copy size={17} />
               Copy Answer
             </button>
           )}
+
         </div>
+
       </div>
+
     </main>
   );
 }
 
 /* =========================================================
-   ADMIN PANEL
+   ADMIN
 ========================================================= */
 
-function AdminPanel({ onClose, tools }) {
-  const [tab, setTab] = useState("dashboard");
-  const [adminSearch, setAdminSearch] = useState("");
-  const [notice, setNotice] = useState("");
+function AdminPanel({
+  onClose,
+  tools,
+  categories,
+  reload,
+}) {
+  const [tab, setTab] =
+    useState("dashboard");
 
-  const stats = getSaved("tm-stats", {
-    visits: 0,
-    toolUses: 0,
-  });
+  const [adminSearch, setAdminSearch] =
+    useState("");
 
-  const filteredTools = tools.filter((t) =>
-    t[0]
-      .toLowerCase()
-      .includes(adminSearch.toLowerCase())
+  const stats = getSaved(
+    "tm-stats",
+    {
+      visits: 0,
+      toolUses: 0,
+    }
   );
 
-  const showNotice = (text) => {
-    setNotice(text);
-    setTimeout(() => setNotice(""), 2000);
-  };
+  const filteredTools =
+    tools.filter((tool) =>
+      tool.name
+        .toLowerCase()
+        .includes(
+          adminSearch
+            .toLowerCase()
+        )
+    );
 
   return (
     <main className="adminPage container">
+
       <div className="adminHeader">
+
         <div>
+
           <div className="pill">
             <ShieldCheck size={15} />
             Admin Panel
           </div>
 
-          <h1>ToolMaster Pro Control Center</h1>
+          <h1>
+            ToolMaster Pro
+            Control Center
+          </h1>
 
           <p>
-            Manage tools, monitor usage and configure your
-            platform.
+            Manage tools and monitor
+            your platform.
           </p>
+
         </div>
 
         <button
@@ -989,271 +1701,366 @@ function AdminPanel({ onClose, tools }) {
           <ChevronLeft size={17} />
           Website
         </button>
+
       </div>
 
       <div className="adminLayout">
+
         <aside className="adminSidebar">
+
           <button
-            className={tab === "dashboard" ? "active" : ""}
-            onClick={() => setTab("dashboard")}
+            className={
+              tab === "dashboard"
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setTab("dashboard")
+            }
           >
-            <LayoutDashboard size={18} />
+            <LayoutDashboard
+              size={18}
+            />
             Dashboard
           </button>
 
           <button
-            className={tab === "tools" ? "active" : ""}
-            onClick={() => setTab("tools")}
+            className={
+              tab === "tools"
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setTab("tools")
+            }
           >
             <Wrench size={18} />
             Tools
           </button>
 
           <button
-            className={tab === "users" ? "active" : ""}
-            onClick={() => setTab("users")}
-          >
-            <Users size={18} />
-            Users
-          </button>
-
-          <button
-            className={tab === "analytics" ? "active" : ""}
-            onClick={() => setTab("analytics")}
+            className={
+              tab === "analytics"
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setTab("analytics")
+            }
           >
             <BarChart3 size={18} />
             Analytics
           </button>
 
           <button
-            className={tab === "settings" ? "active" : ""}
-            onClick={() => setTab("settings")}
+            className={
+              tab === "settings"
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setTab("settings")
+            }
           >
             <Settings size={18} />
             Settings
           </button>
+
         </aside>
 
         <section className="adminContent">
-          {notice && (
-            <div className="toast">
-              <CheckCircleIcon />
-              {notice}
-            </div>
-          )}
 
           {tab === "dashboard" && (
             <>
-              <h2>Dashboard</h2>
+              <h2>
+                Dashboard
+              </h2>
 
               <div className="metricGrid">
+
                 <Metric
                   icon={<Wrench />}
                   title="Total Tools"
                   value={tools.length}
                 />
+
                 <Metric
-                  icon={<Users />}
-                  title="Users"
-                  value="0"
+                  icon={<Wrench />}
+                  title="Categories"
+                  value={
+                    categories.length
+                  }
                 />
+
                 <Metric
                   icon={<BarChart3 />}
                   title="Tool Uses"
-                  value={stats.toolUses}
+                  value={
+                    stats.toolUses
+                  }
                 />
+
                 <Metric
-                  icon={<LayoutDashboard />}
+                  icon={
+                    <LayoutDashboard />
+                  }
                   title="Visits"
-                  value={stats.visits}
+                  value={
+                    stats.visits
+                  }
                 />
+
               </div>
 
               <div className="adminCards">
+
                 <AdminCard
                   title="Platform Status"
-                  text="Frontend application is running."
-                  action="System Healthy"
-                  icon={<CheckCircleIcon />}
+                  text="Frontend and Supabase connection are active."
+                  action="Connected"
+                  icon={
+                    <CheckCircleIcon />
+                  }
                   success
                 />
 
                 <AdminCard
-                  title="Security"
-                  text="Keep authentication and API keys on the server."
-                  action="Review Security"
-                  icon={<ShieldCheck />}
+                  title="Database"
+                  text={`${tools.length} active tools loaded from Supabase.`}
+                  action="Supabase Connected"
+                  icon={
+                    <ShieldCheck />
+                  }
+                  success
                 />
 
-                <AdminCard
-                  title="Database"
-                  text="LocalStorage is currently used for demo statistics."
-                  action="Connect Database"
-                  icon={<Settings />}
-                />
               </div>
             </>
           )}
 
           {tab === "tools" && (
             <>
+
               <div className="adminTitleRow">
+
                 <div>
-                  <h2>Tool Management</h2>
-                  <p>{tools.length} tools configured.</p>
+                  <h2>
+                    Tool Management
+                  </h2>
+
+                  <p>
+                    {tools.length} active
+                    tools loaded.
+                  </p>
                 </div>
 
                 <button
                   className="primary"
-                  onClick={() =>
-                    showNotice(
-                      "Tool creation requires a database in production."
-                    )
-                  }
+                  onClick={reload}
                 >
-                  <Plus size={17} />
-                  Add Tool
+                  <RefreshCw
+                    size={17}
+                  />
+                  Refresh
                 </button>
+
               </div>
 
               <div className="adminSearch">
+
                 <Search size={18} />
+
                 <input
-                  value={adminSearch}
+                  value={
+                    adminSearch
+                  }
                   onChange={(e) =>
-                    setAdminSearch(e.target.value)
+                    setAdminSearch(
+                      e.target.value
+                    )
                   }
                   placeholder="Search tools..."
                 />
+
               </div>
 
               <div className="toolTable">
-                {filteredTools.map((t) => (
-                  <div className="toolRow" key={t[3]}>
-                    <div>
-                      <b>{t[0]}</b>
-                      <small>{t[1]}</small>
-                    </div>
 
-                    <span className="status">
-                      Active
-                    </span>
+                {filteredTools.map(
+                  (tool) => {
 
-                    <button
-                      className="iconBtn"
-                      onClick={() =>
-                        showNotice(
-                          `${t[0]} settings opened`
-                        )
-                      }
-                    >
-                      <Settings size={17} />
-                    </button>
-                  </div>
-                ))}
+                    const cat =
+                      categories.find(
+                        (c) =>
+                          c.id ===
+                          tool.category_id
+                      );
+
+                    return (
+                      <div
+                        className="toolRow"
+                        key={tool.id}
+                      >
+
+                        <div>
+
+                          <b>
+                            {tool.name}
+                          </b>
+
+                          <small>
+                            {cat?.name ||
+                              "Tools"}
+                          </small>
+
+                        </div>
+
+                        <span className="status">
+                          Active
+                        </span>
+
+                      </div>
+                    );
+                  }
+                )}
+
               </div>
+
             </>
-          )}
-
-          {tab === "users" && (
-            <div className="emptyAdmin">
-              <Users size={48} />
-              <h2>User Management</h2>
-              <p>
-                Connect Supabase, Firebase or another database
-                to add real user authentication.
-              </p>
-
-              <button
-                className="primary"
-                onClick={() =>
-                  showNotice(
-                    "Authentication backend is not connected yet."
-                  )
-                }
-              >
-                Configure Authentication
-              </button>
-            </div>
           )}
 
           {tab === "analytics" && (
             <>
-              <h2>Analytics</h2>
+
+              <h2>
+                Analytics
+              </h2>
 
               <div className="metricGrid">
+
                 <Metric
-                  icon={<BarChart3 />}
+                  icon={
+                    <BarChart3 />
+                  }
                   title="Tool Opens"
-                  value={stats.visits}
+                  value={
+                    stats.visits
+                  }
                 />
+
                 <Metric
                   icon={<Zap />}
                   title="Tool Runs"
-                  value={stats.toolUses}
+                  value={
+                    stats.toolUses
+                  }
                 />
+
                 <Metric
                   icon={<Wrench />}
                   title="Available Tools"
-                  value={tools.length}
+                  value={
+                    tools.length
+                  }
                 />
+
               </div>
 
-              <button
-                className="secondary"
-                onClick={() => {
-                  localStorage.removeItem("tm-stats");
-                  showNotice("Analytics reset.");
-                }}
-              >
-                <RefreshCw size={17} />
-                Reset Analytics
-              </button>
             </>
           )}
 
           {tab === "settings" && (
             <>
-              <h2>Settings</h2>
+
+              <h2>
+                Settings
+              </h2>
 
               <div className="settingsBox">
+
                 <div>
-                  <b>Application</b>
-                  <p>ToolMaster Pro</p>
+                  <b>
+                    Application
+                  </b>
+
+                  <p>
+                    ToolMaster Pro
+                  </p>
                 </div>
 
                 <div>
-                  <b>Version</b>
-                  <p>2.0.0</p>
+                  <b>
+                    Database
+                  </b>
+
+                  <p>
+                    Supabase
+                  </p>
                 </div>
 
                 <div>
-                  <b>Deployment</b>
-                  <p>Vercel / Vite</p>
+                  <b>
+                    Deployment
+                  </b>
+
+                  <p>
+                    Vercel / Vite
+                  </p>
                 </div>
 
                 <div>
-                  <b>Backend</b>
-                  <p>Not connected</p>
+                  <b>
+                    Active Tools
+                  </b>
+
+                  <p>
+                    {tools.length}
+                  </p>
                 </div>
+
               </div>
+
             </>
           )}
+
         </section>
       </div>
+
     </main>
   );
 }
 
-function Metric({ icon, title, value }) {
+/* =========================================================
+   METRICS
+========================================================= */
+
+function Metric({
+  icon,
+  title,
+  value,
+}) {
   return (
     <div className="metric">
-      <div className="metricIcon">{icon}</div>
-      <small>{title}</small>
-      <strong>{value}</strong>
+
+      <div className="metricIcon">
+        {icon}
+      </div>
+
+      <small>
+        {title}
+      </small>
+
+      <strong>
+        {value}
+      </strong>
+
     </div>
   );
 }
+
+/* =========================================================
+   ADMIN CARD
+========================================================= */
 
 function AdminCard({
   title,
@@ -1264,36 +2071,69 @@ function AdminCard({
 }) {
   return (
     <div className="adminCard">
-      <div className="adminCardIcon">{icon}</div>
-      <h3>{title}</h3>
-      <p>{text}</p>
-      <strong className={success ? "ok" : ""}>
+
+      <div className="adminCardIcon">
+        {icon}
+      </div>
+
+      <h3>
+        {title}
+      </h3>
+
+      <p>
+        {text}
+      </p>
+
+      <strong
+        className={
+          success
+            ? "ok"
+            : ""
+        }
+      >
         {action}
       </strong>
+
     </div>
   );
 }
 
 function CheckCircleIcon() {
-  return <Check size={18} />;
+  return (
+    <Check size={18} />
+  );
 }
 
 /* =========================================================
-   UTILITIES
+   PASSWORD
 ========================================================= */
 
-function generatePassword(length = 18) {
+function generatePassword(
+  length = 18
+) {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
 
-  const values = crypto.getRandomValues(
-    new Uint32Array(length)
-  );
+  const values =
+    crypto.getRandomValues(
+      new Uint32Array(
+        length
+      )
+    );
 
   return [...values]
-    .map((v) => chars[v % chars.length])
+    .map(
+      (v) =>
+        chars[
+          v % chars.length
+        ]
+    )
     .join("");
 }
+
+/* =========================================================
+   MORSE
+========================================================= */
 
 function textToMorse(text) {
   const map = {
@@ -1339,7 +2179,10 @@ function textToMorse(text) {
     .toLowerCase()
     .split("")
     .map((c) => {
-      if (c === " ") return "/";
+      if (c === " ") {
+        return "/";
+      }
+
       return map[c] || c;
     })
     .join(" ");
@@ -1349,7 +2192,10 @@ function textToMorse(text) {
    MOUNT
 ========================================================= */
 
-const root = document.getElementById("root");
+const root =
+  document.getElementById(
+    "root"
+  );
 
 if (!root) {
   throw new Error(
