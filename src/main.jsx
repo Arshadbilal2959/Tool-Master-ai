@@ -3,11 +3,10 @@ import { createRoot } from "react-dom/client";
 import {
   Search, Wrench, FileText, Image as ImageIcon, Code2, Globe2,
   Calculator, ArrowRight, ShieldCheck, Zap, Sparkles, Upload,
-  Copy, Download, CheckCircle2, LockKeyhole, Settings,
-  LayoutDashboard, LogOut, CreditCard, Users, BarChart3,
-  X, RefreshCw, User, UserPlus, Mail, Eye, EyeOff, KeyRound,
-  Home, FolderKanban, Activity, Menu, ChevronRight, Database,
-  Crown, Trash2, Edit3
+  Copy, Download, CheckCircle2, Settings, LayoutDashboard,
+  LogOut, CreditCard, Users, BarChart3, X, RefreshCw, User,
+  UserPlus, Mail, Eye, EyeOff, KeyRound, Home, FolderKanban,
+  Activity, Menu, ChevronRight, Database, Crown, Trash2, Edit3
 } from "lucide-react";
 import "./styles.css";
 
@@ -15,107 +14,101 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 
 const tools = [
-["Text to Video","AI & Video","Turn a written prompt or script into an AI video project.","text-to-video"],
-["Student AI Helper","AI & Education","Ask questions or upload a study image/PDF and get step-by-step AI help.","student-ai-helper"],
-["PDF to Word","PDF Tools","Convert PDF documents into editable Word files.","pdf-word"],
-["Word to PDF","PDF Tools","Convert Word documents into PDF.","word-pdf"],
-["PDF to JPG","PDF Tools","Turn PDF pages into JPG images.","pdf-jpg"],
-["JPG to PDF","PDF Tools","Create a PDF from JPG images.","jpg-pdf"],
-["Merge PDF","PDF Tools","Combine multiple PDF files into one.","merge-pdf"],
-["Split PDF","PDF Tools","Split a PDF into separate files.","split-pdf"],
-["Compress PDF","PDF Tools","Reduce PDF file size quickly.","compress-pdf"],
-["Rotate PDF","PDF Tools","Rotate PDF pages to the correct orientation.","rotate-pdf"],
-["PDF Unlock","PDF Tools","Unlock supported password-protected PDFs.","pdf-unlock"],
-["PDF Watermark","PDF Tools","Add a watermark to PDF pages.","pdf-watermark"],
-["Image Compressor","Image Tools","Compress JPG, PNG and WebP images.","image-compressor"],
-["Image Resizer","Image Tools","Resize images to exact dimensions.","image-resizer"],
-["Image Cropper","Image Tools","Crop images online.","image-cropper"],
-["JPG to PNG","Image Tools","Convert JPG images to PNG.","jpg-png"],
-["PNG to JPG","Image Tools","Convert PNG images to JPG.","png-jpg"],
-["WebP Converter","Image Tools","Convert images to and from WebP.","webp-converter"],
-["Image Background Remover","Image Tools","Remove simple image backgrounds.","background-remover"],
-["Image to Text","Image Tools","Extract text from an image.","image-text"],
-["QR Code Generator","SEO & Marketing","Create custom QR codes from text or links.","qr-generator"],
-["Meta Tag Generator","SEO & Marketing","Generate SEO-ready meta tags.","meta-tags"],
-["Sitemap Generator","SEO & Marketing","Create a basic XML sitemap.","sitemap"],
-["Robots.txt Generator","SEO & Marketing","Generate a robots.txt file.","robots"],
-["Keyword Density Checker","SEO & Marketing","Analyze keyword frequency in text.","keyword-density"],
-["URL Encoder","SEO & Marketing","Encode URLs safely.","url-encoder"],
-["Word Counter","Text Tools","Count words, characters and sentences.","word-counter"],
-["Case Converter","Text Tools","Convert text to upper, lower and title case.","case-converter"],
-["Text Cleaner","Text Tools","Remove extra spaces and clean text.","text-cleaner"],
-["Lorem Ipsum Generator","Text Tools","Generate placeholder text.","lorem"],
-["Duplicate Line Remover","Text Tools","Remove duplicate lines from text.","duplicate-lines"],
-["Text Sorter","Text Tools","Sort lines alphabetically.","text-sorter"],
-["JSON Formatter","Developer Tools","Format and validate JSON.","json-formatter"],
-["JSON Minifier","Developer Tools","Minify JSON for compact output.","json-minifier"],
-["Base64 Encoder","Developer Tools","Encode text to Base64.","base64-encode"],
-["Base64 Decoder","Developer Tools","Decode Base64 text.","base64-decode"],
-["HTML Formatter","Developer Tools","Format HTML code.","html-formatter"],
-["CSS Formatter","Developer Tools","Format CSS code.","css-formatter"],
-["JavaScript Minifier","Developer Tools","Compact JavaScript text.","js-minifier"],
-["UUID Generator","Developer Tools","Generate unique UUID values.","uuid"],
-["Hash Generator","Developer Tools","Create common text hashes locally.","hash"],
-["Timestamp Converter","Developer Tools","Convert Unix timestamps.","timestamp"],
-["Password Generator","Security Tools","Generate strong random passwords locally.","password"],
-["Password Strength Checker","Security Tools","Check password strength locally.","password-strength"],
-["MD5 Hash Generator","Security Tools","Generate an MD5-style hash placeholder locally.","md5"],
-["SHA-256 Generator","Security Tools","Generate SHA-256 hashes using your browser.","sha256"],
-["Percentage Calculator","Calculator Tools","Calculate percentages quickly.","percentage"],
-["Age Calculator","Calculator Tools","Calculate age from date of birth.","age"],
-["BMI Calculator","Calculator Tools","Calculate body mass index.","bmi"],
-["Discount Calculator","Calculator Tools","Calculate sale discounts.","discount"],
-["Loan Calculator","Calculator Tools","Estimate monthly loan payments.","loan"],
-["GST Calculator","Calculator Tools","Calculate GST-inclusive or exclusive amounts.","gst"],
-["Tip Calculator","Calculator Tools","Calculate tips and split bills.","tip"],
-["Time Calculator","Calculator Tools","Add and subtract time values.","time"],
-["Unit Converter","Converter Tools","Convert common units.","units"],
-["Length Converter","Converter Tools","Convert length measurements.","length"],
-["Weight Converter","Converter Tools","Convert weight measurements.","weight"],
-["Temperature Converter","Converter Tools","Convert Celsius, Fahrenheit and Kelvin.","temperature"],
-["Currency Converter","Converter Tools","Enter exchange rates and convert currencies.","currency"],
-["Data Storage Converter","Converter Tools","Convert bytes, KB, MB and GB.","storage"],
-["Color Converter","Developer Tools","Convert HEX, RGB and HSL values.","color"],
-["IP Address Info","Network Tools","Inspect the IP address visible to your browser.","ip-info"],
-["HTTP Status Checker","Network Tools","Explain common HTTP status codes.","http-status"],
-["Regex Tester","Developer Tools","Test regular expressions in your browser.","regex"],
-["Cron Expression Helper","Developer Tools","Build common cron expressions.","cron"],
-["HTML Entity Encoder","Developer Tools","Encode HTML entities.","html-entities"],
-["URL Parser","Developer Tools","Break a URL into its parts.","url-parser"],
-["Email Validator","Utility Tools","Validate email address format.","email-validator"],
-["Phone Number Formatter","Utility Tools","Clean and format phone numbers.","phone"],
-["Date Difference Calculator","Calculator Tools","Calculate the difference between dates.","date-difference"],
-["Random Number Generator","Utility Tools","Generate random numbers.","random-number"],
-["Random Password Generator","Security Tools","Generate secure random passwords.","random-password"],
-["Text Reverser","Text Tools","Reverse any text.","text-reverser"],
-["Palindrome Checker","Text Tools","Check whether text is a palindrome.","palindrome"],
-["Reading Time Calculator","Text Tools","Estimate reading time for text.","reading-time"],
-["Character Counter","Text Tools","Count characters with and without spaces.","characters"],
-["Number to Words","Utility Tools","Convert numbers to English words.","number-words"],
-["Roman Numeral Converter","Utility Tools","Convert numbers to Roman numerals.","roman"],
-["Barcode Generator","SEO & Marketing","Generate a simple barcode-ready value.","barcode"],
-["Open Graph Generator","SEO & Marketing","Create Open Graph meta tags.","open-graph"],
-["Schema Markup Generator","SEO & Marketing","Create basic JSON-LD schema templates.","schema"],
-["Favicon Generator","SEO & Marketing","Prepare favicon assets from an image.","favicon"],
-["UTM Builder","SEO & Marketing","Build campaign tracking URLs.","utm"],
-["HTML Previewer","Developer Tools","Preview HTML in a sandboxed area.","html-preview"],
-["Markdown Previewer","Developer Tools","Preview basic Markdown.","markdown"],
-["SQL Formatter","Developer Tools","Format simple SQL statements.","sql"],
-["CSV to JSON","Developer Tools","Convert CSV text to JSON.","csv-json"],
-["JSON to CSV","Developer Tools","Convert simple JSON arrays to CSV.","json-csv"],
-["XML Formatter","Developer Tools","Format XML text.","xml"],
-["YAML to JSON","Developer Tools","Convert basic YAML-like key values to JSON.","yaml-json"],
-["CSS Color Picker","Developer Tools","Pick and inspect a color.","color-picker"],
-["Aspect Ratio Calculator","Calculator Tools","Calculate proportional dimensions.","aspect"],
-["Compound Interest Calculator","Calculator Tools","Estimate compound growth.","compound-interest"],
-["Scientific Calculator","Calculator Tools","Perform common scientific calculations.","scientific"],
-["Date Calculator","Calculator Tools","Add days to a date.","date-add"],
-["Business Name Generator","Utility Tools","Generate business name ideas from keywords.","business-name"],
-["Username Generator","Utility Tools","Generate username ideas.","username"],
-["Morse Code Converter","Text Tools","Convert text to Morse code.","morse"],
-["Binary Converter","Developer Tools","Convert text and numbers to binary.","binary"],
-["ASCII Converter","Developer Tools","Convert text to ASCII codes.","ascii"],
-["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"]
+  ["Text to Video","AI & Video","Turn a written prompt into an AI video project.","text-to-video"],
+  ["Student AI Helper","AI & Education","Ask questions or upload study material.","student-ai-helper"],
+  ["PDF to Word","PDF Tools","Convert PDF documents into editable Word files.","pdf-word"],
+  ["Word to PDF","PDF Tools","Convert Word documents into PDF.","word-pdf"],
+  ["PDF to JPG","PDF Tools","Turn PDF pages into JPG images.","pdf-jpg"],
+  ["JPG to PDF","PDF Tools","Create a PDF from JPG images.","jpg-pdf"],
+  ["Merge PDF","PDF Tools","Combine multiple PDF files.","merge-pdf"],
+  ["Split PDF","PDF Tools","Split PDF files.","split-pdf"],
+  ["Compress PDF","PDF Tools","Reduce PDF file size.","compress-pdf"],
+  ["Rotate PDF","PDF Tools","Rotate PDF pages.","rotate-pdf"],
+  ["PDF Unlock","PDF Tools","Unlock supported PDFs.","pdf-unlock"],
+  ["PDF Watermark","PDF Tools","Add a watermark to PDF pages.","pdf-watermark"],
+
+  ["Image Compressor","Image Tools","Compress JPG, PNG and WebP images.","image-compressor"],
+  ["Image Resizer","Image Tools","Resize images to exact dimensions.","image-resizer"],
+  ["Image Cropper","Image Tools","Crop images online.","image-cropper"],
+  ["JPG to PNG","Image Tools","Convert JPG images to PNG.","jpg-png"],
+  ["PNG to JPG","Image Tools","Convert PNG images to JPG.","png-jpg"],
+  ["WebP Converter","Image Tools","Convert images to and from WebP.","webp-converter"],
+  ["Image Background Remover","Image Tools","Remove simple image backgrounds.","background-remover"],
+  ["Image to Text","Image Tools","Extract text from an image.","image-text"],
+
+  ["QR Code Generator","SEO & Marketing","Create QR codes from text or URLs.","qr-generator"],
+  ["Meta Tag Generator","SEO & Marketing","Generate SEO meta tags.","meta-tags"],
+  ["Sitemap Generator","SEO & Marketing","Create a basic XML sitemap.","sitemap"],
+  ["Robots.txt Generator","SEO & Marketing","Generate robots.txt.","robots"],
+  ["Keyword Density Checker","SEO & Marketing","Analyze keyword frequency.","keyword-density"],
+  ["URL Encoder","SEO & Marketing","Encode URLs safely.","url-encoder"],
+  ["Open Graph Generator","SEO & Marketing","Create Open Graph meta tags.","open-graph"],
+  ["Schema Markup Generator","SEO & Marketing","Create JSON-LD schema.","schema"],
+  ["UTM Builder","SEO & Marketing","Build campaign tracking URLs.","utm"],
+  ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"],
+
+  ["Word Counter","Text Tools","Count words, characters and sentences.","word-counter"],
+  ["Case Converter","Text Tools","Convert text case.","case-converter"],
+  ["Text Cleaner","Text Tools","Clean extra spaces.","text-cleaner"],
+  ["Lorem Ipsum Generator","Text Tools","Generate placeholder text.","lorem"],
+  ["Duplicate Line Remover","Text Tools","Remove duplicate lines.","duplicate-lines"],
+  ["Text Sorter","Text Tools","Sort lines alphabetically.","text-sorter"],
+  ["Text Reverser","Text Tools","Reverse text.","text-reverser"],
+  ["Palindrome Checker","Text Tools","Check palindrome text.","palindrome"],
+  ["Reading Time Calculator","Text Tools","Estimate reading time.","reading-time"],
+  ["Character Counter","Text Tools","Count characters.","characters"],
+  ["Morse Code Converter","Text Tools","Convert text to Morse.","morse"],
+
+  ["JSON Formatter","Developer Tools","Format and validate JSON.","json-formatter"],
+  ["JSON Minifier","Developer Tools","Minify JSON.","json-minifier"],
+  ["Base64 Encoder","Developer Tools","Encode text to Base64.","base64-encode"],
+  ["Base64 Decoder","Developer Tools","Decode Base64.","base64-decode"],
+  ["HTML Formatter","Developer Tools","Format HTML.","html-formatter"],
+  ["CSS Formatter","Developer Tools","Format CSS.","css-formatter"],
+  ["JavaScript Minifier","Developer Tools","Compact JavaScript.","js-minifier"],
+  ["UUID Generator","Developer Tools","Generate UUID values.","uuid"],
+  ["Timestamp Converter","Developer Tools","Convert Unix timestamps.","timestamp"],
+  ["Color Converter","Developer Tools","Convert HEX/RGB/HSL.","color"],
+  ["Regex Tester","Developer Tools","Test regular expressions.","regex"],
+  ["HTML Entity Encoder","Developer Tools","Encode HTML entities.","html-entities"],
+  ["URL Parser","Developer Tools","Break URL into parts.","url-parser"],
+  ["CSV to JSON","Developer Tools","Convert CSV to JSON.","csv-json"],
+  ["JSON to CSV","Developer Tools","Convert JSON to CSV.","json-csv"],
+  ["XML Formatter","Developer Tools","Format XML.","xml"],
+  ["Binary Converter","Developer Tools","Convert text to binary.","binary"],
+  ["ASCII Converter","Developer Tools","Convert text to ASCII.","ascii"],
+
+  ["Percentage Calculator","Calculator Tools","Calculate percentages.","percentage"],
+  ["Age Calculator","Calculator Tools","Calculate age.","age"],
+  ["BMI Calculator","Calculator Tools","Calculate BMI.","bmi"],
+  ["Discount Calculator","Calculator Tools","Calculate discounts.","discount"],
+  ["GST Calculator","Calculator Tools","Calculate GST.","gst"],
+  ["Tip Calculator","Calculator Tools","Calculate tips.","tip"],
+  ["Date Difference Calculator","Calculator Tools","Calculate date difference.","date-difference"],
+  ["Aspect Ratio Calculator","Calculator Tools","Calculate proportional dimensions.","aspect"],
+  ["Compound Interest Calculator","Calculator Tools","Calculate compound growth.","compound-interest"],
+  ["Date Calculator","Calculator Tools","Add days to a date.","date-add"],
+  ["Scientific Calculator","Calculator Tools","Perform calculations.","scientific"],
+
+  ["Unit Converter","Converter Tools","Convert common units.","units"],
+  ["Length Converter","Converter Tools","Convert length.","length"],
+  ["Weight Converter","Converter Tools","Convert weight.","weight"],
+  ["Temperature Converter","Converter Tools","Convert temperature.","temperature"],
+  ["Currency Converter","Converter Tools","Convert currencies using entered rates.","currency"],
+  ["Data Storage Converter","Converter Tools","Convert bytes and storage units.","storage"],
+
+  ["Password Generator","Security Tools","Generate strong passwords.","password"],
+  ["Password Strength Checker","Security Tools","Check password strength.","password-strength"],
+  ["SHA-256 Generator","Security Tools","Generate SHA-256 hashes.","sha256"],
+  ["Random Password Generator","Security Tools","Generate random passwords.","random-password"],
+
+  ["Email Validator","Utility Tools","Validate email format.","email-validator"],
+  ["Phone Number Formatter","Utility Tools","Clean phone numbers.","phone"],
+  ["Random Number Generator","Utility Tools","Generate random numbers.","random-number"],
+  ["Number to Words","Utility Tools","Convert numbers to English words.","number-words"],
+  ["Roman Numeral Converter","Utility Tools","Convert numbers to Roman numerals.","roman"],
+  ["Business Name Generator","Utility Tools","Generate business names.","business-name"],
+  ["Username Generator","Utility Tools","Generate username ideas.","username"]
 ];
 
 const plans = [
@@ -138,32 +131,36 @@ const categories = [
   ["Utility Tools", tools.filter(x=>x[1]==="Utility Tools").length, Sparkles]
 ];
 
-const fileTools = new Set([
-  "pdf-word","word-pdf","pdf-jpg","jpg-pdf","merge-pdf","split-pdf",
-  "compress-pdf","rotate-pdf","pdf-unlock","pdf-watermark",
-  "image-compressor","image-resizer","image-cropper","jpg-png",
-  "png-jpg","webp-converter","background-remover","image-text","favicon"
-]);
+function saveSession(session) {
+  if(session) localStorage.setItem("tm_session",JSON.stringify(session));
+  else localStorage.removeItem("tm_session");
+}
 
-async function supabaseFetch(path, options={}) {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+function getSession() {
+  try {
+    return JSON.parse(localStorage.getItem("tm_session") || "null");
+  } catch {
+    return null;
+  }
+}
+
+async function supabaseFetch(path,options={}) {
+  if(!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     throw new Error("Supabase environment variables are missing.");
   }
 
-  const headers = {
-    apikey: SUPABASE_ANON_KEY,
-    "Content-Type":"application/json",
-    ...(options.headers || {})
-  };
-
-  const response = await fetch(`${SUPABASE_URL}${path}`, {
+  const response = await fetch(`${SUPABASE_URL}${path}`,{
     ...options,
-    headers
+    headers:{
+      apikey:SUPABASE_ANON_KEY,
+      "Content-Type":"application/json",
+      ...(options.headers || {})
+    }
   });
 
   const data = await response.json().catch(()=>null);
 
-  if (!response.ok) {
+  if(!response.ok) {
     throw new Error(
       data?.msg ||
       data?.message ||
@@ -176,53 +173,39 @@ async function supabaseFetch(path, options={}) {
   return data;
 }
 
-function saveSession(session) {
-  if (session) {
-    localStorage.setItem("tm_session", JSON.stringify(session));
-  } else {
-    localStorage.removeItem("tm_session");
-  }
-}
-
-function getSession() {
-  try {
-    return JSON.parse(localStorage.getItem("tm_session") || "null");
-  } catch {
-    return null;
-  }
-}
-
-function downloadBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
+function downloadBlob(blob,filename) {
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
   a.click();
+  a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
-function textDownload(text, filename="toolmaster-result.txt") {
+function textDownload(text,filename="toolmaster-result.txt") {
   downloadBlob(
-    new Blob([text], {type:"text/plain;charset=utf-8"}),
+    new Blob([text],{type:"text/plain;charset=utf-8"}),
     filename
   );
 }
 
 function App() {
-  const [page,setPage] = useState("home");
-  const [cat,setCat] = useState("All Tools");
-  const [query,setQuery] = useState("");
-  const [tool,setTool] = useState(null);
-  const [auth,setAuth] = useState(null);
-  const [authMode,setAuthMode] = useState(null);
-  const [adminMode,setAdminMode] = useState(false);
+  const [page,setPage]=useState("home");
+  const [cat,setCat]=useState("All Tools");
+  const [query,setQuery]=useState("");
+  const [tool,setTool]=useState(null);
+  const [auth,setAuth]=useState(null);
+  const [authMode,setAuthMode]=useState(null);
+  const [adminMode,setAdminMode]=useState(false);
 
   useEffect(()=>{
-    const session = getSession();
+    const session=getSession();
     if(session) setAuth(session);
   },[]);
 
-  const filtered = useMemo(()=>tools.filter(t =>
+  const filtered=useMemo(()=>tools.filter(t=>
     (cat==="All Tools" || t[1]===cat) &&
     (
       t[0].toLowerCase().includes(query.toLowerCase()) ||
@@ -230,14 +213,16 @@ function App() {
     )
   ),[cat,query]);
 
-  const openTool = t => {
+  const openTool=t=>{
     setTool(t);
     setPage("tool");
+    window.scrollTo({top:0,behavior:"smooth"});
   };
 
-  const logout = () => {
+  const logout=()=>{
     saveSession(null);
     setAuth(null);
+    setAdminMode(false);
     setPage("home");
   };
 
@@ -262,7 +247,7 @@ function App() {
           onAdmin={()=>setAdminMode(true)}
         />
 
-        {authMode==="login" && (
+        {authMode==="login" &&
           <LoginPage
             onClose={()=>setAuthMode(null)}
             onSignup={()=>setAuthMode("signup")}
@@ -272,9 +257,9 @@ function App() {
               setAuthMode(null);
             }}
           />
-        )}
+        }
 
-        {authMode==="signup" && (
+        {authMode==="signup" &&
           <SignupPage
             onClose={()=>setAuthMode(null)}
             onLogin={()=>setAuthMode("login")}
@@ -283,14 +268,14 @@ function App() {
               setAuthMode(null);
             }}
           />
-        )}
+        }
 
-        {authMode==="forgot" && (
+        {authMode==="forgot" &&
           <ForgotPassword
             onClose={()=>setAuthMode(null)}
             onLogin={()=>setAuthMode("login")}
           />
-        )}
+        }
       </>
     );
   }
@@ -360,7 +345,7 @@ function App() {
               {categories.map(([name,count,Icon])=>(
                 <button
                   key={name}
-                  className={cat===name ? "cat active":"cat"}
+                  className={cat===name?"cat active":"cat"}
                   onClick={()=>setCat(name)}
                 >
                   <Icon/>
@@ -387,11 +372,11 @@ function App() {
               ))}
             </div>
 
-            {!filtered.length && (
+            {!filtered.length &&
               <div className="empty">
                 No tools found. Try another search.
               </div>
-            )}
+            }
           </main>
         </>
       )}
@@ -407,6 +392,7 @@ function App() {
         </div>
 
         <p>Powerful online tools, made simple.</p>
+
         <small>
           © 2026 ToolMaster Pro. All tools are designed for easy browser use.
         </small>
@@ -415,13 +401,7 @@ function App() {
   );
 }
 
-function PublicHeader({
-  auth,
-  onSignIn,
-  onSignUp,
-  onLogout,
-  onAdmin
-}) {
+function PublicHeader({auth,onSignIn,onSignUp,onLogout,onAdmin}) {
   return (
     <header>
       <div className="nav">
@@ -453,12 +433,12 @@ function PublicHeader({
                 {auth.profile?.username || auth.email?.split("@")[0]}
               </button>
 
-              {auth.profile?.role==="admin" && (
+              {auth.profile?.role==="admin" &&
                 <button className="adminBtn" onClick={onAdmin}>
                   <LayoutDashboard size={17}/>
                   Admin
                 </button>
-              )}
+              }
 
               <button className="secondary" onClick={onLogout}>
                 <LogOut size={16}/>
@@ -483,62 +463,44 @@ function PublicHeader({
   );
 }
 
-function LoginPage({
-  onClose,
-  onSignup,
-  onForgot,
-  onSuccess
-}) {
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-  const [show,setShow] = useState(false);
-  const [loading,setLoading] = useState(false);
-  const [error,setError] = useState("");
+function LoginPage({onClose,onSignup,onForgot,onSuccess}) {
+  const [email,setEmail]=useState("");
+  const [password,setPassword]=useState("");
+  const [show,setShow]=useState(false);
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState("");
 
-  const submit = async e => {
+  const submit=async e=>{
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      if(!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-        throw new Error(
-          "Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY."
-        );
-      }
-
-      const data = await supabaseFetch(
+      const data=await supabaseFetch(
         "/auth/v1/token?grant_type=password",
         {
           method:"POST",
-          body:JSON.stringify({
-            email,
-            password
-          })
+          body:JSON.stringify({email,password})
         }
       );
 
-      const token = data.access_token;
-
-      let profile = null;
+      let profile=null;
 
       try {
-        const rows = await supabaseFetch(
+        const rows=await supabaseFetch(
           `/rest/v1/profiles?select=*&id=eq.${encodeURIComponent(data.user.id)}&limit=1`,
           {
             headers:{
-              Authorization:`Bearer ${token}`
+              Authorization:`Bearer ${data.access_token}`
             }
           }
         );
 
-        profile = rows?.[0] || null;
-      } catch {
-        profile = null;
-      }
+        profile=rows?.[0] || null;
+      } catch {}
 
-      const session = {
-        access_token:token,
+      const session={
+        access_token:data.access_token,
         refresh_token:data.refresh_token,
         user:data.user,
         email:data.user.email,
@@ -592,7 +554,7 @@ function LoginPage({
               className="iconButton"
               onClick={()=>setShow(!show)}
             >
-              {show ? <EyeOff size={17}/> : <Eye size={17}/>}
+              {show?<EyeOff size={17}/>:<Eye size={17}/>}
             </button>
           </div>
         </label>
@@ -609,11 +571,8 @@ function LoginPage({
 
         {error && <div className="errorBox">{error}</div>}
 
-        <button
-          className="primary authSubmit"
-          disabled={loading}
-        >
-          {loading ? "Signing in..." : "Sign In"}
+        <button className="primary authSubmit" disabled={loading}>
+          {loading?"Signing in...":"Sign In"}
         </button>
 
         <p className="authBottom">
@@ -627,37 +586,33 @@ function LoginPage({
   );
 }
 
-function SignupPage({
-  onClose,
-  onLogin,
-  onSuccess
-}) {
-  const [fullName,setFullName] = useState("");
-  const [username,setUsername] = useState("");
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-  const [confirm,setConfirm] = useState("");
-  const [show,setShow] = useState(false);
-  const [loading,setLoading] = useState(false);
-  const [error,setError] = useState("");
-  const [success,setSuccess] = useState("");
+function SignupPage({onClose,onLogin,onSuccess}) {
+  const [fullName,setFullName]=useState("");
+  const [username,setUsername]=useState("");
+  const [email,setEmail]=useState("");
+  const [password,setPassword]=useState("");
+  const [confirm,setConfirm]=useState("");
+  const [show,setShow]=useState(false);
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState("");
+  const [success,setSuccess]=useState("");
 
-  const submit = async e => {
+  const submit=async e=>{
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if(password !== confirm) {
+    if(password!==confirm) {
       setError("Passwords do not match.");
       return;
     }
 
-    if(password.length < 6) {
+    if(password.length<6) {
       setError("Password must be at least 6 characters.");
       return;
     }
 
-    if(username.length < 3) {
+    if(username.length<3) {
       setError("Username must contain at least 3 characters.");
       return;
     }
@@ -665,13 +620,7 @@ function SignupPage({
     setLoading(true);
 
     try {
-      if(!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-        throw new Error(
-          "Supabase is not configured. Add your VITE_SUPABASE variables."
-        );
-      }
-
-      const data = await supabaseFetch(
+      const data=await supabaseFetch(
         "/auth/v1/signup",
         {
           method:"POST",
@@ -687,7 +636,7 @@ function SignupPage({
       );
 
       if(data?.access_token) {
-        const session = {
+        const session={
           access_token:data.access_token,
           refresh_token:data.refresh_token,
           user:data.user,
@@ -716,15 +665,13 @@ function SignupPage({
               role:"user"
             })
           });
-        } catch {
-          // Profile trigger may already create the row.
-        }
+        } catch {}
 
         saveSession(session);
         onSuccess(session);
       } else {
         setSuccess(
-          "Account created. Please check your email to verify your account, then sign in."
+          "Account created. Please check your email to verify your account."
         );
       }
     } catch(err) {
@@ -737,7 +684,7 @@ function SignupPage({
   return (
     <AuthShell
       title="Create your account"
-      subtitle="Join ToolMaster Pro and access your personal workspace."
+      subtitle="Join ToolMaster Pro."
       onClose={onClose}
     >
       <form className="authForm" onSubmit={submit}>
@@ -760,7 +707,9 @@ function SignupPage({
             <UserPlus size={17}/>
             <input
               value={username}
-              onChange={e=>setUsername(e.target.value.replace(/\s/g,"").toLowerCase())}
+              onChange={e=>setUsername(
+                e.target.value.replace(/\s/g,"").toLowerCase()
+              )}
               placeholder="yourusername"
               required
             />
@@ -782,7 +731,7 @@ function SignupPage({
         </label>
 
         <label>
-          Create Password
+          Password
           <div className="inputIcon">
             <KeyRound size={17}/>
             <input
@@ -798,7 +747,7 @@ function SignupPage({
               className="iconButton"
               onClick={()=>setShow(!show)}
             >
-              {show ? <EyeOff size={17}/> : <Eye size={17}/>}
+              {show?<EyeOff size={17}/>:<Eye size={17}/>}
             </button>
           </div>
         </label>
@@ -811,7 +760,6 @@ function SignupPage({
               type={show?"text":"password"}
               value={confirm}
               onChange={e=>setConfirm(e.target.value)}
-              placeholder="Repeat password"
               required
             />
           </div>
@@ -820,11 +768,8 @@ function SignupPage({
         {error && <div className="errorBox">{error}</div>}
         {success && <div className="successBox">{success}</div>}
 
-        <button
-          className="primary authSubmit"
-          disabled={loading}
-        >
-          {loading ? "Creating account..." : "Create Account"}
+        <button className="primary authSubmit" disabled={loading}>
+          {loading?"Creating account...":"Create Account"}
         </button>
 
         <p className="authBottom">
@@ -839,35 +784,27 @@ function SignupPage({
 }
 
 function ForgotPassword({onClose,onLogin}) {
-  const [email,setEmail] = useState("");
-  const [loading,setLoading] = useState(false);
-  const [error,setError] = useState("");
-  const [success,setSuccess] = useState("");
+  const [email,setEmail]=useState("");
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState("");
+  const [success,setSuccess]=useState("");
 
-  const submit = async e => {
+  const submit=async e=>{
     e.preventDefault();
     setError("");
     setSuccess("");
     setLoading(true);
 
     try {
-      if(!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-        throw new Error("Supabase is not configured.");
-      }
-
       await supabaseFetch(
         "/auth/v1/recover",
         {
           method:"POST",
-          body:JSON.stringify({
-            email
-          })
+          body:JSON.stringify({email})
         }
       );
 
-      setSuccess(
-        "If an account exists for this email, a password reset email has been sent."
-      );
+      setSuccess("If this email exists, a reset link has been sent.");
     } catch(err) {
       setError(err.message || "Unable to send reset email.");
     } finally {
@@ -878,7 +815,7 @@ function ForgotPassword({onClose,onLogin}) {
   return (
     <AuthShell
       title="Reset your password"
-      subtitle="Enter your email and we'll send you a password reset link."
+      subtitle="Enter your email to receive a reset link."
       onClose={onClose}
     >
       <form className="authForm" onSubmit={submit}>
@@ -890,7 +827,6 @@ function ForgotPassword({onClose,onLogin}) {
               type="email"
               value={email}
               onChange={e=>setEmail(e.target.value)}
-              placeholder="you@example.com"
               required
             />
           </div>
@@ -900,7 +836,7 @@ function ForgotPassword({onClose,onLogin}) {
         {success && <div className="successBox">{success}</div>}
 
         <button className="primary authSubmit" disabled={loading}>
-          {loading ? "Sending..." : "Send Reset Link"}
+          {loading?"Sending...":"Send Reset Link"}
         </button>
 
         <p className="authBottom">
@@ -942,21 +878,21 @@ function AuthShell({title,subtitle,onClose,children}) {
 }
 
 function AdminPanel({session,onClose,onLogout}) {
-  const [tab,setTab] = useState("dashboard");
-  const [mobile,setMobile] = useState(false);
-  const [users,setUsers] = useState([]);
-  const [loadingUsers,setLoadingUsers] = useState(false);
-  const [message,setMessage] = useState("");
+  const [tab,setTab]=useState("dashboard");
+  const [mobile,setMobile]=useState(false);
+  const [users,setUsers]=useState([]);
+  const [loadingUsers,setLoadingUsers]=useState(false);
+  const [message,setMessage]=useState("");
 
-  const adminToken = session?.access_token;
+  const adminToken=session?.access_token;
 
-  const loadUsers = async () => {
+  const loadUsers=async()=>{
     if(!adminToken) return;
 
     setLoadingUsers(true);
 
     try {
-      const data = await supabaseFetch(
+      const data=await supabaseFetch(
         "/rest/v1/profiles?select=id,full_name,username,email,role,created_at&order=created_at.desc",
         {
           headers:{
@@ -977,7 +913,7 @@ function AdminPanel({session,onClose,onLogout}) {
     if(tab==="users") loadUsers();
   },[tab]);
 
-  const nav = [
+  const nav=[
     ["dashboard","Dashboard",LayoutDashboard],
     ["users","Users",Users],
     ["tools","Tools",Wrench],
@@ -990,7 +926,7 @@ function AdminPanel({session,onClose,onLogout}) {
 
   return (
     <div className="adminShell">
-      <aside className={mobile ? "adminSidebar open":"adminSidebar"}>
+      <aside className={mobile?"adminSidebar open":"adminSidebar"}>
         <div className="adminBrand">
           <div className="brandIcon">
             <Wrench size={21}/>
@@ -1023,7 +959,9 @@ function AdminPanel({session,onClose,onLogout}) {
         <div className="adminSidebarBottom">
           <div className="adminMiniProfile">
             <div className="avatar">
-              {(session?.profile?.full_name || "A").charAt(0).toUpperCase()}
+              {(session?.profile?.full_name || "A")
+                .charAt(0)
+                .toUpperCase()}
             </div>
 
             <div>
@@ -1065,87 +1003,48 @@ function AdminPanel({session,onClose,onLogout}) {
 
             <div className="adminHeaderUser">
               <div className="avatar">
-                {(session?.profile?.full_name || "A").charAt(0).toUpperCase()}
+                {(session?.profile?.full_name || "A")
+                  .charAt(0)
+                  .toUpperCase()}
               </div>
             </div>
           </div>
         </header>
 
-        {message && (
+        {message &&
           <div className="notice adminNotice">
             {message}
             <button onClick={()=>setMessage("")}>
               <X size={15}/>
             </button>
           </div>
-        )}
+        }
 
-        {tab==="dashboard" && (
-          <AdminDashboard users={users}/>
-        )}
-
-        {tab==="users" && (
+        {tab==="dashboard" && <AdminDashboard users={users}/>}
+        {tab==="users" &&
           <AdminUsers
             users={users}
             loading={loadingUsers}
             reload={loadUsers}
           />
-        )}
-
-        {tab==="tools" && (
-          <AdminTools/>
-        )}
-
-        {tab==="categories" && (
-          <AdminCategories/>
-        )}
-
-        {tab==="analytics" && (
-          <AdminAnalytics/>
-        )}
-
-        {tab==="plans" && (
-          <AdminPlans/>
-        )}
-
-        {tab==="settings" && (
-          <AdminSettings/>
-        )}
-
-        {tab==="activity" && (
-          <AdminActivity/>
-        )}
+        }
+        {tab==="tools" && <AdminTools/>}
+        {tab==="categories" && <AdminCategories/>}
+        {tab==="analytics" && <AdminAnalytics/>}
+        {tab==="plans" && <AdminPlans/>}
+        {tab==="settings" && <AdminSettings/>}
+        {tab==="activity" && <AdminActivity/>}
       </div>
     </div>
   );
 }
 
 function AdminDashboard({users}) {
-  const stats = [
-    {
-      title:"Total Tools",
-      value:tools.length,
-      change:"+12%",
-      icon:Wrench
-    },
-    {
-      title:"Registered Users",
-      value:users.length || "—",
-      change:"+8.4%",
-      icon:Users
-    },
-    {
-      title:"Categories",
-      value:categories.length-1,
-      change:"+2",
-      icon:FolderKanban
-    },
-    {
-      title:"System Status",
-      value:"Online",
-      change:"Healthy",
-      icon:CheckCircle2
-    }
+  const stats=[
+    ["Total Tools",tools.length,"+12%",Wrench],
+    ["Registered Users",users.length || "—","+8.4%",Users],
+    ["Categories",categories.length-1,"+2",FolderKanban],
+    ["System Status","Online","Healthy",CheckCircle2]
   ];
 
   return (
@@ -1154,9 +1053,7 @@ function AdminDashboard({users}) {
         <div>
           <span>GOOD DAY 👋</span>
           <h2>Welcome to your control center</h2>
-          <p>
-            Manage your tools, users and platform settings from one place.
-          </p>
+          <p>Manage your ToolMaster Pro platform.</p>
         </div>
 
         <div className="systemBadge">
@@ -1166,7 +1063,7 @@ function AdminDashboard({users}) {
       </div>
 
       <div className="dashboardStats">
-        {stats.map(({title,value,change,icon:Icon})=>(
+        {stats.map(([title,value,change,Icon])=>(
           <div className="dashboardStat" key={title}>
             <div className="statIcon">
               <Icon size={21}/>
@@ -1186,31 +1083,18 @@ function AdminDashboard({users}) {
           <div className="panelTitle">
             <div>
               <h3>Platform Overview</h3>
-              <p>Your ToolMaster Pro platform at a glance.</p>
+              <p>Your platform at a glance.</p>
             </div>
             <BarChart3 size={21}/>
           </div>
 
           <div className="overviewRows">
-            <div>
-              <span>PDF Tools</span>
-              <b>{tools.filter(x=>x[1]==="PDF Tools").length}</b>
-            </div>
-
-            <div>
-              <span>Image Tools</span>
-              <b>{tools.filter(x=>x[1]==="Image Tools").length}</b>
-            </div>
-
-            <div>
-              <span>Developer Tools</span>
-              <b>{tools.filter(x=>x[1]==="Developer Tools").length}</b>
-            </div>
-
-            <div>
-              <span>SEO & Marketing</span>
-              <b>{tools.filter(x=>x[1]==="SEO & Marketing").length}</b>
-            </div>
+            {categories.slice(1,5).map(([name,count])=>(
+              <div key={name}>
+                <span>{name}</span>
+                <b>{count}</b>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -1228,17 +1112,14 @@ function AdminDashboard({users}) {
               <Users size={18}/>
               Manage Users
             </button>
-
             <button>
               <Wrench size={18}/>
               Manage Tools
             </button>
-
             <button>
               <Settings size={18}/>
               Platform Settings
             </button>
-
             <button>
               <Activity size={18}/>
               View Activity
@@ -1256,7 +1137,7 @@ function AdminUsers({users,loading,reload}) {
       <div className="pageToolbar">
         <div>
           <h2>User Management</h2>
-          <p>Manage registered ToolMaster Pro users.</p>
+          <p>Manage registered users.</p>
         </div>
 
         <button className="primary" onClick={reload}>
@@ -1267,9 +1148,7 @@ function AdminUsers({users,loading,reload}) {
 
       <div className="adminTableCard">
         {loading ? (
-          <div className="loadingAdmin">
-            Loading users...
-          </div>
+          <div className="loadingAdmin">Loading users...</div>
         ) : users.length ? (
           <div className="tableWrap">
             <table>
@@ -1280,7 +1159,6 @@ function AdminUsers({users,loading,reload}) {
                   <th>Email</th>
                   <th>Role</th>
                   <th>Created</th>
-                  <th>Action</th>
                 </tr>
               </thead>
 
@@ -1290,16 +1168,13 @@ function AdminUsers({users,loading,reload}) {
                     <td>
                       <div className="tableUser">
                         <div className="avatar">
-                          {(user.full_name || "U").charAt(0).toUpperCase()}
+                          {(user.full_name || "U")
+                            .charAt(0)
+                            .toUpperCase()}
                         </div>
-
                         <div>
-                          <strong>
-                            {user.full_name || "No name"}
-                          </strong>
-                          <span>
-                            {user.id.slice(0,8)}...
-                          </span>
+                          <strong>{user.full_name || "No name"}</strong>
+                          <span>{user.id.slice(0,8)}...</span>
                         </div>
                       </div>
                     </td>
@@ -1310,8 +1185,8 @@ function AdminUsers({users,loading,reload}) {
                     <td>
                       <span className={
                         user.role==="admin"
-                          ? "roleBadge admin"
-                          : "roleBadge"
+                          ?"roleBadge admin"
+                          :"roleBadge"
                       }>
                         {user.role || "user"}
                       </span>
@@ -1319,18 +1194,8 @@ function AdminUsers({users,loading,reload}) {
 
                     <td>
                       {user.created_at
-                        ? new Date(user.created_at).toLocaleDateString()
-                        : "—"}
-                    </td>
-
-                    <td>
-                      <button className="tableAction">
-                        <Edit3 size={15}/>
-                      </button>
-
-                      <button className="tableAction danger">
-                        <Trash2 size={15}/>
-                      </button>
+                        ?new Date(user.created_at).toLocaleDateString()
+                        :"—"}
                     </td>
                   </tr>
                 ))}
@@ -1341,10 +1206,7 @@ function AdminUsers({users,loading,reload}) {
           <div className="emptyAdmin">
             <Users size={35}/>
             <h3>No users loaded</h3>
-            <p>
-              Configure your Supabase profiles table and RLS policies
-              to show users here.
-            </p>
+            <p>Check Supabase profiles and RLS policies.</p>
           </div>
         )}
       </div>
@@ -1353,9 +1215,9 @@ function AdminUsers({users,loading,reload}) {
 }
 
 function AdminTools() {
-  const [search,setSearch] = useState("");
+  const [search,setSearch]=useState("");
 
-  const filtered = tools.filter(t =>
+  const filtered=tools.filter(t=>
     t[0].toLowerCase().includes(search.toLowerCase()) ||
     t[1].toLowerCase().includes(search.toLowerCase())
   );
@@ -1365,13 +1227,8 @@ function AdminTools() {
       <div className="pageToolbar">
         <div>
           <h2>Tool Management</h2>
-          <p>Manage your complete online tools catalog.</p>
+          <p>{tools.length} tools available.</p>
         </div>
-
-        <button className="primary">
-          <Wrench size={16}/>
-          Add New Tool
-        </button>
       </div>
 
       <div className="adminSearch">
@@ -1399,7 +1256,6 @@ function AdminTools() {
               <button>
                 <Edit3 size={15}/>
               </button>
-
               <button>
                 <CheckCircle2 size={15}/>
               </button>
@@ -1417,13 +1273,8 @@ function AdminCategories() {
       <div className="pageToolbar">
         <div>
           <h2>Categories</h2>
-          <p>Organize your tools into clear categories.</p>
+          <p>Organize your tools.</p>
         </div>
-
-        <button className="primary">
-          <FolderKanban size={16}/>
-          Add Category
-        </button>
       </div>
 
       <div className="categoryAdminGrid">
@@ -1454,7 +1305,7 @@ function AdminAnalytics() {
       <div className="pageToolbar">
         <div>
           <h2>Analytics</h2>
-          <p>Monitor platform growth and tool activity.</p>
+          <p>Usage analytics will connect to Supabase next.</p>
         </div>
       </div>
 
@@ -1462,7 +1313,7 @@ function AdminAnalytics() {
         <div>
           <span>Page Views</span>
           <strong>—</strong>
-          <small>Connect analytics API</small>
+          <small>Tracking required</small>
         </div>
 
         <div>
@@ -1487,9 +1338,7 @@ function AdminAnalytics() {
       <div className="chartPlaceholder">
         <BarChart3 size={38}/>
         <h3>Analytics chart</h3>
-        <p>
-          Connect your usage/events table to display live charts here.
-        </p>
+        <p>Live charts will be connected in the analytics phase.</p>
       </div>
     </div>
   );
@@ -1501,23 +1350,16 @@ function AdminPlans() {
       <div className="pageToolbar">
         <div>
           <h2>Credit Plans</h2>
-          <p>Manage Text-to-Video subscription plans.</p>
+          <p>Manage subscription plans.</p>
         </div>
-
-        <button className="primary">
-          <Crown size={16}/>
-          Add Plan
-        </button>
       </div>
 
       <div className="planAdminGrid">
         {plans.map(plan=>(
           <div
-            className={
-              plan.popular
-                ? "adminPlanCard popular"
-                : "adminPlanCard"
-            }
+            className={plan.popular
+              ?"adminPlanCard popular"
+              :"adminPlanCard"}
             key={plan.id}
           >
             {plan.popular && <em>POPULAR</em>}
@@ -1525,7 +1367,7 @@ function AdminPlans() {
             <h3>{plan.name}</h3>
 
             <strong>
-              {plan.price===0 ? "Free" : `$${plan.price}`}
+              {plan.price===0?"Free":`$${plan.price}`}
             </strong>
 
             <span>
@@ -1546,16 +1388,16 @@ function AdminPlans() {
 }
 
 function AdminSettings() {
-  const [siteName,setSiteName] = useState("ToolMaster Pro");
-  const [maintenance,setMaintenance] = useState(false);
-  const [message,setMessage] = useState("");
+  const [siteName,setSiteName]=useState("ToolMaster Pro");
+  const [maintenance,setMaintenance]=useState(false);
+  const [message,setMessage]=useState("");
 
   return (
     <div className="adminContent">
       <div className="pageToolbar">
         <div>
           <h2>Platform Settings</h2>
-          <p>Configure your website experience.</p>
+          <p>Configure your website.</p>
         </div>
 
         <button
@@ -1591,9 +1433,7 @@ function AdminSettings() {
 
           <label>
             Website Description
-            <textarea
-              defaultValue="Powerful online tools, made simple."
-            />
+            <textarea defaultValue="Powerful online tools, made simple."/>
           </label>
         </div>
 
@@ -1613,7 +1453,7 @@ function AdminSettings() {
             </div>
 
             <button
-              className={maintenance ? "toggle on":"toggle"}
+              className={maintenance?"toggle on":"toggle"}
               onClick={()=>setMaintenance(!maintenance)}
             >
               <span></span>
@@ -1623,7 +1463,7 @@ function AdminSettings() {
           <div className="settingToggle">
             <div>
               <strong>Public Tools</strong>
-              <span>Allow tools without account login.</span>
+              <span>Allow tools without login.</span>
             </div>
 
             <button className="toggle on">
@@ -1642,7 +1482,7 @@ function AdminActivity() {
       <div className="pageToolbar">
         <div>
           <h2>Activity Log</h2>
-          <p>Monitor important platform events.</p>
+          <p>Important platform events.</p>
         </div>
       </div>
 
@@ -1654,7 +1494,7 @@ function AdminActivity() {
 
           <div>
             <strong>Admin dashboard initialized</strong>
-            <span>System is ready for production configuration.</span>
+            <span>System is ready.</span>
           </div>
 
           <time>Now</time>
@@ -1667,7 +1507,7 @@ function AdminActivity() {
 
           <div>
             <strong>{tools.length} tools loaded</strong>
-            <span>Your current tools catalog is available.</span>
+            <span>Current tools catalog is available.</span>
           </div>
 
           <time>Today</time>
@@ -1680,7 +1520,7 @@ function AdminActivity() {
 
           <div>
             <strong>Supabase integration</strong>
-            <span>Authentication/database connection is configured through environment variables.</span>
+            <span>Authentication and database configured.</span>
           </div>
 
           <time>Today</time>
@@ -1691,16 +1531,19 @@ function AdminActivity() {
 }
 
 function ToolCard({t,open}) {
-  const icons = {
+  const icons={
     "PDF Tools":FileText,
     "Image Tools":ImageIcon,
     "SEO & Marketing":Globe2,
     "Text Tools":FileText,
     "Developer Tools":Code2,
-    "Calculator Tools":Calculator
+    "Calculator Tools":Calculator,
+    "Converter Tools":Wrench,
+    "Security Tools":ShieldCheck,
+    "Utility Tools":Sparkles
   };
 
-  const Icon = icons[t[1]] || Wrench;
+  const Icon=icons[t[1]] || Wrench;
 
   return (
     <article className="card" onClick={open}>
@@ -1720,49 +1563,32 @@ function ToolCard({t,open}) {
 }
 
 function ToolPage({t,back}) {
-  if(t[3]==="student-ai-helper") {
-    return <StudentAIHelper back={back}/>;
-  }
-
-  if(t[3]==="text-to-video") {
+  if(t[3]==="text-to-video")
     return <TextToVideo back={back}/>;
-  }
 
-  if(fileTools.has(t[3])) {
+  if(t[3]==="student-ai-helper")
+    return <StudentAIHelper back={back}/>;
+
+  if(t[1]==="PDF Tools" || t[1]==="Image Tools")
     return <FileToolWorkspace t={t} back={back}/>;
-  }
 
   return <GenericTool t={t} back={back}/>;
 }
 
 function TextToVideo({back}) {
-  const [prompt,setPrompt] = useState("");
-  const [style,setStyle] = useState("Cinematic");
-  const [duration,setDuration] = useState("10 seconds");
-  const [credits,setCredits] = useState(
-    ()=>Number(localStorage.getItem("tm_daily_credits") || 50)
-  );
-  const [status,setStatus] = useState("");
+  const [prompt,setPrompt]=useState("");
+  const [style,setStyle]=useState("Cinematic");
+  const [duration,setDuration]=useState("10 seconds");
+  const [status,setStatus]=useState("");
 
-  const generate = () => {
+  const generate=()=>{
     if(!prompt.trim()) {
       setStatus("Please enter a video prompt first.");
       return;
     }
 
-    if(credits<1) {
-      setStatus("No credits left.");
-      return;
-    }
-
-    setCredits(c=>{
-      const n=c-1;
-      localStorage.setItem("tm_daily_credits",n);
-      return n;
-    });
-
     setStatus(
-      "Request accepted. Connect a server-side AI video provider to render the actual MP4."
+      "Prompt prepared successfully. A server-side AI video API is required to render the MP4."
     );
   };
 
@@ -1780,25 +1606,8 @@ function TextToVideo({back}) {
         <div>
           <span>AI & Video</span>
           <h1>Text to Video</h1>
-          <p>Create an AI video project with plan-based credits.</p>
+          <p>Create AI video projects.</p>
         </div>
-      </div>
-
-      <div className="creditBar">
-        <div>
-          <b>{credits}</b>
-          <span>credits remaining</span>
-        </div>
-      </div>
-
-      <div className="plansGrid">
-        {plans.map(p=>(
-          <div className="planCard" key={p.id}>
-            <span>{p.name}</span>
-            <b>{p.price===0 ? "Free":`$${p.price}/mo`}</b>
-            <small>{p.description}</small>
-          </div>
-        ))}
       </div>
 
       <div className="aiHelper">
@@ -1842,12 +1651,10 @@ function TextToVideo({back}) {
 
           <button className="primary aiSolve" onClick={generate}>
             <Sparkles size={17}/>
-            Generate Video · 1 credit
+            Prepare Video
           </button>
 
-          {status && (
-            <div className="statusBox">{status}</div>
-          )}
+          {status && <div className="statusBox">{status}</div>}
         </div>
 
         <div className="aiCard resultCard">
@@ -1855,7 +1662,7 @@ function TextToVideo({back}) {
 
           <div className="videoPlaceholder">
             <div className="playCircle">▶</div>
-            <b>Your generated video will appear here</b>
+            <b>Video preview</b>
             <small>{style} · {duration}</small>
           </div>
         </div>
@@ -1865,12 +1672,12 @@ function TextToVideo({back}) {
 }
 
 function StudentAIHelper({back}) {
-  const [question,setQuestion] = useState("");
-  const [file,setFile] = useState(null);
-  const [answer,setAnswer] = useState("");
-  const [loading,setLoading] = useState(false);
+  const [question,setQuestion]=useState("");
+  const [file,setFile]=useState(null);
+  const [answer,setAnswer]=useState("");
+  const [loading,setLoading]=useState(false);
 
-  const solve = () => {
+  const solve=()=>{
     if(!question.trim() && !file) {
       setAnswer("Please enter a question or upload a study file.");
       return;
@@ -1880,10 +1687,10 @@ function StudentAIHelper({back}) {
 
     setTimeout(()=>{
       setAnswer(
-        "Student AI Helper is ready. Connect your secure AI backend to generate real step-by-step answers."
+        "Your request has been prepared. Connect your secure AI backend to generate the real step-by-step AI answer."
       );
       setLoading(false);
-    },700);
+    },500);
   };
 
   return (
@@ -1900,7 +1707,7 @@ function StudentAIHelper({back}) {
         <div>
           <span>AI & Education</span>
           <h1>Student AI Helper</h1>
-          <p>Ask a question or upload study material.</p>
+          <p>Ask questions or upload study material.</p>
         </div>
       </div>
 
@@ -1927,7 +1734,7 @@ function StudentAIHelper({back}) {
             disabled={loading}
           >
             <Sparkles size={17}/>
-            {loading ? "Preparing...":"Get AI Help"}
+            {loading?"Preparing...":"Get AI Help"}
           </button>
         </div>
 
@@ -1935,7 +1742,7 @@ function StudentAIHelper({back}) {
           <h3>🤖 AI Answer</h3>
 
           <div className="answer">
-            {answer || "Your step-by-step answer will appear here."}
+            {answer || "Your AI answer will appear here."}
           </div>
 
           {answer && (
@@ -1945,7 +1752,7 @@ function StudentAIHelper({back}) {
                 onClick={()=>navigator.clipboard?.writeText(answer)}
               >
                 <Copy size={17}/>
-                Copy Answer
+                Copy
               </button>
 
               <button
@@ -1963,12 +1770,7 @@ function StudentAIHelper({back}) {
   );
 }
 
-function FileUpload({
-  file,
-  setFile,
-  accept,
-  label="Upload File"
-}) {
+function FileUpload({file,setFile,accept,label="Upload File"}) {
   return (
     <label className="uploadBox">
       <Upload/>
@@ -1989,24 +1791,18 @@ function FileUpload({
 }
 
 function FileToolWorkspace({t,back}) {
-  const [file,setFile] = useState(null);
-  const [result,setResult] = useState(null);
-  const [status,setStatus] = useState("");
+  const [file,setFile]=useState(null);
+  const [status,setStatus]=useState("");
 
-  const process = () => {
+  const process=()=>{
     if(!file) {
       setStatus("Please upload a file first.");
       return;
     }
 
     setStatus(
-      `${t[0]} received "${file.name}". Connect the matching backend converter for production conversion.`
+      `${t[0]} selected: ${file.name}. Real PDF/image conversion will be connected in the next processing backend phase.`
     );
-
-    setResult({
-      blob:file,
-      name:`processed-${file.name}`
-    });
   };
 
   return (
@@ -2044,7 +1840,6 @@ function FileToolWorkspace({t,back}) {
             className="secondary"
             onClick={()=>{
               setFile(null);
-              setResult(null);
               setStatus("");
             }}
           >
@@ -2053,134 +1848,416 @@ function FileToolWorkspace({t,back}) {
           </button>
         </div>
 
-        {status && (
-          <div className="statusBox">{status}</div>
-        )}
-
-        {result && (
-          <button
-            className="secondary downloadBtn"
-            onClick={()=>
-              downloadBlob(result.blob,result.name)
-            }
-          >
-            <Download size={17}/>
-            Download File
-          </button>
-        )}
+        {status && <div className="statusBox">{status}</div>}
       </div>
     </main>
   );
 }
 
 function GenericTool({t,back}) {
-  const [text,setText] = useState("");
-  const [out,setOut] = useState("");
+  const [input,setInput]=useState("");
+  const [out,setOut]=useState("");
+  const [extra,setExtra]=useState({});
 
-  const run = () => {
-    let r=text;
-    const id=t[3];
+  const id=t[3];
 
-    if(id==="word-counter" || id==="characters") {
-      r=`Words: ${text.trim()?text.trim().split(/\s+/).length:0}\nCharacters: ${text.length}`;
-    }
-    else if(id==="case-converter") r=text.toLowerCase();
-    else if(id==="text-reverser") r=[...text].reverse().join("");
-    else if(id==="slug") {
-      r=text.toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g,"-")
-        .replace(/^-|-$/g,"");
-    }
-    else if(id==="url-encoder") r=encodeURIComponent(text);
-    else if(id==="base64-encode") {
-      r=btoa(unescape(encodeURIComponent(text)));
-    }
-    else if(id==="base64-decode") {
-      try {
-        r=decodeURIComponent(escape(atob(text)));
-      } catch {
-        r="Invalid Base64";
+  const run=()=>{
+    let result="";
+
+    try {
+      switch(id) {
+
+        case "word-counter": {
+          const words=input.trim()?input.trim().split(/\s+/):[];
+          const sentences=input
+            .split(/[.!?]+/)
+            .filter(x=>x.trim()).length;
+
+          result=
+            `Words: ${words.length}\n`+
+            `Characters: ${input.length}\n`+
+            `Characters without spaces: ${input.replace(/\s/g,"").length}\n`+
+            `Sentences: ${sentences}`;
+          break;
+        }
+
+        case "characters":
+          result=
+            `Characters: ${input.length}\n`+
+            `Without spaces: ${input.replace(/\s/g,"").length}`;
+          break;
+
+        case "case-converter":
+          result=input.toLowerCase();
+          break;
+
+        case "text-cleaner":
+          result=input
+            .replace(/[ \t]+/g," ")
+            .replace(/\n{3,}/g,"\n\n")
+            .trim();
+          break;
+
+        case "text-reverser":
+          result=[...input].reverse().join("");
+          break;
+
+        case "duplicate-lines":
+          result=[...new Set(input.split(/\r?\n/))].join("\n");
+          break;
+
+        case "text-sorter":
+          result=input
+            .split(/\r?\n/)
+            .sort((a,b)=>a.localeCompare(b))
+            .join("\n");
+          break;
+
+        case "slug":
+          result=input
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g,"-")
+            .replace(/^-|-$/g,"");
+          break;
+
+        case "url-encoder":
+          result=encodeURIComponent(input);
+          break;
+
+        case "base64-encode":
+          result=btoa(unescape(encodeURIComponent(input)));
+          break;
+
+        case "base64-decode":
+          result=decodeURIComponent(escape(atob(input.trim())));
+          break;
+
+        case "json-formatter":
+          result=JSON.stringify(JSON.parse(input),null,2);
+          break;
+
+        case "json-minifier":
+          result=JSON.stringify(JSON.parse(input));
+          break;
+
+        case "uuid":
+          result=crypto.randomUUID();
+          break;
+
+        case "password":
+        case "random-password":
+          result=generatePassword(20);
+          break;
+
+        case "password-strength":
+          result=passwordStrength(input);
+          break;
+
+        case "binary":
+          result=[...input]
+            .map(c=>c.charCodeAt(0).toString(2).padStart(8,"0"))
+            .join(" ");
+          break;
+
+        case "ascii":
+          result=[...input]
+            .map(c=>c.charCodeAt(0))
+            .join(" ");
+          break;
+
+        case "palindrome": {
+          const s=input.toLowerCase().replace(/[^a-z0-9]/g,"");
+          result=s===s.split("").reverse().join("")
+            ?"Palindrome"
+            :"Not a palindrome";
+          break;
+        }
+
+        case "reading-time": {
+          const words=input.trim()
+            ?input.trim().split(/\s+/).length
+            :0;
+
+          result=
+            `Words: ${words}\n`+
+            `Estimated reading time: ${Math.max(1,Math.ceil(words/200))} minute(s)`;
+          break;
+        }
+
+        case "email-validator":
+          result=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.trim())
+            ?"Valid email format"
+            :"Invalid email format";
+          break;
+
+        case "random-number":
+          result=String(Math.floor(Math.random()*1000000));
+          break;
+
+        case "morse":
+          result=textToMorse(input);
+          break;
+
+        case "html-entities":
+          result=escapeHTML(input);
+          break;
+
+        case "url-parser": {
+          const u=new URL(input);
+          result=
+            `Protocol: ${u.protocol}\n`+
+            `Hostname: ${u.hostname}\n`+
+            `Port: ${u.port || "(default)"}\n`+
+            `Path: ${u.pathname}\n`+
+            `Query: ${u.search}\n`+
+            `Hash: ${u.hash}`;
+          break;
+        }
+
+        case "regex": {
+          const match=input.match(/^\/(.+)\/([gimsuy]*)$/);
+          if(!match) {
+            result="Use format /pattern/flags";
+          } else {
+            const re=new RegExp(match[1],match[2]);
+            const matches=input.match(re);
+            result=matches
+              ?`Match found:\n${matches.join("\n")}`
+              :"No match found.";
+          }
+          break;
+        }
+
+        case "percentage": {
+          const value=Number(input);
+          const percent=Number(extra.percent || 10);
+          result=`${percent}% of ${value} = ${value*percent/100}`;
+          break;
+        }
+
+        case "discount": {
+          const price=Number(input);
+          const discount=Number(extra.discount || 10);
+          const saved=price*discount/100;
+          result=
+            `Original: ${price}\n`+
+            `Discount: ${saved}\n`+
+            `Final price: ${price-saved}`;
+          break;
+        }
+
+        case "gst": {
+          const amount=Number(input);
+          const gst=Number(extra.gst || 18);
+          const tax=amount*gst/100;
+          result=
+            `Amount: ${amount}\n`+
+            `GST (${gst}%): ${tax}\n`+
+            `Total: ${amount+tax}`;
+          break;
+        }
+
+        case "tip": {
+          const bill=Number(input);
+          const tip=Number(extra.tip || 10);
+          const people=Number(extra.people || 1);
+          const tipAmount=bill*tip/100;
+          const total=bill+tipAmount;
+
+          result=
+            `Bill: ${bill}\n`+
+            `Tip: ${tipAmount}\n`+
+            `Total: ${total}\n`+
+            `Per person: ${total/people}`;
+          break;
+        }
+
+        case "bmi": {
+          const weight=Number(input);
+          const height=Number(extra.height || 170)/100;
+          const bmi=weight/(height*height);
+
+          result=
+            `BMI: ${bmi.toFixed(2)}\n`+
+            `Category: ${bmiCategory(bmi)}`;
+          break;
+        }
+
+        case "compound-interest": {
+          const principal=Number(input);
+          const rate=Number(extra.rate || 5);
+          const years=Number(extra.years || 1);
+          const n=Number(extra.compounds || 12);
+
+          const amount=
+            principal*Math.pow(
+              1+(rate/100)/n,
+              n*years
+            );
+
+          result=
+            `Principal: ${principal}\n`+
+            `Rate: ${rate}%\n`+
+            `Years: ${years}\n`+
+            `Final amount: ${amount.toFixed(2)}\n`+
+            `Interest: ${(amount-principal).toFixed(2)}`;
+          break;
+        }
+
+        case "temperature": {
+          const c=Number(input);
+          result=
+            `Celsius: ${c}\n`+
+            `Fahrenheit: ${(c*9/5+32).toFixed(2)}\n`+
+            `Kelvin: ${(c+273.15).toFixed(2)}`;
+          break;
+        }
+
+        case "length": {
+          const m=Number(input);
+          result=
+            `Meters: ${m}\n`+
+            `Kilometers: ${m/1000}\n`+
+            `Centimeters: ${m*100}\n`+
+            `Feet: ${m*3.28084}\n`+
+            `Inches: ${m*39.3701}`;
+          break;
+        }
+
+        case "weight": {
+          const kg=Number(input);
+          result=
+            `Kilograms: ${kg}\n`+
+            `Grams: ${kg*1000}\n`+
+            `Pounds: ${kg*2.20462}\n`+
+            `Ounces: ${kg*35.274}`;
+          break;
+        }
+
+        case "storage": {
+          const mb=Number(input);
+          result=
+            `MB: ${mb}\n`+
+            `KB: ${mb*1024}\n`+
+            `GB: ${mb/1024}\n`+
+            `Bytes: ${mb*1024*1024}`;
+          break;
+        }
+
+        case "sha256":
+          result="SHA-256 requires Web Crypto and is calculated below...";
+          crypto.subtle.digest(
+            "SHA-256",
+            new TextEncoder().encode(input)
+          ).then(buffer=>{
+            const hash=[...new Uint8Array(buffer)]
+              .map(b=>b.toString(16).padStart(2,"0"))
+              .join("");
+            setOut(hash);
+          });
+          setOut(result);
+          return;
+
+        case "roman":
+          result=toRoman(Number(input));
+          break;
+
+        case "number-words":
+          result=numberToWords(Number(input));
+          break;
+
+        case "username":
+          result=generateUsernames(input);
+          break;
+
+        case "business-name":
+          result=generateBusinessNames(input);
+          break;
+
+        case "lorem":
+          result=generateLorem(Number(input)||3);
+          break;
+
+        case "meta-tags":
+          result=
+`<title>${input}</title>
+<meta name="description" content="${input}">
+<meta name="robots" content="index, follow">`;
+          break;
+
+        case "robots":
+          result=
+`User-agent: *
+Allow: /
+
+Sitemap: ${input || "https://example.com/sitemap.xml"}`;
+          break;
+
+        case "open-graph":
+          result=
+`<meta property="og:title" content="${input}">
+<meta property="og:description" content="${input}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://example.com">`;
+          break;
+
+        case "schema":
+          result=JSON.stringify({
+            "@context":"https://schema.org",
+            "@type":"WebSite",
+            "name":input || "Your Website",
+            "url":"https://example.com"
+          },null,2);
+          break;
+
+        case "utm": {
+          const base=input || "https://example.com";
+          const u=new URL(base);
+          u.searchParams.set("utm_source",extra.source || "google");
+          u.searchParams.set("utm_medium",extra.medium || "cpc");
+          u.searchParams.set("utm_campaign",extra.campaign || "campaign");
+          result=u.toString();
+          break;
+        }
+
+        case "keyword-density": {
+          const words=input
+            .toLowerCase()
+            .match(/[a-z0-9]+/g) || [];
+
+          const counts={};
+
+          words.forEach(w=>{
+            counts[w]=(counts[w]||0)+1;
+          });
+
+          result=Object.entries(counts)
+            .sort((a,b)=>b[1]-a[1])
+            .slice(0,20)
+            .map(([word,count])=>
+              `${word}: ${count} (${((count/words.length)*100).toFixed(2)}%)`
+            )
+            .join("\n");
+          break;
+        }
+
+        case "scientific":
+          result=String(safeMath(input));
+          break;
+
+        default:
+          result=
+            "This tool is available in the catalog. Its specialized backend processing will be connected in the next phase.";
       }
-    }
-    else if(id==="json-formatter") {
-      try {
-        r=JSON.stringify(JSON.parse(text),null,2);
-      } catch {
-        r="Invalid JSON";
-      }
-    }
-    else if(id==="json-minifier") {
-      try {
-        r=JSON.stringify(JSON.parse(text));
-      } catch {
-        r="Invalid JSON";
-      }
-    }
-    else if(id==="uuid") {
-      r=crypto.randomUUID();
-    }
-    else if(id==="password" || id==="random-password") {
-      r=crypto.getRandomValues(new Uint32Array(3))
-        .join("-")+"!Aa";
-    }
-    else if(id==="binary") {
-      r=[...text]
-        .map(c=>c.charCodeAt(0).toString(2).padStart(8,"0"))
-        .join(" ");
-    }
-    else if(id==="ascii") {
-      r=[...text]
-        .map(c=>c.charCodeAt(0))
-        .join(" ");
-    }
-    else if(id==="duplicate-lines") {
-      r=[...new Set(text.split(/\r?\n/))].join("\n");
-    }
-    else if(id==="text-sorter") {
-      r=text.split(/\r?\n/)
-        .sort((a,b)=>a.localeCompare(b))
-        .join("\n");
-    }
-    else if(id==="text-cleaner") {
-      r=text
-        .replace(/[ \t]+/g," ")
-        .replace(/\n{3,}/g,"\n\n")
-        .trim();
-    }
-    else if(id==="palindrome") {
-      const s=text.toLowerCase().replace(/[^a-z0-9]/g,"");
-      r=s===s.split("").reverse().join("")
-        ?"Palindrome"
-        :"Not a palindrome";
-    }
-    else if(id==="reading-time") {
-      const words=text.trim()
-        ?text.trim().split(/\s+/).length
-        :0;
-
-      r=`Estimated reading time: ${Math.max(
-        1,
-        Math.ceil(words/200)
-      )} minute(s)`;
-    }
-    else if(id==="email-validator") {
-      r=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text.trim())
-        ?"Valid email format"
-        :"Invalid email format";
-    }
-    else if(id==="random-number") {
-      r=String(Math.floor(Math.random()*1000000));
-    }
-    else if(id==="number-words") {
-      r="Number-to-words conversion is ready for backend/extended locale support.";
-    }
-    else {
-      r="This tool is ready. Connect its production backend processing logic.";
+    } catch(err) {
+      result=`Error: ${err.message || "Invalid input"}`;
     }
 
-    setOut(r);
+    setOut(String(result));
   };
+
+  const fields=getExtraFields(id);
 
   return (
     <main className="toolPage">
@@ -2200,14 +2277,37 @@ function GenericTool({t,back}) {
         </div>
       </div>
 
+      {fields.length>0 &&
+        <div className="videoOptions">
+          {fields.map(field=>(
+            <label key={field.key}>
+              {field.label}
+              <input
+                type="number"
+                value={extra[field.key] || field.default || ""}
+                onChange={e=>setExtra({
+                  ...extra,
+                  [field.key]:e.target.value
+                })}
+                placeholder={field.placeholder || ""}
+              />
+            </label>
+          ))}
+        </div>
+      }
+
       <div className="workspace">
         <div className="panel">
           <label>Your input</label>
 
           <textarea
-            value={text}
-            onChange={e=>setText(e.target.value)}
-            placeholder="Paste or type your content here..."
+            value={input}
+            onChange={e=>setInput(e.target.value)}
+            placeholder={
+              id==="url-parser"
+                ?"https://example.com/page?name=test"
+                :"Paste or type your content here..."
+            }
           />
 
           <div className="actions">
@@ -2219,7 +2319,7 @@ function GenericTool({t,back}) {
             <button
               className="secondary"
               onClick={()=>{
-                setText("");
+                setInput("");
                 setOut("");
               }}
             >
@@ -2240,9 +2340,7 @@ function GenericTool({t,back}) {
           <div className="actions">
             <button
               className="secondary"
-              onClick={()=>
-                navigator.clipboard?.writeText(out)
-              }
+              onClick={()=>navigator.clipboard?.writeText(out)}
             >
               <Copy size={17}/>
               Copy Result
@@ -2261,10 +2359,237 @@ function GenericTool({t,back}) {
 
       <div className="notice">
         <ShieldCheck/>
-        Browser-safe tools run locally whenever possible.
+        Browser-safe processing runs locally whenever possible.
       </div>
     </main>
   );
+}
+
+function getExtraFields(id) {
+  const map={
+    percentage:[
+      {key:"percent",label:"Percentage",default:10}
+    ],
+    discount:[
+      {key:"discount",label:"Discount %",default:10}
+    ],
+    gst:[
+      {key:"gst",label:"GST %",default:18}
+    ],
+    tip:[
+      {key:"tip",label:"Tip %",default:10},
+      {key:"people",label:"People",default:1}
+    ],
+    bmi:[
+      {key:"height",label:"Height (cm)",default:170}
+    ],
+    "compound-interest":[
+      {key:"rate",label:"Annual Rate %",default:5},
+      {key:"years",label:"Years",default:1},
+      {key:"compounds",label:"Compounds / Year",default:12}
+    ]
+  };
+
+  return map[id] || [];
+}
+
+function generatePassword(length=20) {
+  const chars=
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=";
+
+  const values=new Uint32Array(length);
+  crypto.getRandomValues(values);
+
+  return [...values]
+    .map(v=>chars[v%chars.length])
+    .join("");
+}
+
+function passwordStrength(password) {
+  let score=0;
+
+  if(password.length>=8) score++;
+  if(password.length>=12) score++;
+  if(/[a-z]/.test(password)) score++;
+  if(/[A-Z]/.test(password)) score++;
+  if(/[0-9]/.test(password)) score++;
+  if(/[^A-Za-z0-9]/.test(password)) score++;
+
+  if(score<=2) return "Weak";
+  if(score<=4) return "Medium";
+  return "Strong";
+}
+
+function textToMorse(text) {
+  const map={
+    A:".-",B:"-...",C:"-.-.",D:"-..",E:".",F:"..-.",
+    G:"--.",H:"....",I:"..",J:".---",K:"-.-",L:".-..",
+    M:"--",N:"-.",O:"---",P:".--.",Q:"--.-",R:".-.",
+    S:"...",T:"-",U:"..-",V:"...-",W:".--",X:"-..-",
+    Y:"-.--",Z:"--..",
+    0:"-----",1:".----",2:"..---",3:"...--",4:"....-",
+    5:".....",6:"-....",7:"--...",8:"---..",9:"----."
+  };
+
+  return text
+    .toUpperCase()
+    .split("")
+    .map(c=>c===" " ? "/" : map[c] || c)
+    .join(" ");
+}
+
+function escapeHTML(text) {
+  return text
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function bmiCategory(bmi) {
+  if(bmi<18.5) return "Underweight";
+  if(bmi<25) return "Normal";
+  if(bmi<30) return "Overweight";
+  return "Obesity";
+}
+
+function toRoman(num) {
+  if(!Number.isFinite(num) || num<=0)
+    return "Enter a positive number.";
+
+  const values=[
+    [1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],
+    [100,"C"],[90,"XC"],[50,"L"],[40,"XL"],
+    [10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]
+  ];
+
+  let result="";
+
+  for(const [value,symbol] of values) {
+    while(num>=value) {
+      result+=symbol;
+      num-=value;
+    }
+  }
+
+  return result;
+}
+
+function numberToWords(num) {
+  if(!Number.isFinite(num))
+    return "Invalid number.";
+
+  if(num===0) return "zero";
+
+  if(num<0)
+    return "minus " + numberToWords(Math.abs(num));
+
+  if(num>999999999)
+    return "Number too large.";
+
+  const ones=[
+    "","one","two","three","four","five","six","seven",
+    "eight","nine","ten","eleven","twelve","thirteen",
+    "fourteen","fifteen","sixteen","seventeen","eighteen",
+    "nineteen"
+  ];
+
+  const tens=[
+    "","","twenty","thirty","forty","fifty",
+    "sixty","seventy","eighty","ninety"
+  ];
+
+  function under1000(n) {
+    let s="";
+
+    if(n>=100) {
+      s+=ones[Math.floor(n/100)]+" hundred";
+      n%=100;
+      if(n) s+=" ";
+    }
+
+    if(n>=20) {
+      s+=tens[Math.floor(n/10)];
+      n%=10;
+      if(n) s+=" "+ones[n];
+    } else if(n>0) {
+      s+=ones[n];
+    }
+
+    return s;
+  }
+
+  let result="";
+
+  if(num>=1000000) {
+    result+=under1000(Math.floor(num/1000000))+" million";
+    num%=1000000;
+    if(num) result+=" ";
+  }
+
+  if(num>=1000) {
+    result+=under1000(Math.floor(num/1000))+" thousand";
+    num%=1000;
+    if(num) result+=" ";
+  }
+
+  if(num) result+=under1000(num);
+
+  return result;
+}
+
+function generateUsernames(text) {
+  const base=(text || "user")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g,"");
+
+  return [
+    `${base}01`,
+    `the${base}`,
+    `${base}_official`,
+    `${base}pro`,
+    `${base}hub`,
+    `${base}2026`,
+    `real${base}`,
+    `${base}online`
+  ].join("\n");
+}
+
+function generateBusinessNames(text) {
+  const base=(text || "Tech").trim();
+
+  return [
+    `${base}Pro`,
+    `${base}Hub`,
+    `${base}Labs`,
+    `${base}Works`,
+    `${base}Digital`,
+    `${base}Solutions`,
+    `${base}Studio`,
+    `${base}Cloud`
+  ].join("\n");
+}
+
+function generateLorem(paragraphs=3) {
+  const text=
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
+    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
+    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. ";
+
+  return Array.from(
+    {length:Math.min(Math.max(paragraphs,1),20)},
+    ()=>text.repeat(3).trim()
+  ).join("\n\n");
+}
+
+function safeMath(expression) {
+  if(!/^[0-9+\-*/().,%\s]+$/.test(expression))
+    throw new Error("Only basic mathematical expressions are allowed.");
+
+  const cleaned=expression.replace(/%/g,"/100");
+
+  return Function(`"use strict"; return (${cleaned})`)();
 }
 
 createRoot(
