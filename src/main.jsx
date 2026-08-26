@@ -24,10 +24,8 @@ import {
   Copy,
 } from "lucide-react";
 
-import { createClient } from "@supabase/supabase-js";
-
 /* =========================================================
-   SUPABASE
+   SUPABASE CONFIG
    ========================================================= */
 
 const SUPABASE_URL =
@@ -37,26 +35,11 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
   import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 
-const supabase =
-  SUPABASE_ANON_KEY
-    ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-    : null;
-
-/*
-  Your deployed Edge Function:
-  pdf-to-word
-
-  If VITE_SUPABASE_ANON_KEY is configured in Vercel,
-  Supabase client will be used.
-
-  Otherwise the function URL is called directly.
-*/
-
 const PDF_TO_WORD_URL =
   `${SUPABASE_URL}/functions/v1/pdf-to-word`;
 
 /* =========================================================
-   TOOL DATA
+   TOOLS
    ========================================================= */
 
 const tools = [
@@ -136,7 +119,11 @@ function formatBytes(bytes) {
   if (!bytes) return "0 KB";
 
   const units = ["B", "KB", "MB", "GB"];
-  const index = Math.floor(Math.log(bytes) / Math.log(1024));
+
+  const index = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1
+  );
 
   return `${(bytes / Math.pow(1024, index)).toFixed(
     index === 0 ? 0 : 2
@@ -144,20 +131,25 @@ function formatBytes(bytes) {
 }
 
 /* =========================================================
-   PDF TO WORD
+   PDF TO WORD API
    ========================================================= */
 
-async function sendPdfToFunction(file) {
+async function convertPdfToWord(file) {
   const formData = new FormData();
+
   formData.append("file", file);
 
-  let headers = {};
+  const headers = {
+    apikey: SUPABASE_ANON_KEY,
+  };
+
+  /*
+    Authorization header is only added when the public
+    Supabase key exists.
+  */
 
   if (SUPABASE_ANON_KEY) {
-    headers = {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-    };
+    headers.Authorization = `Bearer ${SUPABASE_ANON_KEY}`;
   }
 
   const response = await fetch(PDF_TO_WORD_URL, {
@@ -166,61 +158,200 @@ async function sendPdfToFunction(file) {
     body: formData,
   });
 
-  let data = null;
-
-  try {
-    data = await response.json();
-  } catch {
-    data = null;
-  }
+  const contentType =
+    response.headers.get("content-type") || "";
 
   if (!response.ok) {
-    throw new Error(
-      data?.error ||
-        `Server error (${response.status}). Please try again.`
-    );
+    let errorMessage =
+      `PDF conversion failed (${response.status})`;
+
+    if (contentType.includes("application/json")) {
+      try {
+        const errorData = await response.json();
+
+        errorMessage =
+          errorData?.error ||
+          errorData?.message ||
+          errorMessage;
+      } catch {
+        // ignore
+      }
+    } else {
+      try {
+        const text = await response.text();
+
+        if (text) {
+          errorMessage = text;
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    throw new Error(errorMessage);
   }
 
-  return data;
+  /*
+    The Edge Function can return the generated DOCX
+    directly as a binary response.
+  */
+
+  if (
+    contentType.includes(
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+  ) {
+    const blob = await response.blob();
+
+    return {
+      type: "blob",
+      blob,
+      filename: "converted-document.docx",
+    };
+  }
+
+  /*
+    Also support JSON response containing a download URL
+    or base64 data.
+  */
+
+  if (contentType.includes("application/json")) {
+    const data = await response.json();
+
+    if (data?.download_url) {
+      return {
+        type: "url",
+        url: data.download_url,
+        filename:
+          data.filename || "converted-document.docx",
+      };
+    }
+
+    if (data?.url) {
+      return {
+        type: "url",
+        url: data.url,
+        filename:
+          data.filename || "converted-document.docx",
+      };
+    }
+
+    if (data?.file_url) {
+      return {
+        type: "url",
+        url: data.file_url,
+        filename:
+          data.filename || "converted-document.docx",
+      };
+    }
+
+    if (data?.base64) {
+      const binary = atob(data.base64);
+
+      const bytes = new Uint8Array(binary.length);
+
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+
+      const blob = new Blob([bytes], {
+        type:
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
+
+      return {
+        type: "blob",
+        blob,
+        filename:
+          data.filename || "converted-document.docx",
+      };
+    }
+
+    if (data?.success === false) {
+      throw new Error(
+        data?.error ||
+          data?.message ||
+          "PDF conversion failed."
+      );
+    }
+  }
+
+  throw new Error(
+    "The conversion server returned an unsupported response."
+  );
 }
 
 /* =========================================================
-   MAIN APP
+   APP
    ========================================================= */
 
 function App() {
   const [mobileMenu, setMobileMenu] = useState(false);
+
   const [search, setSearch] = useState("");
+
   const [category, setCategory] = useState("All");
 
   const [activeTool, setActiveTool] = useState(null);
 
+  /* PDF */
+
   const [pdfFile, setPdfFile] = useState(null);
-  const [pdfStatus, setPdfStatus] = useState("");
-  const [pdfError, setPdfError] = useState("");
+
   const [pdfLoading, setPdfLoading] = useState(false);
 
+  const [pdfError, setPdfError] = useState("");
+
+  const [pdfStatus, setPdfStatus] = useState("");
+
+  const [downloadReady, setDownloadReady] = useState(false);
+
+  const [downloadUrl, setDownloadUrl] = useState("");
+
+  const [downloadFilename, setDownloadFilename] =
+    useState("converted-document.docx");
+
+  /* SEO */
+
   const [seoText, setSeoText] = useState("");
+
   const [seoResult, setSeoResult] = useState(null);
 
+  /* Keywords */
+
   const [keywordInput, setKeywordInput] = useState("");
+
   const [keywords, setKeywords] = useState([]);
 
+  /* Video */
+
   const [videoText, setVideoText] = useState("");
+
   const [videoResult, setVideoResult] = useState("");
 
+  /* Code */
+
   const [codeInput, setCodeInput] = useState("");
+
   const [codeResult, setCodeResult] = useState("");
 
+  /* Calculator */
+
   const [calcInput, setCalcInput] = useState("");
+
   const [calcResult, setCalcResult] = useState("");
+
+  /* =======================================================
+     FILTER
+     ======================================================= */
 
   const filteredTools = useMemo(() => {
     const query = search.trim().toLowerCase();
 
     return tools.filter((tool) => {
       const matchesCategory =
-        category === "All" || tool.category === category;
+        category === "All" ||
+        tool.category === category;
 
       const matchesSearch =
         !query ||
@@ -233,7 +364,7 @@ function App() {
   }, [search, category]);
 
   /* =======================================================
-     PDF FILE SELECT
+     PDF SELECT
      ======================================================= */
 
   function handlePdfSelect(event) {
@@ -241,6 +372,8 @@ function App() {
 
     setPdfError("");
     setPdfStatus("");
+    setDownloadReady(false);
+    setDownloadUrl("");
 
     if (!file) {
       setPdfFile(null);
@@ -253,53 +386,94 @@ function App() {
 
     if (!isPdf) {
       setPdfFile(null);
-      setPdfError("Please select a PDF file.");
+      setPdfError(
+        "Please select a valid PDF file."
+      );
       return;
     }
 
     if (file.size > 20 * 1024 * 1024) {
       setPdfFile(null);
-      setPdfError("Maximum PDF size is 20 MB.");
+      setPdfError(
+        "Maximum PDF size is 20 MB."
+      );
       return;
     }
 
     setPdfFile(file);
-    setPdfStatus("PDF selected and ready.");
+
+    setPdfStatus(
+      "PDF selected. Ready for conversion."
+    );
   }
 
   /* =======================================================
-     PDF SEND
+     PDF CONVERT
      ======================================================= */
 
   async function handlePdfConvert() {
     if (!pdfFile) {
-      setPdfError("Please select a PDF file first.");
+      setPdfError(
+        "Please select a PDF file first."
+      );
       return;
     }
 
     setPdfLoading(true);
+
     setPdfError("");
-    setPdfStatus("Uploading PDF...");
+
+    setPdfStatus(
+      "Uploading PDF to conversion server..."
+    );
+
+    setDownloadReady(false);
+
+    setDownloadUrl("");
 
     try {
-      const result = await sendPdfToFunction(pdfFile);
+      const result =
+        await convertPdfToWord(pdfFile);
 
-      if (result?.success) {
-        setPdfStatus(
-          "PDF processed successfully. Your Word file is ready."
+      if (result.type === "blob") {
+        const url =
+          URL.createObjectURL(result.blob);
+
+        setDownloadUrl(url);
+
+        setDownloadFilename(
+          result.filename ||
+            "converted-document.docx"
         );
-      } else {
+
+        setDownloadReady(true);
+
         setPdfStatus(
-          result?.message ||
-            "PDF was received by the processing server."
+          "Conversion completed successfully!"
+        );
+      } else if (result.type === "url") {
+        setDownloadUrl(result.url);
+
+        setDownloadFilename(
+          result.filename ||
+            "converted-document.docx"
+        );
+
+        setDownloadReady(true);
+
+        setPdfStatus(
+          "Conversion completed successfully!"
         );
       }
     } catch (error) {
-      console.error(error);
+      console.error(
+        "PDF conversion error:",
+        error
+      );
 
       setPdfError(
         error?.message ||
-          "Unable to connect to the PDF processing server."
+          "Unable to convert PDF. Please try again."
       );
 
       setPdfStatus("");
@@ -309,7 +483,30 @@ function App() {
   }
 
   /* =======================================================
-     SEO ANALYZER
+     DOWNLOAD
+     ======================================================= */
+
+  function downloadConvertedFile() {
+    if (!downloadUrl) return;
+
+    const link =
+      document.createElement("a");
+
+    link.href = downloadUrl;
+
+    link.download =
+      downloadFilename ||
+      "converted-document.docx";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+  }
+
+  /* =======================================================
+     SEO
      ======================================================= */
 
   function analyzeSEO() {
@@ -320,34 +517,52 @@ function App() {
       return;
     }
 
-    const words = text.split(/\s+/).filter(Boolean);
+    const words =
+      text.split(/\s+/).filter(Boolean);
+
     const characters = text.length;
-    const sentences = text
-      .split(/[.!?]+/)
-      .filter((x) => x.trim()).length;
 
-    const headings = (
-      text.match(
-        /(^|\n)(title|h1|h2|h3|heading)/gi
-      ) || []
-    ).length;
+    const sentences =
+      text
+        .split(/[.!?]+/)
+        .filter((x) => x.trim()).length;
 
-    const keywordLikeWords = [...new Set(
-      words
-        .map((word) =>
-          word
-            .toLowerCase()
-            .replace(/[^a-z0-9-]/g, "")
-        )
-        .filter((word) => word.length >= 5)
-    )].slice(0, 10);
+    const headings =
+      (
+        text.match(
+          /(^|\n)(title|h1|h2|h3|heading)/gi
+        ) || []
+      ).length;
+
+    const keywordWords = [
+      ...new Set(
+        words
+          .map((word) =>
+            word
+              .toLowerCase()
+              .replace(/[^a-z0-9-]/g, "")
+          )
+          .filter(
+            (word) => word.length >= 5
+          )
+      ),
+    ].slice(0, 10);
 
     const score = Math.min(
       100,
       35 +
-        Math.min(25, words.length / 8) +
-        Math.min(20, sentences * 2) +
-        Math.min(10, headings * 5) +
+        Math.min(
+          25,
+          words.length / 8
+        ) +
+        Math.min(
+          20,
+          sentences * 2
+        ) +
+        Math.min(
+          10,
+          headings * 5
+        ) +
         (characters > 300 ? 10 : 0)
     );
 
@@ -357,29 +572,35 @@ function App() {
       characters,
       sentences,
       headings,
+      keywordIdeas: keywordWords,
       suggestions: [
         words.length < 300
-          ? "Add more useful content to improve topical depth."
+          ? "Add more useful content for better topical depth."
           : "Content length looks reasonable.",
+
         headings === 0
-          ? "Add clear headings such as H1 and H2."
+          ? "Add clear H1 and H2 headings."
           : "Heading structure detected.",
-        sentences > 0 && words.length / sentences > 25
+
+        sentences > 0 &&
+        words.length / sentences > 25
           ? "Some sentences are long. Consider shorter sentences."
           : "Sentence length looks reasonable.",
-        "Add your primary keyword naturally in the title, introduction and headings.",
+
+        "Use your main keyword naturally in the title and introduction.",
+
         "Add a useful meta description when publishing the page.",
       ],
-      keywordIdeas: keywordLikeWords,
     });
   }
 
   /* =======================================================
-     KEYWORD GENERATOR
+     KEYWORDS
      ======================================================= */
 
   function generateKeywords() {
-    const input = keywordInput.trim().toLowerCase();
+    const input =
+      keywordInput.trim().toLowerCase();
 
     if (!input) {
       setKeywords([]);
@@ -409,25 +630,27 @@ function App() {
       `${base} 2026`,
     ];
 
-    setKeywords([...new Set(generated)]);
+    setKeywords([
+      ...new Set(generated),
+    ]);
   }
 
   /* =======================================================
-     TEXT TO VIDEO
+     VIDEO
      ======================================================= */
 
   function generateVideoScript() {
-    const text = videoText.trim();
+    const text =
+      videoText.trim();
 
     if (!text) {
       setVideoResult("");
       return;
     }
 
-    setVideoResult(
-      `VIDEO SCRIPT
+    const script = `VIDEO SCRIPT
 
-Title:
+TITLE:
 ${text}
 
 HOOK:
@@ -437,14 +660,19 @@ INTRO:
 In this video, we will explain ${text} and why it matters.
 
 MAIN POINTS:
+
 1. What is ${text}?
+
 2. Why is ${text} useful?
+
 3. How can beginners use it?
+
 4. What are the most important things to remember?
 
 CALL TO ACTION:
-If you found this useful, save this video, share it and follow for more helpful content.`
-    );
+If you found this useful, save this video, share it and follow for more helpful content.`;
+
+    setVideoResult(script);
   }
 
   /* =======================================================
@@ -452,47 +680,60 @@ If you found this useful, save this video, share it and follow for more helpful 
      ======================================================= */
 
   function formatCode() {
-    const text = codeInput.trim();
+    const text =
+      codeInput.trim();
 
     if (!text) {
       setCodeResult("");
       return;
     }
 
-    let formatted = text
-      .replace(/\{/g, "{\n")
-      .replace(/\}/g, "\n}\n")
-      .replace(/;/g, ";\n")
-      .replace(/\n\s*\n/g, "\n");
+    let formatted =
+      text
+        .replace(/\{/g, "{\n")
+        .replace(/\}/g, "\n}\n")
+        .replace(/;/g, ";\n")
+        .replace(/\n\s*\n/g, "\n");
 
-    const lines = formatted
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
+    const lines =
+      formatted
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean);
 
     let indent = 0;
 
-    const output = lines.map((line) => {
-      if (line.startsWith("}")) {
-        indent = Math.max(0, indent - 1);
-      }
-
-      const result =
-        "  ".repeat(indent) + line;
-
-      if (
-        line.endsWith("{") ||
-        line.includes("{")
-      ) {
-        if (!line.startsWith("}")) {
-          indent++;
+    const output =
+      lines.map((line) => {
+        if (line.startsWith("}")) {
+          indent =
+            Math.max(
+              0,
+              indent - 1
+            );
         }
-      }
 
-      return result;
-    });
+        const result =
+          "  ".repeat(indent) +
+          line;
 
-    setCodeResult(output.join("\n"));
+        if (
+          line.endsWith("{") ||
+          line.includes("{")
+        ) {
+          if (
+            !line.startsWith("}")
+          ) {
+            indent++;
+          }
+        }
+
+        return result;
+      });
+
+    setCodeResult(
+      output.join("\n")
+    );
   }
 
   /* =======================================================
@@ -500,52 +741,71 @@ If you found this useful, save this video, share it and follow for more helpful 
      ======================================================= */
 
   function calculate() {
-    const expression = calcInput.trim();
+    const expression =
+      calcInput.trim();
 
     if (!expression) {
       setCalcResult("");
       return;
     }
 
-    // Basic calculator only.
-    // No eval().
-    if (!/^[0-9+\-*/().%\s]+$/.test(expression)) {
-      setCalcResult("Invalid expression");
+    if (
+      !/^[0-9+\-*/().%\s]+$/.test(
+        expression
+      )
+    ) {
+      setCalcResult(
+        "Invalid expression"
+      );
       return;
     }
 
     try {
-      const sanitized = expression.replace(
-        /(\d+(?:\.\d+)?)%/g,
-        "($1/100)"
-      );
+      const sanitized =
+        expression.replace(
+          /(\d+(?:\.\d+)?)%/g,
+          "($1/100)"
+        );
 
-      const result = Function(
-        `"use strict"; return (${sanitized})`
-      )();
+      const result =
+        Function(
+          `"use strict"; return (${sanitized})`
+        )();
 
-      if (!Number.isFinite(result)) {
-        setCalcResult("Invalid calculation");
+      if (
+        !Number.isFinite(result)
+      ) {
+        setCalcResult(
+          "Invalid calculation"
+        );
       } else {
-        setCalcResult(String(result));
+        setCalcResult(
+          String(result)
+        );
       }
     } catch {
-      setCalcResult("Invalid expression");
+      setCalcResult(
+        "Invalid expression"
+      );
     }
   }
 
   /* =======================================================
-     OPEN TOOL
+     TOOL OPEN
      ======================================================= */
 
   function openTool(tool) {
     setActiveTool(tool.id);
+
     setPdfError("");
+
     setPdfStatus("");
 
     setTimeout(() => {
       document
-        .getElementById("tool-workspace")
+        .getElementById(
+          "tool-workspace"
+        )
         ?.scrollIntoView({
           behavior: "smooth",
           block: "start",
@@ -563,9 +823,13 @@ If you found this useful, save this video, share it and follow for more helpful 
 
   async function copyText(text) {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(
+        text
+      );
     } catch {
-      console.log("Copy failed");
+      console.log(
+        "Copy failed"
+      );
     }
   }
 
@@ -575,73 +839,111 @@ If you found this useful, save this video, share it and follow for more helpful 
 
   return (
     <div className="app">
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
+
+      {/* HEADER */}
 
       <header className="header">
         <div className="container nav">
+
           <button
             className="logo"
-            onClick={() => scrollToId("home")}
+            onClick={() =>
+              scrollToId("home")
+            }
           >
             <span className="logoIcon">
               <Wrench size={20} />
             </span>
 
-            <span>
-              <strong>ToolMaster</strong>
-              <small>Pro</small>
+            <span className="logoText">
+              <strong>
+                ToolMaster
+              </strong>
+
+              <small>
+                Pro
+              </small>
             </span>
           </button>
 
-          <nav className={mobileMenu ? "navLinks open" : "navLinks"}>
-            <button onClick={() => {
-              scrollToId("home");
-              setMobileMenu(false);
-            }}>
+          <nav
+            className={
+              mobileMenu
+                ? "navLinks open"
+                : "navLinks"
+            }
+          >
+            <button
+              onClick={() => {
+                scrollToId("home");
+                setMobileMenu(false);
+              }}
+            >
               Home
             </button>
 
-            <button onClick={() => {
-              scrollToId("tools");
-              setMobileMenu(false);
-            }}>
+            <button
+              onClick={() => {
+                scrollToId("tools");
+                setMobileMenu(false);
+              }}
+            >
               Tools
             </button>
 
-            <button onClick={() => {
-              scrollToId("categories");
-              setMobileMenu(false);
-            }}>
+            <button
+              onClick={() => {
+                scrollToId(
+                  "categories"
+                );
+                setMobileMenu(false);
+              }}
+            >
               Categories
             </button>
 
-            <button onClick={() => {
-              scrollToId("about");
-              setMobileMenu(false);
-            }}>
+            <button
+              onClick={() => {
+                scrollToId("about");
+                setMobileMenu(false);
+              }}
+            >
               About
             </button>
           </nav>
 
           <button
             className="mobileMenu"
-            onClick={() => setMobileMenu(!mobileMenu)}
+            onClick={() =>
+              setMobileMenu(
+                !mobileMenu
+              )
+            }
           >
-            {mobileMenu ? <X /> : <Menu />}
+            {mobileMenu ? (
+              <X />
+            ) : (
+              <Menu />
+            )}
           </button>
+
         </div>
       </header>
 
-      {/* =====================================================
-          HERO
-      ===================================================== */}
+      {/* MAIN */}
 
       <main>
-        <section id="home" className="hero">
+
+        {/* HERO */}
+
+        <section
+          id="home"
+          className="hero"
+        >
           <div className="container heroGrid">
-            <div>
+
+            <div className="heroContent">
+
               <div className="badge">
                 <Sparkles size={15} />
                 All-in-one online tools
@@ -649,19 +951,26 @@ If you found this useful, save this video, share it and follow for more helpful 
 
               <h1>
                 Powerful Tools.
-                <span> Simple Results.</span>
+                <span>
+                  {" "}Simple Results.
+                </span>
               </h1>
 
               <p>
-                Convert files, generate keywords, analyze SEO,
-                create content and use useful online utilities —
+                Convert files, generate
+                keywords, analyze SEO,
+                create content and use
+                useful online utilities —
                 all in one place.
               </p>
 
               <div className="heroButtons">
+
                 <button
                   className="primaryButton"
-                  onClick={() => scrollToId("tools")}
+                  onClick={() =>
+                    scrollToId("tools")
+                  }
                 >
                   Our Tools
                   <ArrowRight size={18} />
@@ -669,177 +978,269 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                 <button
                   className="secondaryButton"
-                  onClick={() => scrollToId("about")}
+                  onClick={() =>
+                    scrollToId("about")
+                  }
                 >
                   Learn More
                 </button>
+
               </div>
+
             </div>
 
             <div className="heroCard">
+
               <div className="heroCardIcon">
                 <Wrench size={42} />
               </div>
 
-              <h3>Everything in one place</h3>
+              <h3>
+                Everything in one place
+              </h3>
 
               <p>
-                Simple utilities for files, SEO, content,
-                development and everyday work.
+                Simple utilities for
+                files, SEO, content,
+                development and
+                everyday work.
               </p>
 
               <div className="miniStats">
+
                 <div>
-                  <strong>{tools.length}+</strong>
-                  <span>Tools</span>
+                  <strong>
+                    {tools.length}+
+                  </strong>
+
+                  <span>
+                    Tools
+                  </span>
                 </div>
 
                 <div>
-                  <strong>24/7</strong>
-                  <span>Available</span>
+                  <strong>
+                    24/7
+                  </strong>
+
+                  <span>
+                    Available
+                  </span>
                 </div>
 
                 <div>
-                  <strong>Fast</strong>
-                  <span>Results</span>
+                  <strong>
+                    Fast
+                  </strong>
+
+                  <span>
+                    Results
+                  </span>
                 </div>
+
               </div>
+
             </div>
+
           </div>
         </section>
 
-        {/* ===================================================
-            TOOLS
-        =================================================== */}
+        {/* TOOLS */}
 
-        <section id="tools" className="section">
+        <section
+          id="tools"
+          className="section"
+        >
           <div className="container">
+
             <div className="sectionHeading">
+
               <div>
                 <div className="eyebrow">
                   <Wrench size={15} />
                   OUR TOOLS
                 </div>
 
-                <h2>Everything you need</h2>
+                <h2>
+                  Everything you need
+                </h2>
 
                 <p>
-                  Choose a tool and start working instantly.
+                  Choose a tool and
+                  start working instantly.
                 </p>
               </div>
 
               <div className="searchBox">
+
                 <Search size={18} />
 
                 <input
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) =>
+                    setSearch(
+                      e.target.value
+                    )
+                  }
                   placeholder="Search tools..."
                 />
+
               </div>
+
             </div>
 
             <div className="toolGrid">
-              {filteredTools.map((tool) => {
-                const Icon = tool.icon;
 
-                return (
-                  <div className="toolCard" key={tool.id}>
-                    <div className="toolIcon">
-                      <Icon size={24} />
-                    </div>
+              {filteredTools.map(
+                (tool) => {
+                  const Icon =
+                    tool.icon;
 
-                    <div className="toolCategory">
-                      {tool.category}
-                    </div>
-
-                    <h3>{tool.name}</h3>
-
-                    <p>{tool.description}</p>
-
-                    <button
-                      className="toolButton"
-                      onClick={() => openTool(tool)}
+                  return (
+                    <div
+                      className="toolCard"
+                      key={tool.id}
                     >
-                      Use Tool
-                      <ArrowRight size={17} />
-                    </button>
-                  </div>
-                );
-              })}
+
+                      <div className="toolIcon">
+                        <Icon size={24} />
+                      </div>
+
+                      <div className="toolCategory">
+                        {tool.category}
+                      </div>
+
+                      <h3>
+                        {tool.name}
+                      </h3>
+
+                      <p>
+                        {tool.description}
+                      </p>
+
+                      <button
+                        className="toolButton"
+                        onClick={() =>
+                          openTool(tool)
+                        }
+                      >
+                        Use Tool
+                        <ArrowRight size={17} />
+                      </button>
+
+                    </div>
+                  );
+                }
+              )}
+
             </div>
 
             {filteredTools.length === 0 && (
               <div className="empty">
                 <Search size={30} />
-                <h3>No tools found</h3>
-                <p>Try another search.</p>
+
+                <h3>
+                  No tools found
+                </h3>
+
+                <p>
+                  Try another search.
+                </p>
               </div>
             )}
+
           </div>
         </section>
 
-        {/* ===================================================
-            CATEGORIES
-        =================================================== */}
+        {/* CATEGORIES */}
 
-        <section id="categories" className="section soft">
+        <section
+          id="categories"
+          className="section soft"
+        >
           <div className="container">
+
             <div className="sectionHeading centered">
+
               <div>
                 <div className="eyebrow">
                   CATEGORIES
                 </div>
 
-                <h2>Find the right tool</h2>
+                <h2>
+                  Find the right tool
+                </h2>
 
                 <p>
-                  Browse ToolMaster by category.
+                  Browse ToolMaster
+                  by category.
                 </p>
               </div>
+
             </div>
 
             <div className="categoryGrid">
-              {categories.map((item) => (
-                <button
-                  key={item}
-                  className={
-                    category === item
-                      ? "categoryCard active"
-                      : "categoryCard"
-                  }
-                  onClick={() => {
-                    setCategory(item);
-                    scrollToId("tools");
-                  }}
-                >
-                  {item}
-                </button>
-              ))}
+
+              {categories.map(
+                (item) => (
+                  <button
+                    key={item}
+                    className={
+                      category === item
+                        ? "categoryCard active"
+                        : "categoryCard"
+                    }
+                    onClick={() => {
+                      setCategory(
+                        item
+                      );
+
+                      scrollToId(
+                        "tools"
+                      );
+                    }}
+                  >
+                    {item}
+                  </button>
+                )
+              )}
+
             </div>
+
           </div>
         </section>
 
-        {/* ===================================================
-            WORKSPACE
-        =================================================== */}
+        {/* WORKSPACE */}
 
         <section
           id="tool-workspace"
           className="workspaceSection"
         >
           <div className="container">
+
             {!activeTool ? (
+
               <div className="workspaceEmpty">
+
                 <Wrench size={40} />
-                <h2>Select a tool</h2>
+
+                <h2>
+                  Select a tool
+                </h2>
+
                 <p>
-                  Choose any tool above to start working.
+                  Choose any tool above
+                  to start working.
                 </p>
+
               </div>
+
             ) : (
+
               <div className="workspace">
+
                 <div className="workspaceHeader">
+
                   <div>
                     <div className="eyebrow">
                       TOOL WORKSPACE
@@ -848,7 +1249,9 @@ If you found this useful, save this video, share it and follow for more helpful 
                     <h2>
                       {
                         tools.find(
-                          (x) => x.id === activeTool
+                          (x) =>
+                            x.id ===
+                            activeTool
                         )?.name
                       }
                     </h2>
@@ -856,19 +1259,23 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                   <button
                     className="closeButton"
-                    onClick={closeTool}
+                    onClick={
+                      closeTool
+                    }
                   >
                     <X size={20} />
                   </button>
+
                 </div>
 
-                {/* =========================================
-                    PDF TO WORD
-                ========================================= */}
+                {/* PDF */}
 
                 {activeTool === "pdf" && (
+
                   <div className="toolWorkspace">
+
                     <div className="uploadArea">
+
                       <div className="uploadIcon">
                         <Upload size={35} />
                       </div>
@@ -878,103 +1285,179 @@ If you found this useful, save this video, share it and follow for more helpful 
                       </h3>
 
                       <p>
-                        Select a PDF file up to 20 MB.
+                        Select a PDF file
+                        up to 20 MB.
                       </p>
 
                       <label className="uploadButton">
+
                         <Upload size={18} />
+
                         Select PDF
+
                         <input
                           type="file"
                           accept="application/pdf,.pdf"
-                          onChange={handlePdfSelect}
+                          onChange={
+                            handlePdfSelect
+                          }
                           hidden
                         />
+
                       </label>
 
                       {pdfFile && (
                         <div className="selectedFile">
+
                           <FileText size={22} />
 
                           <div>
+
                             <strong>
                               {pdfFile.name}
                             </strong>
 
                             <span>
-                              {formatBytes(pdfFile.size)}
+                              {formatBytes(
+                                pdfFile.size
+                              )}
                             </span>
+
                           </div>
 
                           <CheckCircle2
                             size={20}
                           />
+
                         </div>
                       )}
 
                       {pdfError && (
                         <div className="message error">
-                          <AlertCircle size={18} />
-                          {pdfError}
+
+                          <AlertCircle
+                            size={18}
+                          />
+
+                          <span>
+                            {pdfError}
+                          </span>
+
                         </div>
                       )}
 
-                      {pdfStatus && !pdfError && (
-                        <div className="message success">
-                          <CheckCircle2 size={18} />
-                          {pdfStatus}
-                        </div>
-                      )}
+                      {pdfStatus &&
+                        !pdfError && (
+                          <div className="message success">
+
+                            <CheckCircle2
+                              size={18}
+                            />
+
+                            <span>
+                              {pdfStatus}
+                            </span>
+
+                          </div>
+                        )}
 
                       <button
                         className="primaryButton convertButton"
                         disabled={
-                          !pdfFile || pdfLoading
+                          !pdfFile ||
+                          pdfLoading
                         }
-                        onClick={handlePdfConvert}
+                        onClick={
+                          handlePdfConvert
+                        }
                       >
+
                         {pdfLoading ? (
                           <>
                             <Loader2
                               size={18}
                               className="spin"
                             />
-                            Processing...
+
+                            Converting...
                           </>
                         ) : (
                           <>
                             Convert PDF to Word
-                            <ArrowRight size={18} />
+
+                            <ArrowRight
+                              size={18}
+                            />
                           </>
                         )}
+
                       </button>
 
+                      {downloadReady && (
+                        <div className="downloadArea">
+
+                          <CheckCircle2
+                            size={28}
+                          />
+
+                          <h3>
+                            Word file is ready
+                          </h3>
+
+                          <p>
+                            Your PDF has
+                            been converted.
+                          </p>
+
+                          <button
+                            className="downloadButton"
+                            onClick={
+                              downloadConvertedFile
+                            }
+                          >
+                            <Download
+                              size={18}
+                            />
+
+                            Download Word File
+                          </button>
+
+                        </div>
+                      )}
+
                       <p className="workspaceNote">
-                        Your file is securely sent to the
-                        ToolMaster PDF processing function.
+                        PDF files are processed
+                        through your Supabase
+                        Edge Function.
                       </p>
+
                     </div>
+
                   </div>
                 )}
 
-                {/* =========================================
-                    VIDEO
-                ========================================= */}
+                {/* VIDEO */}
 
                 {activeTool === "video" && (
+
                   <div className="toolWorkspace">
+
                     <textarea
                       className="largeTextarea"
                       value={videoText}
                       onChange={(e) =>
-                        setVideoText(e.target.value)
+                        setVideoText(
+                          e.target.value
+                        )
                       }
                       placeholder="Enter your video idea..."
                     />
 
                     <button
                       className="primaryButton"
-                      onClick={generateVideoScript}
+                      onClick={
+                        generateVideoScript
+                      }
                     >
                       Generate Script
                       <Sparkles size={18} />
@@ -982,46 +1465,57 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                     {videoResult && (
                       <div className="resultBox">
+
                         <div className="resultHeader">
+
                           <strong>
                             Video Script
                           </strong>
 
                           <button
                             onClick={() =>
-                              copyText(videoResult)
+                              copyText(
+                                videoResult
+                              )
                             }
                           >
                             <Copy size={17} />
                           </button>
+
                         </div>
 
                         <pre>
                           {videoResult}
                         </pre>
+
                       </div>
                     )}
+
                   </div>
                 )}
 
-                {/* =========================================
-                    SEO
-                ========================================= */}
+                {/* SEO */}
 
                 {activeTool === "seo" && (
+
                   <div className="toolWorkspace">
+
                     <textarea
                       className="largeTextarea"
                       value={seoText}
                       onChange={(e) =>
-                        setSeoText(e.target.value)
+                        setSeoText(
+                          e.target.value
+                        )
                       }
                       placeholder="Paste your content here..."
                     />
 
                     <button
                       className="primaryButton"
-                      onClick={analyzeSEO}
+                      onClick={
+                        analyzeSEO
+                      }
                     >
                       Analyze SEO
                       <BarChart3 size={18} />
@@ -1029,195 +1523,263 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                     {seoResult && (
                       <div className="seoResults">
+
                         <div className="scoreCard">
+
                           <strong>
                             {seoResult.score}
                           </strong>
+
                           <span>
                             SEO Score
                           </span>
+
                         </div>
 
                         <div className="statGrid">
+
                           <div>
                             <strong>
                               {seoResult.words}
                             </strong>
-                            <span>Words</span>
+                            <span>
+                              Words
+                            </span>
                           </div>
 
                           <div>
                             <strong>
                               {seoResult.characters}
                             </strong>
-                            <span>Characters</span>
+                            <span>
+                              Characters
+                            </span>
                           </div>
 
                           <div>
                             <strong>
                               {seoResult.sentences}
                             </strong>
-                            <span>Sentences</span>
+                            <span>
+                              Sentences
+                            </span>
                           </div>
 
                           <div>
                             <strong>
                               {seoResult.headings}
                             </strong>
-                            <span>Headings</span>
+                            <span>
+                              Headings
+                            </span>
                           </div>
+
                         </div>
 
                         <div className="suggestions">
+
                           <h3>
                             Suggestions
                           </h3>
 
                           {seoResult.suggestions.map(
-                            (item, index) => (
+                            (
+                              item,
+                              index
+                            ) => (
                               <div
                                 key={index}
                                 className="suggestion"
                               >
+
                                 <CheckCircle2
                                   size={18}
                                 />
+
                                 {item}
+
                               </div>
                             )
                           )}
+
                         </div>
+
                       </div>
                     )}
+
                   </div>
                 )}
 
-                {/* =========================================
-                    KEYWORDS
-                ========================================= */}
+                {/* KEYWORDS */}
 
                 {activeTool === "keywords" && (
+
                   <div className="toolWorkspace">
+
                     <input
                       className="largeInput"
-                      value={keywordInput}
+                      value={
+                        keywordInput
+                      }
                       onChange={(e) =>
-                        setKeywordInput(e.target.value)
+                        setKeywordInput(
+                          e.target.value
+                        )
                       }
                       placeholder="Enter a topic, e.g. digital marketing"
                     />
 
                     <button
                       className="primaryButton"
-                      onClick={generateKeywords}
+                      onClick={
+                        generateKeywords
+                      }
                     >
                       Generate Keywords
                       <KeyRound size={18} />
                     </button>
 
                     {keywords.length > 0 && (
-                      <div className="keywordResults">
-                        {keywords.map((keyword) => (
-                          <div
-                            className="keywordChip"
-                            key={keyword}
-                          >
-                            {keyword}
 
-                            <button
-                              onClick={() =>
-                                copyText(keyword)
-                              }
+                      <div className="keywordResults">
+
+                        {keywords.map(
+                          (keyword) => (
+                            <div
+                              className="keywordChip"
+                              key={keyword}
                             >
-                              <Copy size={14} />
-                            </button>
-                          </div>
-                        ))}
+
+                              {keyword}
+
+                              <button
+                                onClick={() =>
+                                  copyText(
+                                    keyword
+                                  )
+                                }
+                              >
+                                <Copy
+                                  size={14}
+                                />
+                              </button>
+
+                            </div>
+                          )
+                        )}
+
                       </div>
+
                     )}
+
                   </div>
                 )}
 
-                {/* =========================================
-                    IMAGE
-                ========================================= */}
+                {/* IMAGE */}
 
                 {activeTool === "image" && (
+
                   <div className="toolWorkspace">
+
                     <div className="comingSoon">
+
                       <ImageIcon size={40} />
+
                       <h3>
                         Image Tools
                       </h3>
+
                       <p>
-                        Image processing tools are being
-                        prepared for the next processing phase.
+                        Image processing
+                        tools are coming
+                        in the next phase.
                       </p>
+
                     </div>
+
                   </div>
                 )}
 
-                {/* =========================================
-                    CODE
-                ========================================= */}
+                {/* CODE */}
 
                 {activeTool === "code" && (
+
                   <div className="toolWorkspace">
+
                     <textarea
                       className="codeTextarea"
                       value={codeInput}
                       onChange={(e) =>
-                        setCodeInput(e.target.value)
+                        setCodeInput(
+                          e.target.value
+                        )
                       }
                       placeholder="Paste your code here..."
                     />
 
                     <button
                       className="primaryButton"
-                      onClick={formatCode}
+                      onClick={
+                        formatCode
+                      }
                     >
                       Format Code
                       <Code2 size={18} />
                     </button>
 
                     {codeResult && (
+
                       <div className="resultBox">
+
                         <div className="resultHeader">
+
                           <strong>
                             Formatted Code
                           </strong>
 
                           <button
                             onClick={() =>
-                              copyText(codeResult)
+                              copyText(
+                                codeResult
+                              )
                             }
                           >
                             <Copy size={17} />
                           </button>
+
                         </div>
 
                         <pre>
                           {codeResult}
                         </pre>
+
                       </div>
                     )}
+
                   </div>
                 )}
 
-                {/* =========================================
-                    CALCULATOR
-                ========================================= */}
+                {/* CALCULATOR */}
 
                 {activeTool === "calculator" && (
+
                   <div className="toolWorkspace calculator">
+
                     <input
                       className="calculatorInput"
-                      value={calcInput}
+                      value={
+                        calcInput
+                      }
                       onChange={(e) =>
-                        setCalcInput(e.target.value)
+                        setCalcInput(
+                          e.target.value
+                        )
                       }
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") {
+                        if (
+                          e.key ===
+                          "Enter"
+                        ) {
                           calculate();
                         }
                       }}
@@ -1226,10 +1788,14 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                     <button
                       className="primaryButton"
-                      onClick={calculate}
+                      onClick={
+                        calculate
+                      }
                     >
                       Calculate
-                      <Calculator size={18} />
+                      <Calculator
+                        size={18}
+                      />
                     </button>
 
                     {calcResult && (
@@ -1237,99 +1803,136 @@ If you found this useful, save this video, share it and follow for more helpful 
                         {calcResult}
                       </div>
                     )}
+
                   </div>
                 )}
+
               </div>
             )}
+
           </div>
         </section>
 
-        {/* ===================================================
-            FEATURES
-        =================================================== */}
+        {/* FEATURES */}
 
         <section className="section soft">
+
           <div className="container featureGrid">
+
             <div className="featureCard">
               <Zap size={28} />
-              <h3>Fast</h3>
+
+              <h3>
+                Fast
+              </h3>
+
               <p>
-                Quick and simple tools designed for
+                Quick and simple
+                tools designed for
                 everyday tasks.
               </p>
             </div>
 
             <div className="featureCard">
               <ShieldCheck size={28} />
-              <h3>Secure</h3>
+
+              <h3>
+                Secure
+              </h3>
+
               <p>
-                Your workflow is designed with privacy
+                Your workflow is
+                designed with privacy
                 and security in mind.
               </p>
             </div>
 
             <div className="featureCard">
               <Sparkles size={28} />
-              <h3>Useful</h3>
+
+              <h3>
+                Useful
+              </h3>
+
               <p>
-                A growing collection of practical
-                online utilities.
+                A growing collection
+                of practical online
+                utilities.
               </p>
             </div>
+
           </div>
+
         </section>
 
-        {/* ===================================================
-            ABOUT
-        =================================================== */}
+        {/* ABOUT */}
 
-        <section id="about" className="section">
+        <section
+          id="about"
+          className="section"
+        >
+
           <div className="container about">
+
             <div className="eyebrow">
               ABOUT TOOLMASTER
             </div>
 
             <h2>
-              One place for your everyday digital tools.
+              One place for your everyday
+              digital tools.
             </h2>
 
             <p>
-              ToolMaster Pro brings useful converters,
-              generators, SEO tools, calculators and
-              other utilities into one clean workspace.
+              ToolMaster Pro brings useful
+              converters, generators, SEO
+              tools, calculators and other
+              utilities into one clean
+              workspace.
             </p>
+
           </div>
+
         </section>
+
       </main>
 
-      {/* =====================================================
-          FOOTER
-      ===================================================== */}
+      {/* FOOTER */}
 
       <footer className="footer">
+
         <div className="container footerInner">
+
           <div className="footerBrand">
+
             <span className="logoIcon">
               <Wrench size={18} />
             </span>
 
             <strong>
-              ToolMaster<span>Pro</span>
+              ToolMaster
+              <span>
+                Pro
+              </span>
             </strong>
+
           </div>
 
           <p>
-            © 2026 ToolMaster Pro. All rights reserved.
+            © 2026 ToolMaster Pro.
+            All rights reserved.
           </p>
+
         </div>
+
       </footer>
 
       {/* =====================================================
-          INTERNAL CSS
-          No styles.css import required
+          CSS
       ===================================================== */}
 
       <style>{`
+
         * {
           box-sizing: border-box;
         }
@@ -1367,7 +1970,10 @@ If you found this useful, save this video, share it and follow for more helpful 
         }
 
         .container {
-          width: min(1160px, calc(100% - 40px));
+          width: min(
+            1160px,
+            calc(100% - 40px)
+          );
           margin: 0 auto;
         }
 
@@ -1375,16 +1981,20 @@ If you found this useful, save this video, share it and follow for more helpful 
           position: sticky;
           top: 0;
           z-index: 50;
-          background: rgba(255,255,255,.94);
-          backdrop-filter: blur(12px);
-          border-bottom: 1px solid #e2e8f0;
+          background:
+            rgba(255,255,255,.94);
+          backdrop-filter:
+            blur(12px);
+          border-bottom:
+            1px solid #e2e8f0;
         }
 
         .nav {
           min-height: 72px;
           display: flex;
           align-items: center;
-          justify-content: space-between;
+          justify-content:
+            space-between;
           gap: 24px;
         }
 
@@ -1397,7 +2007,7 @@ If you found this useful, save this video, share it and follow for more helpful 
           color: #0f172a;
         }
 
-        .logo span:last-child {
+        .logoText {
           display: flex;
           align-items: baseline;
           gap: 4px;
@@ -1405,7 +2015,6 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .logo strong {
           font-size: 20px;
-          letter-spacing: -.5px;
         }
 
         .logo small {
@@ -1462,7 +2071,8 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .heroGrid {
           display: grid;
-          grid-template-columns: 1.15fr .85fr;
+          grid-template-columns:
+            1.15fr .85fr;
           align-items: center;
           gap: 70px;
         }
@@ -1475,7 +2085,8 @@ If you found this useful, save this video, share it and follow for more helpful 
           padding: 8px 13px;
           border-radius: 999px;
           background: white;
-          border: 1px solid #e2e8f0;
+          border:
+            1px solid #e2e8f0;
           color: #475569;
           font-size: 13px;
           font-weight: 700;
@@ -1484,10 +2095,10 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .hero h1 {
           margin: 0;
-          font-size: clamp(42px, 6vw, 70px);
+          font-size:
+            clamp(42px, 6vw, 70px);
           line-height: 1.02;
           letter-spacing: -3px;
-          max-width: 750px;
         }
 
         .hero h1 span {
@@ -1511,7 +2122,8 @@ If you found this useful, save this video, share it and follow for more helpful 
         .primaryButton,
         .secondaryButton,
         .toolButton,
-        .uploadButton {
+        .uploadButton,
+        .downloadButton {
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -1519,7 +2131,8 @@ If you found this useful, save this video, share it and follow for more helpful 
           border-radius: 10px;
           padding: 12px 17px;
           font-weight: 700;
-          border: 1px solid transparent;
+          border:
+            1px solid transparent;
           transition: .2s ease;
         }
 
@@ -1530,7 +2143,8 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .primaryButton:hover:not(:disabled) {
           background: #1d4ed8;
-          transform: translateY(-1px);
+          transform:
+            translateY(-1px);
         }
 
         .primaryButton:disabled {
@@ -1541,19 +2155,19 @@ If you found this useful, save this video, share it and follow for more helpful 
         .secondaryButton {
           background: white;
           color: #0f172a;
-          border-color: #cbd5e1;
-        }
-
-        .secondaryButton:hover {
-          background: #f8fafc;
+          border-color:
+            #cbd5e1;
         }
 
         .heroCard {
           background: white;
-          border: 1px solid #e2e8f0;
+          border:
+            1px solid #e2e8f0;
           border-radius: 24px;
           padding: 34px;
-          box-shadow: 0 20px 60px rgba(15,23,42,.08);
+          box-shadow:
+            0 20px 60px
+            rgba(15,23,42,.08);
         }
 
         .heroCardIcon {
@@ -1579,7 +2193,8 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .miniStats {
           display: grid;
-          grid-template-columns: repeat(3,1fr);
+          grid-template-columns:
+            repeat(3,1fr);
           gap: 10px;
           margin-top: 25px;
         }
@@ -1594,10 +2209,6 @@ If you found this useful, save this video, share it and follow for more helpful 
         .miniStats strong,
         .miniStats span {
           display: block;
-        }
-
-        .miniStats strong {
-          font-size: 17px;
         }
 
         .miniStats span {
@@ -1618,12 +2229,13 @@ If you found this useful, save this video, share it and follow for more helpful 
         .sectionHeading {
           display: flex;
           align-items: end;
-          justify-content: space-between;
+          justify-content:
+            space-between;
           gap: 30px;
           margin-bottom: 35px;
         }
 
-        .sectionHeading.centered {
+        .centered {
           justify-content: center;
           text-align: center;
         }
@@ -1659,7 +2271,8 @@ If you found this useful, save this video, share it and follow for more helpful 
           align-items: center;
           gap: 9px;
           padding: 11px 13px;
-          border: 1px solid #cbd5e1;
+          border:
+            1px solid #cbd5e1;
           border-radius: 10px;
           background: white;
         }
@@ -1672,13 +2285,15 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .toolGrid {
           display: grid;
-          grid-template-columns: repeat(4,1fr);
+          grid-template-columns:
+            repeat(4,1fr);
           gap: 18px;
         }
 
         .toolCard {
           background: white;
-          border: 1px solid #e2e8f0;
+          border:
+            1px solid #e2e8f0;
           border-radius: 17px;
           padding: 23px;
           min-height: 285px;
@@ -1688,8 +2303,11 @@ If you found this useful, save this video, share it and follow for more helpful 
         }
 
         .toolCard:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 15px 40px rgba(15,23,42,.08);
+          transform:
+            translateY(-4px);
+          box-shadow:
+            0 15px 40px
+            rgba(15,23,42,.08);
         }
 
         .toolIcon {
@@ -1733,12 +2351,14 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .categoryGrid {
           display: grid;
-          grid-template-columns: repeat(7,1fr);
+          grid-template-columns:
+            repeat(7,1fr);
           gap: 12px;
         }
 
         .categoryCard {
-          border: 1px solid #e2e8f0;
+          border:
+            1px solid #e2e8f0;
           background: white;
           border-radius: 13px;
           padding: 17px 10px;
@@ -1759,8 +2379,11 @@ If you found this useful, save this video, share it and follow for more helpful 
         }
 
         .workspaceEmpty {
-          background: rgba(255,255,255,.05);
-          border: 1px solid rgba(255,255,255,.1);
+          background:
+            rgba(255,255,255,.05);
+          border:
+            1px solid
+            rgba(255,255,255,.1);
           color: white;
           border-radius: 22px;
           padding: 60px;
@@ -1775,15 +2398,19 @@ If you found this useful, save this video, share it and follow for more helpful 
           background: white;
           border-radius: 22px;
           overflow: hidden;
-          box-shadow: 0 25px 70px rgba(0,0,0,.2);
+          box-shadow:
+            0 25px 70px
+            rgba(0,0,0,.2);
         }
 
         .workspaceHeader {
           padding: 25px 28px;
           display: flex;
-          justify-content: space-between;
+          justify-content:
+            space-between;
           align-items: center;
-          border-bottom: 1px solid #e2e8f0;
+          border-bottom:
+            1px solid #e2e8f0;
         }
 
         .closeButton {
@@ -1801,7 +2428,8 @@ If you found this useful, save this video, share it and follow for more helpful 
         }
 
         .uploadArea {
-          border: 2px dashed #cbd5e1;
+          border:
+            2px dashed #cbd5e1;
           border-radius: 18px;
           padding: 45px 25px;
           text-align: center;
@@ -1811,7 +2439,8 @@ If you found this useful, save this video, share it and follow for more helpful 
         .uploadIcon {
           width: 70px;
           height: 70px;
-          margin: 0 auto 18px;
+          margin:
+            0 auto 18px;
           display: grid;
           place-items: center;
           border-radius: 18px;
@@ -1843,7 +2472,8 @@ If you found this useful, save this video, share it and follow for more helpful 
           gap: 13px;
           text-align: left;
           background: white;
-          border: 1px solid #e2e8f0;
+          border:
+            1px solid #e2e8f0;
           border-radius: 12px;
           padding: 14px;
         }
@@ -1886,13 +2516,15 @@ If you found this useful, save this video, share it and follow for more helpful 
         .message.error {
           background: #fef2f2;
           color: #b91c1c;
-          border: 1px solid #fecaca;
+          border:
+            1px solid #fecaca;
         }
 
         .message.success {
           background: #f0fdf4;
           color: #15803d;
-          border: 1px solid #bbf7d0;
+          border:
+            1px solid #bbf7d0;
         }
 
         .convertButton {
@@ -1903,8 +2535,37 @@ If you found this useful, save this video, share it and follow for more helpful 
           font-size: 12px !important;
         }
 
+        .downloadArea {
+          max-width: 600px;
+          margin: 25px auto 0;
+          padding: 25px;
+          background: #f0fdf4;
+          border:
+            1px solid #bbf7d0;
+          border-radius: 15px;
+        }
+
+        .downloadArea > svg {
+          color: #16a34a;
+        }
+
+        .downloadArea h3 {
+          margin-bottom: 5px;
+        }
+
+        .downloadButton {
+          margin-top: 10px;
+          background: #16a34a;
+          color: white;
+        }
+
+        .downloadButton:hover {
+          background: #15803d;
+        }
+
         .spin {
-          animation: spin 1s linear infinite;
+          animation:
+            spin 1s linear infinite;
         }
 
         @keyframes spin {
@@ -1918,7 +2579,8 @@ If you found this useful, save this video, share it and follow for more helpful 
         .largeInput,
         .calculatorInput {
           width: 100%;
-          border: 1px solid #cbd5e1;
+          border:
+            1px solid #cbd5e1;
           border-radius: 12px;
           padding: 15px;
           outline: none;
@@ -1939,7 +2601,9 @@ If you found this useful, save this video, share it and follow for more helpful 
         .codeTextarea {
           min-height: 300px;
           resize: vertical;
-          font-family: Consolas, monospace;
+          font-family:
+            Consolas,
+            monospace;
         }
 
         .largeTextarea:focus,
@@ -1947,12 +2611,14 @@ If you found this useful, save this video, share it and follow for more helpful 
         .largeInput:focus,
         .calculatorInput:focus {
           border-color: #2563eb;
-          box-shadow: 0 0 0 3px #dbeafe;
+          box-shadow:
+            0 0 0 3px #dbeafe;
         }
 
         .resultBox {
           margin-top: 25px;
-          border: 1px solid #e2e8f0;
+          border:
+            1px solid #e2e8f0;
           border-radius: 14px;
           overflow: hidden;
         }
@@ -1960,8 +2626,10 @@ If you found this useful, save this video, share it and follow for more helpful 
         .resultHeader {
           padding: 13px 15px;
           display: flex;
-          justify-content: space-between;
-          border-bottom: 1px solid #e2e8f0;
+          justify-content:
+            space-between;
+          border-bottom:
+            1px solid #e2e8f0;
           background: #f8fafc;
         }
 
@@ -1975,7 +2643,9 @@ If you found this useful, save this video, share it and follow for more helpful 
           padding: 20px;
           white-space: pre-wrap;
           overflow: auto;
-          font-family: Consolas, monospace;
+          font-family:
+            Consolas,
+            monospace;
           line-height: 1.6;
         }
 
@@ -2007,13 +2677,15 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .statGrid {
           display: grid;
-          grid-template-columns: repeat(4,1fr);
+          grid-template-columns:
+            repeat(4,1fr);
           gap: 12px;
         }
 
         .statGrid div {
           padding: 18px;
-          border: 1px solid #e2e8f0;
+          border:
+            1px solid #e2e8f0;
           border-radius: 12px;
         }
 
@@ -2036,16 +2708,13 @@ If you found this useful, save this video, share it and follow for more helpful 
           margin-top: 25px;
         }
 
-        .suggestions h3 {
-          margin-bottom: 12px;
-        }
-
         .suggestion {
           display: flex;
           gap: 9px;
           padding: 11px 0;
           color: #475569;
-          border-bottom: 1px solid #e2e8f0;
+          border-bottom:
+            1px solid #e2e8f0;
         }
 
         .suggestion svg {
@@ -2066,7 +2735,8 @@ If you found this useful, save this video, share it and follow for more helpful 
           gap: 8px;
           background: #eff6ff;
           color: #1d4ed8;
-          border: 1px solid #bfdbfe;
+          border:
+            1px solid #bfdbfe;
           border-radius: 999px;
           padding: 9px 12px;
           font-size: 14px;
@@ -2112,23 +2782,21 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .featureGrid {
           display: grid;
-          grid-template-columns: repeat(3,1fr);
+          grid-template-columns:
+            repeat(3,1fr);
           gap: 18px;
         }
 
         .featureCard {
           padding: 28px;
-          border: 1px solid #e2e8f0;
+          border:
+            1px solid #e2e8f0;
           border-radius: 17px;
           background: white;
         }
 
         .featureCard svg {
           color: #2563eb;
-        }
-
-        .featureCard h3 {
-          margin-bottom: 7px;
         }
 
         .featureCard p {
@@ -2139,10 +2807,6 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .about {
           max-width: 800px;
-        }
-
-        .about h2 {
-          margin-top: 0;
         }
 
         .about p {
@@ -2159,7 +2823,8 @@ If you found this useful, save this video, share it and follow for more helpful 
         .footerInner {
           display: flex;
           align-items: center;
-          justify-content: space-between;
+          justify-content:
+            space-between;
           gap: 20px;
         }
 
@@ -2187,22 +2852,31 @@ If you found this useful, save this video, share it and follow for more helpful 
         }
 
         @media (max-width: 950px) {
+
           .heroGrid {
             grid-template-columns: 1fr;
           }
 
           .toolGrid {
-            grid-template-columns: repeat(2,1fr);
+            grid-template-columns:
+              repeat(2,1fr);
           }
 
           .categoryGrid {
-            grid-template-columns: repeat(4,1fr);
+            grid-template-columns:
+              repeat(4,1fr);
           }
+
         }
 
         @media (max-width: 700px) {
+
           .container {
-            width: min(100% - 28px, 1160px);
+            width:
+              min(
+                100% - 28px,
+                1160px
+              );
           }
 
           .navLinks {
@@ -2212,8 +2886,10 @@ If you found this useful, save this video, share it and follow for more helpful 
             left: 0;
             right: 0;
             background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 10px 15px 15px;
+            border-bottom:
+              1px solid #e2e8f0;
+            padding:
+              10px 15px 15px;
             flex-direction: column;
             align-items: stretch;
           }
@@ -2259,7 +2935,8 @@ If you found this useful, save this video, share it and follow for more helpful 
           }
 
           .categoryGrid {
-            grid-template-columns: repeat(2,1fr);
+            grid-template-columns:
+              repeat(2,1fr);
           }
 
           .featureGrid {
@@ -2267,7 +2944,8 @@ If you found this useful, save this video, share it and follow for more helpful 
           }
 
           .statGrid {
-            grid-template-columns: repeat(2,1fr);
+            grid-template-columns:
+              repeat(2,1fr);
           }
 
           .footerInner {
@@ -2282,17 +2960,21 @@ If you found this useful, save this video, share it and follow for more helpful 
           .toolWorkspace {
             padding: 20px;
           }
+
         }
+
       `}</style>
+
     </div>
   );
 }
 
 /* =========================================================
-   START REACT
+   START
    ========================================================= */
 
-const rootElement = document.getElementById("root");
+const rootElement =
+  document.getElementById("root");
 
 if (rootElement) {
   createRoot(rootElement).render(
