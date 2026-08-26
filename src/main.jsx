@@ -10,21 +10,27 @@ import {
   Code2,
   Globe2,
   Calculator,
+  ArrowRight,
   ShieldCheck,
   Zap,
   Sparkles,
-  Upload,
   Download,
   Copy,
   Check,
-  ArrowRight,
-  Video,
-  FileOutput,
-  KeyRound,
-  BarChart3,
-  Type,
+  Upload,
+  Trash2,
   RefreshCw,
+  FileDown,
+  Type,
+  Video,
+  BarChart3,
+  KeyRound,
+  Lock,
+  Eye,
+  Hash,
+  Link as LinkIcon,
 } from "lucide-react";
+
 import "./styles.css";
 
 const TOOLS = [
@@ -32,83 +38,121 @@ const TOOLS = [
     id: "pdf-word",
     name: "PDF to Word",
     description: "Convert PDF documents into editable Word files.",
-    category: "PDF Tools",
-    icon: FileOutput,
+    category: "PDF",
+    icon: FileText,
   },
   {
     id: "pdf-text",
     name: "PDF to Text",
     description: "Extract readable text from PDF documents.",
-    category: "PDF Tools",
+    category: "PDF",
     icon: FileText,
+  },
+  {
+    id: "text-pdf",
+    name: "Text to PDF",
+    description: "Create a downloadable PDF from your text.",
+    category: "PDF",
+    icon: FileDown,
+  },
+  {
+    id: "image-compress",
+    name: "Image Compressor",
+    description: "Compress images directly in your browser.",
+    category: "Image",
+    icon: ImageIcon,
+  },
+  {
+    id: "image-converter",
+    name: "Image Converter",
+    description: "Convert images between common formats.",
+    category: "Image",
+    icon: ImageIcon,
   },
   {
     id: "text-video",
     name: "Text to Video",
-    description: "Turn your text idea into a video-ready script.",
-    category: "AI Tools",
+    description: "Prepare a video script and scene plan from text.",
+    category: "Video",
     icon: Video,
   },
   {
-    id: "seo",
+    id: "seo-analyzer",
     name: "SEO Analyzer",
-    description: "Analyze title, description, keywords and SEO score.",
-    category: "SEO Tools",
+    description: "Analyze title, description, headings and keyword usage.",
+    category: "SEO",
     icon: BarChart3,
   },
   {
-    id: "keyword",
+    id: "keyword-generator",
     name: "Keyword Generator",
-    description: "Generate useful SEO keyword ideas from your topic.",
-    category: "SEO Tools",
+    description: "Generate SEO keyword ideas from your topic.",
+    category: "SEO",
     icon: KeyRound,
+  },
+  {
+    id: "meta-generator",
+    name: "Meta Tag Generator",
+    description: "Generate SEO title and meta description suggestions.",
+    category: "SEO",
+    icon: Hash,
   },
   {
     id: "word-counter",
     name: "Word Counter",
-    description: "Count words, characters and sentences.",
-    category: "Text Tools",
+    description: "Count words, characters, sentences and paragraphs.",
+    category: "Text",
     icon: Type,
   },
   {
-    id: "case",
-    name: "Text Case Converter",
+    id: "case-converter",
+    name: "Case Converter",
     description: "Convert text to upper, lower and title case.",
-    category: "Text Tools",
-    icon: RefreshCw,
+    category: "Text",
+    icon: Type,
+  },
+  {
+    id: "text-cleaner",
+    name: "Text Cleaner",
+    description: "Remove extra spaces and clean your text.",
+    category: "Text",
+    icon: Sparkles,
   },
   {
     id: "calculator",
     name: "Calculator",
-    description: "Perform quick mathematical calculations.",
+    description: "Perform common mathematical calculations.",
     category: "Utility",
     icon: Calculator,
   },
   {
-    id: "image-info",
-    name: "Image Tool",
-    description: "Upload an image and inspect basic information.",
-    category: "Image Tools",
-    icon: ImageIcon,
+    id: "password",
+    name: "Password Generator",
+    description: "Generate strong random passwords.",
+    category: "Security",
+    icon: Lock,
   },
   {
-    id: "code",
-    name: "Code Formatter",
-    description: "Format and clean your code.",
-    category: "Developer Tools",
-    icon: Code2,
-  },
-  {
-    id: "website",
-    name: "Website Analyzer",
-    description: "Enter a website URL and get an analysis checklist.",
-    category: "SEO Tools",
-    icon: Globe2,
+    id: "url-checker",
+    name: "URL Generator",
+    description: "Create a clean URL slug from your text.",
+    category: "SEO",
+    icon: LinkIcon,
   },
 ];
 
-function downloadText(filename, text, type = "text/plain") {
-  const blob = new Blob([text], { type });
+const CATEGORIES = [
+  "All",
+  "PDF",
+  "Image",
+  "Video",
+  "SEO",
+  "Text",
+  "Utility",
+  "Security",
+];
+
+function downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -119,686 +163,1228 @@ function downloadText(filename, text, type = "text/plain") {
   URL.revokeObjectURL(url);
 }
 
-function ToolWorkspace({ tool, onClose }) {
-  const [file, setFile] = useState(null);
-  const [text, setText] = useState("");
-  const [result, setResult] = useState("");
-  const [copied, setCopied] = useState(false);
-  const [url, setUrl] = useState("");
-  const [keywords, setKeywords] = useState([]);
-  const [imageInfo, setImageInfo] = useState(null);
+function downloadText(text, filename, type = "text/plain") {
+  downloadBlob(new Blob([text], { type }), filename);
+}
 
-  const Icon = tool.icon;
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
 
-  const copyResult = async () => {
-    if (!result) return;
-    await navigator.clipboard.writeText(result);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+function generateKeywords(topic) {
+  if (!topic.trim()) return [];
+
+  const base = topic.trim();
+
+  return [
+    base,
+    `${base} online`,
+    `${base} free`,
+    `best ${base}`,
+    `${base} tool`,
+    `${base} guide`,
+    `${base} tutorial`,
+    `${base} tips`,
+    `${base} software`,
+    `${base} service`,
+    `${base} generator`,
+    `${base} converter`,
+    `${base} for beginners`,
+    `${base} 2026`,
+    `${base} free online`,
+  ];
+}
+
+function getTextStats(text) {
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const characters = text.length;
+  const charactersNoSpaces = text.replace(/\s/g, "").length;
+  const sentences = text.trim()
+    ? (text.match(/[.!?]+(?=\s|$)/g) || []).length
+    : 0;
+  const paragraphs = text.trim()
+    ? text.split(/\n\s*\n/).filter(Boolean).length
+    : 0;
+
+  return {
+    words,
+    characters,
+    charactersNoSpaces,
+    sentences,
+    paragraphs,
   };
-
-  const processTool = () => {
-    if (tool.id === "word-counter") {
-      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-      const chars = text.length;
-      const sentences = text
-        .split(/[.!?]+/)
-        .map((x) => x.trim())
-        .filter(Boolean).length;
-
-      setResult(
-        `Words: ${words}\nCharacters: ${chars}\nSentences: ${sentences}`
-      );
-      return;
-    }
-
-    if (tool.id === "case") {
-      setResult(
-        `UPPERCASE:\n${text.toUpperCase()}\n\nLOWERCASE:\n${text.toLowerCase()}\n\nTITLE CASE:\n${text
-          .toLowerCase()
-          .replace(/\b\w/g, (c) => c.toUpperCase())}`
-      );
-      return;
-    }
-
-    if (tool.id === "keyword") {
-      const base = text.trim();
-      if (!base) {
-        setResult("Please enter a topic first.");
-        return;
-      }
-
-      const generated = [
-        base,
-        `${base} tools`,
-        `${base} online`,
-        `free ${base}`,
-        `${base} generator`,
-        `${base} software`,
-        `${base} tutorial`,
-        `${base} guide`,
-        `${base} best tools`,
-        `${base} for beginners`,
-        `${base} free online`,
-        `${base} services`,
-      ];
-
-      setKeywords(generated);
-      setResult(generated.join("\n"));
-      return;
-    }
-
-    if (tool.id === "seo") {
-      const title = text.trim();
-      const score =
-        title.length >= 30 && title.length <= 60
-          ? 100
-          : title.length > 0
-          ? 70
-          : 0;
-
-      setResult(
-        `SEO ANALYSIS
-
-Title:
-${title || "No title provided"}
-
-SEO Score: ${score}/100
-
-Recommendations:
-- Keep the title around 30–60 characters.
-- Include your main keyword.
-- Use a clear and descriptive title.
-- Create a unique meta description.
-- Use relevant headings and internal links.`
-      );
-      return;
-    }
-
-    if (tool.id === "calculator") {
-      try {
-        const safe = text.replace(/[^0-9+\-*/().%\s]/g, "");
-        if (!safe.trim()) {
-          setResult("Enter a mathematical expression.");
-          return;
-        }
-
-        // Basic calculator only.
-        const answer = Function(`"use strict"; return (${safe})`)();
-        setResult(String(answer));
-      } catch {
-        setResult("Invalid calculation.");
-      }
-      return;
-    }
-
-    if (tool.id === "text-video") {
-      if (!text.trim()) {
-        setResult("Enter your video topic or script first.");
-        return;
-      }
-
-      setResult(
-        `VIDEO SCRIPT
-
-TITLE:
-${text.trim()}
-
-HOOK:
-Are you ready to learn more about ${text.trim()}?
-
-INTRO:
-Welcome! In this video we will explore ${text.trim()}.
-
-MAIN CONTENT:
-Explain the main idea clearly.
-Add examples and useful information.
-Keep each section short and engaging.
-
-CALL TO ACTION:
-If you found this useful, share the video and follow for more.
-
-END:
-Thanks for watching!`
-      );
-      return;
-    }
-
-    if (tool.id === "code") {
-      const formatted = text
-        .replace(/\{/g, "{\n")
-        .replace(/\}/g, "\n}\n")
-        .replace(/;/g, ";\n");
-
-      setResult(formatted);
-      return;
-    }
-
-    if (tool.id === "website") {
-      if (!url.trim()) {
-        setResult("Please enter a website URL.");
-        return;
-      }
-
-      setResult(
-        `WEBSITE ANALYSIS
-
-URL:
-${url}
-
-Checklist:
-✓ Website URL received
-✓ Mobile responsiveness should be checked
-✓ Page title should be optimized
-✓ Meta description should be present
-✓ H1 heading should be present
-✓ Images should have alt text
-✓ Website speed should be optimized
-✓ HTTPS should be enabled
-✓ Internal links should be checked
-
-Note:
-For a complete live website crawl, connect a server-side SEO API in the backend.`
-      );
-      return;
-    }
-
-    if (tool.id === "pdf-word") {
-      if (!file) {
-        setResult("Please select a PDF file first.");
-        return;
-      }
-
-      setResult(
-        `PDF selected successfully:
-
-${file.name}
-
-File size:
-${(file.size / 1024 / 1024).toFixed(2)} MB
-
-The file is ready for the PDF processing backend.
-
-This frontend version does not require jspdf and will build safely on Vercel.`
-      );
-      return;
-    }
-
-    if (tool.id === "pdf-text") {
-      if (!file) {
-        setResult("Please select a PDF file first.");
-        return;
-      }
-
-      setResult(
-        `PDF selected:
-
-${file.name}
-
-For actual PDF text extraction, connect a server-side PDF parser / Edge Function.
-
-The upload interface is working correctly.`
-      );
-      return;
-    }
-
-    setResult("Tool is ready.");
-  };
-
-  const handleImage = (selected) => {
-    if (!selected) return;
-
-    setFile(selected);
-
-    if (selected.type.startsWith("image/")) {
-      const img = new Image();
-
-      img.onload = () => {
-        setImageInfo({
-          width: img.width,
-          height: img.height,
-          size: (selected.size / 1024).toFixed(1),
-          type: selected.type,
-        });
-      };
-
-      img.src = URL.createObjectURL(selected);
-    }
-  };
-
-  const needsFile =
-    tool.id === "pdf-word" ||
-    tool.id === "pdf-text" ||
-    tool.id === "image-info";
-
-  return (
-    <div className="workspace-overlay">
-      <div className="workspace">
-        <div className="workspace-header">
-          <div className="workspace-title">
-            <div className="tool-icon-large">
-              <Icon size={26} />
-            </div>
-
-            <div>
-              <h2>{tool.name}</h2>
-              <p>{tool.description}</p>
-            </div>
-          </div>
-
-          <button className="icon-btn" onClick={onClose}>
-            <X size={22} />
-          </button>
-        </div>
-
-        <div className="workspace-body">
-          {needsFile && (
-            <div className="upload-box">
-              <Upload size={38} />
-
-              <h3>
-                {tool.id === "image-info"
-                  ? "Upload an image"
-                  : "Upload your PDF"}
-              </h3>
-
-              <p>
-                {tool.id === "image-info"
-                  ? "PNG, JPG, JPEG or WebP"
-                  : "Select a PDF file from your computer"}
-              </p>
-
-              <label className="upload-button">
-                Choose File
-                <input
-                  type="file"
-                  hidden
-                  accept={
-                    tool.id === "image-info"
-                      ? "image/*"
-                      : ".pdf,application/pdf"
-                  }
-                  onChange={(e) => {
-                    const selected = e.target.files?.[0];
-                    if (tool.id === "image-info") {
-                      handleImage(selected);
-                    } else {
-                      setFile(selected || null);
-                    }
-                  }}
-                />
-              </label>
-
-              {file && (
-                <div className="selected-file">
-                  <FileText size={18} />
-                  <span>{file.name}</span>
-                </div>
-              )}
-
-              {imageInfo && tool.id === "image-info" && (
-                <div className="info-card">
-                  <strong>Image Information</strong>
-                  <p>
-                    Dimensions: {imageInfo.width} × {imageInfo.height}
-                  </p>
-                  <p>Size: {imageInfo.size} KB</p>
-                  <p>Type: {imageInfo.type}</p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {tool.id === "website" && (
-            <div className="input-section">
-              <label>Website URL</label>
-              <input
-                className="text-input"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://example.com"
-              />
-            </div>
-          )}
-
-          {!needsFile && tool.id !== "website" && (
-            <div className="input-section">
-              <label>
-                {tool.id === "calculator"
-                  ? "Expression"
-                  : tool.id === "seo"
-                  ? "Enter your page title"
-                  : tool.id === "keyword"
-                  ? "Enter your topic"
-                  : "Enter your text"}
-              </label>
-
-              <textarea
-                className="main-textarea"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder={
-                  tool.id === "calculator"
-                    ? "25 * 4 + 10"
-                    : tool.id === "keyword"
-                    ? "e.g. PDF converter"
-                    : "Type or paste your content here..."
-                }
-              />
-            </div>
-          )}
-
-          <div className="action-row">
-            <button className="primary-btn" onClick={processTool}>
-              <Sparkles size={18} />
-              Process
-            </button>
-
-            {result && (
-              <>
-                <button className="secondary-btn" onClick={copyResult}>
-                  {copied ? <Check size={18} /> : <Copy size={18} />}
-                  {copied ? "Copied" : "Copy"}
-                </button>
-
-                <button
-                  className="secondary-btn"
-                  onClick={() =>
-                    downloadText(
-                      `${tool.id}-result.txt`,
-                      result,
-                      "text/plain"
-                    )
-                  }
-                >
-                  <Download size={18} />
-                  Download
-                </button>
-              </>
-            )}
-          </div>
-
-          {result && (
-            <div className="result-box">
-              <div className="result-header">
-                <strong>Result</strong>
-              </div>
-
-              <pre>{result}</pre>
-            </div>
-          )}
-
-          {keywords.length > 0 && (
-            <div className="keyword-list">
-              {keywords.map((keyword, index) => (
-                <span key={index}>{keyword}</span>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
 }
 
 function App() {
-  const [mobileMenu, setMobileMenu] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("All");
   const [search, setSearch] = useState("");
-  const [activeTool, setActiveTool] = useState(null);
-  const [category, setCategory] = useState("All");
-
-  const categories = useMemo(
-    () => ["All", ...new Set(TOOLS.map((tool) => tool.category))],
-    []
-  );
+  const [selectedTool, setSelectedTool] = useState(null);
 
   const filteredTools = useMemo(() => {
     return TOOLS.filter((tool) => {
       const categoryMatch =
-        category === "All" || tool.category === category;
+        activeCategory === "All" || tool.category === activeCategory;
 
       const searchMatch =
-        !search ||
+        !search.trim() ||
         tool.name.toLowerCase().includes(search.toLowerCase()) ||
-        tool.description.toLowerCase().includes(search.toLowerCase());
+        tool.description.toLowerCase().includes(search.toLowerCase()) ||
+        tool.category.toLowerCase().includes(search.toLowerCase());
 
       return categoryMatch && searchMatch;
     });
-  }, [category, search]);
+  }, [activeCategory, search]);
+
+  function openTool(tool) {
+    setSelectedTool(tool);
+    setMenuOpen(false);
+  }
 
   return (
     <div className="app">
       <header className="navbar">
         <div className="container nav-inner">
-          <a className="logo" href="#home">
-            <div className="logo-mark">
-              <Wrench size={22} />
-            </div>
-
-            <span>
-              Tool<span>Master</span>
+          <button
+            className="brand"
+            onClick={() => {
+              setSelectedTool(null);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
+            <span className="brand-icon">
+              <Wrench size={21} />
             </span>
-          </a>
+            <span>ToolMaster<span className="brand-pro">Pro</span></span>
+          </button>
 
-          <nav className={mobileMenu ? "nav-links mobile-open" : "nav-links"}>
-            <a href="#home" onClick={() => setMobileMenu(false)}>
-              Home
-            </a>
-
-            <a href="#tools" onClick={() => setMobileMenu(false)}>
+          <nav className={`nav-links ${menuOpen ? "open" : ""}`}>
+            <a href="#tools" onClick={() => setMenuOpen(false)}>
               Tools
             </a>
-
-            <a href="#categories" onClick={() => setMobileMenu(false)}>
+            <a href="#categories" onClick={() => setMenuOpen(false)}>
               Categories
             </a>
-
-            <a href="#about" onClick={() => setMobileMenu(false)}>
+            <a href="#about" onClick={() => setMenuOpen(false)}>
               About
             </a>
           </nav>
 
           <button
-            className="mobile-menu-btn"
-            onClick={() => setMobileMenu(!mobileMenu)}
+            className="mobile-menu"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label="Toggle menu"
           >
-            {mobileMenu ? <X /> : <Menu />}
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </header>
 
       <main>
-        <section className="hero" id="home">
-          <div className="container hero-content">
-            <div className="badge">
-              <Sparkles size={15} />
-              All-in-one online tools
-            </div>
+        {!selectedTool ? (
+          <>
+            <section className="hero">
+              <div className="container hero-content">
+                <div className="hero-badge">
+                  <Sparkles size={15} />
+                  Powerful tools. Simple experience.
+                </div>
 
-            <h1>
-              Powerful tools.
-              <br />
-              <span>Simple results.</span>
-            </h1>
+                <h1>
+                  All Your Essential
+                  <span> Online Tools</span>
+                </h1>
 
-            <p>
-              Convert files, optimize content, generate keywords, analyze SEO
-              and more — all from one simple platform.
-            </p>
-
-            <div className="hero-search">
-              <Search size={21} />
-
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search for a tool..."
-              />
-
-              <button onClick={() => {
-                document
-                  .getElementById("tools")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}>
-                Search
-              </button>
-            </div>
-
-            <div className="hero-stats">
-              <div>
-                <strong>{TOOLS.length}+</strong>
-                <span>Useful Tools</span>
-              </div>
-
-              <div>
-                <strong>Free</strong>
-                <span>To Use</span>
-              </div>
-
-              <div>
-                <strong>Fast</strong>
-                <span>Processing</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="tools-section" id="tools">
-          <div className="container">
-            <div className="section-heading">
-              <div>
-                <span className="section-label">OUR TOOLS</span>
-                <h2>Everything you need</h2>
                 <p>
-                  Select a tool and start working instantly.
+                  Convert, create, analyze and optimize with fast browser-based
+                  tools. No complicated software required.
                 </p>
+
+                <div className="hero-search">
+                  <Search size={21} />
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search for a tool..."
+                  />
+                  {search && (
+                    <button
+                      className="clear-search"
+                      onClick={() => setSearch("")}
+                    >
+                      <X size={18} />
+                    </button>
+                  )}
+                </div>
+
+                <div className="hero-stats">
+                  <div>
+                    <strong>{TOOLS.length}+</strong>
+                    <span>Tools</span>
+                  </div>
+                  <div>
+                    <strong>8</strong>
+                    <span>Categories</span>
+                  </div>
+                  <div>
+                    <strong>100%</strong>
+                    <span>Simple</span>
+                  </div>
+                </div>
               </div>
-            </div>
+            </section>
 
-            <div className="category-tabs" id="categories">
-              {categories.map((item) => (
-                <button
-                  key={item}
-                  className={category === item ? "active" : ""}
-                  onClick={() => setCategory(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
+            <section id="categories" className="categories-section">
+              <div className="container">
+                <div className="section-heading">
+                  <div>
+                    <span className="eyebrow">EXPLORE</span>
+                    <h2>Categories</h2>
+                  </div>
+                </div>
 
-            <div className="tools-grid">
-              {filteredTools.map((tool) => {
-                const Icon = tool.icon;
-
-                return (
-                  <article className="tool-card" key={tool.id}>
-                    <div className="tool-card-icon">
-                      <Icon size={24} />
-                    </div>
-
-                    <div className="tool-card-content">
-                      <span className="tool-category">
-                        {tool.category}
-                      </span>
-
-                      <h3>{tool.name}</h3>
-
-                      <p>{tool.description}</p>
-
-                      <button
-                        className="tool-link"
-                        onClick={() => setActiveTool(tool)}
-                      >
-                        Open Tool
-                        <ArrowRight size={17} />
-                      </button>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-
-            {filteredTools.length === 0 && (
-              <div className="empty-state">
-                <Search size={35} />
-                <h3>No tools found</h3>
-                <p>Try another search.</p>
+                <div className="category-tabs">
+                  {CATEGORIES.map((category) => (
+                    <button
+                      key={category}
+                      className={
+                        activeCategory === category ? "active" : ""
+                      }
+                      onClick={() => setActiveCategory(category)}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
               </div>
-            )}
-          </div>
-        </section>
+            </section>
 
-        <section className="features">
-          <div className="container">
-            <div className="features-grid">
-              <div className="feature">
-                <Zap size={28} />
-                <h3>Fast</h3>
-                <p>
-                  Designed for quick and simple processing.
-                </p>
+            <section id="tools" className="tools-section">
+              <div className="container">
+                <div className="section-heading">
+                  <div>
+                    <span className="eyebrow">TOOLS</span>
+                    <h2>Choose a Tool</h2>
+                  </div>
+                  <span className="result-count">
+                    {filteredTools.length} tools
+                  </span>
+                </div>
+
+                {filteredTools.length === 0 ? (
+                  <div className="empty-state">
+                    <Search size={42} />
+                    <h3>No tools found</h3>
+                    <p>Try another search term or category.</p>
+                    <button
+                      className="primary-btn"
+                      onClick={() => {
+                        setSearch("");
+                        setActiveCategory("All");
+                      }}
+                    >
+                      Reset Search
+                    </button>
+                  </div>
+                ) : (
+                  <div className="tool-grid">
+                    {filteredTools.map((tool) => (
+                      <ToolCard
+                        key={tool.id}
+                        tool={tool}
+                        onClick={() => openTool(tool)}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
+            </section>
 
-              <div className="feature">
-                <ShieldCheck size={28} />
-                <h3>Secure</h3>
-                <p>
-                  Your files stay in your browser unless processing requires
-                  a backend.
-                </p>
+            <section id="about" className="about-section">
+              <div className="container about-grid">
+                <div>
+                  <span className="eyebrow">ABOUT TOOLMASTER PRO</span>
+                  <h2>Useful tools without the complexity.</h2>
+                  <p>
+                    ToolMaster Pro brings everyday PDF, image, text, SEO,
+                    security and utility tools together in one clean place.
+                  </p>
+                </div>
+
+                <div className="feature-list">
+                  <Feature
+                    icon={<Zap size={20} />}
+                    title="Fast"
+                    text="Designed for quick everyday tasks."
+                  />
+                  <Feature
+                    icon={<ShieldCheck size={20} />}
+                    title="Privacy Friendly"
+                    text="Browser-based features keep many tasks on your device."
+                  />
+                  <Feature
+                    icon={<Wrench size={20} />}
+                    title="Simple"
+                    text="Clear interfaces with no unnecessary complexity."
+                  />
+                </div>
               </div>
-
-              <div className="feature">
-                <Wrench size={28} />
-                <h3>Easy to Use</h3>
-                <p>
-                  Clean interface with straightforward tools.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="about-section" id="about">
-          <div className="container about-content">
-            <span className="section-label">ABOUT TOOLMASTER</span>
-            <h2>One platform for everyday digital tasks.</h2>
-            <p>
-              ToolMaster Pro brings useful PDF, text, SEO, developer,
-              calculator and AI utilities together in one place.
-            </p>
-          </div>
-        </section>
+            </section>
+          </>
+        ) : (
+          <ToolPage
+            tool={selectedTool}
+            onBack={() => setSelectedTool(null)}
+          />
+        )}
       </main>
 
-      <footer>
+      <footer className="footer">
         <div className="container footer-inner">
-          <div className="logo">
-            <div className="logo-mark">
-              <Wrench size={19} />
+          <div>
+            <div className="footer-brand">
+              <span className="brand-icon">
+                <Wrench size={18} />
+              </span>
+              ToolMasterPro
             </div>
-
-            <span>
-              Tool<span>Master</span>
-            </span>
+            <p>Simple tools for everyday work.</p>
           </div>
-
-          <p>© 2026 ToolMaster Pro. All rights reserved.</p>
+          <div className="footer-copy">
+            © {new Date().getFullYear()} ToolMasterPro
+          </div>
         </div>
       </footer>
+    </div>
+  );
+}
 
-      {activeTool && (
-        <ToolWorkspace
-          tool={activeTool}
-          onClose={() => setActiveTool(null)}
-        />
+function ToolCard({ tool, onClick }) {
+  const Icon = tool.icon;
+
+  return (
+    <button className="tool-card" onClick={onClick}>
+      <div className="tool-icon">
+        <Icon size={24} />
+      </div>
+
+      <div className="tool-card-content">
+        <div className="tool-category">{tool.category}</div>
+        <h3>{tool.name}</h3>
+        <p>{tool.description}</p>
+      </div>
+
+      <ArrowRight className="tool-arrow" size={20} />
+    </button>
+  );
+}
+
+function Feature({ icon, title, text }) {
+  return (
+    <div className="feature">
+      <div className="feature-icon">{icon}</div>
+      <div>
+        <h3>{title}</h3>
+        <p>{text}</p>
+      </div>
+    </div>
+  );
+}
+
+function ToolPage({ tool, onBack }) {
+  const components = {
+    "pdf-word": <PdfWordTool />,
+    "pdf-text": <PdfTextTool />,
+    "text-pdf": <TextPdfTool />,
+    "image-compress": <ImageCompressTool />,
+    "image-converter": <ImageConverterTool />,
+    "text-video": <TextVideoTool />,
+    "seo-analyzer": <SeoAnalyzerTool />,
+    "keyword-generator": <KeywordTool />,
+    "meta-generator": <MetaTool />,
+    "word-counter": <WordCounterTool />,
+    "case-converter": <CaseConverterTool />,
+    "text-cleaner": <TextCleanerTool />,
+    calculator: <CalculatorTool />,
+    password: <PasswordTool />,
+    "url-checker": <SlugTool />,
+  };
+
+  return (
+    <section className="tool-page">
+      <div className="container">
+        <button className="back-btn" onClick={onBack}>
+          ← Back to tools
+        </button>
+
+        <div className="tool-page-header">
+          <div className="tool-page-icon">
+            <tool.icon size={30} />
+          </div>
+          <div>
+            <span className="eyebrow">{tool.category}</span>
+            <h1>{tool.name}</h1>
+            <p>{tool.description}</p>
+          </div>
+        </div>
+
+        <div className="tool-workspace">
+          {components[tool.id] || (
+            <div className="empty-state">
+              <h3>Tool coming soon</h3>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Workspace({ children }) {
+  return <div className="workspace-inner">{children}</div>;
+}
+
+function FileInput({ file, setFile, accept = ".pdf" }) {
+  function handleFile(e) {
+    const selected = e.target.files?.[0];
+    if (selected) setFile(selected);
+  }
+
+  return (
+    <div className="file-input">
+      {!file ? (
+        <label className="dropzone">
+          <Upload size={35} />
+          <strong>Choose a file</strong>
+          <span>Click to upload or select a file</span>
+          <small>Accepted: {accept}</small>
+          <input type="file" accept={accept} onChange={handleFile} />
+        </label>
+      ) : (
+        <div className="selected-file">
+          <div className="selected-file-icon">
+            <FileText size={24} />
+          </div>
+          <div>
+            <strong>{file.name}</strong>
+            <span>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+          </div>
+          <button
+            className="icon-btn"
+            onClick={() => setFile(null)}
+            title="Remove file"
+          >
+            <Trash2 size={18} />
+          </button>
+        </div>
       )}
     </div>
   );
 }
 
-createRoot(document.getElementById("root")).render(
+function PdfWordTool() {
+  const [file, setFile] = useState(null);
+  const [message, setMessage] = useState("");
+
+  function convert() {
+    if (!file) {
+      setMessage("Please select a PDF first.");
+      return;
+    }
+
+    setMessage(
+      `PDF selected: ${file.name}. Full PDF-to-Word conversion requires a document-processing backend.`
+    );
+  }
+
+  return (
+    <Workspace>
+      <FileInput file={file} setFile={setFile} accept=".pdf,application/pdf" />
+
+      <button className="primary-btn large" onClick={convert}>
+        <FileDown size={19} />
+        Convert to Word
+      </button>
+
+      {message && <div className="notice">{message}</div>}
+    </Workspace>
+  );
+}
+
+function PdfTextTool() {
+  const [file, setFile] = useState(null);
+  const [message, setMessage] = useState("");
+
+  function extract() {
+    if (!file) {
+      setMessage("Please select a PDF first.");
+      return;
+    }
+
+    setMessage(
+      `PDF selected: ${file.name}. Browser-only PDF text extraction can be connected to the processing backend next.`
+    );
+  }
+
+  return (
+    <Workspace>
+      <FileInput file={file} setFile={setFile} accept=".pdf,application/pdf" />
+
+      <button className="primary-btn large" onClick={extract}>
+        <FileText size={19} />
+        Extract Text
+      </button>
+
+      {message && <div className="notice">{message}</div>}
+    </Workspace>
+  );
+}
+
+function TextPdfTool() {
+  const [text, setText] = useState("");
+
+  function createPdf() {
+    if (!text.trim()) return;
+
+    const content = text
+      .split("\n")
+      .map((line) => line || " ")
+      .join("\n");
+
+    const pseudoPdf = `%PDF-1.4\n% ToolMasterPro Text Export\n\n${content}\n\n%%EOF`;
+
+    downloadText(pseudoPdf, "toolmaster-document.pdf", "application/pdf");
+  }
+
+  return (
+    <Workspace>
+      <textarea
+        className="big-textarea"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Type or paste your text here..."
+      />
+
+      <button className="primary-btn large" onClick={createPdf}>
+        <Download size={19} />
+        Download PDF
+      </button>
+
+      <div className="notice">
+        For production-quality PDF layout, fonts and page handling, connect a
+        PDF generation backend/library.
+      </div>
+    </Workspace>
+  );
+}
+
+function ImageCompressTool() {
+  const [file, setFile] = useState(null);
+  const [quality, setQuality] = useState(0.7);
+  const [preview, setPreview] = useState(null);
+
+  function selectFile(e) {
+    const selected = e.target.files?.[0];
+    if (!selected) return;
+
+    setFile(selected);
+
+    const reader = new FileReader();
+    reader.onload = () => setPreview(reader.result);
+    reader.readAsDataURL(selected);
+  }
+
+  function compress() {
+    if (!file || !preview) return;
+
+    const img = new Image();
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const maxWidth = 2000;
+      const scale = Math.min(1, maxWidth / img.width);
+
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            downloadBlob(blob, `compressed-${file.name.replace(/\s+/g, "-")}`);
+          }
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+
+    img.src = preview;
+  }
+
+  return (
+    <Workspace>
+      <label className="dropzone">
+        <ImageIcon size={35} />
+        <strong>Choose an image</strong>
+        <span>JPG, PNG, WEBP and other browser-supported images</span>
+        <input type="file" accept="image/*" onChange={selectFile} />
+      </label>
+
+      {file && (
+        <>
+          <div className="image-preview">
+            <img src={preview} alt="Preview" />
+          </div>
+
+          <div className="range-control">
+            <label>
+              Quality: <strong>{Math.round(quality * 100)}%</strong>
+            </label>
+            <input
+              type="range"
+              min="0.1"
+              max="1"
+              step="0.05"
+              value={quality}
+              onChange={(e) => setQuality(Number(e.target.value))}
+            />
+          </div>
+
+          <button className="primary-btn large" onClick={compress}>
+            <Download size={19} />
+            Compress & Download
+          </button>
+        </>
+      )}
+    </Workspace>
+  );
+}
+
+function ImageConverterTool() {
+  const [file, setFile] = useState(null);
+  const [format, setFormat] = useState("image/png");
+  const [preview, setPreview] = useState(null);
+
+  function choose(e) {
+    const selected = e.target.files?.[0];
+    if (!selected) return;
+
+    setFile(selected);
+
+    const reader = new FileReader();
+    reader.onload = () => setPreview(reader.result);
+    reader.readAsDataURL(selected);
+  }
+
+  function convert() {
+    if (!file || !preview) return;
+
+    const img = new Image();
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      const extension =
+        format === "image/jpeg"
+          ? "jpg"
+          : format === "image/webp"
+            ? "webp"
+            : "png";
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          downloadBlob(blob, `converted-${Date.now()}.${extension}`);
+        }
+      }, format);
+    };
+
+    img.src = preview;
+  }
+
+  return (
+    <Workspace>
+      <label className="dropzone">
+        <ImageIcon size={35} />
+        <strong>Choose an image</strong>
+        <span>Select an image to convert</span>
+        <input type="file" accept="image/*" onChange={choose} />
+      </label>
+
+      {file && (
+        <>
+          <div className="form-row">
+            <label>Output format</label>
+            <select
+              value={format}
+              onChange={(e) => setFormat(e.target.value)}
+            >
+              <option value="image/png">PNG</option>
+              <option value="image/jpeg">JPG</option>
+              <option value="image/webp">WEBP</option>
+            </select>
+          </div>
+
+          <button className="primary-btn large" onClick={convert}>
+            <Download size={19} />
+            Convert Image
+          </button>
+        </>
+      )}
+    </Workspace>
+  );
+}
+
+function TextVideoTool() {
+  const [text, setText] = useState("");
+  const [script, setScript] = useState("");
+
+  function generate() {
+    if (!text.trim()) return;
+
+    const sentences = text
+      .split(/[.!?]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const result = sentences
+      .map(
+        (sentence, index) =>
+          `Scene ${index + 1}\nVisual: ${sentence}\nVoiceover: ${sentence}\nDuration: 5 seconds`
+      )
+      .join("\n\n");
+
+    setScript(result);
+  }
+
+  function download() {
+    if (!script) return;
+    downloadText(script, "toolmaster-video-script.txt");
+  }
+
+  return (
+    <Workspace>
+      <textarea
+        className="big-textarea"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Enter your topic or video text..."
+      />
+
+      <button className="primary-btn large" onClick={generate}>
+        <Video size={19} />
+        Generate Video Plan
+      </button>
+
+      {script && (
+        <>
+          <textarea className="result-textarea" value={script} readOnly />
+          <button className="secondary-btn" onClick={download}>
+            <Download size={18} />
+            Download Script
+          </button>
+        </>
+      )}
+
+      <div className="notice">
+        This creates a video script and scene plan. Actual MP4 rendering can
+        be connected to a video-generation backend/API.
+      </div>
+    </Workspace>
+  );
+}
+
+function SeoAnalyzerTool() {
+  const [url, setUrl] = useState("");
+  const [content, setContent] = useState("");
+  const [result, setResult] = useState(null);
+
+  function analyze() {
+    const text = content.trim();
+
+    const words = text ? text.split(/\s+/).length : 0;
+    const headings = (text.match(/^#+\s.+$/gm) || []).length;
+    const titleLength = url.length;
+
+    const score = Math.min(
+      100,
+      35 +
+        (words >= 300 ? 20 : 0) +
+        (headings >= 2 ? 15 : 0) +
+        (titleLength >= 10 ? 10 : 0) +
+        (words >= 800 ? 20 : 0)
+    );
+
+    setResult({
+      score,
+      words,
+      headings,
+      recommendations: [
+        words < 300 ? "Add more useful content." : "Content length is acceptable.",
+        headings < 2
+          ? "Use more descriptive headings."
+          : "Heading structure looks good.",
+        url.length < 10
+          ? "Provide a title or page URL."
+          : "Page information provided.",
+      ],
+    });
+  }
+
+  return (
+    <Workspace>
+      <input
+        className="text-input"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        placeholder="Page title or URL"
+      />
+
+      <textarea
+        className="big-textarea"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        placeholder="Paste your page content here..."
+      />
+
+      <button className="primary-btn large" onClick={analyze}>
+        <BarChart3 size={19} />
+        Analyze SEO
+      </button>
+
+      {result && (
+        <div className="seo-result">
+          <div className="score-circle">
+            <strong>{result.score}</strong>
+            <span>/100</span>
+          </div>
+
+          <div className="stats-grid">
+            <div>
+              <strong>{result.words}</strong>
+              <span>Words</span>
+            </div>
+            <div>
+              <strong>{result.headings}</strong>
+              <span>Headings</span>
+            </div>
+          </div>
+
+          <div className="recommendations">
+            <h3>Recommendations</h3>
+            {result.recommendations.map((item) => (
+              <p key={item}>✓ {item}</p>
+            ))}
+          </div>
+        </div>
+      )}
+    </Workspace>
+  );
+}
+
+function KeywordTool() {
+  const [topic, setTopic] = useState("");
+  const [keywords, setKeywords] = useState([]);
+  const [copied, setCopied] = useState(false);
+
+  function generate() {
+    setKeywords(generateKeywords(topic));
+  }
+
+  async function copyAll() {
+    await navigator.clipboard.writeText(keywords.join("\n"));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+
+  return (
+    <Workspace>
+      <input
+        className="text-input"
+        value={topic}
+        onChange={(e) => setTopic(e.target.value)}
+        placeholder="Enter your topic, e.g. digital marketing"
+      />
+
+      <button className="primary-btn large" onClick={generate}>
+        <KeyRound size={19} />
+        Generate Keywords
+      </button>
+
+      {keywords.length > 0 && (
+        <div className="keyword-result">
+          <div className="result-header">
+            <h3>Keyword Ideas</h3>
+            <button className="secondary-btn small" onClick={copyAll}>
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+              {copied ? "Copied" : "Copy All"}
+            </button>
+          </div>
+
+          <div className="keyword-list">
+            {keywords.map((keyword) => (
+              <span key={keyword}>{keyword}</span>
+            ))}
+          </div>
+        </div>
+      )}
+    </Workspace>
+  );
+}
+
+function MetaTool() {
+  const [topic, setTopic] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  function generate() {
+    const clean = topic.trim();
+
+    if (!clean) return;
+
+    setTitle(`${clean} - Complete Guide & Best Tools`);
+    setDescription(
+      `Discover the best ${clean} tips, tools and strategies. Learn how to get better results with this complete guide.`
+    );
+  }
+
+  return (
+    <Workspace>
+      <input
+        className="text-input"
+        value={topic}
+        onChange={(e) => setTopic(e.target.value)}
+        placeholder="Enter your main topic"
+      />
+
+      <button className="primary-btn large" onClick={generate}>
+        <Hash size={19} />
+        Generate Meta Tags
+      </button>
+
+      {title && (
+        <div className="generated-fields">
+          <label>SEO Title</label>
+          <input className="text-input" value={title} readOnly />
+
+          <label>Meta Description</label>
+          <textarea
+            className="result-textarea"
+            value={description}
+            readOnly
+          />
+        </div>
+      )}
+    </Workspace>
+  );
+}
+
+function WordCounterTool() {
+  const [text, setText] = useState("");
+  const stats = getTextStats(text);
+
+  return (
+    <Workspace>
+      <textarea
+        className="big-textarea"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Type or paste your text..."
+      />
+
+      <div className="stats-grid large-stats">
+        <div>
+          <strong>{stats.words}</strong>
+          <span>Words</span>
+        </div>
+        <div>
+          <strong>{stats.characters}</strong>
+          <span>Characters</span>
+        </div>
+        <div>
+          <strong>{stats.charactersNoSpaces}</strong>
+          <span>No Spaces</span>
+        </div>
+        <div>
+          <strong>{stats.sentences}</strong>
+          <span>Sentences</span>
+        </div>
+        <div>
+          <strong>{stats.paragraphs}</strong>
+          <span>Paragraphs</span>
+        </div>
+      </div>
+    </Workspace>
+  );
+}
+
+function CaseConverterTool() {
+  const [text, setText] = useState("");
+
+  function upper() {
+    setText(text.toUpperCase());
+  }
+
+  function lower() {
+    setText(text.toLowerCase());
+  }
+
+  function title() {
+    setText(
+      text.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase())
+    );
+  }
+
+  function sentence() {
+    setText(
+      text
+        .toLowerCase()
+        .replace(/(^\s*\w|[.!?]\s+\w)/g, (match) => match.toUpperCase())
+    );
+  }
+
+  async function copy() {
+    await navigator.clipboard.writeText(text);
+  }
+
+  return (
+    <Workspace>
+      <textarea
+        className="big-textarea"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Enter text..."
+      />
+
+      <div className="button-row">
+        <button className="secondary-btn" onClick={upper}>
+          UPPERCASE
+        </button>
+        <button className="secondary-btn" onClick={lower}>
+          lowercase
+        </button>
+        <button className="secondary-btn" onClick={title}>
+          Title Case
+        </button>
+        <button className="secondary-btn" onClick={sentence}>
+          Sentence case
+        </button>
+        <button className="secondary-btn" onClick={copy}>
+          <Copy size={17} />
+          Copy
+        </button>
+      </div>
+    </Workspace>
+  );
+}
+
+function TextCleanerTool() {
+  const [text, setText] = useState("");
+
+  function clean() {
+    const cleaned = text
+      .split("\n")
+      .map((line) => line.replace(/\s+/g, " ").trim())
+      .join("\n")
+      .replace(/\n{3,}/g, "\n\n");
+
+    setText(cleaned);
+  }
+
+  return (
+    <Workspace>
+      <textarea
+        className="big-textarea"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Paste messy text here..."
+      />
+
+      <div className="button-row">
+        <button className="primary-btn" onClick={clean}>
+          <Sparkles size={18} />
+          Clean Text
+        </button>
+
+        <button
+          className="secondary-btn"
+          onClick={() => setText("")}
+        >
+          <Trash2 size={18} />
+          Clear
+        </button>
+      </div>
+    </Workspace>
+  );
+}
+
+function CalculatorTool() {
+  const [expression, setExpression] = useState("");
+  const [result, setResult] = useState("");
+
+  function calculate() {
+    try {
+      if (!expression.trim()) return;
+
+      if (!/^[0-9+\-*/().%\s]+$/.test(expression)) {
+        setResult("Invalid expression");
+        return;
+      }
+
+      const value = Function(`"use strict"; return (${expression})`)();
+
+      if (Number.isFinite(value)) {
+        setResult(String(value));
+      } else {
+        setResult("Invalid result");
+      }
+    } catch {
+      setResult("Invalid expression");
+    }
+  }
+
+  return (
+    <Workspace>
+      <input
+        className="text-input calculator-input"
+        value={expression}
+        onChange={(e) => setExpression(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") calculate();
+        }}
+        placeholder="Example: (25 * 4) + 10"
+      />
+
+      <button className="primary-btn large" onClick={calculate}>
+        <Calculator size={19} />
+        Calculate
+      </button>
+
+      {result && (
+        <div className="calculator-result">
+          <span>Result</span>
+          <strong>{result}</strong>
+        </div>
+      )}
+    </Workspace>
+  );
+}
+
+function PasswordTool() {
+  const [length, setLength] = useState(16);
+  const [password, setPassword] = useState("");
+
+  function generate() {
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=";
+
+    let output = "";
+
+    const array = new Uint32Array(length);
+    crypto.getRandomValues(array);
+
+    for (let i = 0; i < length; i++) {
+      output += chars[array[i] % chars.length];
+    }
+
+    setPassword(output);
+  }
+
+  async function copy() {
+    if (password) await navigator.clipboard.writeText(password);
+  }
+
+  return (
+    <Workspace>
+      <div className="range-control">
+        <label>
+          Password length: <strong>{length}</strong>
+        </label>
+        <input
+          type="range"
+          min="8"
+          max="64"
+          value={length}
+          onChange={(e) => setLength(Number(e.target.value))}
+        />
+      </div>
+
+      <button className="primary-btn large" onClick={generate}>
+        <RefreshCw size={19} />
+        Generate Password
+      </button>
+
+      {password && (
+        <div className="password-output">
+          <code>{password}</code>
+          <button className="secondary-btn" onClick={copy}>
+            <Copy size={18} />
+            Copy
+          </button>
+        </div>
+      )}
+
+      <div className="notice">
+        Generate and store passwords responsibly. Never share sensitive
+        passwords with anyone.
+      </div>
+    </Workspace>
+  );
+}
+
+function SlugTool() {
+  const [text, setText] = useState("");
+  const [slug, setSlug] = useState("");
+
+  function generate() {
+    setSlug(slugify(text));
+  }
+
+  async function copy() {
+    if (slug) await navigator.clipboard.writeText(slug);
+  }
+
+  return (
+    <Workspace>
+      <input
+        className="text-input"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Enter page title"
+      />
+
+      <button className="primary-btn large" onClick={generate}>
+        <LinkIcon size={19} />
+        Generate URL Slug
+      </button>
+
+      {slug && (
+        <div className="password-output">
+          <code>{slug}</code>
+          <button className="secondary-btn" onClick={copy}>
+            <Copy size={18} />
+            Copy
+          </button>
+        </div>
+      )}
+    </Workspace>
+  );
+}
+
+const root = createRoot(document.getElementById("root"));
+root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
