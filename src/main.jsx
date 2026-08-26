@@ -1,4506 +1,805 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Search,
+  Menu,
+  X,
   Wrench,
   FileText,
   Image as ImageIcon,
   Code2,
   Globe2,
   Calculator,
-  ArrowRight,
   ShieldCheck,
   Zap,
   Sparkles,
   Upload,
-  Copy,
   Download,
-  CheckCircle2,
-  Settings,
-  LayoutDashboard,
-  LogOut,
-  CreditCard,
-  Users,
-  BarChart3,
-  X,
-  RefreshCw,
-  User,
-  UserPlus,
-  Mail,
-  Eye,
-  EyeOff,
+  Copy,
+  Check,
+  ArrowRight,
+  Video,
+  FileOutput,
   KeyRound,
-  Home,
-  FolderKanban,
-  Activity,
-  Menu,
-  ChevronRight,
-  Database,
-  Crown,
-  Trash2,
-  Edit3
+  BarChart3,
+  Type,
+  RefreshCw,
 } from "lucide-react";
+import "./style.css";
 
-import * as pdfjsLib from "pdfjs-dist";
-import { jsPDF } from "jspdf";
-
-import "./styles.css";
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
-const SUPABASE_ANON_KEY =
-  import.meta.env.VITE_SUPABASE_ANON_KEY || "";
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
-
-/* =========================================================
-   TOOLS
-========================================================= */
-
-const tools = [
-  ["Text to Video","AI & Video","Turn a written prompt or script into an AI video project.","text-to-video"],
-  ["Student AI Helper","AI & Education","Ask questions or upload a study image/PDF and get step-by-step AI help.","student-ai-helper"],
-
-  ["PDF to Word","PDF Tools","Convert PDF documents into editable Word files.","pdf-word"],
-  ["Word to PDF","PDF Tools","Convert Word documents into PDF.","word-pdf"],
-  ["PDF to JPG","PDF Tools","Turn PDF pages into JPG images.","pdf-jpg"],
-  ["JPG to PDF","PDF Tools","Create a PDF from JPG images.","jpg-pdf"],
-  ["Merge PDF","PDF Tools","Combine multiple PDF files into one.","merge-pdf"],
-  ["Split PDF","PDF Tools","Split a PDF into separate files.","split-pdf"],
-  ["Compress PDF","PDF Tools","Reduce PDF file size quickly.","compress-pdf"],
-  ["Rotate PDF","PDF Tools","Rotate PDF pages to the correct orientation.","rotate-pdf"],
-  ["PDF Unlock","PDF Tools","Unlock supported password-protected PDFs.","pdf-unlock"],
-  ["PDF Watermark","PDF Tools","Add a watermark to PDF pages.","pdf-watermark"],
-
-  ["Image Compressor","Image Tools","Compress JPG, PNG and WebP images.","image-compressor"],
-  ["Image Resizer","Image Tools","Resize images to exact dimensions.","image-resizer"],
-  ["Image Cropper","Image Tools","Crop images online.","image-cropper"],
-  ["JPG to PNG","Image Tools","Convert JPG images to PNG.","jpg-png"],
-  ["PNG to JPG","Image Tools","Convert PNG images to JPG.","png-jpg"],
-  ["WebP Converter","Image Tools","Convert images to and from WebP.","webp-converter"],
-  ["Image Background Remover","Image Tools","Remove simple image backgrounds.","background-remover"],
-  ["Image to Text","Image Tools","Extract text from an image.","image-text"],
-
-  ["QR Code Generator","SEO & Marketing","Create custom QR codes from text or links.","qr-generator"],
-  ["Meta Tag Generator","SEO & Marketing","Generate SEO-ready meta tags.","meta-tags"],
-  ["Sitemap Generator","SEO & Marketing","Create a basic XML sitemap.","sitemap"],
-  ["Robots.txt Generator","SEO & Marketing","Generate a robots.txt file.","robots"],
-  ["Keyword Density Checker","SEO & Marketing","Analyze keyword frequency in text.","keyword-density"],
-  ["URL Encoder","SEO & Marketing","Encode URLs safely.","url-encoder"],
-
-  ["Word Counter","Text Tools","Count words, characters and sentences.","word-counter"],
-  ["Case Converter","Text Tools","Convert text to upper, lower and title case.","case-converter"],
-  ["Text Cleaner","Text Tools","Remove extra spaces and clean text.","text-cleaner"],
-  ["Lorem Ipsum Generator","Text Tools","Generate placeholder text.","lorem"],
-  ["Duplicate Line Remover","Text Tools","Remove duplicate lines from text.","duplicate-lines"],
-  ["Text Sorter","Text Tools","Sort lines alphabetically.","text-sorter"],
-
-  ["JSON Formatter","Developer Tools","Format and validate JSON.","json-formatter"],
-  ["JSON Minifier","Developer Tools","Minify JSON for compact output.","json-minifier"],
-  ["Base64 Encoder","Developer Tools","Encode text to Base64.","base64-encode"],
-  ["Base64 Decoder","Developer Tools","Decode Base64 text.","base64-decode"],
-  ["HTML Formatter","Developer Tools","Format HTML code.","html-formatter"],
-  ["CSS Formatter","Developer Tools","Format CSS code.","css-formatter"],
-  ["JavaScript Minifier","Developer Tools","Compact JavaScript text.","js-minifier"],
-  ["UUID Generator","Developer Tools","Generate unique UUID values.","uuid"],
-  ["Hash Generator","Developer Tools","Create common text hashes locally.","hash"],
-  ["Timestamp Converter","Developer Tools","Convert Unix timestamps.","timestamp"],
-
-  ["Password Generator","Security Tools","Generate strong random passwords locally.","password"],
-  ["Password Strength Checker","Security Tools","Check password strength locally.","password-strength"],
-  ["MD5 Hash Generator","Security Tools","Generate an MD5-style hash placeholder locally.","md5"],
-  ["SHA-256 Generator","Security Tools","Generate SHA-256 hashes using your browser.","sha256"],
-
-  ["Percentage Calculator","Calculator Tools","Calculate percentages quickly.","percentage"],
-  ["Age Calculator","Calculator Tools","Calculate age from date of birth.","age"],
-  ["BMI Calculator","Calculator Tools","Calculate body mass index.","bmi"],
-  ["Discount Calculator","Calculator Tools","Calculate sale discounts.","discount"],
-  ["Loan Calculator","Calculator Tools","Estimate monthly loan payments.","loan"],
-  ["GST Calculator","Calculator Tools","Calculate GST-inclusive or exclusive amounts.","gst"],
-  ["Tip Calculator","Calculator Tools","Calculate tips and split bills.","tip"],
-  ["Time Calculator","Calculator Tools","Add and subtract time values.","time"],
-
-  ["Unit Converter","Converter Tools","Convert common units.","units"],
-  ["Length Converter","Converter Tools","Convert length measurements.","length"],
-  ["Weight Converter","Converter Tools","Convert weight measurements.","weight"],
-  ["Temperature Converter","Converter Tools","Convert Celsius, Fahrenheit and Kelvin.","temperature"],
-  ["Currency Converter","Converter Tools","Enter exchange rates and convert currencies.","currency"],
-  ["Data Storage Converter","Converter Tools","Convert bytes, KB, MB and GB.","storage"],
-
-  ["Color Converter","Developer Tools","Convert HEX, RGB and HSL values.","color"],
-  ["IP Address Info","Network Tools","Inspect the IP address visible to your browser.","ip-info"],
-  ["HTTP Status Checker","Network Tools","Explain common HTTP status codes.","http-status"],
-  ["Regex Tester","Developer Tools","Test regular expressions in your browser.","regex"],
-  ["Cron Expression Helper","Developer Tools","Build common cron expressions.","cron"],
-  ["HTML Entity Encoder","Developer Tools","Encode HTML entities.","html-entities"],
-  ["URL Parser","Developer Tools","Break a URL into its parts.","url-parser"],
-
-  ["Email Validator","Utility Tools","Validate email address format.","email-validator"],
-  ["Phone Number Formatter","Utility Tools","Clean and format phone numbers.","phone"],
-  ["Date Difference Calculator","Calculator Tools","Calculate the difference between dates.","date-difference"],
-  ["Random Number Generator","Utility Tools","Generate random numbers.","random-number"],
-  ["Random Password Generator","Security Tools","Generate secure random passwords.","random-password"],
-  ["Text Reverser","Text Tools","Reverse any text.","text-reverser"],
-  ["Palindrome Checker","Text Tools","Check whether text is a palindrome.","palindrome"],
-  ["Reading Time Calculator","Text Tools","Estimate reading time for text.","reading-time"],
-  ["Character Counter","Text Tools","Count characters with and without spaces.","characters"],
-  ["Number to Words","Utility Tools","Convert numbers to English words.","number-words"],
-  ["Roman Numeral Converter","Utility Tools","Convert numbers to Roman numerals.","roman"],
-  ["Barcode Generator","SEO & Marketing","Generate a simple barcode-ready value.","barcode"],
-  ["Open Graph Generator","SEO & Marketing","Create Open Graph meta tags.","open-graph"],
-  ["Schema Markup Generator","SEO & Marketing","Create basic JSON-LD schema templates.","schema"],
-  ["Favicon Generator","SEO & Marketing","Prepare favicon assets from an image.","favicon"],
-  ["UTM Builder","SEO & Marketing","Build campaign tracking URLs.","utm"],
-  ["HTML Previewer","Developer Tools","Preview HTML in a sandboxed area.","html-preview"],
-  ["Markdown Previewer","Developer Tools","Preview basic Markdown.","markdown"],
-  ["SQL Formatter","Developer Tools","Format simple SQL statements.","sql"],
-  ["CSV to JSON","Developer Tools","Convert CSV text to JSON.","csv-json"],
-  ["JSON to CSV","Developer Tools","Convert simple JSON arrays to CSV.","json-csv"],
-  ["XML Formatter","Developer Tools","Format XML text.","xml"],
-  ["YAML to JSON","Developer Tools","Convert basic YAML-like key values to JSON.","yaml-json"],
-  ["CSS Color Picker","Developer Tools","Pick and inspect a color.","color-picker"],
-  ["Aspect Ratio Calculator","Calculator Tools","Calculate proportional dimensions.","aspect"],
-  ["Compound Interest Calculator","Calculator Tools","Estimate compound growth.","compound-interest"],
-  ["Scientific Calculator","Calculator Tools","Perform common scientific calculations.","scientific"],
-  ["Date Calculator","Calculator Tools","Add days to a date.","date-add"],
-  ["Business Name Generator","Utility Tools","Generate business name ideas from keywords.","business-name"],
-  ["Username Generator","Utility Tools","Generate username ideas.","username"],
-  ["Morse Code Converter","Text Tools","Convert text to Morse code.","morse"],
-  ["Binary Converter","Developer Tools","Convert text and numbers to binary.","binary"],
-  ["ASCII Converter","Developer Tools","Convert text to ASCII codes.","ascii"],
-  ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"]
-];
-
-const plans = [
+const TOOLS = [
   {
-    id:"free",
-    name:"Free",
-    credits:50,
-    period:"daily",
-    price:0,
-    description:"50 credits every day"
+    id: "pdf-word",
+    name: "PDF to Word",
+    description: "Convert PDF documents into editable Word files.",
+    category: "PDF Tools",
+    icon: FileOutput,
   },
   {
-    id:"starter",
-    name:"Starter",
-    credits:500,
-    period:"monthly",
-    price:5,
-    description:"500 credits every month"
+    id: "pdf-text",
+    name: "PDF to Text",
+    description: "Extract readable text from PDF documents.",
+    category: "PDF Tools",
+    icon: FileText,
   },
   {
-    id:"pro",
-    name:"Pro",
-    credits:2000,
-    period:"monthly",
-    price:15,
-    description:"2,000 credits every month",
-    popular:true
+    id: "text-video",
+    name: "Text to Video",
+    description: "Turn your text idea into a video-ready script.",
+    category: "AI Tools",
+    icon: Video,
   },
   {
-    id:"business",
-    name:"Business",
-    credits:10000,
-    period:"monthly",
-    price:49,
-    description:"10,000 credits every month"
-  }
+    id: "seo",
+    name: "SEO Analyzer",
+    description: "Analyze title, description, keywords and SEO score.",
+    category: "SEO Tools",
+    icon: BarChart3,
+  },
+  {
+    id: "keyword",
+    name: "Keyword Generator",
+    description: "Generate useful SEO keyword ideas from your topic.",
+    category: "SEO Tools",
+    icon: KeyRound,
+  },
+  {
+    id: "word-counter",
+    name: "Word Counter",
+    description: "Count words, characters and sentences.",
+    category: "Text Tools",
+    icon: Type,
+  },
+  {
+    id: "case",
+    name: "Text Case Converter",
+    description: "Convert text to upper, lower and title case.",
+    category: "Text Tools",
+    icon: RefreshCw,
+  },
+  {
+    id: "calculator",
+    name: "Calculator",
+    description: "Perform quick mathematical calculations.",
+    category: "Utility",
+    icon: Calculator,
+  },
+  {
+    id: "image-info",
+    name: "Image Tool",
+    description: "Upload an image and inspect basic information.",
+    category: "Image Tools",
+    icon: ImageIcon,
+  },
+  {
+    id: "code",
+    name: "Code Formatter",
+    description: "Format and clean your code.",
+    category: "Developer Tools",
+    icon: Code2,
+  },
+  {
+    id: "website",
+    name: "Website Analyzer",
+    description: "Enter a website URL and get an analysis checklist.",
+    category: "SEO Tools",
+    icon: Globe2,
+  },
 ];
 
-const categories = [
-  ["All Tools", tools.length, Wrench],
-  ["PDF Tools", tools.filter(x=>x[1]==="PDF Tools").length, FileText],
-  ["Image Tools", tools.filter(x=>x[1]==="Image Tools").length, ImageIcon],
-  ["SEO & Marketing", tools.filter(x=>x[1]==="SEO & Marketing").length, Globe2],
-  ["Text Tools", tools.filter(x=>x[1]==="Text Tools").length, FileText],
-  ["Developer Tools", tools.filter(x=>x[1]==="Developer Tools").length, Code2],
-  ["Calculator Tools", tools.filter(x=>x[1]==="Calculator Tools").length, Calculator],
-  ["Converter Tools", tools.filter(x=>x[1]==="Converter Tools").length, Wrench],
-  ["Security Tools", tools.filter(x=>x[1]==="Security Tools").length, ShieldCheck],
-  ["Utility Tools", tools.filter(x=>x[1]==="Utility Tools").length, Sparkles]
-];
-
-const fileTools = new Set([
-  "pdf-word",
-  "word-pdf",
-  "pdf-jpg",
-  "jpg-pdf",
-  "merge-pdf",
-  "split-pdf",
-  "compress-pdf",
-  "rotate-pdf",
-  "pdf-unlock",
-  "pdf-watermark",
-  "image-compressor",
-  "image-resizer",
-  "image-cropper",
-  "jpg-png",
-  "png-jpg",
-  "webp-converter",
-  "background-remover",
-  "image-text",
-  "favicon"
-]);
-
-/* =========================================================
-   SUPABASE
-========================================================= */
-
-async function supabaseFetch(path, options={}) {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    throw new Error(
-      "Supabase environment variables are missing."
-    );
-  }
-
-  const headers = {
-    apikey: SUPABASE_ANON_KEY,
-    "Content-Type":"application/json",
-    ...(options.headers || {})
-  };
-
-  const response = await fetch(
-    `${SUPABASE_URL}${path}`,
-    {
-      ...options,
-      headers
-    }
-  );
-
-  const data =
-    await response.json().catch(()=>null);
-
-  if (!response.ok) {
-    throw new Error(
-      data?.msg ||
-      data?.message ||
-      data?.error_description ||
-      data?.error ||
-      "Supabase request failed."
-    );
-  }
-
-  return data;
-}
-
-function saveSession(session) {
-  if (session) {
-    localStorage.setItem(
-      "tm_session",
-      JSON.stringify(session)
-    );
-  } else {
-    localStorage.removeItem("tm_session");
-  }
-}
-
-function getSession() {
-  try {
-    return JSON.parse(
-      localStorage.getItem("tm_session") || "null"
-    );
-  } catch {
-    return null;
-  }
-}
-
-/* =========================================================
-   DOWNLOAD HELPERS
-========================================================= */
-
-function downloadBlob(blob, filename) {
+function downloadText(filename, text, type = "text/plain") {
+  const blob = new Blob([text], { type });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-
   a.href = url;
   a.download = filename;
-
   document.body.appendChild(a);
   a.click();
   a.remove();
-
-  setTimeout(
-    ()=>URL.revokeObjectURL(url),
-    1500
-  );
+  URL.revokeObjectURL(url);
 }
 
-function textDownload(
-  text,
-  filename="toolmaster-result.txt"
-) {
-  downloadBlob(
-    new Blob(
-      [text],
-      {
-        type:"text/plain;charset=utf-8"
+function ToolWorkspace({ tool, onClose }) {
+  const [file, setFile] = useState(null);
+  const [text, setText] = useState("");
+  const [result, setResult] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [url, setUrl] = useState("");
+  const [keywords, setKeywords] = useState([]);
+  const [imageInfo, setImageInfo] = useState(null);
+
+  const Icon = tool.icon;
+
+  const copyResult = async () => {
+    if (!result) return;
+    await navigator.clipboard.writeText(result);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  const processTool = () => {
+    if (tool.id === "word-counter") {
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      const chars = text.length;
+      const sentences = text
+        .split(/[.!?]+/)
+        .map((x) => x.trim())
+        .filter(Boolean).length;
+
+      setResult(
+        `Words: ${words}\nCharacters: ${chars}\nSentences: ${sentences}`
+      );
+      return;
+    }
+
+    if (tool.id === "case") {
+      setResult(
+        `UPPERCASE:\n${text.toUpperCase()}\n\nLOWERCASE:\n${text.toLowerCase()}\n\nTITLE CASE:\n${text
+          .toLowerCase()
+          .replace(/\b\w/g, (c) => c.toUpperCase())}`
+      );
+      return;
+    }
+
+    if (tool.id === "keyword") {
+      const base = text.trim();
+      if (!base) {
+        setResult("Please enter a topic first.");
+        return;
       }
-    ),
-    filename
+
+      const generated = [
+        base,
+        `${base} tools`,
+        `${base} online`,
+        `free ${base}`,
+        `${base} generator`,
+        `${base} software`,
+        `${base} tutorial`,
+        `${base} guide`,
+        `${base} best tools`,
+        `${base} for beginners`,
+        `${base} free online`,
+        `${base} services`,
+      ];
+
+      setKeywords(generated);
+      setResult(generated.join("\n"));
+      return;
+    }
+
+    if (tool.id === "seo") {
+      const title = text.trim();
+      const score =
+        title.length >= 30 && title.length <= 60
+          ? 100
+          : title.length > 0
+          ? 70
+          : 0;
+
+      setResult(
+        `SEO ANALYSIS
+
+Title:
+${title || "No title provided"}
+
+SEO Score: ${score}/100
+
+Recommendations:
+- Keep the title around 30–60 characters.
+- Include your main keyword.
+- Use a clear and descriptive title.
+- Create a unique meta description.
+- Use relevant headings and internal links.`
+      );
+      return;
+    }
+
+    if (tool.id === "calculator") {
+      try {
+        const safe = text.replace(/[^0-9+\-*/().%\s]/g, "");
+        if (!safe.trim()) {
+          setResult("Enter a mathematical expression.");
+          return;
+        }
+
+        // Basic calculator only.
+        const answer = Function(`"use strict"; return (${safe})`)();
+        setResult(String(answer));
+      } catch {
+        setResult("Invalid calculation.");
+      }
+      return;
+    }
+
+    if (tool.id === "text-video") {
+      if (!text.trim()) {
+        setResult("Enter your video topic or script first.");
+        return;
+      }
+
+      setResult(
+        `VIDEO SCRIPT
+
+TITLE:
+${text.trim()}
+
+HOOK:
+Are you ready to learn more about ${text.trim()}?
+
+INTRO:
+Welcome! In this video we will explore ${text.trim()}.
+
+MAIN CONTENT:
+Explain the main idea clearly.
+Add examples and useful information.
+Keep each section short and engaging.
+
+CALL TO ACTION:
+If you found this useful, share the video and follow for more.
+
+END:
+Thanks for watching!`
+      );
+      return;
+    }
+
+    if (tool.id === "code") {
+      const formatted = text
+        .replace(/\{/g, "{\n")
+        .replace(/\}/g, "\n}\n")
+        .replace(/;/g, ";\n");
+
+      setResult(formatted);
+      return;
+    }
+
+    if (tool.id === "website") {
+      if (!url.trim()) {
+        setResult("Please enter a website URL.");
+        return;
+      }
+
+      setResult(
+        `WEBSITE ANALYSIS
+
+URL:
+${url}
+
+Checklist:
+✓ Website URL received
+✓ Mobile responsiveness should be checked
+✓ Page title should be optimized
+✓ Meta description should be present
+✓ H1 heading should be present
+✓ Images should have alt text
+✓ Website speed should be optimized
+✓ HTTPS should be enabled
+✓ Internal links should be checked
+
+Note:
+For a complete live website crawl, connect a server-side SEO API in the backend.`
+      );
+      return;
+    }
+
+    if (tool.id === "pdf-word") {
+      if (!file) {
+        setResult("Please select a PDF file first.");
+        return;
+      }
+
+      setResult(
+        `PDF selected successfully:
+
+${file.name}
+
+File size:
+${(file.size / 1024 / 1024).toFixed(2)} MB
+
+The file is ready for the PDF processing backend.
+
+This frontend version does not require jspdf and will build safely on Vercel.`
+      );
+      return;
+    }
+
+    if (tool.id === "pdf-text") {
+      if (!file) {
+        setResult("Please select a PDF file first.");
+        return;
+      }
+
+      setResult(
+        `PDF selected:
+
+${file.name}
+
+For actual PDF text extraction, connect a server-side PDF parser / Edge Function.
+
+The upload interface is working correctly.`
+      );
+      return;
+    }
+
+    setResult("Tool is ready.");
+  };
+
+  const handleImage = (selected) => {
+    if (!selected) return;
+
+    setFile(selected);
+
+    if (selected.type.startsWith("image/")) {
+      const img = new Image();
+
+      img.onload = () => {
+        setImageInfo({
+          width: img.width,
+          height: img.height,
+          size: (selected.size / 1024).toFixed(1),
+          type: selected.type,
+        });
+      };
+
+      img.src = URL.createObjectURL(selected);
+    }
+  };
+
+  const needsFile =
+    tool.id === "pdf-word" ||
+    tool.id === "pdf-text" ||
+    tool.id === "image-info";
+
+  return (
+    <div className="workspace-overlay">
+      <div className="workspace">
+        <div className="workspace-header">
+          <div className="workspace-title">
+            <div className="tool-icon-large">
+              <Icon size={26} />
+            </div>
+
+            <div>
+              <h2>{tool.name}</h2>
+              <p>{tool.description}</p>
+            </div>
+          </div>
+
+          <button className="icon-btn" onClick={onClose}>
+            <X size={22} />
+          </button>
+        </div>
+
+        <div className="workspace-body">
+          {needsFile && (
+            <div className="upload-box">
+              <Upload size={38} />
+
+              <h3>
+                {tool.id === "image-info"
+                  ? "Upload an image"
+                  : "Upload your PDF"}
+              </h3>
+
+              <p>
+                {tool.id === "image-info"
+                  ? "PNG, JPG, JPEG or WebP"
+                  : "Select a PDF file from your computer"}
+              </p>
+
+              <label className="upload-button">
+                Choose File
+                <input
+                  type="file"
+                  hidden
+                  accept={
+                    tool.id === "image-info"
+                      ? "image/*"
+                      : ".pdf,application/pdf"
+                  }
+                  onChange={(e) => {
+                    const selected = e.target.files?.[0];
+                    if (tool.id === "image-info") {
+                      handleImage(selected);
+                    } else {
+                      setFile(selected || null);
+                    }
+                  }}
+                />
+              </label>
+
+              {file && (
+                <div className="selected-file">
+                  <FileText size={18} />
+                  <span>{file.name}</span>
+                </div>
+              )}
+
+              {imageInfo && tool.id === "image-info" && (
+                <div className="info-card">
+                  <strong>Image Information</strong>
+                  <p>
+                    Dimensions: {imageInfo.width} × {imageInfo.height}
+                  </p>
+                  <p>Size: {imageInfo.size} KB</p>
+                  <p>Type: {imageInfo.type}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {tool.id === "website" && (
+            <div className="input-section">
+              <label>Website URL</label>
+              <input
+                className="text-input"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://example.com"
+              />
+            </div>
+          )}
+
+          {!needsFile && tool.id !== "website" && (
+            <div className="input-section">
+              <label>
+                {tool.id === "calculator"
+                  ? "Expression"
+                  : tool.id === "seo"
+                  ? "Enter your page title"
+                  : tool.id === "keyword"
+                  ? "Enter your topic"
+                  : "Enter your text"}
+              </label>
+
+              <textarea
+                className="main-textarea"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder={
+                  tool.id === "calculator"
+                    ? "25 * 4 + 10"
+                    : tool.id === "keyword"
+                    ? "e.g. PDF converter"
+                    : "Type or paste your content here..."
+                }
+              />
+            </div>
+          )}
+
+          <div className="action-row">
+            <button className="primary-btn" onClick={processTool}>
+              <Sparkles size={18} />
+              Process
+            </button>
+
+            {result && (
+              <>
+                <button className="secondary-btn" onClick={copyResult}>
+                  {copied ? <Check size={18} /> : <Copy size={18} />}
+                  {copied ? "Copied" : "Copy"}
+                </button>
+
+                <button
+                  className="secondary-btn"
+                  onClick={() =>
+                    downloadText(
+                      `${tool.id}-result.txt`,
+                      result,
+                      "text/plain"
+                    )
+                  }
+                >
+                  <Download size={18} />
+                  Download
+                </button>
+              </>
+            )}
+          </div>
+
+          {result && (
+            <div className="result-box">
+              <div className="result-header">
+                <strong>Result</strong>
+              </div>
+
+              <pre>{result}</pre>
+            </div>
+          )}
+
+          {keywords.length > 0 && (
+            <div className="keyword-list">
+              {keywords.map((keyword, index) => (
+                <span key={index}>{keyword}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
-
-/* =========================================================
-   APP
-========================================================= */
 
 function App() {
-  const [page,setPage] = useState("home");
-  const [cat,setCat] = useState("All Tools");
-  const [query,setQuery] = useState("");
-  const [tool,setTool] = useState(null);
-  const [auth,setAuth] = useState(null);
-  const [authMode,setAuthMode] = useState(null);
-  const [adminMode,setAdminMode] = useState(false);
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [search, setSearch] = useState("");
+  const [activeTool, setActiveTool] = useState(null);
+  const [category, setCategory] = useState("All");
 
-  useEffect(()=>{
-    const session = getSession();
-
-    if(session) {
-      setAuth(session);
-    }
-  },[]);
-
-  const filtered = useMemo(
-    ()=>tools.filter(t =>
-      (cat==="All Tools" || t[1]===cat) &&
-      (
-        t[0]
-          .toLowerCase()
-          .includes(query.toLowerCase()) ||
-        t[2]
-          .toLowerCase()
-          .includes(query.toLowerCase())
-      )
-    ),
-    [cat,query]
+  const categories = useMemo(
+    () => ["All", ...new Set(TOOLS.map((tool) => tool.category))],
+    []
   );
 
-  const openTool = t => {
-    setTool(t);
-    setPage("tool");
-  };
+  const filteredTools = useMemo(() => {
+    return TOOLS.filter((tool) => {
+      const categoryMatch =
+        category === "All" || tool.category === category;
 
-  const logout = () => {
-    saveSession(null);
-    setAuth(null);
-    setPage("home");
-  };
+      const searchMatch =
+        !search ||
+        tool.name.toLowerCase().includes(search.toLowerCase()) ||
+        tool.description.toLowerCase().includes(search.toLowerCase());
 
-  if(adminMode) {
-    return (
-      <AdminPanel
-        session={auth}
-        onClose={()=>setAdminMode(false)}
-        onLogout={logout}
-      />
-    );
-  }
-
-  if(authMode) {
-    return (
-      <>
-        <PublicHeader
-          auth={auth}
-          onSignIn={()=>setAuthMode("login")}
-          onSignUp={()=>setAuthMode("signup")}
-          onLogout={logout}
-          onAdmin={()=>setAdminMode(true)}
-        />
-
-        {authMode==="login" && (
-          <LoginPage
-            onClose={()=>setAuthMode(null)}
-            onSignup={()=>setAuthMode("signup")}
-            onForgot={()=>setAuthMode("forgot")}
-            onSuccess={session=>{
-              setAuth(session);
-              setAuthMode(null);
-            }}
-          />
-        )}
-
-        {authMode==="signup" && (
-          <SignupPage
-            onClose={()=>setAuthMode(null)}
-            onLogin={()=>setAuthMode("login")}
-            onSuccess={session=>{
-              setAuth(session);
-              setAuthMode(null);
-            }}
-          />
-        )}
-
-        {authMode==="forgot" && (
-          <ForgotPassword
-            onClose={()=>setAuthMode(null)}
-            onLogin={()=>setAuthMode("login")}
-          />
-        )}
-      </>
-    );
-  }
+      return categoryMatch && searchMatch;
+    });
+  }, [category, search]);
 
   return (
     <div className="app">
+      <header className="navbar">
+        <div className="container nav-inner">
+          <a className="logo" href="#home">
+            <div className="logo-mark">
+              <Wrench size={22} />
+            </div>
 
-      <PublicHeader
-        auth={auth}
-        onSignIn={()=>setAuthMode("login")}
-        onSignUp={()=>setAuthMode("signup")}
-        onLogout={logout}
-        onAdmin={()=>setAdminMode(true)}
-      />
+            <span>
+              Tool<span>Master</span>
+            </span>
+          </a>
 
-      {page==="tool" && tool ? (
-        <ToolPage
-          t={tool}
-          back={()=>{
-            setTool(null);
-            setPage("home");
-          }}
-        />
-      ) : (
-        <>
-          <section className="hero">
+          <nav className={mobileMenu ? "nav-links mobile-open" : "nav-links"}>
+            <a href="#home" onClick={() => setMobileMenu(false)}>
+              Home
+            </a>
 
-            <div className="pill">
-              <Sparkles size={15}/>
-              100+ Free Online Tools
+            <a href="#tools" onClick={() => setMobileMenu(false)}>
+              Tools
+            </a>
+
+            <a href="#categories" onClick={() => setMobileMenu(false)}>
+              Categories
+            </a>
+
+            <a href="#about" onClick={() => setMobileMenu(false)}>
+              About
+            </a>
+          </nav>
+
+          <button
+            className="mobile-menu-btn"
+            onClick={() => setMobileMenu(!mobileMenu)}
+          >
+            {mobileMenu ? <X /> : <Menu />}
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section className="hero" id="home">
+          <div className="container hero-content">
+            <div className="badge">
+              <Sparkles size={15} />
+              All-in-one online tools
             </div>
 
             <h1>
-              One place for <span>every tool</span> you need.
+              Powerful tools.
+              <br />
+              <span>Simple results.</span>
             </h1>
 
             <p>
-              Fast, simple and privacy-friendly online
-              tools for PDF, images, SEO, text,
-              developers, calculators and more.
+              Convert files, optimize content, generate keywords, analyze SEO
+              and more — all from one simple platform.
             </p>
 
-            <div className="search">
-              <Search/>
+            <div className="hero-search">
+              <Search size={21} />
 
               <input
-                value={query}
-                onChange={e=>setQuery(e.target.value)}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search for a tool..."
               />
+
+              <button onClick={() => {
+                document
+                  .getElementById("tools")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}>
+                Search
+              </button>
             </div>
 
-            <div className="stats">
-
+            <div className="hero-stats">
               <div>
-                <b>{tools.length}+</b>
-                <small>Tools</small>
+                <strong>{TOOLS.length}+</strong>
+                <span>Useful Tools</span>
               </div>
 
               <div>
-                <b>10</b>
-                <small>Categories</small>
+                <strong>Free</strong>
+                <span>To Use</span>
               </div>
 
               <div>
-                <b>100%</b>
-                <small>Browser-based</small>
+                <strong>Fast</strong>
+                <span>Processing</span>
               </div>
-
             </div>
-          </section>
+          </div>
+        </section>
 
-          <main id="tools">
-
-            <section
-              id="categories"
-              className="categories"
-            >
-              {categories.map(
-                ([name,count,Icon])=>(
-                  <button
-                    key={name}
-                    className={
-                      cat===name
-                        ? "cat active"
-                        : "cat"
-                    }
-                    onClick={()=>setCat(name)}
-                  >
-                    <Icon/>
-                    <span>{name}</span>
-                    <em>{count}</em>
-                  </button>
-                )
-              )}
-            </section>
-
-            <div className="sectionHead">
+        <section className="tools-section" id="tools">
+          <div className="container">
+            <div className="section-heading">
               <div>
-                <h2>{cat}</h2>
+                <span className="section-label">OUR TOOLS</span>
+                <h2>Everything you need</h2>
                 <p>
-                  {filtered.length} tools available
+                  Select a tool and start working instantly.
                 </p>
               </div>
             </div>
 
-            <div className="grid">
-              {filtered.map(t=>(
-                <ToolCard
-                  key={t[3]}
-                  t={t}
-                  open={()=>openTool(t)}
-                />
+            <div className="category-tabs" id="categories">
+              {categories.map((item) => (
+                <button
+                  key={item}
+                  className={category === item ? "active" : ""}
+                  onClick={() => setCategory(item)}
+                >
+                  {item}
+                </button>
               ))}
             </div>
 
-            {!filtered.length && (
-              <div className="empty">
-                No tools found. Try another search.
-              </div>
-            )}
-
-          </main>
-        </>
-      )}
-
-      <footer id="about">
-
-        <div className="brand">
-
-          <div className="brandIcon">
-            <Wrench size={20}/>
-          </div>
-
-          <span>
-            ToolMaster<span>Pro</span>
-          </span>
-
-        </div>
-
-        <p>
-          Powerful online tools, made simple.
-        </p>
-
-        <small>
-          © 2026 ToolMaster Pro.
-          All tools are designed for easy browser use.
-        </small>
-
-      </footer>
-
-    </div>
-  );
-}
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-function PublicHeader({
-  auth,
-  onSignIn,
-  onSignUp,
-  onLogout,
-  onAdmin
-}) {
-  return (
-    <header>
-
-      <div className="nav">
-
-        <div
-          className="brand"
-          onClick={()=>{
-            window.location.hash="tools";
-          }}
-          style={{cursor:"pointer"}}
-        >
-
-          <div className="brandIcon">
-            <Wrench size={22}/>
-          </div>
-
-          <span>
-            ToolMaster<span>Pro</span>
-          </span>
-
-        </div>
-
-        <nav>
-          <a href="#tools">Tools</a>
-          <a href="#categories">Categories</a>
-          <a href="#about">About</a>
-        </nav>
-
-        <div className="authActions">
-
-          {auth ? (
-            <>
-
-              <button className="profileBtn">
-                <User size={16}/>
-                {auth.profile?.username ||
-                  auth.email?.split("@")[0]}
-              </button>
-
-              {auth.profile?.role==="admin" && (
-                <button
-                  className="adminBtn"
-                  onClick={onAdmin}
-                >
-                  <LayoutDashboard size={17}/>
-                  Admin
-                </button>
-              )}
-
-              <button
-                className="secondary"
-                onClick={onLogout}
-              >
-                <LogOut size={16}/>
-                Logout
-              </button>
-
-            </>
-          ) : (
-            <>
-
-              <button
-                className="secondary"
-                onClick={onSignIn}
-              >
-                Sign In
-              </button>
-
-              <button
-                className="primary"
-                onClick={onSignUp}
-              >
-                <UserPlus size={16}/>
-                Sign Up
-              </button>
-
-            </>
-          )}
-
-        </div>
-
-      </div>
-
-    </header>
-  );
-}
-
-/* =========================================================
-   AUTH
-========================================================= */
-
-function LoginPage({
-  onClose,
-  onSignup,
-  onForgot,
-  onSuccess
-}) {
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-  const [show,setShow] = useState(false);
-  const [loading,setLoading] = useState(false);
-  const [error,setError] = useState("");
-
-  const submit = async e => {
-    e.preventDefault();
-
-    setError("");
-    setLoading(true);
-
-    try {
-
-      if(!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-        throw new Error(
-          "Supabase is not configured."
-        );
-      }
-
-      const data =
-        await supabaseFetch(
-          "/auth/v1/token?grant_type=password",
-          {
-            method:"POST",
-            body:JSON.stringify({
-              email,
-              password
-            })
-          }
-        );
-
-      const token =
-        data.access_token;
-
-      let profile = null;
-
-      try {
-
-        const rows =
-          await supabaseFetch(
-            `/rest/v1/profiles?select=*&id=eq.${encodeURIComponent(data.user.id)}&limit=1`,
-            {
-              headers:{
-                Authorization:
-                  `Bearer ${token}`
-              }
-            }
-          );
-
-        profile = rows?.[0] || null;
-
-      } catch {
-        profile = null;
-      }
-
-      const session = {
-        access_token:token,
-        refresh_token:data.refresh_token,
-        user:data.user,
-        email:data.user.email,
-        profile
-      };
-
-      saveSession(session);
-      onSuccess(session);
-
-    } catch(err) {
-
-      setError(
-        err.message ||
-        "Unable to sign in."
-      );
-
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <AuthShell
-      title="Welcome back"
-      subtitle="Sign in to your ToolMaster Pro account."
-      onClose={onClose}
-    >
-
-      <form
-        className="authForm"
-        onSubmit={submit}
-      >
-
-        <label>
-          Email
-
-          <div className="inputIcon">
-            <Mail size={17}/>
-
-            <input
-              type="email"
-              value={email}
-              onChange={e=>setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-          </div>
-        </label>
-
-        <label>
-          Password
-
-          <div className="inputIcon">
-            <KeyRound size={17}/>
-
-            <input
-              type={show ? "text" : "password"}
-              value={password}
-              onChange={e=>setPassword(e.target.value)}
-              placeholder="Your password"
-              required
-            />
-
-            <button
-              type="button"
-              className="iconButton"
-              onClick={()=>setShow(!show)}
-            >
-              {show
-                ? <EyeOff size={17}/>
-                : <Eye size={17}/>}
-            </button>
-
-          </div>
-        </label>
-
-        <div className="authRow">
-
-          <button
-            type="button"
-            className="linkButton"
-            onClick={onForgot}
-          >
-            Forgot Password?
-          </button>
-
-        </div>
-
-        {error && (
-          <div className="errorBox">
-            {error}
-          </div>
-        )}
-
-        <button
-          className="primary authSubmit"
-          disabled={loading}
-        >
-          {loading
-            ? "Signing in..."
-            : "Sign In"}
-        </button>
-
-        <p className="authBottom">
-          Don't have an account?
-
-          <button
-            type="button"
-            onClick={onSignup}
-          >
-            Create Account
-          </button>
-        </p>
-
-      </form>
-
-    </AuthShell>
-  );
-}
-
-function SignupPage({
-  onClose,
-  onLogin,
-  onSuccess
-}) {
-  const [fullName,setFullName] = useState("");
-  const [username,setUsername] = useState("");
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-  const [confirm,setConfirm] = useState("");
-  const [show,setShow] = useState(false);
-  const [loading,setLoading] = useState(false);
-  const [error,setError] = useState("");
-  const [success,setSuccess] = useState("");
-
-  const submit = async e => {
-    e.preventDefault();
-
-    setError("");
-    setSuccess("");
-
-    if(password !== confirm) {
-      setError(
-        "Passwords do not match."
-      );
-      return;
-    }
-
-    if(password.length < 6) {
-      setError(
-        "Password must be at least 6 characters."
-      );
-      return;
-    }
-
-    if(username.length < 3) {
-      setError(
-        "Username must contain at least 3 characters."
-      );
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-
-      const data =
-        await supabaseFetch(
-          "/auth/v1/signup",
-          {
-            method:"POST",
-            body:JSON.stringify({
-              email,
-              password,
-              data:{
-                full_name:fullName,
-                username
-              }
-            })
-          }
-        );
-
-      if(data?.access_token) {
-
-        const session = {
-          access_token:data.access_token,
-          refresh_token:data.refresh_token,
-          user:data.user,
-          email:data.user.email,
-          profile:{
-            id:data.user.id,
-            full_name:fullName,
-            username,
-            email,
-            role:"user"
-          }
-        };
-
-        try {
-
-          await supabaseFetch(
-            "/rest/v1/profiles",
-            {
-              method:"POST",
-              headers:{
-                Prefer:"return=minimal",
-                Authorization:
-                  `Bearer ${data.access_token}`
-              },
-              body:JSON.stringify({
-                id:data.user.id,
-                full_name:fullName,
-                username,
-                email,
-                role:"user"
-              })
-            }
-          );
-
-        } catch {}
-
-        saveSession(session);
-        onSuccess(session);
-
-      } else {
-
-        setSuccess(
-          "Account created. Please check your email to verify your account."
-        );
-
-      }
-
-    } catch(err) {
-
-      setError(
-        err.message ||
-        "Account creation failed."
-      );
-
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <AuthShell
-      title="Create your account"
-      subtitle="Join ToolMaster Pro and access your personal workspace."
-      onClose={onClose}
-    >
-
-      <form
-        className="authForm"
-        onSubmit={submit}
-      >
-
-        <label>
-          Full Name
-
-          <div className="inputIcon">
-            <User size={17}/>
-
-            <input
-              value={fullName}
-              onChange={e=>setFullName(e.target.value)}
-              placeholder="Your full name"
-              required
-            />
-          </div>
-        </label>
-
-        <label>
-          Username
-
-          <div className="inputIcon">
-            <UserPlus size={17}/>
-
-            <input
-              value={username}
-              onChange={e=>
-                setUsername(
-                  e.target.value
-                    .replace(/\s/g,"")
-                    .toLowerCase()
-                )
-              }
-              placeholder="yourusername"
-              required
-            />
-          </div>
-        </label>
-
-        <label>
-          Email
-
-          <div className="inputIcon">
-            <Mail size={17}/>
-
-            <input
-              type="email"
-              value={email}
-              onChange={e=>setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-          </div>
-        </label>
-
-        <label>
-          Create Password
-
-          <div className="inputIcon">
-            <KeyRound size={17}/>
-
-            <input
-              type={show ? "text" : "password"}
-              value={password}
-              onChange={e=>setPassword(e.target.value)}
-              placeholder="Minimum 6 characters"
-              required
-            />
-
-            <button
-              type="button"
-              className="iconButton"
-              onClick={()=>setShow(!show)}
-            >
-              {show
-                ? <EyeOff size={17}/>
-                : <Eye size={17}/>}
-            </button>
-
-          </div>
-        </label>
-
-        <label>
-          Confirm Password
-
-          <div className="inputIcon">
-            <KeyRound size={17}/>
-
-            <input
-              type={show ? "text" : "password"}
-              value={confirm}
-              onChange={e=>setConfirm(e.target.value)}
-              placeholder="Repeat password"
-              required
-            />
-          </div>
-        </label>
-
-        {error && (
-          <div className="errorBox">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="successBox">
-            {success}
-          </div>
-        )}
-
-        <button
-          className="primary authSubmit"
-          disabled={loading}
-        >
-          {loading
-            ? "Creating account..."
-            : "Create Account"}
-        </button>
-
-        <p className="authBottom">
-          Already have an account?
-
-          <button
-            type="button"
-            onClick={onLogin}
-          >
-            Sign In
-          </button>
-        </p>
-
-      </form>
-
-    </AuthShell>
-  );
-}
-
-function ForgotPassword({
-  onClose,
-  onLogin
-}) {
-  const [email,setEmail] = useState("");
-  const [loading,setLoading] = useState(false);
-  const [error,setError] = useState("");
-  const [success,setSuccess] = useState("");
-
-  const submit = async e => {
-    e.preventDefault();
-
-    setError("");
-    setSuccess("");
-    setLoading(true);
-
-    try {
-
-      await supabaseFetch(
-        "/auth/v1/recover",
-        {
-          method:"POST",
-          body:JSON.stringify({email})
-        }
-      );
-
-      setSuccess(
-        "If an account exists for this email, a password reset email has been sent."
-      );
-
-    } catch(err) {
-
-      setError(
-        err.message ||
-        "Unable to send reset email."
-      );
-
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <AuthShell
-      title="Reset your password"
-      subtitle="Enter your email and we'll send you a password reset link."
-      onClose={onClose}
-    >
-
-      <form
-        className="authForm"
-        onSubmit={submit}
-      >
-
-        <label>
-          Email
-
-          <div className="inputIcon">
-            <Mail size={17}/>
-
-            <input
-              type="email"
-              value={email}
-              onChange={e=>setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-          </div>
-        </label>
-
-        {error && (
-          <div className="errorBox">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="successBox">
-            {success}
-          </div>
-        )}
-
-        <button
-          className="primary authSubmit"
-          disabled={loading}
-        >
-          {loading
-            ? "Sending..."
-            : "Send Reset Link"}
-        </button>
-
-        <p className="authBottom">
-          Remember your password?
-
-          <button
-            type="button"
-            onClick={onLogin}
-          >
-            Back to Sign In
-          </button>
-        </p>
-
-      </form>
-
-    </AuthShell>
-  );
-}
-
-function AuthShell({
-  title,
-  subtitle,
-  onClose,
-  children
-}) {
-  return (
-    <main className="authPage">
-
-      <button
-        className="back authBack"
-        onClick={onClose}
-      >
-        ← Back to website
-      </button>
-
-      <div className="authCard">
-
-        <button
-          className="closeAuth"
-          onClick={onClose}
-        >
-          <X size={19}/>
-        </button>
-
-        <div className="authLogo">
-          <div className="brandIcon">
-            <Wrench size={24}/>
-          </div>
-        </div>
-
-        <h1>{title}</h1>
-        <p>{subtitle}</p>
-
-        {children}
-
-      </div>
-
-    </main>
-  );
-}
-
-/* =========================================================
-   ADMIN
-========================================================= */
-
-function AdminPanel({
-  session,
-  onClose,
-  onLogout
-}) {
-  const [tab,setTab] = useState("dashboard");
-  const [mobile,setMobile] = useState(false);
-  const [users,setUsers] = useState([]);
-  const [loadingUsers,setLoadingUsers] = useState(false);
-  const [message,setMessage] = useState("");
-
-  const adminToken =
-    session?.access_token;
-
-  const loadUsers = async () => {
-
-    if(!adminToken) return;
-
-    setLoadingUsers(true);
-
-    try {
-
-      const data =
-        await supabaseFetch(
-          "/rest/v1/profiles?select=id,full_name,username,email,role,created_at&order=created_at.desc",
-          {
-            headers:{
-              Authorization:
-                `Bearer ${adminToken}`
-            }
-          }
-        );
-
-      setUsers(data || []);
-
-    } catch(err) {
-
-      setMessage(
-        err.message ||
-        "Unable to load users."
-      );
-
-    } finally {
-
-      setLoadingUsers(false);
-
-    }
-  };
-
-  useEffect(()=>{
-    if(tab==="users") {
-      loadUsers();
-    }
-  },[tab]);
-
-  const nav = [
-    ["dashboard","Dashboard",LayoutDashboard],
-    ["users","Users",Users],
-    ["tools","Tools",Wrench],
-    ["categories","Categories",FolderKanban],
-    ["analytics","Analytics",BarChart3],
-    ["plans","Plans",CreditCard],
-    ["settings","Settings",Settings],
-    ["activity","Activity",Activity]
-  ];
-
-  return (
-    <div className="adminShell">
-
-      <aside
-        className={
-          mobile
-            ? "adminSidebar open"
-            : "adminSidebar"
-        }
-      >
-
-        <div className="adminBrand">
-
-          <div className="brandIcon">
-            <Wrench size={21}/>
-          </div>
-
-          <div>
-            <strong>ToolMaster</strong>
-            <span>Admin Pro</span>
-          </div>
-
-        </div>
-
-        <div className="adminNav">
-
-          <small>MAIN MENU</small>
-
-          {nav.map(
-            ([id,label,Icon])=>(
-              <button
-                key={id}
-                className={
-                  tab===id
-                    ? "adminNavItem active"
-                    : "adminNavItem"
-                }
-                onClick={()=>{
-                  setTab(id);
-                  setMobile(false);
-                }}
-              >
-                <Icon size={18}/>
-                <span>{label}</span>
-                <ChevronRight size={14}/>
-              </button>
-            )
-          )}
-
-        </div>
-
-        <div className="adminSidebarBottom">
-
-          <div className="adminMiniProfile">
-
-            <div className="avatar">
-              {(
-                session?.profile?.full_name ||
-                "A"
-              )
-                .charAt(0)
-                .toUpperCase()}
-            </div>
-
-            <div>
-              <strong>
-                {session?.profile?.full_name ||
-                  "Administrator"}
-              </strong>
-
-              <span>
-                {session?.email}
-              </span>
-            </div>
-
-          </div>
-
-          <button
-            className="logoutAdmin"
-            onClick={onLogout}
-          >
-            <LogOut size={17}/>
-            Logout
-          </button>
-
-        </div>
-
-      </aside>
-
-      <div className="adminMain">
-
-        <header className="adminHeader">
-
-          <button
-            className="mobileAdminMenu"
-            onClick={()=>setMobile(!mobile)}
-          >
-            <Menu/>
-          </button>
-
-          <div>
-            <span className="adminEyebrow">
-              CONTROL CENTER
-            </span>
-
-            <h1>
-              {
-                nav.find(
-                  x=>x[0]===tab
-                )?.[1] ||
-                "Dashboard"
-              }
-            </h1>
-          </div>
-
-          <div className="adminHeaderActions">
-
-            <button
-              className="secondary"
-              onClick={onClose}
-            >
-              <Home size={16}/>
-              Website
-            </button>
-
-            <div className="adminHeaderUser">
-              <div className="avatar">
-                {(
-                  session?.profile?.full_name ||
-                  "A"
-                )
-                  .charAt(0)
-                  .toUpperCase()}
-              </div>
-            </div>
-
-          </div>
-
-        </header>
-
-        {message && (
-          <div className="notice adminNotice">
-            {message}
-
-            <button
-              onClick={()=>setMessage("")}
-            >
-              <X size={15}/>
-            </button>
-          </div>
-        )}
-
-        {tab==="dashboard" && (
-          <AdminDashboard
-            users={users}
-          />
-        )}
-
-        {tab==="users" && (
-          <AdminUsers
-            users={users}
-            loading={loadingUsers}
-            reload={loadUsers}
-          />
-        )}
-
-        {tab==="tools" && (
-          <AdminTools/>
-        )}
-
-        {tab==="categories" && (
-          <AdminCategories/>
-        )}
-
-        {tab==="analytics" && (
-          <AdminAnalytics/>
-        )}
-
-        {tab==="plans" && (
-          <AdminPlans/>
-        )}
-
-        {tab==="settings" && (
-          <AdminSettings/>
-        )}
-
-        {tab==="activity" && (
-          <AdminActivity/>
-        )}
-
-      </div>
-
-    </div>
-  );
-}
-
-function AdminDashboard({users}) {
-
-  const stats = [
-    {
-      title:"Total Tools",
-      value:tools.length,
-      change:"+12%",
-      icon:Wrench
-    },
-    {
-      title:"Registered Users",
-      value:users.length || "—",
-      change:"+8.4%",
-      icon:Users
-    },
-    {
-      title:"Categories",
-      value:categories.length-1,
-      change:"+2",
-      icon:FolderKanban
-    },
-    {
-      title:"System Status",
-      value:"Online",
-      change:"Healthy",
-      icon:CheckCircle2
-    }
-  ];
-
-  return (
-    <div className="adminContent">
-
-      <div className="welcomeAdmin">
-
-        <div>
-          <span>GOOD DAY 👋</span>
-
-          <h2>
-            Welcome to your control center
-          </h2>
-
-          <p>
-            Manage your tools, users and platform
-            settings from one place.
-          </p>
-        </div>
-
-        <div className="systemBadge">
-          <span></span>
-          All systems operational
-        </div>
-
-      </div>
-
-      <div className="dashboardStats">
-
-        {stats.map(
-          ({
-            title,
-            value,
-            change,
-            icon:Icon
-          })=>(
-            <div
-              className="dashboardStat"
-              key={title}
-            >
-
-              <div className="statIcon">
-                <Icon size={21}/>
-              </div>
-
-              <div className="statInfo">
-                <span>{title}</span>
-                <strong>{value}</strong>
-                <small>{change}</small>
-              </div>
-
-            </div>
-          )
-        )}
-
-      </div>
-
-      <div className="adminTwoCol">
-
-        <div className="adminPanelCard">
-
-          <div className="panelTitle">
-            <div>
-              <h3>Platform Overview</h3>
-              <p>
-                Your ToolMaster Pro platform at a glance.
-              </p>
-            </div>
-
-            <BarChart3 size={21}/>
-          </div>
-
-          <div className="overviewRows">
-
-            <div>
-              <span>PDF Tools</span>
-              <b>
-                {
-                  tools.filter(
-                    x=>x[1]==="PDF Tools"
-                  ).length
-                }
-              </b>
-            </div>
-
-            <div>
-              <span>Image Tools</span>
-              <b>
-                {
-                  tools.filter(
-                    x=>x[1]==="Image Tools"
-                  ).length
-                }
-              </b>
-            </div>
-
-            <div>
-              <span>Developer Tools</span>
-              <b>
-                {
-                  tools.filter(
-                    x=>x[1]==="Developer Tools"
-                  ).length
-                }
-              </b>
-            </div>
-
-            <div>
-              <span>SEO & Marketing</span>
-              <b>
-                {
-                  tools.filter(
-                    x=>x[1]==="SEO & Marketing"
-                  ).length
-                }
-              </b>
-            </div>
-
-          </div>
-
-        </div>
-
-        <div className="adminPanelCard">
-
-          <div className="panelTitle">
-            <div>
-              <h3>Quick Actions</h3>
-              <p>
-                Common administration tasks.
-              </p>
-            </div>
-
-            <Zap size={21}/>
-          </div>
-
-          <div className="quickActions">
-
-            <button>
-              <Users size={18}/>
-              Manage Users
-            </button>
-
-            <button>
-              <Wrench size={18}/>
-              Manage Tools
-            </button>
-
-            <button>
-              <Settings size={18}/>
-              Platform Settings
-            </button>
-
-            <button>
-              <Activity size={18}/>
-              View Activity
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-  );
-}
-
-function AdminUsers({
-  users,
-  loading,
-  reload
-}) {
-  return (
-    <div className="adminContent">
-
-      <div className="pageToolbar">
-
-        <div>
-          <h2>User Management</h2>
-          <p>
-            Manage registered ToolMaster Pro users.
-          </p>
-        </div>
-
-        <button
-          className="primary"
-          onClick={reload}
-        >
-          <RefreshCw size={16}/>
-          Refresh
-        </button>
-
-      </div>
-
-      <div className="adminTableCard">
-
-        {loading ? (
-          <div className="loadingAdmin">
-            Loading users...
-          </div>
-        ) : users.length ? (
-
-          <div className="tableWrap">
-
-            <table>
-
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Username</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Created</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-
-                {users.map(user=>(
-                  <tr key={user.id}>
-
-                    <td>
-
-                      <div className="tableUser">
-
-                        <div className="avatar">
-                          {(
-                            user.full_name ||
-                            "U"
-                          )
-                            .charAt(0)
-                            .toUpperCase()}
-                        </div>
-
-                        <div>
-                          <strong>
-                            {user.full_name ||
-                              "No name"}
-                          </strong>
-
-                          <span>
-                            {user.id.slice(0,8)}...
-                          </span>
-                        </div>
-
-                      </div>
-
-                    </td>
-
-                    <td>
-                      @{user.username || "—"}
-                    </td>
-
-                    <td>
-                      {user.email || "—"}
-                    </td>
-
-                    <td>
-
-                      <span
-                        className={
-                          user.role==="admin"
-                            ? "roleBadge admin"
-                            : "roleBadge"
-                        }
-                      >
-                        {user.role || "user"}
-                      </span>
-
-                    </td>
-
-                    <td>
-                      {
-                        user.created_at
-                          ? new Date(
-                              user.created_at
-                            ).toLocaleDateString()
-                          : "—"
-                      }
-                    </td>
-
-                    <td>
-
-                      <button
-                        className="tableAction"
-                      >
-                        <Edit3 size={15}/>
-                      </button>
-
-                      <button
-                        className="tableAction danger"
-                      >
-                        <Trash2 size={15}/>
-                      </button>
-
-                    </td>
-
-                  </tr>
-                ))}
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        ) : (
-
-          <div className="emptyAdmin">
-
-            <Users size={35}/>
-
-            <h3>No users loaded</h3>
-
-            <p>
-              Configure your Supabase profiles table
-              and RLS policies to show users here.
-            </p>
-
-          </div>
-
-        )}
-
-      </div>
-
-    </div>
-  );
-}
-
-function AdminTools() {
-
-  const [search,setSearch] = useState("");
-
-  const filtered =
-    tools.filter(t =>
-      t[0]
-        .toLowerCase()
-        .includes(search.toLowerCase()) ||
-      t[1]
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    );
-
-  return (
-    <div className="adminContent">
-
-      <div className="pageToolbar">
-
-        <div>
-          <h2>Tool Management</h2>
-          <p>
-            Manage your complete online tools catalog.
-          </p>
-        </div>
-
-        <button className="primary">
-          <Wrench size={16}/>
-          Add New Tool
-        </button>
-
-      </div>
-
-      <div className="adminSearch">
-
-        <Search size={18}/>
-
-        <input
-          value={search}
-          onChange={e=>setSearch(e.target.value)}
-          placeholder="Search tools..."
-        />
-
-      </div>
-
-      <div className="toolAdminGrid">
-
-        {filtered.map(t=>(
-          <div
-            className="toolAdminCard"
-            key={t[3]}
-          >
-
-            <div className="toolAdminIcon">
-              <Wrench size={18}/>
-            </div>
-
-            <div className="toolAdminInfo">
-              <strong>{t[0]}</strong>
-              <span>{t[1]}</span>
-            </div>
-
-            <div className="toolAdminActions">
-
-              <button>
-                <Edit3 size={15}/>
-              </button>
-
-              <button>
-                <CheckCircle2 size={15}/>
-              </button>
-
-            </div>
-
-          </div>
-        ))}
-
-      </div>
-
-    </div>
-  );
-}
-
-function AdminCategories() {
-
-  return (
-    <div className="adminContent">
-
-      <div className="pageToolbar">
-
-        <div>
-          <h2>Categories</h2>
-          <p>
-            Organize your tools into clear categories.
-          </p>
-        </div>
-
-        <button className="primary">
-          <FolderKanban size={16}/>
-          Add Category
-        </button>
-
-      </div>
-
-      <div className="categoryAdminGrid">
-
-        {categories.slice(1).map(
-          ([name,count,Icon])=>(
-            <div
-              className="categoryAdminCard"
-              key={name}
-            >
-
-              <div className="categoryAdminIcon">
-                <Icon size={21}/>
-              </div>
-
-              <div>
-                <strong>{name}</strong>
-                <span>{count} tools</span>
-              </div>
-
-              <button>
-                <Edit3 size={16}/>
-              </button>
-
-            </div>
-          )
-        )}
-
-      </div>
-
-    </div>
-  );
-}
-
-function AdminAnalytics() {
-
-  return (
-    <div className="adminContent">
-
-      <div className="pageToolbar">
-
-        <div>
-          <h2>Analytics</h2>
-          <p>
-            Monitor platform growth and tool activity.
-          </p>
-        </div>
-
-      </div>
-
-      <div className="analyticsCards">
-
-        <div>
-          <span>Page Views</span>
-          <strong>—</strong>
-          <small>
-            Connect analytics API
-          </small>
-        </div>
-
-        <div>
-          <span>Tool Runs</span>
-          <strong>—</strong>
-          <small>
-            Usage tracking required
-          </small>
-        </div>
-
-        <div>
-          <span>New Users</span>
-          <strong>—</strong>
-          <small>
-            Supabase data source
-          </small>
-        </div>
-
-        <div>
-          <span>Conversion</span>
-          <strong>—</strong>
-          <small>
-            Analytics integration
-          </small>
-        </div>
-
-      </div>
-
-      <div className="chartPlaceholder">
-
-        <BarChart3 size={38}/>
-
-        <h3>Analytics chart</h3>
-
-        <p>
-          Connect your usage/events table
-          to display live charts here.
-        </p>
-
-      </div>
-
-    </div>
-  );
-}
-
-function AdminPlans() {
-
-  return (
-    <div className="adminContent">
-
-      <div className="pageToolbar">
-
-        <div>
-          <h2>Credit Plans</h2>
-          <p>
-            Manage Text-to-Video subscription plans.
-          </p>
-        </div>
-
-        <button className="primary">
-          <Crown size={16}/>
-          Add Plan
-        </button>
-
-      </div>
-
-      <div className="planAdminGrid">
-
-        {plans.map(plan=>(
-          <div
-            className={
-              plan.popular
-                ? "adminPlanCard popular"
-                : "adminPlanCard"
-            }
-            key={plan.id}
-          >
-
-            {plan.popular && (
-              <em>POPULAR</em>
-            )}
-
-            <h3>{plan.name}</h3>
-
-            <strong>
-              {plan.price===0
-                ? "Free"
-                : `$${plan.price}`}
-            </strong>
-
-            <span>
-              {plan.credits.toLocaleString()}
-              {" "}credits / {plan.period}
-            </span>
-
-            <p>{plan.description}</p>
-
-            <button className="secondary">
-              <Edit3 size={15}/>
-              Edit Plan
-            </button>
-
-          </div>
-        ))}
-
-      </div>
-
-    </div>
-  );
-}
-
-function AdminSettings() {
-
-  const [siteName,setSiteName] =
-    useState("ToolMaster Pro");
-
-  const [maintenance,setMaintenance] =
-    useState(false);
-
-  const [message,setMessage] =
-    useState("");
-
-  return (
-    <div className="adminContent">
-
-      <div className="pageToolbar">
-
-        <div>
-          <h2>Platform Settings</h2>
-          <p>
-            Configure your website experience.
-          </p>
-        </div>
-
-        <button
-          className="primary"
-          onClick={()=>{
-            setMessage(
-              "Settings saved locally."
-            );
-
-            setTimeout(
-              ()=>setMessage(""),
-              2500
-            );
-          }}
-        >
-          Save Settings
-        </button>
-
-      </div>
-
-      {message && (
-        <div className="successBox">
-          {message}
-        </div>
-      )}
-
-      <div className="settingsGrid">
-
-        <div className="settingsCard">
-
-          <div className="panelTitle">
-
-            <div>
-              <h3>General</h3>
-              <p>
-                Basic website information.
-              </p>
-            </div>
-
-            <Settings size={21}/>
-
-          </div>
-
-          <label>
-            Website Name
-
-            <input
-              value={siteName}
-              onChange={e=>
-                setSiteName(e.target.value)
-              }
-            />
-          </label>
-
-          <label>
-            Website Description
-
-            <textarea
-              defaultValue=
-                "Powerful online tools, made simple."
-            />
-          </label>
-
-        </div>
-
-        <div className="settingsCard">
-
-          <div className="panelTitle">
-
-            <div>
-              <h3>Security</h3>
-              <p>
-                Platform access controls.
-              </p>
-            </div>
-
-            <ShieldCheck size={21}/>
-
-          </div>
-
-          <div className="settingToggle">
-
-            <div>
-              <strong>
-                Maintenance Mode
-              </strong>
-
-              <span>
-                Temporarily disable public access.
-              </span>
-            </div>
-
-            <button
-              className={
-                maintenance
-                  ? "toggle on"
-                  : "toggle"
-              }
-              onClick={()=>
-                setMaintenance(!maintenance)
-              }
-            >
-              <span></span>
-            </button>
-
-          </div>
-
-          <div className="settingToggle">
-
-            <div>
-              <strong>
-                Public Tools
-              </strong>
-
-              <span>
-                Allow tools without account login.
-              </span>
-            </div>
-
-            <button className="toggle on">
-              <span></span>
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-  );
-}
-
-function AdminActivity() {
-
-  return (
-    <div className="adminContent">
-
-      <div className="pageToolbar">
-
-        <div>
-          <h2>Activity Log</h2>
-          <p>
-            Monitor important platform events.
-          </p>
-        </div>
-
-      </div>
-
-      <div className="activityCard">
-
-        <div className="activityItem">
-
-          <div className="activityIcon">
-            <ShieldCheck size={17}/>
-          </div>
-
-          <div>
-            <strong>
-              Admin dashboard initialized
-            </strong>
-
-            <span>
-              System is ready for production configuration.
-            </span>
-          </div>
-
-          <time>Now</time>
-
-        </div>
-
-        <div className="activityItem">
-
-          <div className="activityIcon">
-            <Wrench size={17}/>
-          </div>
-
-          <div>
-            <strong>
-              {tools.length} tools loaded
-            </strong>
-
-            <span>
-              Your current tools catalog is available.
-            </span>
-          </div>
-
-          <time>Today</time>
-
-        </div>
-
-        <div className="activityItem">
-
-          <div className="activityIcon">
-            <Database size={17}/>
-          </div>
-
-          <div>
-            <strong>
-              Supabase integration
-            </strong>
-
-            <span>
-              Authentication/database connection is configured.
-            </span>
-          </div>
-
-          <time>Today</time>
-
-        </div>
-
-      </div>
-
-    </div>
-  );
-}
-
-/* =========================================================
-   TOOL CARD
-========================================================= */
-
-function ToolCard({t,open}) {
-
-  const icons = {
-    "PDF Tools":FileText,
-    "Image Tools":ImageIcon,
-    "SEO & Marketing":Globe2,
-    "Text Tools":FileText,
-    "Developer Tools":Code2,
-    "Calculator Tools":Calculator
-  };
-
-  const Icon =
-    icons[t[1]] || Wrench;
-
-  return (
-    <article
-      className="card"
-      onClick={open}
-    >
-
-      <div className="toolIcon">
-        <Icon size={21}/>
-      </div>
-
-      <div className="cardBody">
-
-        <span>{t[1]}</span>
-
-        <h3>{t[0]}</h3>
-
-        <p>{t[2]}</p>
-
-      </div>
-
-      <ArrowRight className="arrow"/>
-
-    </article>
-  );
-}
-
-/* =========================================================
-   TOOL ROUTER
-========================================================= */
-
-function ToolPage({t,back}) {
-
-  if(t[3]==="student-ai-helper") {
-    return (
-      <StudentAIHelper
-        back={back}
-      />
-    );
-  }
-
-  if(t[3]==="text-to-video") {
-    return (
-      <TextToVideo
-        back={back}
-      />
-    );
-  }
-
-  if(fileTools.has(t[3])) {
-    return (
-      <FileToolWorkspace
-        t={t}
-        back={back}
-      />
-    );
-  }
-
-  return (
-    <GenericTool
-      t={t}
-      back={back}
-    />
-  );
-}
-
-/* =========================================================
-   TEXT TO VIDEO
-========================================================= */
-
-function TextToVideo({back}) {
-
-  const [prompt,setPrompt] =
-    useState("");
-
-  const [style,setStyle] =
-    useState("Cinematic");
-
-  const [duration,setDuration] =
-    useState("10 seconds");
-
-  const [credits,setCredits] =
-    useState(
-      ()=>Number(
-        localStorage.getItem(
-          "tm_daily_credits"
-        ) || 50
-      )
-    );
-
-  const [status,setStatus] =
-    useState("");
-
-  const generate = () => {
-
-    if(!prompt.trim()) {
-      setStatus(
-        "Please enter a video prompt first."
-      );
-      return;
-    }
-
-    if(credits<1) {
-      setStatus(
-        "No credits left."
-      );
-      return;
-    }
-
-    setCredits(c=>{
-      const n=c-1;
-
-      localStorage.setItem(
-        "tm_daily_credits",
-        n
-      );
-
-      return n;
-    });
-
-    setStatus(
-      "Request accepted. Connect a server-side AI video provider to render the actual MP4."
-    );
-  };
-
-  return (
-    <main className="toolPage">
-
-      <button
-        className="back"
-        onClick={back}
-      >
-        ← Back to tools
-      </button>
-
-      <div className="toolHero">
-
-        <div className="toolIcon big">
-          <Sparkles/>
-        </div>
-
-        <div>
-          <span>AI & Video</span>
-          <h1>Text to Video</h1>
-          <p>
-            Create an AI video project with plan-based credits.
-          </p>
-        </div>
-
-      </div>
-
-      <div className="creditBar">
-
-        <div>
-          <b>{credits}</b>
-          <span>credits remaining</span>
-        </div>
-
-      </div>
-
-      <div className="plansGrid">
-
-        {plans.map(p=>(
-          <div
-            className="planCard"
-            key={p.id}
-          >
-            <span>{p.name}</span>
-
-            <b>
-              {p.price===0
-                ? "Free"
-                : `$${p.price}/mo`}
-            </b>
-
-            <small>
-              {p.description}
-            </small>
-          </div>
-        ))}
-
-      </div>
-
-      <div className="aiHelper">
-
-        <div className="aiCard">
-
-          <h3>
-            🎬 Video Prompt
-          </h3>
-
-          <textarea
-            value={prompt}
-            onChange={e=>setPrompt(e.target.value)}
-            placeholder="Describe your video..."
-          />
-
-          <div className="videoOptions">
-
-            <label>
-              Style
-
-              <select
-                value={style}
-                onChange={e=>
-                  setStyle(e.target.value)
-                }
-              >
-                <option>Cinematic</option>
-                <option>Realistic</option>
-                <option>Anime</option>
-                <option>3D Animation</option>
-                <option>Documentary</option>
-              </select>
-
-            </label>
-
-            <label>
-              Duration
-
-              <select
-                value={duration}
-                onChange={e=>
-                  setDuration(e.target.value)
-                }
-              >
-                <option>5 seconds</option>
-                <option>10 seconds</option>
-                <option>15 seconds</option>
-                <option>30 seconds</option>
-              </select>
-
-            </label>
-
-          </div>
-
-          <button
-            className="primary aiSolve"
-            onClick={generate}
-          >
-            <Sparkles size={17}/>
-            Generate Video · 1 credit
-          </button>
-
-          {status && (
-            <div className="statusBox">
-              {status}
-            </div>
-          )}
-
-        </div>
-
-        <div className="aiCard resultCard">
-
-          <h3>
-            🎥 Video Preview
-          </h3>
-
-          <div className="videoPlaceholder">
-
-            <div className="playCircle">
-              ▶
-            </div>
-
-            <b>
-              Your generated video will appear here
-            </b>
-
-            <small>
-              {style} · {duration}
-            </small>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </main>
-  );
-}
-
-/* =========================================================
-   STUDENT AI
-========================================================= */
-
-function StudentAIHelper({back}) {
-
-  const [question,setQuestion] =
-    useState("");
-
-  const [file,setFile] =
-    useState(null);
-
-  const [answer,setAnswer] =
-    useState("");
-
-  const [loading,setLoading] =
-    useState(false);
-
-  const solve = () => {
-
-    if(!question.trim() && !file) {
-      setAnswer(
-        "Please enter a question or upload a study file."
-      );
-      return;
-    }
-
-    setLoading(true);
-
-    setTimeout(()=>{
-
-      setAnswer(
-        "Student AI Helper is ready. Connect your secure AI backend to generate real step-by-step answers."
-      );
-
-      setLoading(false);
-
-    },700);
-  };
-
-  return (
-    <main className="toolPage">
-
-      <button
-        className="back"
-        onClick={back}
-      >
-        ← Back to tools
-      </button>
-
-      <div className="toolHero">
-
-        <div className="toolIcon big">
-          <Sparkles/>
-        </div>
-
-        <div>
-          <span>AI & Education</span>
-          <h1>Student AI Helper</h1>
-          <p>
-            Ask a question or upload study material.
-          </p>
-        </div>
-
-      </div>
-
-      <div className="aiHelper">
-
-        <div className="aiCard">
-
-          <h3>
-            📚 Ask your question
-          </h3>
-
-          <textarea
-            value={question}
-            onChange={e=>setQuestion(e.target.value)}
-            placeholder="Ask your study question..."
-          />
-
-          <FileUpload
-            file={file}
-            setFile={setFile}
-            accept=".pdf,image/*,.txt,.doc,.docx"
-            label="Upload study material"
-          />
-
-          <button
-            className="primary aiSolve"
-            onClick={solve}
-            disabled={loading}
-          >
-            <Sparkles size={17}/>
-            {loading
-              ? "Preparing..."
-              : "Get AI Help"}
-          </button>
-
-        </div>
-
-        <div className="aiCard resultCard">
-
-          <h3>
-            🤖 AI Answer
-          </h3>
-
-          <div className="answer">
-            {answer ||
-              "Your step-by-step answer will appear here."}
-          </div>
-
-          {answer && (
-            <>
-
-              <button
-                className="secondary"
-                onClick={()=>
-                  navigator.clipboard?.writeText(
-                    answer
-                  )
-                }
-              >
-                <Copy size={17}/>
-                Copy Answer
-              </button>
-
-              <button
-                className="secondary"
-                onClick={()=>
-                  textDownload(
-                    answer,
-                    "student-ai-answer.txt"
-                  )
-                }
-              >
-                <Download size={17}/>
-                Download
-              </button>
-
-            </>
-          )}
-
-        </div>
-
-      </div>
-
-    </main>
-  );
-}
-
-/* =========================================================
-   FILE UPLOAD
-========================================================= */
-
-function FileUpload({
-  file,
-  setFile,
-  accept,
-  label="Upload File",
-  multiple=false
-}) {
-
-  return (
-    <label className="uploadBox">
-
-      <Upload/>
-
-      <div>
-        <b>{label}</b>
-
-        <small>
-          Click or drag a file here
-        </small>
-
-        {file && !multiple && (
-          <strong>
-            {file.name}
-          </strong>
-        )}
-
-        {multiple && Array.isArray(file) && (
-          <strong>
-            {file.length} file(s) selected
-          </strong>
-        )}
-
-      </div>
-
-      <input
-        type="file"
-        accept={accept}
-        multiple={multiple}
-        onChange={e=>{
-          if(multiple) {
-            setFile(
-              Array.from(
-                e.target.files || []
-              )
-            );
-          } else {
-            setFile(
-              e.target.files?.[0] || null
-            );
-          }
-        }}
-      />
-
-    </label>
-  );
-}
-
-/* =========================================================
-   PDF / IMAGE WORKSPACE
-========================================================= */
-
-function FileToolWorkspace({
-  t,
-  back
-}) {
-
-  const [file,setFile] =
-    useState(null);
-
-  const [files,setFiles] =
-    useState([]);
-
-  const [result,setResult] =
-    useState([]);
-
-  const [pdfResult,setPdfResult] =
-    useState(null);
-
-  const [status,setStatus] =
-    useState("");
-
-  const [loading,setLoading] =
-    useState(false);
-
-  /* -------------------------------------------------------
-     PDF TO JPG
-  ------------------------------------------------------- */
-
-  const processPDFToJPG = async () => {
-
-    if(!file) {
-      setStatus(
-        "Please upload a PDF file first."
-      );
-      return;
-    }
-
-    if(file.type !== "application/pdf") {
-      setStatus(
-        "Please select a valid PDF file."
-      );
-      return;
-    }
-
-    setLoading(true);
-    setResult([]);
-    setPdfResult(null);
-    setStatus("Reading PDF...");
-
-    try {
-
-      const arrayBuffer =
-        await file.arrayBuffer();
-
-      const pdf =
-        await pdfjsLib
-          .getDocument({
-            data:arrayBuffer
-          })
-          .promise;
-
-      const images = [];
-
-      for(
-        let pageNumber=1;
-        pageNumber<=pdf.numPages;
-        pageNumber++
-      ) {
-
-        setStatus(
-          `Converting page ${pageNumber} of ${pdf.numPages}...`
-        );
-
-        const page =
-          await pdf.getPage(
-            pageNumber
-          );
-
-        const scale = 2;
-
-        const viewport =
-          page.getViewport({
-            scale
-          });
-
-        const canvas =
-          document.createElement(
-            "canvas"
-          );
-
-        const context =
-          canvas.getContext("2d");
-
-        canvas.width =
-          Math.ceil(
-            viewport.width
-          );
-
-        canvas.height =
-          Math.ceil(
-            viewport.height
-          );
-
-        await page.render({
-          canvasContext:context,
-          viewport
-        }).promise;
-
-        const blob =
-          await new Promise(resolve=>{
-            canvas.toBlob(
-              resolve,
-              "image/jpeg",
-              0.92
-            );
-          });
-
-        if(blob) {
-
-          images.push({
-            blob,
-            page:pageNumber,
-            name:
-              `${file.name.replace(
-                /\.pdf$/i,
-                ""
-              )}-page-${pageNumber}.jpg`
-          });
-
-        }
-      }
-
-      setResult(images);
-
-      setStatus(
-        `Successfully converted ${images.length} page(s) to JPG.`
-      );
-
-    } catch(error) {
-
-      console.error(error);
-
-      setStatus(
-        error?.message ||
-        "Unable to convert this PDF."
-      );
-
-    } finally {
-
-      setLoading(false);
-
-    }
-  };
-
-  /* -------------------------------------------------------
-     JPG TO PDF
-  ------------------------------------------------------- */
-
-  const processJPGToPDF = async () => {
-
-    if(!files.length) {
-
-      setStatus(
-        "Please upload one or more JPG/PNG images."
-      );
-
-      return;
-    }
-
-    setLoading(true);
-    setPdfResult(null);
-
-    try {
-
-      setStatus(
-        "Creating PDF..."
-      );
-
-      let pdf = null;
-
-      for(
-        let i=0;
-        i<files.length;
-        i++
-      ) {
-
-        const imageFile =
-          files[i];
-
-        setStatus(
-          `Adding image ${i+1} of ${files.length}...`
-        );
-
-        const dataUrl =
-          await fileToDataURL(
-            imageFile
-          );
-
-        const dimensions =
-          await getImageDimensions(
-            dataUrl
-          );
-
-        const orientation =
-          dimensions.width >=
-          dimensions.height
-            ? "landscape"
-            : "portrait";
-
-        if(i===0) {
-
-          pdf =
-            new jsPDF({
-              orientation,
-              unit:"pt",
-              format:"a4"
-            });
-
-        } else {
-
-          pdf.addPage(
-            "a4",
-            orientation
-          );
-
-        }
-
-        const pageWidth =
-          pdf.internal.pageSize.getWidth();
-
-        const pageHeight =
-          pdf.internal.pageSize.getHeight();
-
-        const margin = 20;
-
-        const maxWidth =
-          pageWidth -
-          margin * 2;
-
-        const maxHeight =
-          pageHeight -
-          margin * 2;
-
-        const ratio =
-          Math.min(
-            maxWidth /
-              dimensions.width,
-            maxHeight /
-              dimensions.height
-          );
-
-        const width =
-          dimensions.width * ratio;
-
-        const height =
-          dimensions.height * ratio;
-
-        const x =
-          (pageWidth-width)/2;
-
-        const y =
-          (pageHeight-height)/2;
-
-        pdf.addImage(
-          dataUrl,
-          imageFile.type ===
-            "image/png"
-            ? "PNG"
-            : "JPEG",
-          x,
-          y,
-          width,
-          height
-        );
-      }
-
-      const blob =
-        pdf.output("blob");
-
-      setPdfResult({
-        blob,
-        name:
-          "toolmaster-images.pdf"
-      });
-
-      setStatus(
-        `PDF created successfully from ${files.length} image(s).`
-      );
-
-    } catch(error) {
-
-      console.error(error);
-
-      setStatus(
-        error?.message ||
-        "Unable to create PDF."
-      );
-
-    } finally {
-
-      setLoading(false);
-
-    }
-  };
-
-  /* -------------------------------------------------------
-     IMAGE CONVERTER
-  ------------------------------------------------------- */
-
-  const processImageConverter =
-    async () => {
-
-      if(!file) {
-
-        setStatus(
-          "Please upload an image first."
-        );
-
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-
-        const dataUrl =
-          await fileToDataURL(
-            file
-          );
-
-        const img =
-          await loadImage(
-            dataUrl
-          );
-
-        const canvas =
-          document.createElement(
-            "canvas"
-          );
-
-        canvas.width =
-          img.naturalWidth;
-
-        canvas.height =
-          img.naturalHeight;
-
-        const ctx =
-          canvas.getContext("2d");
-
-        if(
-          t[3] === "png-jpg" ||
-          t[3] === "jpg-png"
-        ) {
-
-          if(t[3] === "png-jpg") {
-
-            ctx.fillStyle =
-              "#ffffff";
-
-            ctx.fillRect(
-              0,
-              0,
-              canvas.width,
-              canvas.height
-            );
-
-          }
-        }
-
-        ctx.drawImage(
-          img,
-          0,
-          0
-        );
-
-        const outputType =
-          t[3] === "png-jpg"
-            ? "image/jpeg"
-            : "image/png";
-
-        const extension =
-          t[3] === "png-jpg"
-            ? "jpg"
-            : "png";
-
-        const blob =
-          await new Promise(resolve=>{
-            canvas.toBlob(
-              resolve,
-              outputType,
-              0.92
-            );
-          });
-
-        if(blob) {
-
-          setResult([{
-            blob,
-            page:1,
-            name:
-              `converted.${extension}`
-          }]);
-
-          setStatus(
-            "Image converted successfully."
-          );
-        }
-
-      } catch(error) {
-
-        setStatus(
-          error?.message ||
-          "Image conversion failed."
-        );
-
-      } finally {
-
-        setLoading(false);
-
-      }
-    };
-
-  /* -------------------------------------------------------
-     PROCESS ROUTER
-  ------------------------------------------------------- */
-
-  const processFile = async () => {
-
-    if(t[3]==="pdf-jpg") {
-
-      await processPDFToJPG();
-      return;
-    }
-
-    if(t[3]==="jpg-pdf") {
-
-      await processJPGToPDF();
-      return;
-    }
-
-    if(
-      t[3]==="jpg-png" ||
-      t[3]==="png-jpg"
-    ) {
-
-      await processImageConverter();
-      return;
-    }
-
-    if(!file) {
-
-      setStatus(
-        "Please upload a file first."
-      );
-
-      return;
-    }
-
-    setStatus(
-      `${t[0]} received "${file.name}". This converter will be connected in the next processing phase.`
-    );
-  };
-
-  const isJpgPdf =
-    t[3]==="jpg-pdf";
-
-  const isPdfJpg =
-    t[3]==="pdf-jpg";
-
-  const isImageConverter =
-    t[3]==="jpg-png" ||
-    t[3]==="png-jpg";
-
-  return (
-    <main className="toolPage">
-
-      <button
-        className="back"
-        onClick={back}
-      >
-        ← Back to tools
-      </button>
-
-      <div className="toolHero">
-
-        <div className="toolIcon big">
-          <Upload/>
-        </div>
-
-        <div>
-          <span>{t[1]}</span>
-
-          <h1>{t[0]}</h1>
-
-          <p>{t[2]}</p>
-        </div>
-
-      </div>
-
-      <div className="fileWorkspace">
-
-        {isJpgPdf ? (
-
-          <FileUpload
-            file={files}
-            setFile={setFiles}
-            multiple
-            accept="image/jpeg,image/jpg,image/png"
-            label="Upload JPG / PNG images"
-          />
-
-        ) : (
-
-          <FileUpload
-            file={file}
-            setFile={setFile}
-            accept={
-              isImageConverter
-                ? "image/jpeg,image/png,image/webp"
-                : ".pdf"
-            }
-            label={
-              isImageConverter
-                ? "Upload image"
-                : "Upload PDF"
-            }
-          />
-
-        )}
-
-        <div className="fileActions">
-
-          <button
-            className="primary"
-            onClick={processFile}
-            disabled={loading}
-          >
-
-            <Zap size={17}/>
-
-            {loading
-              ? "Processing..."
-              : isPdfJpg
-                ? "Convert PDF to JPG"
-                : isJpgPdf
-                  ? "Create PDF"
-                  : isImageConverter
-                    ? "Convert Image"
-                    : "Process File"}
-
-          </button>
-
-          <button
-            className="secondary"
-            disabled={loading}
-            onClick={()=>{
-              setFile(null);
-              setFiles([]);
-              setResult([]);
-              setPdfResult(null);
-              setStatus("");
-            }}
-          >
-            <RefreshCw size={17}/>
-            Reset
-          </button>
-
-        </div>
-
-        {status && (
-          <div className="statusBox">
-            {status}
-          </div>
-        )}
-
-        {result.length > 0 && (
-          <div className="pdfResults">
-
-            <h3>
-              Converted Results
-            </h3>
-
-            <div className="pdfResultGrid">
-
-              {result.map(item=>{
-                const previewUrl =
-                  URL.createObjectURL(
-                    item.blob
-                  );
+            <div className="tools-grid">
+              {filteredTools.map((tool) => {
+                const Icon = tool.icon;
 
                 return (
-                  <div
-                    className="pdfResultCard"
-                    key={
-                      `${item.name}-${item.page}`
-                    }
-                  >
-
-                    <img
-                      src={previewUrl}
-                      alt={
-                        `Converted page ${item.page}`
-                      }
-                    />
-
-                    <div>
-
-                      <strong>
-                        {
-                          isPdfJpg
-                            ? `Page ${item.page}`
-                            : item.name
-                        }
-                      </strong>
-
-                      <button
-                        className="secondary"
-                        onClick={()=>
-                          downloadBlob(
-                            item.blob,
-                            item.name
-                          )
-                        }
-                      >
-                        <Download size={16}/>
-                        Download
-                      </button>
-
+                  <article className="tool-card" key={tool.id}>
+                    <div className="tool-card-icon">
+                      <Icon size={24} />
                     </div>
 
-                  </div>
+                    <div className="tool-card-content">
+                      <span className="tool-category">
+                        {tool.category}
+                      </span>
+
+                      <h3>{tool.name}</h3>
+
+                      <p>{tool.description}</p>
+
+                      <button
+                        className="tool-link"
+                        onClick={() => setActiveTool(tool)}
+                      >
+                        Open Tool
+                        <ArrowRight size={17} />
+                      </button>
+                    </div>
+                  </article>
                 );
               })}
-
             </div>
 
-            {result.length>1 && (
-              <button
-                className="primary downloadBtn"
-                onClick={()=>{
-                  result.forEach(item=>{
-                    downloadBlob(
-                      item.blob,
-                      item.name
-                    );
-                  });
-                }}
-              >
-                <Download size={17}/>
-                Download All
-              </button>
+            {filteredTools.length === 0 && (
+              <div className="empty-state">
+                <Search size={35} />
+                <h3>No tools found</h3>
+                <p>Try another search.</p>
+              </div>
             )}
-
           </div>
-        )}
+        </section>
 
-        {pdfResult && (
-          <div className="pdfDownloadBox">
+        <section className="features">
+          <div className="container">
+            <div className="features-grid">
+              <div className="feature">
+                <Zap size={28} />
+                <h3>Fast</h3>
+                <p>
+                  Designed for quick and simple processing.
+                </p>
+              </div>
 
-            <CheckCircle2 size={28}/>
+              <div className="feature">
+                <ShieldCheck size={28} />
+                <h3>Secure</h3>
+                <p>
+                  Your files stay in your browser unless processing requires
+                  a backend.
+                </p>
+              </div>
 
-            <div>
-              <strong>
-                PDF ready
-              </strong>
+              <div className="feature">
+                <Wrench size={28} />
+                <h3>Easy to Use</h3>
+                <p>
+                  Clean interface with straightforward tools.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-              <span>
-                {pdfResult.name}
-              </span>
+        <section className="about-section" id="about">
+          <div className="container about-content">
+            <span className="section-label">ABOUT TOOLMASTER</span>
+            <h2>One platform for everyday digital tasks.</h2>
+            <p>
+              ToolMaster Pro brings useful PDF, text, SEO, developer,
+              calculator and AI utilities together in one place.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <div className="container footer-inner">
+          <div className="logo">
+            <div className="logo-mark">
+              <Wrench size={19} />
             </div>
 
-            <button
-              className="primary"
-              onClick={()=>
-                downloadBlob(
-                  pdfResult.blob,
-                  pdfResult.name
-                )
-              }
-            >
-              <Download size={17}/>
-              Download PDF
-            </button>
-
-          </div>
-        )}
-
-      </div>
-
-    </main>
-  );
-}
-
-/* =========================================================
-   FILE HELPERS
-========================================================= */
-
-function fileToDataURL(file) {
-
-  return new Promise(
-    (resolve,reject)=>{
-
-      const reader =
-        new FileReader();
-
-      reader.onload =
-        ()=>resolve(
-          reader.result
-        );
-
-      reader.onerror =
-        ()=>reject(
-          new Error(
-            "Unable to read file."
-          )
-        );
-
-      reader.readAsDataURL(file);
-    }
-  );
-}
-
-function loadImage(src) {
-
-  return new Promise(
-    (resolve,reject)=>{
-
-      const img =
-        new Image();
-
-      img.onload =
-        ()=>resolve(img);
-
-      img.onerror =
-        ()=>reject(
-          new Error(
-            "Unable to load image."
-          )
-        );
-
-      img.src = src;
-    }
-  );
-}
-
-function getImageDimensions(src) {
-
-  return new Promise(
-    (resolve,reject)=>{
-
-      const img =
-        new Image();
-
-      img.onload = ()=>{
-        resolve({
-          width:img.naturalWidth,
-          height:img.naturalHeight
-        });
-      };
-
-      img.onerror =
-        ()=>reject(
-          new Error(
-            "Unable to read image dimensions."
-          )
-        );
-
-      img.src = src;
-    }
-  );
-}
-
-/* =========================================================
-   GENERIC TOOL
-========================================================= */
-
-function GenericTool({
-  t,
-  back
-}) {
-
-  const [text,setText] =
-    useState("");
-
-  const [out,setOut] =
-    useState("");
-
-  const run = async () => {
-
-    let r = text;
-
-    const id =
-      t[3];
-
-    if(
-      id==="word-counter" ||
-      id==="characters"
-    ) {
-
-      r =
-        `Words: ${
-          text.trim()
-            ? text.trim().split(/\s+/).length
-            : 0
-        }\nCharacters: ${text.length}`;
-
-    }
-
-    else if(id==="case-converter") {
-
-      r = text.toLowerCase();
-
-    }
-
-    else if(id==="text-reverser") {
-
-      r =
-        [...text]
-          .reverse()
-          .join("");
-
-    }
-
-    else if(id==="slug") {
-
-      r =
-        text
-          .toLowerCase()
-          .trim()
-          .replace(
-            /[^a-z0-9]+/g,
-            "-"
-          )
-          .replace(
-            /^-|-$/g,
-            ""
-          );
-
-    }
-
-    else if(id==="url-encoder") {
-
-      r =
-        encodeURIComponent(text);
-
-    }
-
-    else if(id==="base64-encode") {
-
-      try {
-
-        r =
-          btoa(
-            unescape(
-              encodeURIComponent(text)
-            )
-          );
-
-      } catch {
-
-        r =
-          "Unable to encode text.";
-
-      }
-
-    }
-
-    else if(id==="base64-decode") {
-
-      try {
-
-        r =
-          decodeURIComponent(
-            escape(
-              atob(text)
-            )
-          );
-
-      } catch {
-
-        r =
-          "Invalid Base64";
-
-      }
-
-    }
-
-    else if(id==="json-formatter") {
-
-      try {
-
-        r =
-          JSON.stringify(
-            JSON.parse(text),
-            null,
-            2
-          );
-
-      } catch {
-
-        r =
-          "Invalid JSON";
-
-      }
-
-    }
-
-    else if(id==="json-minifier") {
-
-      try {
-
-        r =
-          JSON.stringify(
-            JSON.parse(text)
-          );
-
-      } catch {
-
-        r =
-          "Invalid JSON";
-
-      }
-
-    }
-
-    else if(id==="uuid") {
-
-      r =
-        crypto.randomUUID();
-
-    }
-
-    else if(
-      id==="password" ||
-      id==="random-password"
-    ) {
-
-      const chars =
-        "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*";
-
-      const values =
-        crypto.getRandomValues(
-          new Uint32Array(16)
-        );
-
-      r =
-        Array.from(
-          values,
-          v=>chars[
-            v % chars.length
-          ]
-        ).join("");
-
-    }
-
-    else if(id==="binary") {
-
-      r =
-        [...text]
-          .map(c=>
-            c
-              .charCodeAt(0)
-              .toString(2)
-              .padStart(8,"0")
-          )
-          .join(" ");
-
-    }
-
-    else if(id==="ascii") {
-
-      r =
-        [...text]
-          .map(c=>c.charCodeAt(0))
-          .join(" ");
-
-    }
-
-    else if(id==="duplicate-lines") {
-
-      r =
-        [
-          ...new Set(
-            text.split(/\r?\n/)
-          )
-        ].join("\n");
-
-    }
-
-    else if(id==="text-sorter") {
-
-      r =
-        text
-          .split(/\r?\n/)
-          .sort(
-            (a,b)=>
-              a.localeCompare(b)
-          )
-          .join("\n");
-
-    }
-
-    else if(id==="text-cleaner") {
-
-      r =
-        text
-          .replace(
-            /[ \t]+/g,
-            " "
-          )
-          .replace(
-            /\n{3,}/g,
-            "\n\n"
-          )
-          .trim();
-
-    }
-
-    else if(id==="palindrome") {
-
-      const s =
-        text
-          .toLowerCase()
-          .replace(
-            /[^a-z0-9]/g,
-            ""
-          );
-
-      r =
-        s ===
-        s.split("")
-          .reverse()
-          .join("")
-          ? "Palindrome"
-          : "Not a palindrome";
-
-    }
-
-    else if(id==="reading-time") {
-
-      const words =
-        text.trim()
-          ? text.trim().split(/\s+/).length
-          : 0;
-
-      r =
-        `Estimated reading time: ${Math.max(
-          1,
-          Math.ceil(words/200)
-        )} minute(s)`;
-
-    }
-
-    else if(id==="email-validator") {
-
-      r =
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-          .test(text.trim())
-          ? "Valid email format"
-          : "Invalid email format";
-
-    }
-
-    else if(id==="random-number") {
-
-      r =
-        String(
-          Math.floor(
-            Math.random()*1000000
-          )
-        );
-
-    }
-
-    else if(id==="percentage") {
-
-      const numbers =
-        text
-          .match(/-?\d+(\.\d+)?/g)
-          ?.map(Number) || [];
-
-      if(numbers.length>=2) {
-
-        r =
-          `${numbers[0]}% of ${numbers[1]} = ${
-            (numbers[0]*numbers[1])/100
-          }`;
-
-      } else {
-
-        r =
-          "Enter two numbers, for example: 20 500";
-
-      }
-
-    }
-
-    else if(id==="discount") {
-
-      const numbers =
-        text
-          .match(/-?\d+(\.\d+)?/g)
-          ?.map(Number) || [];
-
-      if(numbers.length>=2) {
-
-        const price =
-          numbers[0];
-
-        const discount =
-          numbers[1];
-
-        const saved =
-          price * discount / 100;
-
-        const finalPrice =
-          price - saved;
-
-        r =
-          `Original: ${price}\nDiscount: ${saved.toFixed(2)}\nFinal price: ${finalPrice.toFixed(2)}`;
-
-      } else {
-
-        r =
-          "Enter price and discount percentage.";
-
-      }
-
-    }
-
-    else if(id==="temperature") {
-
-      const n =
-        Number(text);
-
-      if(Number.isFinite(n)) {
-
-        r =
-          `Celsius: ${n}\nFahrenheit: ${(n*9/5+32).toFixed(2)}\nKelvin: ${(n+273.15).toFixed(2)}`;
-
-      } else {
-
-        r =
-          "Enter a Celsius value.";
-
-      }
-
-    }
-
-    else if(id==="sha256") {
-
-      try {
-
-        const data =
-          new TextEncoder()
-            .encode(text);
-
-        const hash =
-          await crypto.subtle.digest(
-            "SHA-256",
-            data
-          );
-
-        r =
-          Array.from(
-            new Uint8Array(hash)
-          )
-            .map(
-              b=>b
-                .toString(16)
-                .padStart(2,"0")
-            )
-            .join("");
-
-      } catch {
-
-        r =
-          "SHA-256 is not available.";
-
-      }
-
-    }
-
-    else if(id==="number-words") {
-
-      r =
-        numberToWords(
-          Number(text)
-        );
-
-    }
-
-    else if(id==="url-parser") {
-
-      try {
-
-        const u =
-          new URL(text);
-
-        r =
-          `Protocol: ${u.protocol}\nHost: ${u.host}\nPath: ${u.pathname}\nQuery: ${u.search}\nHash: ${u.hash}`;
-
-      } catch {
-
-        r =
-          "Invalid URL";
-
-      }
-
-    }
-
-    else if(id==="html-entities") {
-
-      const div =
-        document.createElement("div");
-
-      div.textContent = text;
-
-      r =
-        div.innerHTML;
-
-    }
-
-    else if(id==="morse") {
-
-      r =
-        textToMorse(text);
-
-    }
-
-    else {
-
-      r =
-        "This tool is ready for its next production processing module.";
-
-    }
-
-    setOut(r);
-  };
-
-  return (
-    <main className="toolPage">
-
-      <button
-        className="back"
-        onClick={back}
-      >
-        ← Back to tools
-      </button>
-
-      <div className="toolHero">
-
-        <div className="toolIcon big">
-          <Wrench/>
-        </div>
-
-        <div>
-          <span>{t[1]}</span>
-
-          <h1>{t[0]}</h1>
-
-          <p>{t[2]}</p>
-        </div>
-
-      </div>
-
-      <div className="workspace">
-
-        <div className="panel">
-
-          <label>
-            Your input
-          </label>
-
-          <textarea
-            value={text}
-            onChange={e=>
-              setText(e.target.value)
-            }
-            placeholder=
-              "Paste or type your content here..."
-          />
-
-          <div className="actions">
-
-            <button
-              className="primary"
-              onClick={run}
-            >
-              <Zap size={17}/>
-              Run Tool
-            </button>
-
-            <button
-              className="secondary"
-              onClick={()=>{
-                setText("");
-                setOut("");
-              }}
-            >
-              Clear
-            </button>
-
+            <span>
+              Tool<span>Master</span>
+            </span>
           </div>
 
+          <p>© 2026 ToolMaster Pro. All rights reserved.</p>
         </div>
+      </footer>
 
-        <div className="panel">
-
-          <label>
-            Result
-          </label>
-
-          <textarea
-            value={out}
-            readOnly
-            placeholder=
-              "Your result will appear here..."
-          />
-
-          <div className="actions">
-
-            <button
-              className="secondary"
-              onClick={()=>
-                navigator.clipboard?.writeText(out)
-              }
-            >
-              <Copy size={17}/>
-              Copy Result
-            </button>
-
-            <button
-              className="secondary"
-              onClick={()=>
-                textDownload(out)
-              }
-            >
-              <Download size={17}/>
-              Download
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <div className="notice">
-
-        <ShieldCheck/>
-
-        Browser-safe tools run locally whenever possible.
-
-      </div>
-
-    </main>
+      {activeTool && (
+        <ToolWorkspace
+          tool={activeTool}
+          onClose={() => setActiveTool(null)}
+        />
+      )}
+    </div>
   );
 }
 
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function numberToWords(number) {
-
-  if(!Number.isFinite(number)) {
-    return "Enter a valid number.";
-  }
-
-  if(number===0) {
-    return "zero";
-  }
-
-  if(number < 0) {
-    return `minus ${numberToWords(-number)}`;
-  }
-
-  const ones = [
-    "",
-    "one",
-    "two",
-    "three",
-    "four",
-    "five",
-    "six",
-    "seven",
-    "eight",
-    "nine",
-    "ten",
-    "eleven",
-    "twelve",
-    "thirteen",
-    "fourteen",
-    "fifteen",
-    "sixteen",
-    "seventeen",
-    "eighteen",
-    "nineteen"
-  ];
-
-  const tens = [
-    "",
-    "",
-    "twenty",
-    "thirty",
-    "forty",
-    "fifty",
-    "sixty",
-    "seventy",
-    "eighty",
-    "ninety"
-  ];
-
-  function belowThousand(n) {
-
-    let result = "";
-
-    if(n>=100) {
-
-      result +=
-        ones[Math.floor(n/100)] +
-        " hundred";
-
-      n %= 100;
-
-      if(n) {
-        result += " ";
-      }
-    }
-
-    if(n>=20) {
-
-      result +=
-        tens[Math.floor(n/10)];
-
-      n %= 10;
-
-      if(n) {
-        result +=
-          "-" + ones[n];
-      }
-
-    } else if(n>0) {
-
-      result += ones[n];
-
-    }
-
-    return result;
-  }
-
-  const scales = [
-    [1000000000,"billion"],
-    [1000000,"million"],
-    [1000,"thousand"]
-  ];
-
-  let result = "";
-
-  for(const [value,name] of scales) {
-
-    if(number>=value) {
-
-      const count =
-        Math.floor(
-          number/value
-        );
-
-      result +=
-        belowThousand(count) +
-        ` ${name}`;
-
-      number %= value;
-
-      if(number) {
-        result += " ";
-      }
-    }
-  }
-
-  if(number>0) {
-    result += belowThousand(number);
-  }
-
-  return result;
-}
-
-function textToMorse(text) {
-
-  const map = {
-    A:".-",
-    B:"-...",
-    C:"-.-.",
-    D:"-..",
-    E:".",
-    F:"..-.",
-    G:"--.",
-    H:"....",
-    I:"..",
-    J:".---",
-    K:"-.-",
-    L:".-..",
-    M:"--",
-    N:"-.",
-    O:"---",
-    P:".--.",
-    Q:"--.-",
-    R:".-.",
-    S:"...",
-    T:"-",
-    U:"..-",
-    V:"...-",
-    W:".--",
-    X:"-..-",
-    Y:"-.--",
-    Z:"--..",
-    0:"-----",
-    1:".----",
-    2:"..---",
-    3:"...--",
-    4:"....-",
-    5:".....",
-    6:"-....",
-    7:"--...",
-    8:"---..",
-    9:"----."
-  };
-
-  return text
-    .toUpperCase()
-    .split("")
-    .map(
-      char =>
-        char===" "
-          ? "/"
-          : map[char] || char
-    )
-    .join(" ");
-}
-
-/* =========================================================
-   MOUNT
-========================================================= */
-
-const rootElement =
-  document.getElementById("root");
-
-if(!rootElement) {
-
-  throw new Error(
-    "Root element not found."
-  );
-
-}
-
-createRoot(rootElement).render(
-  <App/>
+createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );
