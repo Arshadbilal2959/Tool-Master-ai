@@ -2,9 +2,10 @@ import React, { useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Search,
+  X,
   Wrench,
   FileText,
-  Image,
+  Image as ImageIcon,
   Code2,
   Globe2,
   Calculator,
@@ -21,24 +22,22 @@ import {
   LayoutDashboard,
   Loader2,
   AlertCircle,
-  X,
 } from "lucide-react";
 
 import "./styles.css";
 
 /* =========================================================
-   SUPABASE CONFIG
-   ========================================================= */
+   CONFIGURATION
+========================================================= */
 
-const SUPABASE_URL =
-  "https://xpjhcwowzxpiiwkteiua.supabase.co";
+const SUPABASE_URL = "https://xpjhcwowzxpiiwkteiua.supabase.co";
 
 const PDF_TO_WORD_FUNCTION =
   `${SUPABASE_URL}/functions/v1/pdf-to-word`;
 
 /* =========================================================
-   TOOLS DATABASE
-   ========================================================= */
+   TOOLS
+========================================================= */
 
 const tools = [
   ["Text to Video", "AI & Video", "Turn a written prompt or script into an AI video project.", "text-to-video"],
@@ -70,6 +69,12 @@ const tools = [
   ["Robots.txt Generator", "SEO & Marketing", "Generate a robots.txt file.", "robots"],
   ["Keyword Density Checker", "SEO & Marketing", "Analyze keyword frequency in text.", "keyword-density"],
   ["URL Encoder", "SEO & Marketing", "Encode URLs safely.", "url-encoder"],
+  ["Open Graph Generator", "SEO & Marketing", "Create Open Graph meta tags.", "open-graph"],
+  ["Schema Markup Generator", "SEO & Marketing", "Create basic JSON-LD schema templates.", "schema"],
+  ["Favicon Generator", "SEO & Marketing", "Prepare favicon assets from an image.", "favicon"],
+  ["UTM Builder", "SEO & Marketing", "Build campaign tracking URLs.", "utm"],
+  ["Barcode Generator", "SEO & Marketing", "Generate a simple barcode-ready value.", "barcode"],
+  ["URL Slug Generator", "SEO & Marketing", "Create clean SEO slugs.", "slug"],
 
   ["Word Counter", "Text Tools", "Count words, characters and sentences.", "word-counter"],
   ["Case Converter", "Text Tools", "Convert text to upper, lower and title case.", "case-converter"],
@@ -77,6 +82,11 @@ const tools = [
   ["Lorem Ipsum Generator", "Text Tools", "Generate placeholder text.", "lorem"],
   ["Duplicate Line Remover", "Text Tools", "Remove duplicate lines from text.", "duplicate-lines"],
   ["Text Sorter", "Text Tools", "Sort lines alphabetically.", "text-sorter"],
+  ["Text Reverser", "Text Tools", "Reverse any text.", "text-reverser"],
+  ["Palindrome Checker", "Text Tools", "Check whether text is a palindrome.", "palindrome"],
+  ["Reading Time Calculator", "Text Tools", "Estimate reading time for text.", "reading-time"],
+  ["Character Counter", "Text Tools", "Count characters with and without spaces.", "characters"],
+  ["Morse Code Converter", "Text Tools", "Convert text to Morse code.", "morse"],
 
   ["JSON Formatter", "Developer Tools", "Format and validate JSON.", "json-formatter"],
   ["JSON Minifier", "Developer Tools", "Minify JSON for compact output.", "json-minifier"],
@@ -88,11 +98,27 @@ const tools = [
   ["UUID Generator", "Developer Tools", "Generate unique UUID values.", "uuid"],
   ["Hash Generator", "Developer Tools", "Create common text hashes locally.", "hash"],
   ["Timestamp Converter", "Developer Tools", "Convert Unix timestamps.", "timestamp"],
+  ["Color Converter", "Developer Tools", "Convert HEX, RGB and HSL values.", "color"],
+  ["Regex Tester", "Developer Tools", "Test regular expressions in your browser.", "regex"],
+  ["Cron Expression Helper", "Developer Tools", "Build common cron expressions.", "cron"],
+  ["HTML Entity Encoder", "Developer Tools", "Encode HTML entities.", "html-entities"],
+  ["URL Parser", "Developer Tools", "Break a URL into its parts.", "url-parser"],
+  ["HTML Previewer", "Developer Tools", "Preview HTML in a sandboxed area.", "html-preview"],
+  ["Markdown Previewer", "Developer Tools", "Preview basic Markdown.", "markdown"],
+  ["SQL Formatter", "Developer Tools", "Format simple SQL statements.", "sql"],
+  ["CSV to JSON", "Developer Tools", "Convert CSV text to JSON.", "csv-json"],
+  ["JSON to CSV", "Developer Tools", "Convert simple JSON arrays to CSV.", "json-csv"],
+  ["XML Formatter", "Developer Tools", "Format XML text.", "xml"],
+  ["YAML to JSON", "Developer Tools", "Convert basic YAML-like key values to JSON.", "yaml-json"],
+  ["CSS Color Picker", "Developer Tools", "Pick and inspect a color.", "color-picker"],
+  ["Binary Converter", "Developer Tools", "Convert text and numbers to binary.", "binary"],
+  ["ASCII Converter", "Developer Tools", "Convert text to ASCII codes.", "ascii"],
 
   ["Password Generator", "Security Tools", "Generate strong random passwords locally.", "password"],
   ["Password Strength Checker", "Security Tools", "Check password strength locally.", "password-strength"],
   ["MD5 Hash Generator", "Security Tools", "Generate an MD5-style hash placeholder locally.", "md5"],
   ["SHA-256 Generator", "Security Tools", "Generate SHA-256 hashes using your browser.", "sha256"],
+  ["Random Password Generator", "Security Tools", "Generate secure random passwords.", "random-password"],
 
   ["Percentage Calculator", "Calculator Tools", "Calculate percentages quickly.", "percentage"],
   ["Age Calculator", "Calculator Tools", "Calculate age from date of birth.", "age"],
@@ -102,6 +128,11 @@ const tools = [
   ["GST Calculator", "Calculator Tools", "Calculate GST-inclusive or exclusive amounts.", "gst"],
   ["Tip Calculator", "Calculator Tools", "Calculate tips and split bills.", "tip"],
   ["Time Calculator", "Calculator Tools", "Add and subtract time values.", "time"],
+  ["Date Difference Calculator", "Calculator Tools", "Calculate the difference between dates.", "date-difference"],
+  ["Aspect Ratio Calculator", "Calculator Tools", "Calculate proportional dimensions.", "aspect"],
+  ["Compound Interest Calculator", "Calculator Tools", "Estimate compound growth.", "compound-interest"],
+  ["Scientific Calculator", "Calculator Tools", "Perform common scientific calculations.", "scientific"],
+  ["Date Calculator", "Calculator Tools", "Add days to a date.", "date-add"],
 
   ["Unit Converter", "Converter Tools", "Convert common units.", "units"],
   ["Length Converter", "Converter Tools", "Convert length measurements.", "length"],
@@ -110,63 +141,41 @@ const tools = [
   ["Currency Converter", "Converter Tools", "Enter exchange rates and convert currencies.", "currency"],
   ["Data Storage Converter", "Converter Tools", "Convert bytes, KB, MB and GB.", "storage"],
 
-  ["Color Converter", "Developer Tools", "Convert HEX, RGB and HSL values.", "color"],
   ["IP Address Info", "Network Tools", "Inspect the IP address visible to your browser.", "ip-info"],
   ["HTTP Status Checker", "Network Tools", "Explain common HTTP status codes.", "http-status"],
-  ["Regex Tester", "Developer Tools", "Test regular expressions in your browser.", "regex"],
-  ["Cron Expression Helper", "Developer Tools", "Build common cron expressions.", "cron"],
-  ["HTML Entity Encoder", "Developer Tools", "Encode HTML entities.", "html-entities"],
-  ["URL Parser", "Developer Tools", "Break a URL into its parts.", "url-parser"],
 
   ["Email Validator", "Utility Tools", "Validate email address format.", "email-validator"],
   ["Phone Number Formatter", "Utility Tools", "Clean and format phone numbers.", "phone"],
-  ["Date Difference Calculator", "Calculator Tools", "Calculate the difference between dates.", "date-difference"],
   ["Random Number Generator", "Utility Tools", "Generate random numbers.", "random-number"],
-  ["Random Password Generator", "Security Tools", "Generate secure random passwords.", "random-password"],
-
-  ["Text Reverser", "Text Tools", "Reverse any text.", "text-reverser"],
-  ["Palindrome Checker", "Text Tools", "Check whether text is a palindrome.", "palindrome"],
-  ["Reading Time Calculator", "Text Tools", "Estimate reading time for text.", "reading-time"],
-  ["Character Counter", "Text Tools", "Count characters with and without spaces.", "characters"],
   ["Number to Words", "Utility Tools", "Convert numbers to English words.", "number-words"],
   ["Roman Numeral Converter", "Utility Tools", "Convert numbers to Roman numerals.", "roman"],
-
-  ["Barcode Generator", "SEO & Marketing", "Generate a simple barcode-ready value.", "barcode"],
-  ["Open Graph Generator", "SEO & Marketing", "Create Open Graph meta tags.", "open-graph"],
-  ["Schema Markup Generator", "SEO & Marketing", "Create basic JSON-LD schema templates.", "schema"],
-  ["Favicon Generator", "SEO & Marketing", "Prepare favicon assets from an image.", "favicon"],
-  ["UTM Builder", "SEO & Marketing", "Build campaign tracking URLs.", "utm"],
-
-  ["HTML Previewer", "Developer Tools", "Preview HTML in a sandboxed area.", "html-preview"],
-  ["Markdown Previewer", "Developer Tools", "Preview basic Markdown.", "markdown"],
-  ["SQL Formatter", "Developer Tools", "Format simple SQL statements.", "sql"],
-  ["CSV to JSON", "Developer Tools", "Convert CSV text to JSON.", "csv-json"],
-  ["JSON to CSV", "Developer Tools", "Convert simple JSON arrays to CSV.", "json-csv"],
-  ["XML Formatter", "Developer Tools", "Format XML text.", "xml"],
-  ["YAML to JSON", "Developer Tools", "Convert basic YAML-like key values to JSON.", "yaml-json"],
-  ["CSS Color Picker", "Developer Tools", "Pick and inspect a color.", "color-picker"],
-
-  ["Aspect Ratio Calculator", "Calculator Tools", "Calculate proportional dimensions.", "aspect"],
-  ["Compound Interest Calculator", "Calculator Tools", "Estimate compound growth.", "compound-interest"],
-  ["Scientific Calculator", "Calculator Tools", "Perform common scientific calculations.", "scientific"],
-  ["Date Calculator", "Calculator Tools", "Add days to a date.", "date-add"],
-
   ["Business Name Generator", "Utility Tools", "Generate business name ideas from keywords.", "business-name"],
   ["Username Generator", "Utility Tools", "Generate username ideas.", "username"],
-  ["Morse Code Converter", "Text Tools", "Convert text to Morse code.", "morse"],
-  ["Binary Converter", "Developer Tools", "Convert text and numbers to binary.", "binary"],
-  ["ASCII Converter", "Developer Tools", "Convert text to ASCII codes.", "ascii"],
-  ["URL Slug Generator", "SEO & Marketing", "Create clean SEO slugs.", "slug"],
 ];
 
 /* =========================================================
    CATEGORIES
-   ========================================================= */
+========================================================= */
+
+const categoryIcons = {
+  "PDF Tools": FileText,
+  "Image Tools": ImageIcon,
+  "SEO & Marketing": Globe2,
+  "Text Tools": FileText,
+  "Developer Tools": Code2,
+  "Calculator Tools": Calculator,
+  "Converter Tools": Wrench,
+  "Security Tools": ShieldCheck,
+  "Utility Tools": Sparkles,
+  "Network Tools": Globe2,
+  "AI & Video": Sparkles,
+  "AI & Education": Sparkles,
+};
 
 const categories = [
   ["All Tools", tools.length, Wrench],
   ["PDF Tools", tools.filter((x) => x[1] === "PDF Tools").length, FileText],
-  ["Image Tools", tools.filter((x) => x[1] === "Image Tools").length, Image],
+  ["Image Tools", tools.filter((x) => x[1] === "Image Tools").length, ImageIcon],
   ["SEO & Marketing", tools.filter((x) => x[1] === "SEO & Marketing").length, Globe2],
   ["Text Tools", tools.filter((x) => x[1] === "Text Tools").length, FileText],
   ["Developer Tools", tools.filter((x) => x[1] === "Developer Tools").length, Code2],
@@ -178,7 +187,7 @@ const categories = [
 
 /* =========================================================
    MAIN APP
-   ========================================================= */
+========================================================= */
 
 function App() {
   const [cat, setCat] = useState("All Tools");
@@ -187,11 +196,10 @@ function App() {
   const [admin, setAdmin] = useState(false);
 
   const filtered = useMemo(() => {
-    const q = query.toLowerCase().trim();
+    const q = query.trim().toLowerCase();
 
     return tools.filter((t) => {
-      const categoryMatch =
-        cat === "All Tools" || t[1] === cat;
+      const categoryMatch = cat === "All Tools" || t[1] === cat;
 
       const searchMatch =
         !q ||
@@ -203,20 +211,25 @@ function App() {
     });
   }, [cat, query]);
 
+  const openTool = (selectedTool) => {
+    setTool(selectedTool);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const backHome = () => {
+    setTool(null);
+    setAdmin(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="app">
-
-      {/* HEADER */}
       <header>
         <div className="nav">
-
-          <div
+          <button
             className="brand"
-            onClick={() => {
-              setTool(null);
-              setAdmin(false);
-            }}
-            style={{ cursor: "pointer" }}
+            onClick={backHome}
+            type="button"
           >
             <div className="brandIcon">
               <Wrench size={22} />
@@ -225,7 +238,7 @@ function App() {
             <span>
               ToolMaster<span>Pro</span>
             </span>
-          </div>
+          </button>
 
           <nav>
             <a href="#tools">Tools</a>
@@ -239,32 +252,24 @@ function App() {
               setAdmin(!admin);
               setTool(null);
             }}
+            type="button"
           >
             <LayoutDashboard size={17} />
-
             {admin ? "Close Admin" : "Admin"}
           </button>
-
         </div>
       </header>
 
-      {/* ADMIN */}
       {admin ? (
-        <Admin onClose={() => setAdmin(false)} />
+        <Admin onClose={backHome} />
       ) : tool ? (
-
-        /* TOOL PAGE */
         <ToolPage
           t={tool}
-          back={() => setTool(null)}
+          back={backHome}
         />
-
       ) : (
-
-        /* HOME */
         <>
           <section className="hero">
-
             <div className="pill">
               <Sparkles size={15} />
               100+ Free Online Tools
@@ -275,22 +280,29 @@ function App() {
             </h1>
 
             <p>
-              Fast, simple and privacy-friendly online tools for
-              PDF, images, SEO, text, developers, calculators and more.
+              Fast, simple and privacy-friendly online tools for PDF,
+              images, SEO, text, developers, calculators and more.
             </p>
 
             <div className="search">
               <Search />
-
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search for a tool..."
               />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  aria-label="Clear search"
+                >
+                  <X size={18} />
+                </button>
+              )}
             </div>
 
             <div className="stats">
-
               <div>
                 <b>{tools.length}+</b>
                 <small>Tools</small>
@@ -305,60 +317,46 @@ function App() {
                 <b>100%</b>
                 <small>Browser-based</small>
               </div>
-
             </div>
-
           </section>
 
           <main id="tools">
-
             <section
               id="categories"
               className="categories"
             >
-              {categories.map(
-                ([name, count, Icon]) => (
-                  <button
-                    className={
-                      cat === name
-                        ? "cat active"
-                        : "cat"
-                    }
-                    onClick={() => setCat(name)}
-                    key={name}
-                  >
-                    <Icon />
-
-                    <span>{name}</span>
-
-                    <em>{count}</em>
-                  </button>
-                )
-              )}
+              {categories.map(([name, count, Icon]) => (
+                <button
+                  key={name}
+                  type="button"
+                  className={cat === name ? "cat active" : "cat"}
+                  onClick={() => {
+                    setCat(name);
+                    setQuery("");
+                  }}
+                >
+                  <Icon />
+                  <span>{name}</span>
+                  <em>{count}</em>
+                </button>
+              ))}
             </section>
 
             <div className="sectionHead">
-
               <div>
                 <h2>{cat}</h2>
-
-                <p>
-                  {filtered.length} tools available
-                </p>
+                <p>{filtered.length} tools available</p>
               </div>
-
             </div>
 
             <div className="grid">
-
               {filtered.map((t) => (
                 <ToolCard
                   key={t[3]}
                   t={t}
-                  open={() => setTool(t)}
+                  open={() => openTool(t)}
                 />
               ))}
-
             </div>
 
             {!filtered.length && (
@@ -366,16 +364,12 @@ function App() {
                 No tools found. Try another search.
               </div>
             )}
-
           </main>
         </>
       )}
 
-      {/* FOOTER */}
       <footer id="about">
-
         <div className="brand">
-
           <div className="brandIcon">
             <Wrench size={20} />
           </div>
@@ -383,172 +377,120 @@ function App() {
           <span>
             ToolMaster<span>Pro</span>
           </span>
-
         </div>
 
-        <p>
-          Powerful online tools, made simple.
-        </p>
+        <p>Powerful online tools, made simple.</p>
 
         <small>
-          © 2026 ToolMaster Pro.
-          All tools are designed for easy browser use.
+          © 2026 ToolMaster Pro. All tools are designed for easy browser use.
         </small>
-
       </footer>
-
     </div>
   );
 }
 
 /* =========================================================
    TOOL CARD
-   ========================================================= */
+========================================================= */
 
 function ToolCard({ t, open }) {
-
-  const icons = {
-    "PDF Tools": FileText,
-    "Image Tools": Image,
-    "SEO & Marketing": Globe2,
-    "Text Tools": FileText,
-    "Developer Tools": Code2,
-    "Calculator Tools": Calculator,
-    "Security Tools": ShieldCheck,
-  };
-
-  const Icon = icons[t[1]] || Wrench;
+  const Icon = categoryIcons[t[1]] || Wrench;
 
   return (
     <article
       className="card"
       onClick={open}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") open();
+      }}
+      role="button"
+      tabIndex={0}
     >
-
       <div className="toolIcon">
         <Icon size={21} />
       </div>
 
       <div className="cardBody">
-
         <span>{t[1]}</span>
-
         <h3>{t[0]}</h3>
-
         <p>{t[2]}</p>
-
       </div>
 
       <ArrowRight className="arrow" />
-
     </article>
   );
 }
 
 /* =========================================================
+   TOOL PAGE
+========================================================= */
+
+function ToolPage({ t, back }) {
+  if (t[3] === "pdf-word") {
+    return <PdfToWord back={back} />;
+  }
+
+  if (t[3] === "student-ai-helper") {
+    return <StudentAIHelper back={back} />;
+  }
+
+  if (t[3] === "text-to-video") {
+    return <TextToVideo back={back} />;
+  }
+
+  return (
+    <GenericTool
+      t={t}
+      back={back}
+    />
+  );
+}
+
+/* =========================================================
    PDF TO WORD
-   ========================================================= */
+========================================================= */
 
 function PdfToWord({ back }) {
-
-  const [selectedFile, setSelectedFile] =
-    useState(null);
-
-  const [isDragging, setIsDragging] =
-    useState(false);
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [error, setError] =
-    useState("");
-
-  const [success, setSuccess] =
-    useState("");
-
-  const [downloadUrl, setDownloadUrl] =
-    useState("");
-
-  const [downloadName, setDownloadName] =
-    useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [dragging, setDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [downloadUrl, setDownloadUrl] = useState("");
+  const [downloadName, setDownloadName] = useState("");
 
   const publishableKey =
     import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-  /* -----------------------------------------
-     SELECT FILE
-  ----------------------------------------- */
-
   const selectFile = (file) => {
-
     setError("");
     setSuccess("");
     setDownloadUrl("");
     setDownloadName("");
 
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
     const isPdf =
       file.type === "application/pdf" ||
       file.name.toLowerCase().endsWith(".pdf");
 
     if (!isPdf) {
-      setError(
-        "Please select a PDF file."
-      );
+      setSelectedFile(null);
+      setError("Please select a PDF file.");
       return;
     }
 
     if (file.size > 20 * 1024 * 1024) {
-      setError(
-        "Maximum PDF size is 20 MB."
-      );
+      setSelectedFile(null);
+      setError("Maximum PDF size is 20 MB.");
       return;
     }
 
     setSelectedFile(file);
   };
 
-  /* -----------------------------------------
-     FILE CHANGE
-  ----------------------------------------- */
-
-  const handleFileChange = (event) => {
-
-    const file =
-      event.target.files?.[0];
-
-    selectFile(file);
-  };
-
-  /* -----------------------------------------
-     DROP
-  ----------------------------------------- */
-
-  const handleDrop = (event) => {
-
-    event.preventDefault();
-
-    setIsDragging(false);
-
-    const file =
-      event.dataTransfer.files?.[0];
-
-    selectFile(file);
-  };
-
-  /* -----------------------------------------
-     REMOVE
-  ----------------------------------------- */
-
   const removeFile = () => {
-
-    if (
-      downloadUrl &&
-      downloadUrl.startsWith("blob:")
-    ) {
+    if (downloadUrl && downloadUrl.startsWith("blob:")) {
       URL.revokeObjectURL(downloadUrl);
     }
 
@@ -559,457 +501,259 @@ function PdfToWord({ back }) {
     setDownloadName("");
   };
 
-  /* -----------------------------------------
-     CONVERT
-  ----------------------------------------- */
-
-  const convertPdfToWord = async () => {
-
+  const convert = async () => {
     setError("");
     setSuccess("");
 
-    if (
-      downloadUrl &&
-      downloadUrl.startsWith("blob:")
-    ) {
-      URL.revokeObjectURL(downloadUrl);
-    }
-
-    setDownloadUrl("");
-    setDownloadName("");
-
     if (!selectedFile) {
-
-      setError(
-        "Please select a PDF file first."
-      );
-
+      setError("Please select a PDF file first.");
       return;
     }
 
     if (!publishableKey) {
-
       setError(
-        "Supabase publishable key is missing. Please add VITE_SUPABASE_PUBLISHABLE_KEY in Vercel Environment Variables and redeploy."
+        "VITE_SUPABASE_PUBLISHABLE_KEY is missing in Vercel Environment Variables."
       );
-
       return;
     }
 
+    setLoading(true);
+
     try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
 
-      setLoading(true);
-
-      const formData =
-        new FormData();
-
-      formData.append(
-        "file",
-        selectedFile
+      const response = await fetch(
+        PDF_TO_WORD_FUNCTION,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${publishableKey}`,
+            apikey: publishableKey,
+          },
+          body: formData,
+        }
       );
 
-      const response =
-        await fetch(
-          PDF_TO_WORD_FUNCTION,
-          {
-            method: "POST",
-
-            headers: {
-              apikey: publishableKey,
-
-              Authorization:
-                `Bearer ${publishableKey}`,
-            },
-
-            body: formData,
-          }
-        );
-
-      /* ---------------------------------------
-         SERVER ERROR
-      --------------------------------------- */
+      const contentType =
+        response.headers.get("content-type") || "";
 
       if (!response.ok) {
-
-        let message =
-          `PDF conversion failed (${response.status}).`;
+        let message = `Conversion failed (${response.status}).`;
 
         try {
-
-          const contentType =
-            response.headers.get(
-              "content-type"
-            ) || "";
-
-          if (
-            contentType.includes(
-              "application/json"
-            )
-          ) {
-
-            const json =
-              await response.json();
+          if (contentType.includes("application/json")) {
+            const data = await response.json();
 
             message =
-              json.error ||
-              json.message ||
-              json.msg ||
+              data.error ||
+              data.message ||
+              data.msg ||
               message;
-
           } else {
-
-            const text =
-              await response.text();
+            const text = await response.text();
 
             if (text.trim()) {
-              message =
-                text.trim();
+              message = text.trim();
             }
           }
-
         } catch {
-          // keep default error
+          // Keep default message.
         }
 
         throw new Error(message);
       }
 
-      /* ---------------------------------------
-         RESPONSE CONTENT
-      --------------------------------------- */
+      const blob = await response.blob();
 
-      const contentType =
-        response.headers.get(
-          "content-type"
-        ) || "";
-
-      const disposition =
-        response.headers.get(
-          "content-disposition"
-        ) || "";
-
-      /*
-       * JSON response
-       * Example:
-       * {
-       *   "downloadUrl": "...",
-       *   "filename": "file.docx"
-       * }
-       */
-
-      if (
-        contentType.includes(
-          "application/json"
-        )
-      ) {
-
-        const json =
-          await response.json();
-
-        const url =
-          json.downloadUrl ||
-          json.download_url ||
-          json.url;
-
-        if (!url) {
-
-          throw new Error(
-            json.error ||
-            json.message ||
-            "The conversion server returned JSON but no download URL."
-          );
-        }
-
-        const name =
-          json.filename ||
-          json.fileName ||
-          selectedFile.name.replace(
-            /\.pdf$/i,
-            ".docx"
-          );
-
-        setDownloadUrl(url);
-        setDownloadName(name);
-        setSuccess(
-          "PDF converted successfully!"
-        );
-
-        return;
-      }
-
-      /* ---------------------------------------
-         DIRECT DOCX RESPONSE
-      --------------------------------------- */
-
-      const blob =
-        await response.blob();
-
-      if (
-        !blob ||
-        blob.size === 0
-      ) {
-
+      if (!blob || blob.size === 0) {
         throw new Error(
           "The conversion server returned an empty file."
         );
       }
 
       /*
-       * Check whether server accidentally
-       * returned an error as text.
+       * Case 1:
+       * Function returned JSON with a download URL.
        */
 
       if (
-        contentType.includes(
-          "text/plain"
-        ) &&
-        blob.size < 100000
+        contentType.includes("application/json") ||
+        contentType.includes("text/plain")
       ) {
+        const text = await blob.text();
 
-        const text =
-          await blob.text();
+        try {
+          const data = JSON.parse(text);
 
-        if (
-          text.toLowerCase().includes(
-            "error"
-          ) ||
-          text.toLowerCase().includes(
-            "failed"
-          )
-        ) {
+          const url =
+            data.downloadUrl ||
+            data.download_url ||
+            data.url;
 
-          throw new Error(
-            text
-          );
+          if (url) {
+            setDownloadUrl(url);
+
+            setDownloadName(
+              data.filename ||
+                data.fileName ||
+                selectedFile.name.replace(
+                  /\.pdf$/i,
+                  ".docx"
+                )
+            );
+
+            setSuccess(
+              "PDF converted successfully!"
+            );
+
+            return;
+          }
+        } catch {
+          /*
+           * If response was not JSON,
+           * continue as a normal file.
+           */
         }
       }
 
-      let outputName =
+      /*
+       * Case 2:
+       * Function returned DOCX directly.
+       */
+
+      const objectUrl =
+        URL.createObjectURL(blob);
+
+      setDownloadUrl(objectUrl);
+
+      setDownloadName(
         selectedFile.name.replace(
           /\.pdf$/i,
           ""
-        ) + ".docx";
-
-      /*
-       * Try to read filename from
-       * Content-Disposition.
-       */
-
-      const filenameMatch =
-        disposition.match(
-          /filename\*?=(?:UTF-8'')?["']?([^;"']+)["']?/i
-        );
-
-      if (
-        filenameMatch &&
-        filenameMatch[1]
-      ) {
-
-        try {
-
-          outputName =
-            decodeURIComponent(
-              filenameMatch[1]
-            );
-
-        } catch {
-          outputName =
-            filenameMatch[1];
-        }
-      }
-
-      /*
-       * DOCX MIME type.
-       */
-
-      const docxBlob =
-        new Blob(
-          [blob],
-          {
-            type:
-              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          }
-        );
-
-      const objectUrl =
-        URL.createObjectURL(
-          docxBlob
-        );
-
-      setDownloadUrl(
-        objectUrl
-      );
-
-      setDownloadName(
-        outputName
+        ) + ".docx"
       );
 
       setSuccess(
         "PDF converted successfully!"
       );
-
     } catch (err) {
-
       console.error(
-        "PDF conversion error:",
+        "PDF to Word error:",
         err
       );
 
       setError(
         err?.message ||
-        "Something went wrong while converting the PDF."
+          "Something went wrong while converting the PDF."
       );
-
     } finally {
-
       setLoading(false);
     }
   };
 
-  /* -----------------------------------------
-     DOWNLOAD
-  ----------------------------------------- */
+  const download = () => {
+    if (!downloadUrl) return;
 
-  const downloadFile = () => {
-
-    if (!downloadUrl) {
-      return;
-    }
-
-    const link =
+    const a =
       document.createElement("a");
 
-    link.href =
-      downloadUrl;
-
-    link.download =
+    a.href = downloadUrl;
+    a.download =
       downloadName ||
       "converted-document.docx";
 
-    link.target = "_blank";
+    a.target = "_blank";
+    a.rel = "noopener";
 
-    document.body.appendChild(
-      link
-    );
-
-    link.click();
-
-    document.body.removeChild(
-      link
-    );
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
 
   return (
     <main className="toolPage">
-
-      {/* BACK */}
-
       <button
         className="back"
         onClick={back}
+        type="button"
       >
         ← Back to tools
       </button>
 
-      {/* TITLE */}
-
       <div className="toolHero">
-
         <div className="toolIcon big">
           <FileText />
         </div>
 
         <div>
-
-          <span>
-            PDF Tools
-          </span>
-
-          <h1>
-            PDF to Word
-          </h1>
-
+          <span>PDF Tools</span>
+          <h1>PDF to Word</h1>
           <p>
-            Convert your PDF document into
-            an editable Word file.
+            Convert your PDF documents into
+            editable Word files.
           </p>
-
         </div>
-
       </div>
 
-      {/* UPLOAD AREA */}
-
       <div
-        onDragOver={(event) => {
-          event.preventDefault();
-          setIsDragging(true);
-        }}
-
-        onDragLeave={() =>
-          setIsDragging(false)
-        }
-
-        onDrop={handleDrop}
-
         className={
-          `pdfUpload ${
-            isDragging
-              ? "dragging"
-              : ""
-          }`
+          dragging
+            ? "pdfUpload dragging"
+            : "pdfUpload"
         }
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() =>
+          setDragging(false)
+        }
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          selectFile(
+            e.dataTransfer.files?.[0]
+          );
+        }}
       >
-
         {!selectedFile ? (
+          <label className="pdfChoose">
+            <Upload size={42} />
 
-          <label className="pdfDropLabel">
-
-            <div className="pdfUploadIcon">
-              <Upload size={34} />
-            </div>
-
-            <h2>
-              Upload PDF
-            </h2>
+            <h3>
+              Upload your PDF
+            </h3>
 
             <p>
               Drag & drop your PDF here
               or click to browse
             </p>
 
-            <span className="primary pdfChooseButton">
-              <Upload size={18} />
+            <span className="primary">
               Choose PDF
             </span>
 
             <input
               type="file"
-              accept="application/pdf,.pdf"
-              onChange={
-                handleFileChange
+              accept=".pdf,application/pdf"
+              onChange={(e) =>
+                selectFile(
+                  e.target.files?.[0]
+                )
               }
-              hidden
             />
 
             <small>
               Maximum file size: 20 MB
             </small>
-
           </label>
-
         ) : (
-
           <div className="pdfSelected">
-
-            <div className="pdfFileInfo">
-
-              <div className="pdfFileIcon">
-                <FileText size={30} />
-              </div>
+            <div className="selectedFile">
+              <FileText size={30} />
 
               <div>
-
                 <strong>
                   {selectedFile.name}
                 </strong>
@@ -1022,196 +766,106 @@ function PdfToWord({ back }) {
                   ).toFixed(2)}{" "}
                   MB
                 </small>
-
               </div>
-
-              <button
-                type="button"
-                className="pdfRemove"
-                onClick={
-                  removeFile
-                }
-              >
-                <X size={19} />
-              </button>
-
             </div>
 
             <button
               type="button"
-              className="primary pdfConvertButton"
-              onClick={
-                convertPdfToWord
-              }
-              disabled={loading}
+              className="iconButton"
+              onClick={removeFile}
             >
-
-              {loading ? (
-                <>
-                  <Loader2
-                    size={20}
-                    className="spin"
-                  />
-
-                  Converting PDF...
-                </>
-              ) : (
-                <>
-                  <FileText size={20} />
-
-                  Convert to Word
-                </>
-              )}
-
+              <X size={20} />
             </button>
-
           </div>
         )}
 
+        {selectedFile && (
+          <button
+            type="button"
+            className="primary convertButton"
+            disabled={loading}
+            onClick={convert}
+          >
+            {loading ? (
+              <>
+                <Loader2
+                  className="spin"
+                  size={19}
+                />
+                Converting...
+              </>
+            ) : (
+              <>
+                <FileText size={19} />
+                Convert to Word
+              </>
+            )}
+          </button>
+        )}
       </div>
 
-      {/* ERROR */}
-
       {error && (
-
-        <div className="pdfError">
-
-          <AlertCircle size={23} />
+        <div className="errorBox">
+          <AlertCircle size={22} />
 
           <div>
-
             <strong>
               Conversion Error
             </strong>
 
-            <p>
-              {error}
-            </p>
-
+            <p>{error}</p>
           </div>
-
         </div>
-
       )}
 
-      {/* SUCCESS */}
+      {success && downloadUrl && (
+        <div className="successBox">
+          <CheckCircle2 size={27} />
 
-      {success &&
-        downloadUrl && (
-
-          <div className="pdfSuccess">
-
-            <div className="pdfSuccessTitle">
-
-              <CheckCircle2
-                size={25}
-              />
-
-              <strong>
-                {success}
-              </strong>
-
-            </div>
+          <div>
+            <strong>
+              {success}
+            </strong>
 
             <p>
-              Your Word document is
-              ready to download.
+              Your Word document is ready.
             </p>
-
-            {/* DOWNLOAD BUTTON */}
 
             <button
               type="button"
-              className="pdfDownloadButton"
-              onClick={
-                downloadFile
-              }
+              className="downloadButton"
+              onClick={download}
             >
-
-              <Download
-                size={22}
-              />
-
+              <Download size={21} />
               Download Word File
-
             </button>
 
             <small>
               {downloadName}
             </small>
-
           </div>
-        )}
-
-      {/* FEATURES */}
-
-      <div className="pdfFeatures">
-
-        <div>
-
-          <Zap />
-
-          <h3>
-            Fast
-          </h3>
-
-          <p>
-            Quick PDF conversion.
-          </p>
-
         </div>
-
-        <div>
-
-          <ShieldCheck />
-
-          <h3>
-            Secure
-          </h3>
-
-          <p>
-            Files are processed securely.
-          </p>
-
-        </div>
-
-        <div>
-
-          <Download />
-
-          <h3>
-            Download
-          </h3>
-
-          <p>
-            Download your Word document.
-          </p>
-
-        </div>
-
-      </div>
+      )}
 
       <div className="notice">
-
         <ShieldCheck />
 
-        PDF conversion is handled by
-        your Supabase Edge Function.
-        The browser only receives the
-        converted document.
-
+        <span>
+          Files are sent to your configured
+          conversion server. Do not upload
+          sensitive documents unless you trust
+          the service.
+        </span>
       </div>
-
     </main>
   );
 }
 
 /* =========================================================
    TEXT TO VIDEO
-   ========================================================= */
+========================================================= */
 
 function TextToVideo({ back }) {
-
   const [prompt, setPrompt] =
     useState("");
 
@@ -1225,61 +879,45 @@ function TextToVideo({ back }) {
     useState("");
 
   const generate = () => {
-
     if (!prompt.trim()) {
-
       setStatus(
         "Please enter a video prompt first."
       );
-
       return;
     }
 
     setStatus(
-      "Video project prepared. A production AI video API must be connected to render the actual video."
+      `Video project prepared: ${style}, ${duration}. Actual AI video rendering requires a server-side video API.`
     );
   };
 
   return (
     <main className="toolPage">
-
       <button
         className="back"
         onClick={back}
+        type="button"
       >
         ← Back to tools
       </button>
 
       <div className="toolHero">
-
         <div className="toolIcon big">
           <Sparkles />
         </div>
 
         <div>
-
-          <span>
-            AI & Video
-          </span>
-
-          <h1>
-            Text to Video
-          </h1>
-
+          <span>AI & Video</span>
+          <h1>Text to Video</h1>
           <p>
-            Describe a scene, story or
-            marketing idea and prepare an
-            AI video project.
+            Create an AI video project
+            from a written prompt.
           </p>
-
         </div>
-
       </div>
 
       <div className="aiHelper">
-
         <div className="aiCard">
-
           <h3>
             🎬 Video Prompt
           </h3>
@@ -1289,11 +927,10 @@ function TextToVideo({ back }) {
             onChange={(e) =>
               setPrompt(e.target.value)
             }
-            placeholder="Example: A cinematic drone shot of a futuristic city at sunset, realistic lighting, smooth camera movement..."
+            placeholder="Example: A cinematic drone shot of a futuristic city at sunset..."
           />
 
           <div className="videoOptions">
-
             <label>
               Style
 
@@ -1303,32 +940,13 @@ function TextToVideo({ back }) {
                   setStyle(e.target.value)
                 }
               >
-                <option>
-                  Cinematic
-                </option>
-
-                <option>
-                  Realistic
-                </option>
-
-                <option>
-                  Anime
-                </option>
-
-                <option>
-                  3D Animation
-                </option>
-
-                <option>
-                  Documentary
-                </option>
-
-                <option>
-                  Product Ad
-                </option>
-
+                <option>Cinematic</option>
+                <option>Realistic</option>
+                <option>Anime</option>
+                <option>3D Animation</option>
+                <option>Documentary</option>
+                <option>Product Ad</option>
               </select>
-
             </label>
 
             <label>
@@ -1337,60 +955,41 @@ function TextToVideo({ back }) {
               <select
                 value={duration}
                 onChange={(e) =>
-                  setDuration(e.target.value)
+                  setDuration(
+                    e.target.value
+                  )
                 }
               >
-
-                <option>
-                  5 seconds
-                </option>
-
-                <option>
-                  10 seconds
-                </option>
-
-                <option>
-                  15 seconds
-                </option>
-
-                <option>
-                  30 seconds
-                </option>
-
+                <option>5 seconds</option>
+                <option>10 seconds</option>
+                <option>15 seconds</option>
+                <option>30 seconds</option>
               </select>
-
             </label>
-
           </div>
 
           <button
-            className="primary aiSolve"
+            className="primary"
             onClick={generate}
+            type="button"
           >
-
             <Sparkles size={17} />
-
             Generate Video
-
           </button>
-
         </div>
 
-        <div className="aiCard resultCard">
-
+        <div className="aiCard">
           <h3>
             🎥 Video Preview
           </h3>
 
           <div className="videoPlaceholder">
-
             <div className="playCircle">
               ▶
             </div>
 
             <b>
-              Your generated video will
-              appear here
+              Your generated video will appear here
             </b>
 
             <small>
@@ -1398,38 +997,31 @@ function TextToVideo({ back }) {
             </small>
 
             {status && (
-              <p>
-                {status}
-              </p>
+              <p>{status}</p>
             )}
-
           </div>
-
         </div>
-
       </div>
 
       <div className="notice">
-
         <ShieldCheck />
 
-        Real video generation requires
-        a secure server-side AI video
-        provider. API keys must never
-        be exposed in browser code.
-
+        <span>
+          Real AI video generation needs
+          a secure server-side provider.
+          Never expose an AI API key in
+          browser code.
+        </span>
       </div>
-
     </main>
   );
 }
 
 /* =========================================================
-   STUDENT AI HELPER
-   ========================================================= */
+   STUDENT AI
+========================================================= */
 
 function StudentAIHelper({ back }) {
-
   const [question, setQuestion] =
     useState("");
 
@@ -1442,51 +1034,44 @@ function StudentAIHelper({ back }) {
   const [loading, setLoading] =
     useState(false);
 
-  const solve = async () => {
-
+  const solve = () => {
     if (
       !question.trim() &&
       !file
     ) {
-
       setAnswer(
-        "Please enter a question or upload a study image/PDF."
+        "Please enter a question or upload study material."
       );
-
       return;
     }
 
     setLoading(true);
 
     setTimeout(() => {
-
       setAnswer(
-        "Student AI Helper is ready for your question/file. To enable real AI answers, connect a secure backend AI provider. Your uploaded file is currently selected locally."
+        "Student AI Helper is ready. A real AI provider can be connected through a secure backend without exposing the API key in your website."
       );
 
       setLoading(false);
-
     }, 700);
   };
 
   return (
     <main className="toolPage">
-
       <button
         className="back"
         onClick={back}
+        type="button"
       >
         ← Back to tools
       </button>
 
       <div className="toolHero">
-
         <div className="toolIcon big">
           <Sparkles />
         </div>
 
         <div>
-
           <span>
             AI & Education
           </span>
@@ -1496,18 +1081,14 @@ function StudentAIHelper({ back }) {
           </h1>
 
           <p>
-            Ask a question or upload
+            Ask questions or upload
             study material.
           </p>
-
         </div>
-
       </div>
 
       <div className="aiHelper">
-
         <div className="aiCard">
-
           <h3>
             📚 Ask your question
           </h3>
@@ -1515,23 +1096,23 @@ function StudentAIHelper({ back }) {
           <textarea
             value={question}
             onChange={(e) =>
-              setQuestion(e.target.value)
+              setQuestion(
+                e.target.value
+              )
             }
-            placeholder="Example: Explain photosynthesis in simple words, solve this maths question, or summarize this chapter..."
+            placeholder="Example: Explain photosynthesis in simple words..."
           />
 
           <label className="uploadBox">
-
             <Upload />
 
             <div>
-
               <b>
                 Upload study material
               </b>
 
               <small>
-                PDF, JPG, PNG or text
+                PDF, JPG, PNG or TXT
               </small>
 
               {file && (
@@ -1539,7 +1120,6 @@ function StudentAIHelper({ back }) {
                   {file.name}
                 </strong>
               )}
-
             </div>
 
             <input
@@ -1548,489 +1128,317 @@ function StudentAIHelper({ back }) {
               onChange={(e) =>
                 setFile(
                   e.target.files?.[0] ||
-                  null
+                    null
                 )
               }
             />
-
           </label>
 
           <button
-            className="primary aiSolve"
+            className="primary"
             onClick={solve}
             disabled={loading}
+            type="button"
           >
-
             <Sparkles size={17} />
 
             {loading
               ? "Preparing..."
               : "Get AI Help"}
-
           </button>
-
         </div>
 
-        <div className="aiCard resultCard">
-
+        <div className="aiCard">
           <h3>
             🤖 AI Answer
           </h3>
 
           <div className="answer">
-
             {answer ||
               "Your step-by-step explanation will appear here."}
-
           </div>
 
           {answer && (
-
             <button
               className="secondary"
+              type="button"
               onClick={() =>
                 navigator.clipboard?.writeText(
                   answer
                 )
               }
             >
-
               <Copy size={17} />
-
               Copy Answer
-
             </button>
-
           )}
-
         </div>
-
       </div>
-
-      <div className="notice">
-
-        <ShieldCheck />
-
-        For the live version, AI
-        processing should run through
-        a secure backend.
-
-      </div>
-
     </main>
   );
 }
 
 /* =========================================================
-   GENERIC TOOL PAGE
-   ========================================================= */
-
-function ToolPage({ t, back }) {
-
-  /*
-   * IMPORTANT:
-   * PDF TO WORD GETS ITS OWN REAL TOOL.
-   */
-
-  if (
-    t[3] === "pdf-word"
-  ) {
-    return (
-      <PdfToWord
-        back={back}
-      />
-    );
-  }
-
-  if (
-    t[3] === "student-ai-helper"
-  ) {
-    return (
-      <StudentAIHelper
-        back={back}
-      />
-    );
-  }
-
-  if (
-    t[3] === "text-to-video"
-  ) {
-    return (
-      <TextToVideo
-        back={back}
-      />
-    );
-  }
-
-  return (
-    <GenericTool
-      t={t}
-      back={back}
-    />
-  );
-}
-
-/* =========================================================
-   GENERIC TOOL
-   ========================================================= */
+   GENERIC TOOLS
+========================================================= */
 
 function GenericTool({ t, back }) {
-
   const [text, setText] =
     useState("");
 
   const [out, setOut] =
     useState("");
 
-  const run = () => {
+  const run = async () => {
+    let result = text;
 
-    let r = text;
+    try {
+      switch (t[3]) {
+        case "word-counter":
+          result =
+            `Words: ${
+              text.trim()
+                ? text.trim().split(/\s+/).length
+                : 0
+            }\nCharacters: ${text.length}`;
+          break;
 
-    const type = t[3];
+        case "characters":
+          result =
+            `Characters: ${text.length}\nWithout spaces: ${
+              text.replace(/\s/g, "").length
+            }`;
+          break;
 
-    if (
-      type === "word-counter" ||
-      type === "characters"
-    ) {
+        case "case-converter":
+          result =
+            text.toLowerCase();
+          break;
 
-      const words =
-        text.trim()
-          ? text.trim().split(/\s+/).length
-          : 0;
+        case "text-reverser":
+          result =
+            [...text].reverse().join("");
+          break;
 
-      r =
-        `Words: ${words}\nCharacters: ${text.length}`;
+        case "slug":
+          result =
+            text
+              .toLowerCase()
+              .trim()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-|-$/g, "");
+          break;
 
-    } else if (
-      type === "case-converter"
-    ) {
+        case "url-encoder":
+          result =
+            encodeURIComponent(text);
+          break;
 
-      r = text.toLowerCase();
+        case "base64-encode":
+          result =
+            btoa(
+              unescape(
+                encodeURIComponent(text)
+              )
+            );
+          break;
 
-    } else if (
-      type === "text-reverser"
-    ) {
+        case "base64-decode":
+          result =
+            decodeURIComponent(
+              escape(atob(text))
+            );
+          break;
 
-      r =
-        [...text]
-          .reverse()
-          .join("");
+        case "json-formatter":
+          result =
+            JSON.stringify(
+              JSON.parse(text),
+              null,
+              2
+            );
+          break;
 
-    } else if (
-      type === "slug"
-    ) {
+        case "json-minifier":
+          result =
+            JSON.stringify(
+              JSON.parse(text)
+            );
+          break;
 
-      r =
-        text
-          .toLowerCase()
-          .trim()
-          .replace(
-            /[^a-z0-9]+/g,
-            "-"
-          )
-          .replace(
-            /^-|-$/g,
-            ""
-          );
+        case "uuid":
+          result =
+            crypto.randomUUID();
+          break;
 
-    } else if (
-      type === "url-encoder"
-    ) {
+        case "random-password":
+        case "password":
+          result =
+            generatePassword(18);
+          break;
 
-      r =
-        encodeURIComponent(text);
+        case "binary":
+          result =
+            [...text]
+              .map((c) =>
+                c.charCodeAt(0)
+                  .toString(2)
+                  .padStart(8, "0")
+              )
+              .join(" ");
+          break;
 
-    } else if (
-      type === "base64-encode"
-    ) {
+        case "ascii":
+          result =
+            [...text]
+              .map((c) =>
+                c.charCodeAt(0)
+              )
+              .join(" ");
+          break;
 
-      try {
+        case "morse":
+          result =
+            textToMorse(text);
+          break;
 
-        r =
-          btoa(
-            unescape(
-              encodeURIComponent(text)
+        case "palindrome": {
+          const clean =
+            text
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, "");
+
+          result =
+            clean ===
+            [...clean]
+              .reverse()
+              .join("")
+              ? "Yes, this is a palindrome."
+              : "No, this is not a palindrome.";
+          break;
+        }
+
+        case "text-cleaner":
+          result =
+            text
+              .replace(/[ \t]+/g, " ")
+              .replace(/\n\s*\n+/g, "\n")
+              .trim();
+          break;
+
+        case "duplicate-lines": {
+          const lines =
+            text
+              .split("\n")
+              .map((x) => x.trim())
+              .filter(Boolean);
+
+          result =
+            [...new Set(lines)].join("\n");
+          break;
+        }
+
+        case "text-sorter":
+          result =
+            text
+              .split("\n")
+              .sort((a, b) =>
+                a.localeCompare(b)
+              )
+              .join("\n");
+          break;
+
+        case "url-parser": {
+          const url =
+            new URL(text);
+
+          result =
+            JSON.stringify(
+              {
+                protocol:
+                  url.protocol,
+                hostname:
+                  url.hostname,
+                port:
+                  url.port,
+                pathname:
+                  url.pathname,
+                search:
+                  url.search,
+                hash:
+                  url.hash,
+              },
+              null,
+              2
+            );
+          break;
+        }
+
+        case "email-validator":
+          result =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+              text.trim()
             )
-          );
+              ? "Valid email format."
+              : "Invalid email format.";
+          break;
 
-      } catch {
+        case "random-number":
+          result =
+            String(
+              Math.floor(
+                Math.random() * 1000000
+              )
+            );
+          break;
 
-        r =
-          "Unable to encode text.";
-
+        default:
+          result =
+            "This tool is ready. Enter your content and run the tool.";
       }
-
-    } else if (
-      type === "base64-decode"
-    ) {
-
-      try {
-
-        r =
-          decodeURIComponent(
-            escape(
-              atob(text)
-            )
-          );
-
-      } catch {
-
-        r =
-          "Invalid Base64";
-
-      }
-
-    } else if (
-      type === "json-formatter"
-    ) {
-
-      try {
-
-        r =
-          JSON.stringify(
-            JSON.parse(text),
-            null,
-            2
-          );
-
-      } catch {
-
-        r =
-          "Invalid JSON";
-
-      }
-
-    } else if (
-      type === "json-minifier"
-    ) {
-
-      try {
-
-        r =
-          JSON.stringify(
-            JSON.parse(text)
-          );
-
-      } catch {
-
-        r =
-          "Invalid JSON";
-
-      }
-
-    } else if (
-      type === "uuid"
-    ) {
-
-      r =
-        crypto.randomUUID();
-
-    } else if (
-      type === "password" ||
-      type === "random-password"
-    ) {
-
-      const array =
-        new Uint32Array(4);
-
-      crypto.getRandomValues(
-        array
-      );
-
-      r =
-        Array.from(array)
-          .join("-") +
-        "!Aa#";
-
-    } else if (
-      type === "binary"
-    ) {
-
-      r =
-        [...text]
-          .map((c) =>
-            c
-              .charCodeAt(0)
-              .toString(2)
-              .padStart(8, "0")
-          )
-          .join(" ");
-
-    } else if (
-      type === "ascii"
-    ) {
-
-      r =
-        [...text]
-          .map((c) =>
-            c.charCodeAt(0)
-          )
-          .join(" ");
-
-    } else if (
-      type === "morse"
-    ) {
-
-      const m = {
-        a: ".-",
-        b: "-...",
-        c: "-.-.",
-        d: "-..",
-        e: ".",
-        f: "..-.",
-        g: "--.",
-        h: "....",
-        i: "..",
-        j: ".---",
-        k: "-.-",
-        l: ".-..",
-        m: "--",
-        n: "-.",
-        o: "---",
-        p: ".--.",
-        q: "--.-",
-        r: ".-.",
-        s: "...",
-        t: "-",
-        u: "..-",
-        v: "...-",
-        w: ".--",
-        x: "-..-",
-        y: "-.--",
-        z: "--..",
-      };
-
-      r =
-        text
-          .toLowerCase()
-          .split("")
-          .map((c) =>
-            m[c] || c
-          )
-          .join(" ");
-
-    } else if (
-      type === "text-cleaner"
-    ) {
-
-      r =
-        text
-          .replace(
-            /\s+/g,
-            " "
-          )
-          .trim();
-
-    } else if (
-      type === "duplicate-lines"
-    ) {
-
-      r =
-        [...new Set(
-          text.split("\n")
-        )].join("\n");
-
-    } else if (
-      type === "text-sorter"
-    ) {
-
-      r =
-        text
-          .split("\n")
-          .sort((a, b) =>
-            a.localeCompare(b)
-          )
-          .join("\n");
-
-    } else if (
-      type === "palindrome"
-    ) {
-
-      const cleaned =
-        text
-          .toLowerCase()
-          .replace(
-            /[^a-z0-9]/g,
-            ""
-          );
-
-      r =
-        cleaned &&
-        cleaned ===
-          [...cleaned]
-            .reverse()
-            .join("")
-          ? "Yes — this is a palindrome."
-          : "No — this is not a palindrome.";
-
-    } else if (
-      type === "reading-time"
-    ) {
-
-      const words =
-        text.trim()
-          ? text.trim().split(/\s+/).length
-          : 0;
-
-      const minutes =
-        Math.max(
-          1,
-          Math.ceil(
-            words / 200
-          )
-        );
-
-      r =
-        `Words: ${words}\nEstimated reading time: ${minutes} minute(s)`;
-
-    } else {
-
-      r =
-        "This tool is ready. Enter your content to process it locally in your browser.";
-
+    } catch (error) {
+      result =
+        `Invalid input: ${
+          error?.message || "Unable to process."
+        }`;
     }
 
-    setOut(r);
+    setOut(result);
+  };
+
+  const clear = () => {
+    setText("");
+    setOut("");
   };
 
   return (
     <main className="toolPage">
-
       <button
         className="back"
         onClick={back}
+        type="button"
       >
         ← Back to tools
       </button>
 
       <div className="toolHero">
-
         <div className="toolIcon big">
-          <Wrench />
+          {React.createElement(
+            categoryIcons[t[1]] || Wrench
+          )}
         </div>
 
         <div>
+          <span>{t[1]}</span>
 
-          <span>
-            {t[1]}
-          </span>
+          <h1>{t[0]}</h1>
 
-          <h1>
-            {t[0]}
-          </h1>
-
-          <p>
-            {t[2]}
-          </p>
-
+          <p>{t[2]}</p>
         </div>
-
       </div>
 
       <div className="workspace">
-
         <div className="panel">
-
           <label>
             Your input
           </label>
@@ -2044,10 +1452,10 @@ function GenericTool({ t, back }) {
           />
 
           <div className="actions">
-
             <button
               className="primary"
               onClick={run}
+              type="button"
             >
               <Zap size={17} />
               Run Tool
@@ -2055,20 +1463,15 @@ function GenericTool({ t, back }) {
 
             <button
               className="secondary"
-              onClick={() => {
-                setText("");
-                setOut("");
-              }}
+              onClick={clear}
+              type="button"
             >
               Clear
             </button>
-
           </div>
-
         </div>
 
         <div className="panel">
-
           <label>
             Result
           </label>
@@ -2079,51 +1482,84 @@ function GenericTool({ t, back }) {
             placeholder="Your result will appear here..."
           />
 
-          <button
-            className="secondary full"
-            onClick={() =>
-              navigator.clipboard?.writeText(
-                out
-              )
-            }
-          >
+          <div className="actions">
+            <button
+              className="secondary"
+              onClick={() =>
+                navigator.clipboard?.writeText(
+                  out
+                )
+              }
+              type="button"
+            >
+              <Copy size={17} />
+              Copy Result
+            </button>
 
-            <Copy size={17} />
+            {out && (
+              <button
+                className="secondary"
+                type="button"
+                onClick={() => {
+                  const blob =
+                    new Blob(
+                      [out],
+                      {
+                        type: "text/plain",
+                      }
+                    );
 
-            Copy Result
+                  const url =
+                    URL.createObjectURL(
+                      blob
+                    );
 
-          </button>
+                  const a =
+                    document.createElement(
+                      "a"
+                    );
 
+                  a.href = url;
+                  a.download =
+                    "toolmaster-result.txt";
+
+                  a.click();
+
+                  URL.revokeObjectURL(
+                    url
+                  );
+                }}
+              >
+                <Download size={17} />
+                Download
+              </button>
+            )}
+          </div>
         </div>
-
       </div>
 
       <div className="notice">
-
         <ShieldCheck />
 
-        Processing is designed to happen
-        in your browser whenever possible.
-
+        <span>
+          Processing is designed to happen
+          locally in your browser whenever
+          possible.
+        </span>
       </div>
-
     </main>
   );
 }
 
 /* =========================================================
    ADMIN
-   ========================================================= */
+========================================================= */
 
 function Admin({ onClose }) {
-
   return (
     <main className="admin">
-
       <div className="adminTop">
-
         <div>
-
           <span className="pill">
             Admin Panel
           </span>
@@ -2133,24 +1569,22 @@ function Admin({ onClose }) {
           </h1>
 
           <p>
-            Manage the platform foundation.
+            Manage the platform foundation
+            and tools.
           </p>
-
         </div>
 
         <button
           className="secondary"
           onClick={onClose}
+          type="button"
         >
           Back to Website
         </button>
-
       </div>
 
       <div className="adminGrid">
-
         <div className="adminCard">
-
           <Settings />
 
           <h3>
@@ -2158,19 +1592,19 @@ function Admin({ onClose }) {
           </h3>
 
           <p>
-            {tools.length}
-            {" "}
-            tools currently configured.
+            {tools.length} tools currently
+            configured.
           </p>
 
-          <button className="primary">
+          <button
+            className="primary"
+            type="button"
+          >
             Manage Tools
           </button>
-
         </div>
 
         <div className="adminCard">
-
           <LockKeyhole />
 
           <h3>
@@ -2182,14 +1616,15 @@ function Admin({ onClose }) {
             foundation.
           </p>
 
-          <button className="primary">
+          <button
+            className="primary"
+            type="button"
+          >
             Manage Users
           </button>
-
         </div>
 
         <div className="adminCard">
-
           <LayoutDashboard />
 
           <h3>
@@ -2197,18 +1632,19 @@ function Admin({ onClose }) {
           </h3>
 
           <p>
-            Dashboard ready for usage
-            statistics.
+            Dashboard ready for real
+            usage statistics.
           </p>
 
-          <button className="primary">
+          <button
+            className="primary"
+            type="button"
+          >
             View Analytics
           </button>
-
         </div>
 
         <div className="adminCard">
-
           <CheckCircle2 />
 
           <h3>
@@ -2216,29 +1652,105 @@ function Admin({ onClose }) {
           </h3>
 
           <p>
-            Frontend configuration is
-            ready for deployment.
+            Frontend configuration is ready
+            for deployment.
           </p>
 
           <strong className="ok">
             Ready
           </strong>
-
         </div>
-
       </div>
-
     </main>
   );
 }
 
 /* =========================================================
-   START APP
-   ========================================================= */
+   HELPERS
+========================================================= */
 
-createRoot(
-  document.getElementById("root")
-).render(
+function generatePassword(length = 18) {
+  const chars =
+    "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*";
+
+  const values =
+    new Uint32Array(length);
+
+  crypto.getRandomValues(values);
+
+  return Array.from(
+    values,
+    (value) =>
+      chars[value % chars.length]
+  ).join("");
+}
+
+function textToMorse(text) {
+  const morse = {
+    a: ".-",
+    b: "-...",
+    c: "-.-.",
+    d: "-..",
+    e: ".",
+    f: "..-.",
+    g: "--.",
+    h: "....",
+    i: "..",
+    j: ".---",
+    k: "-.-",
+    l: ".-..",
+    m: "--",
+    n: "-.",
+    o: "---",
+    p: ".--.",
+    q: "--.-",
+    r: ".-.",
+    s: "...",
+    t: "-",
+    u: "..-",
+    v: "...-",
+    w: ".--",
+    x: "-..-",
+    y: "-.--",
+    z: "--..",
+
+    0: "-----",
+    1: ".----",
+    2: "..---",
+    3: "...--",
+    4: "....-",
+    5: ".....",
+    6: "-....",
+    7: "--...",
+    8: "---..",
+    9: "----.",
+  };
+
+  return text
+    .toLowerCase()
+    .split("")
+    .map((char) =>
+      char === " "
+        ? "/"
+        : morse[char] || char
+    )
+    .join(" ");
+}
+
+/* =========================================================
+   START APP
+========================================================= */
+
+const rootElement =
+  document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error(
+    "Root element not found. Check index.html."
+  );
+}
+
+createRoot(rootElement).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
