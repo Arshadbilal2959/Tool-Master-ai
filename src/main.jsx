@@ -20,7 +20,7 @@ import {
   Check,
 } from "lucide-react";
 
-import "./styles.css";
+
 
 const tools = [
   {
