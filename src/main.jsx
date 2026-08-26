@@ -32,8 +32,8 @@ const SUPABASE_URL =
   import.meta.env.VITE_SUPABASE_URL ||
   "https://xpjhcwowzxpiiwkteiua.supabase.co";
 
-const SUPABASE_ANON_KEY =
-  import.meta.env.VITE_SUPABASE_ANON_KEY || "";
+const SUPABASE_PUBLISHABLE_KEY =
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
 
 const PDF_TO_WORD_URL =
   `${SUPABASE_URL}/functions/v1/pdf-to-word`;
@@ -47,49 +47,56 @@ const tools = [
     id: "pdf",
     name: "PDF to Word",
     category: "PDF",
-    description: "Convert PDF documents into editable Word files.",
+    description:
+      "Convert PDF documents into editable Word files.",
     icon: FileText,
   },
   {
     id: "video",
     name: "Text to Video",
     category: "Video",
-    description: "Turn your text idea into a video-ready script.",
+    description:
+      "Turn your text idea into a video-ready script.",
     icon: Video,
   },
   {
     id: "seo",
     name: "SEO Analyzer",
     category: "SEO",
-    description: "Analyze your content and get useful SEO suggestions.",
+    description:
+      "Analyze content and get useful SEO suggestions.",
     icon: BarChart3,
   },
   {
     id: "keywords",
     name: "Keyword Generator",
     category: "SEO",
-    description: "Generate keyword ideas for your content.",
+    description:
+      "Generate keyword ideas for your content.",
     icon: KeyRound,
   },
   {
     id: "image",
     name: "Image Tools",
     category: "Image",
-    description: "Work with image-related utilities.",
+    description:
+      "Work with image-related utilities.",
     icon: ImageIcon,
   },
   {
     id: "code",
     name: "Code Formatter",
     category: "Developer",
-    description: "Clean and format your code.",
+    description:
+      "Clean and format your code.",
     icon: Code2,
   },
   {
     id: "calculator",
     name: "Calculator",
     category: "Math",
-    description: "Perform quick mathematical calculations.",
+    description:
+      "Perform quick mathematical calculations.",
     icon: Calculator,
   },
 ];
@@ -119,165 +126,138 @@ function formatBytes(bytes) {
   if (!bytes) return "0 KB";
 
   const units = ["B", "KB", "MB", "GB"];
-
   const index = Math.min(
     Math.floor(Math.log(bytes) / Math.log(1024)),
     units.length - 1
   );
 
-  return `${(bytes / Math.pow(1024, index)).toFixed(
-    index === 0 ? 0 : 2
-  )} ${units[index]}`;
+  return `${(
+    bytes / Math.pow(1024, index)
+  ).toFixed(index === 0 ? 0 : 2)} ${units[index]}`;
 }
 
 /* =========================================================
    PDF TO WORD API
    ========================================================= */
 
-async function convertPdfToWord(file) {
+async function sendPdfToFunction(file) {
   const formData = new FormData();
 
   formData.append("file", file);
 
-  const headers = {
-    apikey: SUPABASE_ANON_KEY,
-  };
+  const headers = {};
 
   /*
-    Authorization header is only added when the public
-    Supabase key exists.
+    Supabase publishable key.
+
+    This key is safe for browser use.
+    NEVER put a secret/service-role key here.
   */
 
-  if (SUPABASE_ANON_KEY) {
-    headers.Authorization = `Bearer ${SUPABASE_ANON_KEY}`;
+  if (SUPABASE_PUBLISHABLE_KEY) {
+    headers.apikey = SUPABASE_PUBLISHABLE_KEY;
+    headers.Authorization =
+      `Bearer ${SUPABASE_PUBLISHABLE_KEY}`;
   }
 
-  const response = await fetch(PDF_TO_WORD_URL, {
-    method: "POST",
-    headers,
-    body: formData,
-  });
+  console.log(
+    "Calling PDF function:",
+    PDF_TO_WORD_URL
+  );
+
+  const response = await fetch(
+    PDF_TO_WORD_URL,
+    {
+      method: "POST",
+      headers,
+      body: formData,
+    }
+  );
 
   const contentType =
     response.headers.get("content-type") || "";
 
+  const rawText = await response.text();
+
+  console.log(
+    "PDF FUNCTION STATUS:",
+    response.status
+  );
+
+  console.log(
+    "PDF FUNCTION CONTENT TYPE:",
+    contentType
+  );
+
+  console.log(
+    "PDF FUNCTION RESPONSE:",
+    rawText
+  );
+
   if (!response.ok) {
-    let errorMessage =
-      `PDF conversion failed (${response.status})`;
+    let errorMessage = rawText;
 
-    if (contentType.includes("application/json")) {
-      try {
-        const errorData = await response.json();
+    try {
+      const errorJson = JSON.parse(rawText);
 
-        errorMessage =
-          errorData?.error ||
-          errorData?.message ||
-          errorMessage;
-      } catch {
-        // ignore
-      }
-    } else {
-      try {
-        const text = await response.text();
-
-        if (text) {
-          errorMessage = text;
-        }
-      } catch {
-        // ignore
-      }
+      errorMessage =
+        errorJson?.error ||
+        errorJson?.message ||
+        rawText;
+    } catch {
+      // Response was not JSON
     }
 
-    throw new Error(errorMessage);
+    throw new Error(
+      errorMessage ||
+        `Server returned HTTP ${response.status}`
+    );
   }
 
   /*
-    The Edge Function can return the generated DOCX
-    directly as a binary response.
+    The current Supabase function returns JSON.
   */
 
   if (
-    contentType.includes(
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )
+    contentType
+      .toLowerCase()
+      .includes("application/json")
   ) {
-    const blob = await response.blob();
-
-    return {
-      type: "blob",
-      blob,
-      filename: "converted-document.docx",
-    };
-  }
-
-  /*
-    Also support JSON response containing a download URL
-    or base64 data.
-  */
-
-  if (contentType.includes("application/json")) {
-    const data = await response.json();
-
-    if (data?.download_url) {
-      return {
-        type: "url",
-        url: data.download_url,
-        filename:
-          data.filename || "converted-document.docx",
-      };
-    }
-
-    if (data?.url) {
-      return {
-        type: "url",
-        url: data.url,
-        filename:
-          data.filename || "converted-document.docx",
-      };
-    }
-
-    if (data?.file_url) {
-      return {
-        type: "url",
-        url: data.file_url,
-        filename:
-          data.filename || "converted-document.docx",
-      };
-    }
-
-    if (data?.base64) {
-      const binary = atob(data.base64);
-
-      const bytes = new Uint8Array(binary.length);
-
-      for (let i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
-      }
-
-      const blob = new Blob([bytes], {
-        type:
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
-
-      return {
-        type: "blob",
-        blob,
-        filename:
-          data.filename || "converted-document.docx",
-      };
-    }
-
-    if (data?.success === false) {
+    try {
+      return JSON.parse(rawText);
+    } catch {
       throw new Error(
-        data?.error ||
-          data?.message ||
-          "PDF conversion failed."
+        "The server returned invalid JSON."
       );
     }
   }
 
+  /*
+    If server returns a DOCX directly in the future,
+    this function can also handle it.
+  */
+
+  if (
+    contentType
+      .toLowerCase()
+      .includes(
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      )
+  ) {
+    return {
+      success: true,
+      directFile: true,
+      blob: new Blob(
+        [rawText],
+        {
+          type: contentType,
+        }
+      ),
+    };
+  }
+
   throw new Error(
-    "The conversion server returned an unsupported response."
+    `The conversion server returned an unsupported response. Content-Type: ${contentType}`
   );
 }
 
@@ -286,67 +266,85 @@ async function convertPdfToWord(file) {
    ========================================================= */
 
 function App() {
-  const [mobileMenu, setMobileMenu] = useState(false);
+  const [mobileMenu, setMobileMenu] =
+    useState(false);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] =
+    useState("");
 
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] =
+    useState("All");
 
-  const [activeTool, setActiveTool] = useState(null);
+  const [activeTool, setActiveTool] =
+    useState(null);
 
   /* PDF */
 
-  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfFile, setPdfFile] =
+    useState(null);
 
-  const [pdfLoading, setPdfLoading] = useState(false);
+  const [pdfStatus, setPdfStatus] =
+    useState("");
 
-  const [pdfError, setPdfError] = useState("");
+  const [pdfError, setPdfError] =
+    useState("");
 
-  const [pdfStatus, setPdfStatus] = useState("");
+  const [pdfLoading, setPdfLoading] =
+    useState(false);
 
-  const [downloadReady, setDownloadReady] = useState(false);
+  const [pdfDownloadUrl, setPdfDownloadUrl] =
+    useState("");
 
-  const [downloadUrl, setDownloadUrl] = useState("");
-
-  const [downloadFilename, setDownloadFilename] =
-    useState("converted-document.docx");
+  const [pdfDownloadName, setPdfDownloadName] =
+    useState("converted.docx");
 
   /* SEO */
 
-  const [seoText, setSeoText] = useState("");
+  const [seoText, setSeoText] =
+    useState("");
 
-  const [seoResult, setSeoResult] = useState(null);
+  const [seoResult, setSeoResult] =
+    useState(null);
 
   /* Keywords */
 
-  const [keywordInput, setKeywordInput] = useState("");
+  const [keywordInput, setKeywordInput] =
+    useState("");
 
-  const [keywords, setKeywords] = useState([]);
+  const [keywords, setKeywords] =
+    useState([]);
 
   /* Video */
 
-  const [videoText, setVideoText] = useState("");
+  const [videoText, setVideoText] =
+    useState("");
 
-  const [videoResult, setVideoResult] = useState("");
+  const [videoResult, setVideoResult] =
+    useState("");
 
   /* Code */
 
-  const [codeInput, setCodeInput] = useState("");
+  const [codeInput, setCodeInput] =
+    useState("");
 
-  const [codeResult, setCodeResult] = useState("");
+  const [codeResult, setCodeResult] =
+    useState("");
 
   /* Calculator */
 
-  const [calcInput, setCalcInput] = useState("");
+  const [calcInput, setCalcInput] =
+    useState("");
 
-  const [calcResult, setCalcResult] = useState("");
+  const [calcResult, setCalcResult] =
+    useState("");
 
   /* =======================================================
-     FILTER
+     FILTER TOOLS
      ======================================================= */
 
   const filteredTools = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const query =
+      search.trim().toLowerCase();
 
     return tools.filter((tool) => {
       const matchesCategory =
@@ -355,11 +353,20 @@ function App() {
 
       const matchesSearch =
         !query ||
-        tool.name.toLowerCase().includes(query) ||
-        tool.category.toLowerCase().includes(query) ||
-        tool.description.toLowerCase().includes(query);
+        tool.name
+          .toLowerCase()
+          .includes(query) ||
+        tool.category
+          .toLowerCase()
+          .includes(query) ||
+        tool.description
+          .toLowerCase()
+          .includes(query);
 
-      return matchesCategory && matchesSearch;
+      return (
+        matchesCategory &&
+        matchesSearch
+      );
     });
   }, [search, category]);
 
@@ -368,12 +375,12 @@ function App() {
      ======================================================= */
 
   function handlePdfSelect(event) {
-    const file = event.target.files?.[0];
+    const file =
+      event.target.files?.[0];
 
     setPdfError("");
     setPdfStatus("");
-    setDownloadReady(false);
-    setDownloadUrl("");
+    setPdfDownloadUrl("");
 
     if (!file) {
       setPdfFile(null);
@@ -382,17 +389,22 @@ function App() {
 
     const isPdf =
       file.type === "application/pdf" ||
-      file.name.toLowerCase().endsWith(".pdf");
+      file.name
+        .toLowerCase()
+        .endsWith(".pdf");
 
     if (!isPdf) {
       setPdfFile(null);
       setPdfError(
-        "Please select a valid PDF file."
+        "Please select a PDF file."
       );
       return;
     }
 
-    if (file.size > 20 * 1024 * 1024) {
+    if (
+      file.size >
+      20 * 1024 * 1024
+    ) {
       setPdfFile(null);
       setPdfError(
         "Maximum PDF size is 20 MB."
@@ -403,7 +415,7 @@ function App() {
     setPdfFile(file);
 
     setPdfStatus(
-      "PDF selected. Ready for conversion."
+      "PDF selected and ready."
     );
   }
 
@@ -420,60 +432,97 @@ function App() {
     }
 
     setPdfLoading(true);
-
     setPdfError("");
-
     setPdfStatus(
-      "Uploading PDF to conversion server..."
+      "Uploading PDF..."
     );
-
-    setDownloadReady(false);
-
-    setDownloadUrl("");
+    setPdfDownloadUrl("");
 
     try {
       const result =
-        await convertPdfToWord(pdfFile);
+        await sendPdfToFunction(
+          pdfFile
+        );
 
-      if (result.type === "blob") {
+      console.log(
+        "FINAL PDF RESULT:",
+        result
+      );
+
+      /*
+        Direct DOCX response
+      */
+
+      if (
+        result?.directFile &&
+        result?.blob
+      ) {
         const url =
-          URL.createObjectURL(result.blob);
+          URL.createObjectURL(
+            result.blob
+          );
 
-        setDownloadUrl(url);
-
-        setDownloadFilename(
-          result.filename ||
-            "converted-document.docx"
+        setPdfDownloadUrl(url);
+        setPdfDownloadName(
+          pdfFile.name.replace(
+            /\.pdf$/i,
+            ".docx"
+          )
         );
-
-        setDownloadReady(true);
 
         setPdfStatus(
-          "Conversion completed successfully!"
-        );
-      } else if (result.type === "url") {
-        setDownloadUrl(result.url);
-
-        setDownloadFilename(
-          result.filename ||
-            "converted-document.docx"
+          "Word file is ready!"
         );
 
-        setDownloadReady(true);
-
-        setPdfStatus(
-          "Conversion completed successfully!"
-        );
+        return;
       }
+
+      /*
+        Normal JSON response
+      */
+
+      if (result?.success) {
+        setPdfStatus(
+          result.message ||
+            "PDF received successfully."
+        );
+
+        /*
+          If future function returns
+          a download URL, support it.
+        */
+
+        if (result.downloadUrl) {
+          setPdfDownloadUrl(
+            result.downloadUrl
+          );
+
+          setPdfDownloadName(
+            result.fileName ||
+              pdfFile.name.replace(
+                /\.pdf$/i,
+                ".docx"
+              )
+          );
+        }
+
+        return;
+      }
+
+      throw new Error(
+        result?.error ||
+          result?.message ||
+          "The PDF server returned an unsupported response."
+      );
     } catch (error) {
       console.error(
-        "PDF conversion error:",
+        "PDF CONVERSION ERROR:",
         error
       );
 
       setPdfError(
         error?.message ||
-          "Unable to convert PDF. Please try again."
+          "Unable to connect to the PDF processing server."
       );
 
       setPdfStatus("");
@@ -483,34 +532,12 @@ function App() {
   }
 
   /* =======================================================
-     DOWNLOAD
-     ======================================================= */
-
-  function downloadConvertedFile() {
-    if (!downloadUrl) return;
-
-    const link =
-      document.createElement("a");
-
-    link.href = downloadUrl;
-
-    link.download =
-      downloadFilename ||
-      "converted-document.docx";
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    link.remove();
-  }
-
-  /* =======================================================
      SEO
      ======================================================= */
 
   function analyzeSEO() {
-    const text = seoText.trim();
+    const text =
+      seoText.trim();
 
     if (!text) {
       setSeoResult(null);
@@ -518,14 +545,19 @@ function App() {
     }
 
     const words =
-      text.split(/\s+/).filter(Boolean);
+      text
+        .split(/\s+/)
+        .filter(Boolean);
 
-    const characters = text.length;
+    const characters =
+      text.length;
 
     const sentences =
       text
         .split(/[.!?]+/)
-        .filter((x) => x.trim()).length;
+        .filter(
+          (x) => x.trim()
+        ).length;
 
     const headings =
       (
@@ -534,19 +566,24 @@ function App() {
         ) || []
       ).length;
 
-    const keywordWords = [
-      ...new Set(
-        words
-          .map((word) =>
-            word
-              .toLowerCase()
-              .replace(/[^a-z0-9-]/g, "")
-          )
-          .filter(
-            (word) => word.length >= 5
-          )
-      ),
-    ].slice(0, 10);
+    const keywordLikeWords =
+      [
+        ...new Set(
+          words
+            .map((word) =>
+              word
+                .toLowerCase()
+                .replace(
+                  /[^a-z0-9-]/g,
+                  ""
+                )
+            )
+            .filter(
+              (word) =>
+                word.length >= 5
+            )
+        ),
+      ].slice(0, 10);
 
     const score = Math.min(
       100,
@@ -563,7 +600,9 @@ function App() {
           10,
           headings * 5
         ) +
-        (characters > 300 ? 10 : 0)
+        (characters > 300
+          ? 10
+          : 0)
     );
 
     setSeoResult({
@@ -572,25 +611,29 @@ function App() {
       characters,
       sentences,
       headings,
-      keywordIdeas: keywordWords,
       suggestions: [
         words.length < 300
-          ? "Add more useful content for better topical depth."
+          ? "Add more useful content to improve topical depth."
           : "Content length looks reasonable.",
 
         headings === 0
-          ? "Add clear H1 and H2 headings."
+          ? "Add clear headings such as H1 and H2."
           : "Heading structure detected.",
 
         sentences > 0 &&
-        words.length / sentences > 25
+        words.length /
+          sentences >
+          25
           ? "Some sentences are long. Consider shorter sentences."
           : "Sentence length looks reasonable.",
 
-        "Use your main keyword naturally in the title and introduction.",
+        "Add your primary keyword naturally in the title, introduction and headings.",
 
         "Add a useful meta description when publishing the page.",
       ],
+
+      keywordIdeas:
+        keywordLikeWords,
     });
   }
 
@@ -600,17 +643,20 @@ function App() {
 
   function generateKeywords() {
     const input =
-      keywordInput.trim().toLowerCase();
+      keywordInput
+        .trim()
+        .toLowerCase();
 
     if (!input) {
       setKeywords([]);
       return;
     }
 
-    const base = input
-      .split(/\s+/)
-      .filter(Boolean)
-      .join(" ");
+    const base =
+      input
+        .split(/\s+/)
+        .filter(Boolean)
+        .join(" ");
 
     const generated = [
       base,
@@ -648,7 +694,8 @@ function App() {
       return;
     }
 
-    const script = `VIDEO SCRIPT
+    setVideoResult(
+      `VIDEO SCRIPT
 
 TITLE:
 ${text}
@@ -670,9 +717,9 @@ MAIN POINTS:
 4. What are the most important things to remember?
 
 CALL TO ACTION:
-If you found this useful, save this video, share it and follow for more helpful content.`;
 
-    setVideoResult(script);
+If you found this useful, save this video, share it and follow for more helpful content.`
+    );
   }
 
   /* =======================================================
@@ -690,22 +737,39 @@ If you found this useful, save this video, share it and follow for more helpful 
 
     let formatted =
       text
-        .replace(/\{/g, "{\n")
-        .replace(/\}/g, "\n}\n")
-        .replace(/;/g, ";\n")
-        .replace(/\n\s*\n/g, "\n");
+        .replace(
+          /\{/g,
+          "{\n"
+        )
+        .replace(
+          /\}/g,
+          "\n}\n"
+        )
+        .replace(
+          /;/g,
+          ";\n"
+        )
+        .replace(
+          /\n\s*\n/g,
+          "\n"
+        );
 
     const lines =
       formatted
         .split("\n")
-        .map((line) => line.trim())
+        .map(
+          (line) =>
+            line.trim()
+        )
         .filter(Boolean);
 
     let indent = 0;
 
     const output =
       lines.map((line) => {
-        if (line.startsWith("}")) {
+        if (
+          line.startsWith("}")
+        ) {
           indent =
             Math.max(
               0,
@@ -718,14 +782,11 @@ If you found this useful, save this video, share it and follow for more helpful 
           line;
 
         if (
-          line.endsWith("{") ||
-          line.includes("{")
+          line.endsWith(
+            "{"
+          )
         ) {
-          if (
-            !line.startsWith("}")
-          ) {
-            indent++;
-          }
+          indent++;
         }
 
         return result;
@@ -791,15 +852,17 @@ If you found this useful, save this video, share it and follow for more helpful 
   }
 
   /* =======================================================
-     TOOL OPEN
+     OPEN TOOL
      ======================================================= */
 
   function openTool(tool) {
-    setActiveTool(tool.id);
+    setActiveTool(
+      tool.id
+    );
 
     setPdfError("");
-
     setPdfStatus("");
+    setPdfDownloadUrl("");
 
     setTimeout(() => {
       document
@@ -807,7 +870,8 @@ If you found this useful, save this video, share it and follow for more helpful 
           "tool-workspace"
         )
         ?.scrollIntoView({
-          behavior: "smooth",
+          behavior:
+            "smooth",
           block: "start",
         });
     }, 50);
@@ -834,7 +898,7 @@ If you found this useful, save this video, share it and follow for more helpful 
   }
 
   /* =======================================================
-     RENDER
+     UI
      ======================================================= */
 
   return (
@@ -848,14 +912,16 @@ If you found this useful, save this video, share it and follow for more helpful 
           <button
             className="logo"
             onClick={() =>
-              scrollToId("home")
+              scrollToId(
+                "home"
+              )
             }
           >
             <span className="logoIcon">
               <Wrench size={20} />
             </span>
 
-            <span className="logoText">
+            <span>
               <strong>
                 ToolMaster
               </strong>
@@ -875,8 +941,12 @@ If you found this useful, save this video, share it and follow for more helpful 
           >
             <button
               onClick={() => {
-                scrollToId("home");
-                setMobileMenu(false);
+                scrollToId(
+                  "home"
+                );
+                setMobileMenu(
+                  false
+                );
               }}
             >
               Home
@@ -884,8 +954,12 @@ If you found this useful, save this video, share it and follow for more helpful 
 
             <button
               onClick={() => {
-                scrollToId("tools");
-                setMobileMenu(false);
+                scrollToId(
+                  "tools"
+                );
+                setMobileMenu(
+                  false
+                );
               }}
             >
               Tools
@@ -896,7 +970,9 @@ If you found this useful, save this video, share it and follow for more helpful 
                 scrollToId(
                   "categories"
                 );
-                setMobileMenu(false);
+                setMobileMenu(
+                  false
+                );
               }}
             >
               Categories
@@ -904,8 +980,12 @@ If you found this useful, save this video, share it and follow for more helpful 
 
             <button
               onClick={() => {
-                scrollToId("about");
-                setMobileMenu(false);
+                scrollToId(
+                  "about"
+                );
+                setMobileMenu(
+                  false
+                );
               }}
             >
               About
@@ -930,11 +1010,9 @@ If you found this useful, save this video, share it and follow for more helpful 
         </div>
       </header>
 
-      {/* MAIN */}
+      {/* HERO */}
 
       <main>
-
-        {/* HERO */}
 
         <section
           id="home"
@@ -942,7 +1020,7 @@ If you found this useful, save this video, share it and follow for more helpful 
         >
           <div className="container heroGrid">
 
-            <div className="heroContent">
+            <div>
 
               <div className="badge">
                 <Sparkles size={15} />
@@ -952,7 +1030,8 @@ If you found this useful, save this video, share it and follow for more helpful 
               <h1>
                 Powerful Tools.
                 <span>
-                  {" "}Simple Results.
+                  {" "}
+                  Simple Results.
                 </span>
               </h1>
 
@@ -969,7 +1048,9 @@ If you found this useful, save this video, share it and follow for more helpful 
                 <button
                   className="primaryButton"
                   onClick={() =>
-                    scrollToId("tools")
+                    scrollToId(
+                      "tools"
+                    )
                   }
                 >
                   Our Tools
@@ -979,7 +1060,9 @@ If you found this useful, save this video, share it and follow for more helpful 
                 <button
                   className="secondaryButton"
                   onClick={() =>
-                    scrollToId("about")
+                    scrollToId(
+                      "about"
+                    )
                   }
                 >
                   Learn More
@@ -1000,10 +1083,9 @@ If you found this useful, save this video, share it and follow for more helpful 
               </h3>
 
               <p>
-                Simple utilities for
-                files, SEO, content,
-                development and
-                everyday work.
+                Simple utilities for files,
+                SEO, content, development
+                and everyday work.
               </p>
 
               <div className="miniStats">
@@ -1012,7 +1094,6 @@ If you found this useful, save this video, share it and follow for more helpful 
                   <strong>
                     {tools.length}+
                   </strong>
-
                   <span>
                     Tools
                   </span>
@@ -1022,7 +1103,6 @@ If you found this useful, save this video, share it and follow for more helpful 
                   <strong>
                     24/7
                   </strong>
-
                   <span>
                     Available
                   </span>
@@ -1032,7 +1112,6 @@ If you found this useful, save this video, share it and follow for more helpful 
                   <strong>
                     Fast
                   </strong>
-
                   <span>
                     Results
                   </span>
@@ -1056,6 +1135,7 @@ If you found this useful, save this video, share it and follow for more helpful 
             <div className="sectionHeading">
 
               <div>
+
                 <div className="eyebrow">
                   <Wrench size={15} />
                   OUR TOOLS
@@ -1066,9 +1146,10 @@ If you found this useful, save this video, share it and follow for more helpful 
                 </h2>
 
                 <p>
-                  Choose a tool and
-                  start working instantly.
+                  Choose a tool and start
+                  working instantly.
                 </p>
+
               </div>
 
               <div className="searchBox">
@@ -1121,7 +1202,9 @@ If you found this useful, save this video, share it and follow for more helpful 
                       <button
                         className="toolButton"
                         onClick={() =>
-                          openTool(tool)
+                          openTool(
+                            tool
+                          )
                         }
                       >
                         Use Tool
@@ -1135,14 +1218,13 @@ If you found this useful, save this video, share it and follow for more helpful 
 
             </div>
 
-            {filteredTools.length === 0 && (
+            {filteredTools.length ===
+              0 && (
               <div className="empty">
                 <Search size={30} />
-
                 <h3>
                   No tools found
                 </h3>
-
                 <p>
                   Try another search.
                 </p>
@@ -1163,6 +1245,7 @@ If you found this useful, save this video, share it and follow for more helpful 
             <div className="sectionHeading centered">
 
               <div>
+
                 <div className="eyebrow">
                   CATEGORIES
                 </div>
@@ -1172,9 +1255,10 @@ If you found this useful, save this video, share it and follow for more helpful 
                 </h2>
 
                 <p>
-                  Browse ToolMaster
-                  by category.
+                  Browse ToolMaster by
+                  category.
                 </p>
+
               </div>
 
             </div>
@@ -1186,7 +1270,8 @@ If you found this useful, save this video, share it and follow for more helpful 
                   <button
                     key={item}
                     className={
-                      category === item
+                      category ===
+                      item
                         ? "categoryCard active"
                         : "categoryCard"
                     }
@@ -1194,7 +1279,6 @@ If you found this useful, save this video, share it and follow for more helpful 
                       setCategory(
                         item
                       );
-
                       scrollToId(
                         "tools"
                       );
@@ -1221,7 +1305,6 @@ If you found this useful, save this video, share it and follow for more helpful 
             {!activeTool ? (
 
               <div className="workspaceEmpty">
-
                 <Wrench size={40} />
 
                 <h2>
@@ -1232,7 +1315,6 @@ If you found this useful, save this video, share it and follow for more helpful 
                   Choose any tool above
                   to start working.
                 </p>
-
               </div>
 
             ) : (
@@ -1242,6 +1324,7 @@ If you found this useful, save this video, share it and follow for more helpful 
                 <div className="workspaceHeader">
 
                   <div>
+
                     <div className="eyebrow">
                       TOOL WORKSPACE
                     </div>
@@ -1255,6 +1338,7 @@ If you found this useful, save this video, share it and follow for more helpful 
                         )?.name
                       }
                     </h2>
+
                   </div>
 
                   <button
@@ -1270,7 +1354,8 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                 {/* PDF */}
 
-                {activeTool === "pdf" && (
+                {activeTool ===
+                  "pdf" && (
 
                   <div className="toolWorkspace">
 
@@ -1312,7 +1397,6 @@ If you found this useful, save this video, share it and follow for more helpful 
                           <FileText size={22} />
 
                           <div>
-
                             <strong>
                               {pdfFile.name}
                             </strong>
@@ -1322,7 +1406,6 @@ If you found this useful, save this video, share it and follow for more helpful 
                                 pdfFile.size
                               )}
                             </span>
-
                           </div>
 
                           <CheckCircle2
@@ -1334,32 +1417,18 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                       {pdfError && (
                         <div className="message error">
-
-                          <AlertCircle
-                            size={18}
-                          />
-
-                          <span>
-                            {pdfError}
-                          </span>
-
+                          <AlertCircle size={18} />
+                          {pdfError}
                         </div>
                       )}
 
                       {pdfStatus &&
                         !pdfError && (
-                          <div className="message success">
-
-                            <CheckCircle2
-                              size={18}
-                            />
-
-                            <span>
-                              {pdfStatus}
-                            </span>
-
-                          </div>
-                        )}
+                        <div className="message success">
+                          <CheckCircle2 size={18} />
+                          {pdfStatus}
+                        </div>
+                      )}
 
                       <button
                         className="primaryButton convertButton"
@@ -1378,57 +1447,36 @@ If you found this useful, save this video, share it and follow for more helpful 
                               size={18}
                               className="spin"
                             />
-
-                            Converting...
+                            Processing...
                           </>
                         ) : (
                           <>
                             Convert PDF to Word
-
-                            <ArrowRight
-                              size={18}
-                            />
+                            <ArrowRight size={18} />
                           </>
                         )}
 
                       </button>
 
-                      {downloadReady && (
-                        <div className="downloadArea">
-
-                          <CheckCircle2
-                            size={28}
-                          />
-
-                          <h3>
-                            Word file is ready
-                          </h3>
-
-                          <p>
-                            Your PDF has
-                            been converted.
-                          </p>
-
-                          <button
-                            className="downloadButton"
-                            onClick={
-                              downloadConvertedFile
-                            }
-                          >
-                            <Download
-                              size={18}
-                            />
-
-                            Download Word File
-                          </button>
-
-                        </div>
+                      {pdfDownloadUrl && (
+                        <a
+                          className="primaryButton downloadButton"
+                          href={
+                            pdfDownloadUrl
+                          }
+                          download={
+                            pdfDownloadName
+                          }
+                        >
+                          <Download size={18} />
+                          Download Word File
+                        </a>
                       )}
 
                       <p className="workspaceNote">
-                        PDF files are processed
-                        through your Supabase
-                        Edge Function.
+                        Your PDF is sent to
+                        the ToolMaster
+                        processing function.
                       </p>
 
                     </div>
@@ -1438,13 +1486,16 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                 {/* VIDEO */}
 
-                {activeTool === "video" && (
+                {activeTool ===
+                  "video" && (
 
                   <div className="toolWorkspace">
 
                     <textarea
                       className="largeTextarea"
-                      value={videoText}
+                      value={
+                        videoText
+                      }
                       onChange={(e) =>
                         setVideoText(
                           e.target.value
@@ -1496,13 +1547,16 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                 {/* SEO */}
 
-                {activeTool === "seo" && (
+                {activeTool ===
+                  "seo" && (
 
                   <div className="toolWorkspace">
 
                     <textarea
                       className="largeTextarea"
-                      value={seoText}
+                      value={
+                        seoText
+                      }
                       onChange={(e) =>
                         setSeoText(
                           e.target.value
@@ -1522,12 +1576,15 @@ If you found this useful, save this video, share it and follow for more helpful 
                     </button>
 
                     {seoResult && (
+
                       <div className="seoResults">
 
                         <div className="scoreCard">
 
                           <strong>
-                            {seoResult.score}
+                            {
+                              seoResult.score
+                            }
                           </strong>
 
                           <span>
@@ -1540,8 +1597,11 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                           <div>
                             <strong>
-                              {seoResult.words}
+                              {
+                                seoResult.words
+                              }
                             </strong>
+
                             <span>
                               Words
                             </span>
@@ -1549,8 +1609,11 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                           <div>
                             <strong>
-                              {seoResult.characters}
+                              {
+                                seoResult.characters
+                              }
                             </strong>
+
                             <span>
                               Characters
                             </span>
@@ -1558,8 +1621,11 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                           <div>
                             <strong>
-                              {seoResult.sentences}
+                              {
+                                seoResult.sentences
+                              }
                             </strong>
+
                             <span>
                               Sentences
                             </span>
@@ -1567,8 +1633,11 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                           <div>
                             <strong>
-                              {seoResult.headings}
+                              {
+                                seoResult.headings
+                              }
                             </strong>
+
                             <span>
                               Headings
                             </span>
@@ -1588,16 +1657,18 @@ If you found this useful, save this video, share it and follow for more helpful 
                               index
                             ) => (
                               <div
-                                key={index}
+                                key={
+                                  index
+                                }
                                 className="suggestion"
                               >
-
                                 <CheckCircle2
-                                  size={18}
+                                  size={
+                                    18
+                                  }
                                 />
 
                                 {item}
-
                               </div>
                             )
                           )}
@@ -1612,7 +1683,8 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                 {/* KEYWORDS */}
 
-                {activeTool === "keywords" && (
+                {activeTool ===
+                  "keywords" && (
 
                   <div className="toolWorkspace">
 
@@ -1639,15 +1711,20 @@ If you found this useful, save this video, share it and follow for more helpful 
                       <KeyRound size={18} />
                     </button>
 
-                    {keywords.length > 0 && (
+                    {keywords.length >
+                      0 && (
 
                       <div className="keywordResults">
 
                         {keywords.map(
-                          (keyword) => (
+                          (
+                            keyword
+                          ) => (
                             <div
                               className="keywordChip"
-                              key={keyword}
+                              key={
+                                keyword
+                              }
                             >
 
                               {keyword}
@@ -1660,7 +1737,9 @@ If you found this useful, save this video, share it and follow for more helpful 
                                 }
                               >
                                 <Copy
-                                  size={14}
+                                  size={
+                                    14
+                                  }
                                 />
                               </button>
 
@@ -1669,7 +1748,6 @@ If you found this useful, save this video, share it and follow for more helpful 
                         )}
 
                       </div>
-
                     )}
 
                   </div>
@@ -1677,7 +1755,8 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                 {/* IMAGE */}
 
-                {activeTool === "image" && (
+                {activeTool ===
+                  "image" && (
 
                   <div className="toolWorkspace">
 
@@ -1702,13 +1781,16 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                 {/* CODE */}
 
-                {activeTool === "code" && (
+                {activeTool ===
+                  "code" && (
 
                   <div className="toolWorkspace">
 
                     <textarea
                       className="codeTextarea"
-                      value={codeInput}
+                      value={
+                        codeInput
+                      }
                       onChange={(e) =>
                         setCodeInput(
                           e.target.value
@@ -1761,7 +1843,8 @@ If you found this useful, save this video, share it and follow for more helpful 
 
                 {/* CALCULATOR */}
 
-                {activeTool === "calculator" && (
+                {activeTool ===
+                  "calculator" && (
 
                   <div className="toolWorkspace calculator">
 
@@ -1793,9 +1876,7 @@ If you found this useful, save this video, share it and follow for more helpful 
                       }
                     >
                       Calculate
-                      <Calculator
-                        size={18}
-                      />
+                      <Calculator size={18} />
                     </button>
 
                     {calcResult && (
@@ -1827,9 +1908,9 @@ If you found this useful, save this video, share it and follow for more helpful 
               </h3>
 
               <p>
-                Quick and simple
-                tools designed for
-                everyday tasks.
+                Quick and simple tools
+                designed for everyday
+                tasks.
               </p>
             </div>
 
@@ -1841,9 +1922,9 @@ If you found this useful, save this video, share it and follow for more helpful 
               </h3>
 
               <p>
-                Your workflow is
-                designed with privacy
-                and security in mind.
+                Your workflow is designed
+                with privacy and security
+                in mind.
               </p>
             </div>
 
@@ -1855,9 +1936,8 @@ If you found this useful, save this video, share it and follow for more helpful 
               </h3>
 
               <p>
-                A growing collection
-                of practical online
-                utilities.
+                A growing collection of
+                practical online utilities.
               </p>
             </div>
 
@@ -1871,7 +1951,6 @@ If you found this useful, save this video, share it and follow for more helpful 
           id="about"
           className="section"
         >
-
           <div className="container about">
 
             <div className="eyebrow">
@@ -1892,7 +1971,6 @@ If you found this useful, save this video, share it and follow for more helpful 
             </p>
 
           </div>
-
         </section>
 
       </main>
@@ -1927,9 +2005,7 @@ If you found this useful, save this video, share it and follow for more helpful 
 
       </footer>
 
-      {/* =====================================================
-          CSS
-      ===================================================== */}
+      {/* CSS */}
 
       <style>{`
 
@@ -1951,6 +2027,7 @@ If you found this useful, save this video, share it and follow for more helpful 
             BlinkMacSystemFont,
             "Segoe UI",
             sans-serif;
+
           background: #f8fafc;
           color: #0f172a;
         }
@@ -1970,10 +2047,12 @@ If you found this useful, save this video, share it and follow for more helpful 
         }
 
         .container {
-          width: min(
-            1160px,
-            calc(100% - 40px)
-          );
+          width:
+            min(
+              1160px,
+              calc(100% - 40px)
+            );
+
           margin: 0 auto;
         }
 
@@ -1981,33 +2060,47 @@ If you found this useful, save this video, share it and follow for more helpful 
           position: sticky;
           top: 0;
           z-index: 50;
+
           background:
-            rgba(255,255,255,.94);
+            rgba(
+              255,
+              255,
+              255,
+              .94
+            );
+
           backdrop-filter:
             blur(12px);
+
           border-bottom:
-            1px solid #e2e8f0;
+            1px solid
+            #e2e8f0;
         }
 
         .nav {
           min-height: 72px;
+
           display: flex;
           align-items: center;
           justify-content:
             space-between;
+
           gap: 24px;
         }
 
         .logo {
           border: 0;
-          background: transparent;
+          background:
+            transparent;
+
           display: flex;
           align-items: center;
           gap: 10px;
+
           color: #0f172a;
         }
 
-        .logoText {
+        .logo span:last-child {
           display: flex;
           align-items: baseline;
           gap: 4px;
@@ -2015,6 +2108,7 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .logo strong {
           font-size: 20px;
+          letter-spacing: -.5px;
         }
 
         .logo small {
@@ -2025,9 +2119,12 @@ If you found this useful, save this video, share it and follow for more helpful 
         .logoIcon {
           width: 38px;
           height: 38px;
+
           border-radius: 11px;
+
           display: grid;
           place-items: center;
+
           background: #0f172a;
           color: white;
         }
@@ -2040,26 +2137,38 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .navLinks button {
           border: 0;
-          background: transparent;
+          background:
+            transparent;
+
           color: #475569;
-          padding: 10px 14px;
+
+          padding:
+            10px 14px;
+
           border-radius: 9px;
+
           font-weight: 600;
         }
 
         .navLinks button:hover {
-          background: #f1f5f9;
+          background:
+            #f1f5f9;
+
           color: #0f172a;
         }
 
         .mobileMenu {
           display: none;
+
           border: 0;
-          background: transparent;
+          background:
+            transparent;
         }
 
         .hero {
-          padding: 90px 0 80px;
+          padding:
+            90px 0 80px;
+
           background:
             radial-gradient(
               circle at top right,
@@ -2071,34 +2180,57 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .heroGrid {
           display: grid;
+
           grid-template-columns:
             1.15fr .85fr;
+
           align-items: center;
+
           gap: 70px;
         }
 
         .badge {
           width: fit-content;
+
           display: flex;
           align-items: center;
+
           gap: 8px;
-          padding: 8px 13px;
+
+          padding:
+            8px 13px;
+
           border-radius: 999px;
+
           background: white;
+
           border:
-            1px solid #e2e8f0;
+            1px solid
+            #e2e8f0;
+
           color: #475569;
+
           font-size: 13px;
           font-weight: 700;
+
           margin-bottom: 22px;
         }
 
         .hero h1 {
           margin: 0;
+
           font-size:
-            clamp(42px, 6vw, 70px);
+            clamp(
+              42px,
+              6vw,
+              70px
+            );
+
           line-height: 1.02;
+
           letter-spacing: -3px;
+
+          max-width: 750px;
         }
 
         .hero h1 span {
@@ -2107,10 +2239,15 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .hero p {
           color: #64748b;
+
           font-size: 18px;
+
           line-height: 1.7;
+
           max-width: 680px;
-          margin: 24px 0 30px;
+
+          margin:
+            24px 0 30px;
         }
 
         .heroButtons {
@@ -2125,24 +2262,42 @@ If you found this useful, save this video, share it and follow for more helpful 
         .uploadButton,
         .downloadButton {
           display: inline-flex;
+
           align-items: center;
           justify-content: center;
+
           gap: 9px;
+
           border-radius: 10px;
-          padding: 12px 17px;
+
+          padding:
+            12px 17px;
+
           font-weight: 700;
+
           border:
-            1px solid transparent;
-          transition: .2s ease;
+            1px solid
+            transparent;
+
+          transition:
+            .2s ease;
+
+          text-decoration: none;
         }
 
         .primaryButton {
-          background: #2563eb;
+          background:
+            #2563eb;
+
           color: white;
         }
 
-        .primaryButton:hover:not(:disabled) {
-          background: #1d4ed8;
+        .primaryButton:hover:not(
+          :disabled
+        ) {
+          background:
+            #1d4ed8;
+
           transform:
             translateY(-1px);
         }
@@ -2155,34 +2310,59 @@ If you found this useful, save this video, share it and follow for more helpful 
         .secondaryButton {
           background: white;
           color: #0f172a;
+
           border-color:
             #cbd5e1;
         }
 
+        .secondaryButton:hover {
+          background:
+            #f8fafc;
+        }
+
         .heroCard {
           background: white;
+
           border:
-            1px solid #e2e8f0;
+            1px solid
+            #e2e8f0;
+
           border-radius: 24px;
+
           padding: 34px;
+
           box-shadow:
             0 20px 60px
-            rgba(15,23,42,.08);
+            rgba(
+              15,
+              23,
+              42,
+              .08
+            );
         }
 
         .heroCardIcon {
           width: 76px;
           height: 76px;
+
           display: grid;
           place-items: center;
+
           border-radius: 20px;
-          background: #eff6ff;
-          color: #2563eb;
+
+          background:
+            #eff6ff;
+
+          color:
+            #2563eb;
+
           margin-bottom: 22px;
         }
 
         .heroCard h3 {
-          margin: 0 0 10px;
+          margin:
+            0 0 10px;
+
           font-size: 25px;
         }
 
@@ -2193,16 +2373,23 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         .miniStats {
           display: grid;
+
           grid-template-columns:
-            repeat(3,1fr);
+            repeat(3, 1fr);
+
           gap: 10px;
+
           margin-top: 25px;
         }
 
         .miniStats div {
           padding: 15px;
+
           border-radius: 13px;
-          background: #f8fafc;
+
+          background:
+            #f8fafc;
+
           text-align: center;
         }
 
@@ -2211,43 +2398,70 @@ If you found this useful, save this video, share it and follow for more helpful 
           display: block;
         }
 
+        .miniStats strong {
+          font-size: 17px;
+        }
+
         .miniStats span {
           margin-top: 4px;
-          color: #64748b;
+
+          color:
+            #64748b;
+
           font-size: 12px;
         }
 
         .section {
-          padding: 90px 0;
-          background: white;
+          padding:
+            90px 0;
+
+          background:
+            white;
         }
 
         .soft {
-          background: #f8fafc;
+          background:
+            #f8fafc;
         }
 
         .sectionHeading {
           display: flex;
+
           align-items: end;
+
           justify-content:
             space-between;
+
           gap: 30px;
+
           margin-bottom: 35px;
         }
 
-        .centered {
-          justify-content: center;
-          text-align: center;
+        .sectionHeading.centered {
+          justify-content:
+            center;
+
+          text-align:
+            center;
         }
 
         .eyebrow {
           display: flex;
+
           align-items: center;
+
           gap: 7px;
-          color: #2563eb;
+
+          color:
+            #2563eb;
+
           font-size: 12px;
+
           font-weight: 800;
-          letter-spacing: .12em;
+
+          letter-spacing:
+            .12em;
+
           margin-bottom: 9px;
         }
 
@@ -2255,312 +2469,534 @@ If you found this useful, save this video, share it and follow for more helpful 
         .about h2,
         .workspaceHeader h2 {
           margin: 0;
+
           font-size: 36px;
-          letter-spacing: -1.4px;
+
+          letter-spacing:
+            -1.4px;
         }
 
         .sectionHeading p,
         .about p {
-          color: #64748b;
-          margin: 10px 0 0;
+          color:
+            #64748b;
+
+          margin:
+            10px 0 0;
         }
 
         .searchBox {
-          width: min(320px,100%);
+          width:
+            min(
+              320px,
+              100%
+            );
+
           display: flex;
+
           align-items: center;
+
           gap: 9px;
-          padding: 11px 13px;
+
+          padding:
+            11px 13px;
+
           border:
-            1px solid #cbd5e1;
+            1px solid
+            #cbd5e1;
+
           border-radius: 10px;
-          background: white;
+
+          background:
+            white;
         }
 
         .searchBox input {
           width: 100%;
+
           border: 0;
+
           outline: 0;
         }
 
         .toolGrid {
           display: grid;
+
           grid-template-columns:
-            repeat(4,1fr);
+            repeat(4, 1fr);
+
           gap: 18px;
         }
 
         .toolCard {
-          background: white;
+          background:
+            white;
+
           border:
-            1px solid #e2e8f0;
+            1px solid
+            #e2e8f0;
+
           border-radius: 17px;
+
           padding: 23px;
-          min-height: 285px;
+
+          min-height:
+            285px;
+
           display: flex;
-          flex-direction: column;
-          transition: .2s ease;
+
+          flex-direction:
+            column;
+
+          transition:
+            .2s ease;
         }
 
         .toolCard:hover {
           transform:
             translateY(-4px);
+
           box-shadow:
             0 15px 40px
-            rgba(15,23,42,.08);
+            rgba(
+              15,
+              23,
+              42,
+              .08
+            );
         }
 
         .toolIcon {
           width: 50px;
           height: 50px;
+
           border-radius: 13px;
+
           display: grid;
           place-items: center;
-          background: #eff6ff;
-          color: #2563eb;
-          margin-bottom: 18px;
+
+          background:
+            #eff6ff;
+
+          color:
+            #2563eb;
+
+          margin-bottom:
+            18px;
         }
 
         .toolCategory {
-          color: #2563eb;
-          font-size: 11px;
-          font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: .08em;
+          color:
+            #2563eb;
+
+          font-size:
+            11px;
+
+          font-weight:
+            800;
+
+          text-transform:
+            uppercase;
+
+          letter-spacing:
+            .08em;
         }
 
         .toolCard h3 {
-          margin: 7px 0 9px;
-          font-size: 21px;
+          margin:
+            7px 0 9px;
+
+          font-size:
+            21px;
         }
 
         .toolCard p {
-          color: #64748b;
-          line-height: 1.55;
-          font-size: 14px;
+          color:
+            #64748b;
+
+          line-height:
+            1.55;
+
+          font-size:
+            14px;
+
           margin: 0;
         }
 
         .toolButton {
-          margin-top: auto;
-          width: fit-content;
-          background: transparent;
-          color: #2563eb;
+          margin-top:
+            auto;
+
+          width:
+            fit-content;
+
+          background:
+            transparent;
+
+          color:
+            #2563eb;
+
           padding: 0;
         }
 
         .categoryGrid {
           display: grid;
+
           grid-template-columns:
-            repeat(7,1fr);
+            repeat(7, 1fr);
+
           gap: 12px;
         }
 
         .categoryCard {
           border:
-            1px solid #e2e8f0;
-          background: white;
-          border-radius: 13px;
-          padding: 17px 10px;
-          font-weight: 700;
-          color: #475569;
+            1px solid
+            #e2e8f0;
+
+          background:
+            white;
+
+          border-radius:
+            13px;
+
+          padding:
+            17px 10px;
+
+          font-weight:
+            700;
+
+          color:
+            #475569;
         }
 
         .categoryCard.active,
         .categoryCard:hover {
-          background: #2563eb;
-          color: white;
-          border-color: #2563eb;
+          background:
+            #2563eb;
+
+          color:
+            white;
+
+          border-color:
+            #2563eb;
         }
 
         .workspaceSection {
-          padding: 75px 0;
-          background: #0f172a;
+          padding:
+            75px 0;
+
+          background:
+            #0f172a;
         }
 
         .workspaceEmpty {
           background:
-            rgba(255,255,255,.05);
+            rgba(
+              255,
+              255,
+              255,
+              .05
+            );
+
           border:
             1px solid
-            rgba(255,255,255,.1);
-          color: white;
-          border-radius: 22px;
-          padding: 60px;
-          text-align: center;
+            rgba(
+              255,
+              255,
+              255,
+              .1
+            );
+
+          color:
+            white;
+
+          border-radius:
+            22px;
+
+          padding:
+            60px;
+
+          text-align:
+            center;
         }
 
         .workspaceEmpty p {
-          color: #94a3b8;
+          color:
+            #94a3b8;
         }
 
         .workspace {
-          background: white;
-          border-radius: 22px;
-          overflow: hidden;
+          background:
+            white;
+
+          border-radius:
+            22px;
+
+          overflow:
+            hidden;
+
           box-shadow:
             0 25px 70px
-            rgba(0,0,0,.2);
+            rgba(
+              0,
+              0,
+              0,
+              .2
+            );
         }
 
         .workspaceHeader {
-          padding: 25px 28px;
+          padding:
+            25px 28px;
+
           display: flex;
+
           justify-content:
             space-between;
-          align-items: center;
+
+          align-items:
+            center;
+
           border-bottom:
-            1px solid #e2e8f0;
+            1px solid
+            #e2e8f0;
         }
 
         .closeButton {
           width: 40px;
           height: 40px;
+
           display: grid;
           place-items: center;
+
           border: 0;
-          background: #f1f5f9;
-          border-radius: 10px;
+
+          background:
+            #f1f5f9;
+
+          border-radius:
+            10px;
         }
 
         .toolWorkspace {
-          padding: 30px;
+          padding:
+            30px;
         }
 
         .uploadArea {
           border:
-            2px dashed #cbd5e1;
-          border-radius: 18px;
-          padding: 45px 25px;
-          text-align: center;
-          background: #f8fafc;
+            2px dashed
+            #cbd5e1;
+
+          border-radius:
+            18px;
+
+          padding:
+            45px 25px;
+
+          text-align:
+            center;
+
+          background:
+            #f8fafc;
         }
 
         .uploadIcon {
           width: 70px;
           height: 70px;
+
           margin:
             0 auto 18px;
+
           display: grid;
           place-items: center;
-          border-radius: 18px;
-          background: #dbeafe;
-          color: #2563eb;
+
+          border-radius:
+            18px;
+
+          background:
+            #dbeafe;
+
+          color:
+            #2563eb;
         }
 
         .uploadArea h3 {
-          margin: 0 0 8px;
-          font-size: 24px;
+          margin:
+            0 0 8px;
+
+          font-size:
+            24px;
         }
 
         .uploadArea p {
-          color: #64748b;
+          color:
+            #64748b;
         }
 
         .uploadButton {
-          margin: 12px auto;
-          background: #0f172a;
-          color: white;
-          width: fit-content;
+          margin:
+            12px auto;
+
+          background:
+            #0f172a;
+
+          color:
+            white;
+
+          width:
+            fit-content;
         }
 
         .selectedFile {
-          max-width: 600px;
-          margin: 22px auto;
+          max-width:
+            600px;
+
+          margin:
+            22px auto;
+
           display: flex;
-          align-items: center;
+
+          align-items:
+            center;
+
           gap: 13px;
-          text-align: left;
-          background: white;
+
+          text-align:
+            left;
+
+          background:
+            white;
+
           border:
-            1px solid #e2e8f0;
-          border-radius: 12px;
-          padding: 14px;
+            1px solid
+            #e2e8f0;
+
+          border-radius:
+            12px;
+
+          padding:
+            14px;
         }
 
-        .selectedFile > svg:last-child {
-          margin-left: auto;
-          color: #16a34a;
+        .selectedFile >
+        svg:last-child {
+          margin-left:
+            auto;
+
+          color:
+            #16a34a;
         }
 
         .selectedFile div {
           display: flex;
-          flex-direction: column;
+
+          flex-direction:
+            column;
+
           gap: 3px;
-          overflow: hidden;
+
+          overflow:
+            hidden;
         }
 
         .selectedFile strong {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          overflow:
+            hidden;
+
+          text-overflow:
+            ellipsis;
+
+          white-space:
+            nowrap;
         }
 
         .selectedFile span {
-          color: #64748b;
-          font-size: 12px;
+          color:
+            #64748b;
+
+          font-size:
+            12px;
         }
 
         .message {
-          max-width: 600px;
-          margin: 15px auto;
-          padding: 12px 14px;
-          border-radius: 10px;
+          max-width:
+            600px;
+
+          margin:
+            15px auto;
+
+          padding:
+            12px 14px;
+
+          border-radius:
+            10px;
+
           display: flex;
-          align-items: center;
+
+          align-items:
+            center;
+
           gap: 9px;
-          text-align: left;
-          font-size: 14px;
+
+          text-align:
+            left;
+
+          font-size:
+            14px;
         }
 
         .message.error {
-          background: #fef2f2;
-          color: #b91c1c;
+          background:
+            #fef2f2;
+
+          color:
+            #b91c1c;
+
           border:
-            1px solid #fecaca;
+            1px solid
+            #fecaca;
         }
 
         .message.success {
-          background: #f0fdf4;
-          color: #15803d;
+          background:
+            #f0fdf4;
+
+          color:
+            #15803d;
+
           border:
-            1px solid #bbf7d0;
+            1px solid
+            #bbf7d0;
         }
 
         .convertButton {
-          margin-top: 8px;
-        }
-
-        .workspaceNote {
-          font-size: 12px !important;
-        }
-
-        .downloadArea {
-          max-width: 600px;
-          margin: 25px auto 0;
-          padding: 25px;
-          background: #f0fdf4;
-          border:
-            1px solid #bbf7d0;
-          border-radius: 15px;
-        }
-
-        .downloadArea > svg {
-          color: #16a34a;
-        }
-
-        .downloadArea h3 {
-          margin-bottom: 5px;
+          margin-top:
+            8px;
         }
 
         .downloadButton {
-          margin-top: 10px;
-          background: #16a34a;
-          color: white;
+          margin:
+            15px auto 0;
+
+          width:
+            fit-content;
+
+          background:
+            #16a34a;
+
+          color:
+            white;
         }
 
         .downloadButton:hover {
-          background: #15803d;
+          background:
+            #15803d;
+        }
+
+        .workspaceNote {
+          font-size:
+            12px !important;
         }
 
         .spin {
@@ -2570,7 +3006,8 @@ If you found this useful, save this video, share it and follow for more helpful 
 
         @keyframes spin {
           to {
-            transform: rotate(360deg);
+            transform:
+              rotate(360deg);
           }
         }
 
@@ -2579,28 +3016,48 @@ If you found this useful, save this video, share it and follow for more helpful 
         .largeInput,
         .calculatorInput {
           width: 100%;
+
           border:
-            1px solid #cbd5e1;
-          border-radius: 12px;
-          padding: 15px;
-          outline: none;
-          margin-bottom: 15px;
-          background: white;
+            1px solid
+            #cbd5e1;
+
+          border-radius:
+            12px;
+
+          padding:
+            15px;
+
+          outline:
+            none;
+
+          margin-bottom:
+            15px;
+
+          background:
+            white;
         }
 
         .largeTextarea {
-          min-height: 230px;
-          resize: vertical;
+          min-height:
+            230px;
+
+          resize:
+            vertical;
         }
 
         .largeInput,
         .calculatorInput {
-          min-height: 52px;
+          min-height:
+            52px;
         }
 
         .codeTextarea {
-          min-height: 300px;
-          resize: vertical;
+          min-height:
+            300px;
+
+          resize:
+            vertical;
+
           font-family:
             Consolas,
             monospace;
@@ -2610,266 +3067,456 @@ If you found this useful, save this video, share it and follow for more helpful 
         .codeTextarea:focus,
         .largeInput:focus,
         .calculatorInput:focus {
-          border-color: #2563eb;
+          border-color:
+            #2563eb;
+
           box-shadow:
-            0 0 0 3px #dbeafe;
+            0 0 0 3px
+            #dbeafe;
         }
 
         .resultBox {
-          margin-top: 25px;
+          margin-top:
+            25px;
+
           border:
-            1px solid #e2e8f0;
-          border-radius: 14px;
-          overflow: hidden;
+            1px solid
+            #e2e8f0;
+
+          border-radius:
+            14px;
+
+          overflow:
+            hidden;
         }
 
         .resultHeader {
-          padding: 13px 15px;
+          padding:
+            13px 15px;
+
           display: flex;
+
           justify-content:
             space-between;
+
           border-bottom:
-            1px solid #e2e8f0;
-          background: #f8fafc;
+            1px solid
+            #e2e8f0;
+
+          background:
+            #f8fafc;
         }
 
         .resultHeader button {
           border: 0;
-          background: transparent;
+
+          background:
+            transparent;
         }
 
         .resultBox pre {
           margin: 0;
-          padding: 20px;
-          white-space: pre-wrap;
-          overflow: auto;
+
+          padding:
+            20px;
+
+          white-space:
+            pre-wrap;
+
+          overflow:
+            auto;
+
           font-family:
             Consolas,
             monospace;
-          line-height: 1.6;
+
+          line-height:
+            1.6;
         }
 
         .seoResults {
-          margin-top: 25px;
+          margin-top:
+            25px;
         }
 
         .scoreCard {
           display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
+
+          flex-direction:
+            column;
+
+          align-items:
+            center;
+
+          justify-content:
+            center;
+
           width: 150px;
           height: 150px;
-          border-radius: 50%;
-          background: #eff6ff;
-          color: #2563eb;
-          margin-bottom: 25px;
+
+          border-radius:
+            50%;
+
+          background:
+            #eff6ff;
+
+          color:
+            #2563eb;
+
+          margin-bottom:
+            25px;
         }
 
         .scoreCard strong {
-          font-size: 42px;
+          font-size:
+            42px;
         }
 
         .scoreCard span {
-          font-size: 12px;
-          font-weight: 700;
+          font-size:
+            12px;
+
+          font-weight:
+            700;
         }
 
         .statGrid {
           display: grid;
+
           grid-template-columns:
-            repeat(4,1fr);
+            repeat(4, 1fr);
+
           gap: 12px;
         }
 
         .statGrid div {
-          padding: 18px;
+          padding:
+            18px;
+
           border:
-            1px solid #e2e8f0;
-          border-radius: 12px;
+            1px solid
+            #e2e8f0;
+
+          border-radius:
+            12px;
         }
 
         .statGrid strong,
         .statGrid span {
-          display: block;
+          display:
+            block;
         }
 
         .statGrid strong {
-          font-size: 23px;
+          font-size:
+            23px;
         }
 
         .statGrid span {
-          margin-top: 5px;
-          color: #64748b;
-          font-size: 12px;
+          margin-top:
+            5px;
+
+          color:
+            #64748b;
+
+          font-size:
+            12px;
         }
 
         .suggestions {
-          margin-top: 25px;
+          margin-top:
+            25px;
+        }
+
+        .suggestions h3 {
+          margin-bottom:
+            12px;
         }
 
         .suggestion {
           display: flex;
+
           gap: 9px;
-          padding: 11px 0;
-          color: #475569;
+
+          padding:
+            11px 0;
+
+          color:
+            #475569;
+
           border-bottom:
-            1px solid #e2e8f0;
+            1px solid
+            #e2e8f0;
         }
 
         .suggestion svg {
-          color: #16a34a;
-          flex: 0 0 auto;
+          color:
+            #16a34a;
+
+          flex:
+            0 0 auto;
         }
 
         .keywordResults {
-          margin-top: 25px;
+          margin-top:
+            25px;
+
           display: flex;
-          flex-wrap: wrap;
+
+          flex-wrap:
+            wrap;
+
           gap: 10px;
         }
 
         .keywordChip {
           display: flex;
-          align-items: center;
+
+          align-items:
+            center;
+
           gap: 8px;
-          background: #eff6ff;
-          color: #1d4ed8;
+
+          background:
+            #eff6ff;
+
+          color:
+            #1d4ed8;
+
           border:
-            1px solid #bfdbfe;
-          border-radius: 999px;
-          padding: 9px 12px;
-          font-size: 14px;
+            1px solid
+            #bfdbfe;
+
+          border-radius:
+            999px;
+
+          padding:
+            9px 12px;
+
+          font-size:
+            14px;
         }
 
         .keywordChip button {
           border: 0;
-          background: transparent;
-          color: inherit;
-          display: grid;
-          place-items: center;
+
+          background:
+            transparent;
+
+          color:
+            inherit;
+
+          display:
+            grid;
+
+          place-items:
+            center;
         }
 
         .comingSoon {
-          text-align: center;
-          padding: 55px 20px;
-          color: #64748b;
+          text-align:
+            center;
+
+          padding:
+            55px 20px;
+
+          color:
+            #64748b;
         }
 
         .comingSoon svg {
-          color: #2563eb;
+          color:
+            #2563eb;
         }
 
         .comingSoon h3 {
-          color: #0f172a;
-          font-size: 24px;
+          color:
+            #0f172a;
+
+          font-size:
+            24px;
         }
 
         .calculator {
-          max-width: 600px;
-          margin: auto;
+          max-width:
+            600px;
+
+          margin:
+            auto;
         }
 
         .calculatorResult {
-          font-size: 38px;
-          font-weight: 800;
-          padding: 25px;
-          border-radius: 15px;
-          background: #f1f5f9;
-          margin-top: 20px;
-          text-align: center;
+          font-size:
+            38px;
+
+          font-weight:
+            800;
+
+          padding:
+            25px;
+
+          border-radius:
+            15px;
+
+          background:
+            #f1f5f9;
+
+          margin-top:
+            20px;
+
+          text-align:
+            center;
         }
 
         .featureGrid {
           display: grid;
+
           grid-template-columns:
-            repeat(3,1fr);
+            repeat(3, 1fr);
+
           gap: 18px;
         }
 
         .featureCard {
-          padding: 28px;
+          padding:
+            28px;
+
           border:
-            1px solid #e2e8f0;
-          border-radius: 17px;
-          background: white;
+            1px solid
+            #e2e8f0;
+
+          border-radius:
+            17px;
+
+          background:
+            white;
         }
 
         .featureCard svg {
-          color: #2563eb;
+          color:
+            #2563eb;
+        }
+
+        .featureCard h3 {
+          margin-bottom:
+            7px;
         }
 
         .featureCard p {
-          color: #64748b;
-          line-height: 1.6;
+          color:
+            #64748b;
+
+          line-height:
+            1.6;
+
           margin: 0;
         }
 
         .about {
-          max-width: 800px;
+          max-width:
+            800px;
+        }
+
+        .about h2 {
+          margin-top:
+            0;
         }
 
         .about p {
-          line-height: 1.8;
-          font-size: 17px;
+          line-height:
+            1.8;
+
+          font-size:
+            17px;
         }
 
         .footer {
-          background: #0f172a;
-          color: white;
-          padding: 25px 0;
+          background:
+            #0f172a;
+
+          color:
+            white;
+
+          padding:
+            25px 0;
         }
 
         .footerInner {
-          display: flex;
-          align-items: center;
+          display:
+            flex;
+
+          align-items:
+            center;
+
           justify-content:
             space-between;
+
           gap: 20px;
         }
 
         .footerBrand {
-          display: flex;
-          align-items: center;
+          display:
+            flex;
+
+          align-items:
+            center;
+
           gap: 10px;
         }
 
         .footerBrand strong span {
-          color: #94a3b8;
-          margin-left: 3px;
+          color:
+            #94a3b8;
+
+          margin-left:
+            3px;
         }
 
         .footer p {
-          color: #94a3b8;
-          font-size: 13px;
+          color:
+            #94a3b8;
+
+          font-size:
+            13px;
+
           margin: 0;
         }
 
         .empty {
-          text-align: center;
-          padding: 50px;
-          color: #64748b;
+          text-align:
+            center;
+
+          padding:
+            50px;
+
+          color:
+            #64748b;
         }
 
-        @media (max-width: 950px) {
+        @media (
+          max-width: 950px
+        ) {
 
           .heroGrid {
-            grid-template-columns: 1fr;
+            grid-template-columns:
+              1fr;
           }
 
           .toolGrid {
             grid-template-columns:
-              repeat(2,1fr);
+              repeat(2, 1fr);
           }
 
           .categoryGrid {
             grid-template-columns:
-              repeat(4,1fr);
+              repeat(4, 1fr);
           }
 
         }
 
-        @media (max-width: 700px) {
+        @media (
+          max-width: 700px
+        ) {
 
           .container {
             width:
@@ -2880,85 +3527,118 @@ If you found this useful, save this video, share it and follow for more helpful 
           }
 
           .navLinks {
-            display: none;
-            position: absolute;
+            display:
+              none;
+
+            position:
+              absolute;
+
             top: 72px;
+
             left: 0;
             right: 0;
-            background: white;
+
+            background:
+              white;
+
             border-bottom:
-              1px solid #e2e8f0;
+              1px solid
+              #e2e8f0;
+
             padding:
               10px 15px 15px;
-            flex-direction: column;
-            align-items: stretch;
+
+            flex-direction:
+              column;
+
+            align-items:
+              stretch;
           }
 
           .navLinks.open {
-            display: flex;
+            display:
+              flex;
           }
 
           .mobileMenu {
-            display: block;
+            display:
+              block;
           }
 
           .hero {
-            padding: 65px 0;
+            padding:
+              65px 0;
           }
 
           .hero h1 {
-            font-size: 45px;
-            letter-spacing: -2px;
+            font-size:
+              45px;
+
+            letter-spacing:
+              -2px;
           }
 
           .section {
-            padding: 65px 0;
+            padding:
+              65px 0;
           }
 
           .sectionHeading {
-            align-items: stretch;
-            flex-direction: column;
+            align-items:
+              stretch;
+
+            flex-direction:
+              column;
           }
 
           .sectionHeading h2,
           .about h2,
           .workspaceHeader h2 {
-            font-size: 30px;
+            font-size:
+              30px;
           }
 
           .searchBox {
-            width: 100%;
+            width:
+              100%;
           }
 
           .toolGrid {
-            grid-template-columns: 1fr;
+            grid-template-columns:
+              1fr;
           }
 
           .categoryGrid {
             grid-template-columns:
-              repeat(2,1fr);
+              repeat(2, 1fr);
           }
 
           .featureGrid {
-            grid-template-columns: 1fr;
+            grid-template-columns:
+              1fr;
           }
 
           .statGrid {
             grid-template-columns:
-              repeat(2,1fr);
+              repeat(2, 1fr);
           }
 
           .footerInner {
-            flex-direction: column;
-            align-items: flex-start;
+            flex-direction:
+              column;
+
+            align-items:
+              flex-start;
           }
 
           .workspaceHeader {
-            padding: 20px;
+            padding:
+              20px;
           }
 
           .toolWorkspace {
-            padding: 20px;
+            padding:
+              20px;
           }
 
         }
@@ -2970,14 +3650,18 @@ If you found this useful, save this video, share it and follow for more helpful 
 }
 
 /* =========================================================
-   START
+   START REACT
    ========================================================= */
 
 const rootElement =
-  document.getElementById("root");
+  document.getElementById(
+    "root"
+  );
 
 if (rootElement) {
-  createRoot(rootElement).render(
+  createRoot(
+    rootElement
+  ).render(
     <React.StrictMode>
       <App />
     </React.StrictMode>
