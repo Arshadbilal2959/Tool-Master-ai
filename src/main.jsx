@@ -25,7 +25,7 @@ import {
   Type,
   RefreshCw,
 } from "lucide-react";
-import "./style.css";
+import "./styles.css";
 
 const TOOLS = [
   {
