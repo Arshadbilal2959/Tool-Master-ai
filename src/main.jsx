@@ -31,23 +31,23 @@ import {
   ChevronUp,
   ChevronDown,
 } from "lucide-react";
-
-import "./styles.css";
 import { createClient } from "@supabase/supabase-js";
+import "./styles.css";
 
 /* =========================================================
-   SUPABASE CONFIG
+   SUPABASE
 ========================================================= */
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 
 const SUPABASE_KEY =
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  import.meta.env.VITE_SUPABASE_ANON_KEY;
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  "";
 
 const supabase = createClient(
-  SUPABASE_URL || "",
-  SUPABASE_KEY || ""
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
 
 const PDF_TO_WORD_FUNCTION = SUPABASE_URL
@@ -55,444 +55,90 @@ const PDF_TO_WORD_FUNCTION = SUPABASE_URL
   : "";
 
 /* =========================================================
-   FALLBACK TOOLS
+   TOOLS
 ========================================================= */
 
 const fallbackTools = [
-  [
-    "Text to Video",
-    "AI & Video",
-    "Turn a written prompt or script into an AI video project.",
-    "text-to-video",
-  ],
-  [
-    "Student AI Helper",
-    "AI & Education",
-    "Ask questions or upload study material and get AI help.",
-    "student-ai-helper",
-  ],
+  ["Text to Video", "AI & Video", "Turn text into an AI video project.", "text-to-video"],
+  ["Student AI Helper", "AI & Education", "Ask questions or upload study material.", "student-ai-helper"],
 
-  [
-    "PDF to Word",
-    "PDF Tools",
-    "Convert PDF documents into editable Word files.",
-    "pdf-word",
-  ],
-  [
-    "Word to PDF",
-    "PDF Tools",
-    "Convert Word documents into PDF.",
-    "word-pdf",
-  ],
-  [
-    "PDF to JPG",
-    "PDF Tools",
-    "Turn PDF pages into JPG images.",
-    "pdf-jpg",
-  ],
-  [
-    "JPG to PDF",
-    "PDF Tools",
-    "Create a PDF from JPG images.",
-    "jpg-pdf",
-  ],
-  [
-    "Merge PDF",
-    "PDF Tools",
-    "Combine multiple PDF files into one.",
-    "merge-pdf",
-  ],
-  [
-    "Split PDF",
-    "PDF Tools",
-    "Split a PDF into separate files.",
-    "split-pdf",
-  ],
-  [
-    "Compress PDF",
-    "PDF Tools",
-    "Reduce PDF file size.",
-    "compress-pdf",
-  ],
-  [
-    "Rotate PDF",
-    "PDF Tools",
-    "Rotate PDF pages.",
-    "rotate-pdf",
-  ],
+  ["PDF to Word", "PDF Tools", "Convert PDF documents into editable Word files.", "pdf-word"],
+  ["Word to PDF", "PDF Tools", "Convert Word documents into PDF.", "word-pdf"],
+  ["PDF to JPG", "PDF Tools", "Convert PDF pages into images.", "pdf-jpg"],
+  ["JPG to PDF", "PDF Tools", "Create PDF from JPG images.", "jpg-pdf"],
+  ["Merge PDF", "PDF Tools", "Combine PDF files.", "merge-pdf"],
+  ["Split PDF", "PDF Tools", "Split PDF pages.", "split-pdf"],
+  ["Compress PDF", "PDF Tools", "Reduce PDF file size.", "compress-pdf"],
+  ["Rotate PDF", "PDF Tools", "Rotate PDF pages.", "rotate-pdf"],
 
-  [
-    "Image Compressor",
-    "Image Tools",
-    "Compress JPG, PNG and WebP images.",
-    "image-compressor",
-  ],
-  [
-    "Image Resizer",
-    "Image Tools",
-    "Resize images to exact dimensions.",
-    "image-resizer",
-  ],
-  [
-    "Image Cropper",
-    "Image Tools",
-    "Crop images online.",
-    "image-cropper",
-  ],
-  [
-    "JPG to PNG",
-    "Image Tools",
-    "Convert JPG images to PNG.",
-    "jpg-png",
-  ],
-  [
-    "PNG to JPG",
-    "Image Tools",
-    "Convert PNG images to JPG.",
-    "png-jpg",
-  ],
-  [
-    "WebP Converter",
-    "Image Tools",
-    "Convert images to and from WebP.",
-    "webp-converter",
-  ],
-  [
-    "Image to Text",
-    "Image Tools",
-    "Extract text from an image.",
-    "image-text",
-  ],
+  ["Image Compressor", "Image Tools", "Compress JPG, PNG and WebP images.", "image-compressor"],
+  ["Image Resizer", "Image Tools", "Resize images.", "image-resizer"],
+  ["Image Cropper", "Image Tools", "Crop images online.", "image-cropper"],
+  ["JPG to PNG", "Image Tools", "Convert JPG to PNG.", "jpg-png"],
+  ["PNG to JPG", "Image Tools", "Convert PNG to JPG.", "png-jpg"],
+  ["WebP Converter", "Image Tools", "Convert images to WebP.", "webp-converter"],
+  ["Image to Text", "Image Tools", "Extract text from images.", "image-text"],
 
-  [
-    "QR Code Generator",
-    "SEO & Marketing",
-    "Create custom QR codes from text or links.",
-    "qr-generator",
-  ],
-  [
-    "Meta Tag Generator",
-    "SEO & Marketing",
-    "Generate SEO-ready meta tags.",
-    "meta-tags",
-  ],
-  [
-    "Sitemap Generator",
-    "SEO & Marketing",
-    "Create a basic XML sitemap.",
-    "sitemap",
-  ],
-  [
-    "Robots.txt Generator",
-    "SEO & Marketing",
-    "Generate robots.txt content.",
-    "robots",
-  ],
-  [
-    "Keyword Density Checker",
-    "SEO & Marketing",
-    "Analyze keyword frequency.",
-    "keyword-density",
-  ],
-  [
-    "URL Encoder",
-    "SEO & Marketing",
-    "Encode URLs safely.",
-    "url-encoder",
-  ],
-  [
-    "Open Graph Generator",
-    "SEO & Marketing",
-    "Create Open Graph meta tags.",
-    "open-graph",
-  ],
-  [
-    "Schema Markup Generator",
-    "SEO & Marketing",
-    "Create JSON-LD schema templates.",
-    "schema",
-  ],
-  [
-    "Favicon Generator",
-    "SEO & Marketing",
-    "Prepare favicon assets.",
-    "favicon",
-  ],
-  [
-    "UTM Builder",
-    "SEO & Marketing",
-    "Build campaign tracking URLs.",
-    "utm",
-  ],
-  [
-    "URL Slug Generator",
-    "SEO & Marketing",
-    "Create clean SEO slugs.",
-    "slug",
-  ],
+  ["QR Code Generator", "SEO & Marketing", "Generate QR codes.", "qr-generator"],
+  ["Meta Tag Generator", "SEO & Marketing", "Generate SEO meta tags.", "meta-tags"],
+  ["Sitemap Generator", "SEO & Marketing", "Generate XML sitemap.", "sitemap"],
+  ["Robots.txt Generator", "SEO & Marketing", "Generate robots.txt.", "robots"],
+  ["Keyword Density Checker", "SEO & Marketing", "Analyze keyword frequency.", "keyword-density"],
+  ["URL Encoder", "SEO & Marketing", "Encode URLs.", "url-encoder"],
+  ["Open Graph Generator", "SEO & Marketing", "Generate Open Graph tags.", "open-graph"],
+  ["Schema Markup Generator", "SEO & Marketing", "Generate JSON-LD schema.", "schema"],
+  ["Favicon Generator", "SEO & Marketing", "Prepare favicon assets.", "favicon"],
+  ["UTM Builder", "SEO & Marketing", "Build campaign URLs.", "utm"],
+  ["URL Slug Generator", "SEO & Marketing", "Create SEO-friendly slugs.", "slug"],
 
-  [
-    "Word Counter",
-    "Text Tools",
-    "Count words, characters and sentences.",
-    "word-counter",
-  ],
-  [
-    "Case Converter",
-    "Text Tools",
-    "Convert text case.",
-    "case-converter",
-  ],
-  [
-    "Text Cleaner",
-    "Text Tools",
-    "Remove extra spaces and clean text.",
-    "text-cleaner",
-  ],
-  [
-    "Lorem Ipsum Generator",
-    "Text Tools",
-    "Generate placeholder text.",
-    "lorem",
-  ],
-  [
-    "Duplicate Line Remover",
-    "Text Tools",
-    "Remove duplicate lines.",
-    "duplicate-lines",
-  ],
-  [
-    "Text Sorter",
-    "Text Tools",
-    "Sort lines alphabetically.",
-    "text-sorter",
-  ],
-  [
-    "Text Reverser",
-    "Text Tools",
-    "Reverse text.",
-    "text-reverser",
-  ],
-  [
-    "Palindrome Checker",
-    "Text Tools",
-    "Check whether text is a palindrome.",
-    "palindrome",
-  ],
-  [
-    "Reading Time Calculator",
-    "Text Tools",
-    "Estimate reading time.",
-    "reading-time",
-  ],
-  [
-    "Character Counter",
-    "Text Tools",
-    "Count characters.",
-    "characters",
-  ],
-  [
-    "Morse Code Converter",
-    "Text Tools",
-    "Convert text to Morse code.",
-    "morse",
-  ],
+  ["Word Counter", "Text Tools", "Count words.", "word-counter"],
+  ["Case Converter", "Text Tools", "Convert text case.", "case-converter"],
+  ["Text Cleaner", "Text Tools", "Clean text.", "text-cleaner"],
+  ["Lorem Ipsum Generator", "Text Tools", "Generate placeholder text.", "lorem"],
+  ["Duplicate Line Remover", "Text Tools", "Remove duplicate lines.", "duplicate-lines"],
+  ["Text Sorter", "Text Tools", "Sort text lines.", "text-sorter"],
+  ["Text Reverser", "Text Tools", "Reverse text.", "text-reverser"],
+  ["Palindrome Checker", "Text Tools", "Check palindrome.", "palindrome"],
+  ["Reading Time Calculator", "Text Tools", "Calculate reading time.", "reading-time"],
+  ["Character Counter", "Text Tools", "Count characters.", "characters"],
+  ["Morse Code Converter", "Text Tools", "Convert text to Morse.", "morse"],
 
-  [
-    "JSON Formatter",
-    "Developer Tools",
-    "Format and validate JSON.",
-    "json-formatter",
-  ],
-  [
-    "JSON Minifier",
-    "Developer Tools",
-    "Minify JSON.",
-    "json-minifier",
-  ],
-  [
-    "Base64 Encoder",
-    "Developer Tools",
-    "Encode text to Base64.",
-    "base64-encode",
-  ],
-  [
-    "Base64 Decoder",
-    "Developer Tools",
-    "Decode Base64.",
-    "base64-decode",
-  ],
-  [
-    "UUID Generator",
-    "Developer Tools",
-    "Generate UUID values.",
-    "uuid",
-  ],
-  [
-    "Hash Generator",
-    "Developer Tools",
-    "Create common hashes.",
-    "hash",
-  ],
-  [
-    "URL Parser",
-    "Developer Tools",
-    "Break a URL into parts.",
-    "url-parser",
-  ],
-  [
-    "CSV to JSON",
-    "Developer Tools",
-    "Convert CSV text to JSON.",
-    "csv-json",
-  ],
-  [
-    "JSON to CSV",
-    "Developer Tools",
-    "Convert JSON arrays to CSV.",
-    "json-csv",
-  ],
+  ["JSON Formatter", "Developer Tools", "Format JSON.", "json-formatter"],
+  ["JSON Minifier", "Developer Tools", "Minify JSON.", "json-minifier"],
+  ["Base64 Encoder", "Developer Tools", "Encode Base64.", "base64-encode"],
+  ["Base64 Decoder", "Developer Tools", "Decode Base64.", "base64-decode"],
+  ["UUID Generator", "Developer Tools", "Generate UUID.", "uuid"],
+  ["Hash Generator", "Developer Tools", "Generate text hash.", "hash"],
+  ["SHA-256 Generator", "Developer Tools", "Generate SHA-256 hash.", "sha256"],
+  ["URL Parser", "Developer Tools", "Parse URLs.", "url-parser"],
+  ["CSV to JSON", "Developer Tools", "Convert CSV to JSON.", "csv-json"],
+  ["JSON to CSV", "Developer Tools", "Convert JSON to CSV.", "json-csv"],
 
-  [
-    "Password Generator",
-    "Security Tools",
-    "Generate strong random passwords.",
-    "password",
-  ],
-  [
-    "Password Strength Checker",
-    "Security Tools",
-    "Check password strength.",
-    "password-strength",
-  ],
-  [
-    "SHA-256 Generator",
-    "Security Tools",
-    "Generate SHA-256 hashes.",
-    "sha256",
-  ],
+  ["Password Generator", "Security Tools", "Generate secure passwords.", "password"],
+  ["Password Strength Checker", "Security Tools", "Check password strength.", "password-strength"],
 
-  [
-    "Percentage Calculator",
-    "Calculator Tools",
-    "Calculate percentages.",
-    "percentage",
-  ],
-  [
-    "Age Calculator",
-    "Calculator Tools",
-    "Calculate age.",
-    "age",
-  ],
-  [
-    "BMI Calculator",
-    "Calculator Tools",
-    "Calculate BMI.",
-    "bmi",
-  ],
-  [
-    "Discount Calculator",
-    "Calculator Tools",
-    "Calculate discounts.",
-    "discount",
-  ],
-  [
-    "Loan Calculator",
-    "Calculator Tools",
-    "Estimate loan payments.",
-    "loan",
-  ],
-  [
-    "GST Calculator",
-    "Calculator Tools",
-    "Calculate GST.",
-    "gst",
-  ],
-  [
-    "Tip Calculator",
-    "Calculator Tools",
-    "Calculate tips.",
-    "tip",
-  ],
+  ["Percentage Calculator", "Calculator Tools", "Calculate percentage.", "percentage"],
+  ["Age Calculator", "Calculator Tools", "Calculate age.", "age"],
+  ["BMI Calculator", "Calculator Tools", "Calculate BMI.", "bmi"],
+  ["Discount Calculator", "Calculator Tools", "Calculate discount.", "discount"],
+  ["Loan Calculator", "Calculator Tools", "Calculate loan payment.", "loan"],
+  ["GST Calculator", "Calculator Tools", "Calculate GST.", "gst"],
+  ["Tip Calculator", "Calculator Tools", "Calculate tips.", "tip"],
 
-  [
-    "Unit Converter",
-    "Converter Tools",
-    "Convert common units.",
-    "units",
-  ],
-  [
-    "Length Converter",
-    "Converter Tools",
-    "Convert length.",
-    "length",
-  ],
-  [
-    "Weight Converter",
-    "Converter Tools",
-    "Convert weight.",
-    "weight",
-  ],
-  [
-    "Temperature Converter",
-    "Converter Tools",
-    "Convert temperatures.",
-    "temperature",
-  ],
-  [
-    "Currency Converter",
-    "Converter Tools",
-    "Convert currencies using an entered rate.",
-    "currency",
-  ],
+  ["Unit Converter", "Converter Tools", "Convert common units.", "units"],
+  ["Length Converter", "Converter Tools", "Convert length.", "length"],
+  ["Weight Converter", "Converter Tools", "Convert weight.", "weight"],
+  ["Temperature Converter", "Converter Tools", "Convert temperature.", "temperature"],
+  ["Currency Converter", "Converter Tools", "Convert currencies using your rate.", "currency"],
 
-  [
-    "Email Validator",
-    "Utility Tools",
-    "Validate email format.",
-    "email-validator",
-  ],
-  [
-    "Phone Number Formatter",
-    "Utility Tools",
-    "Clean phone numbers.",
-    "phone",
-  ],
-  [
-    "Random Number Generator",
-    "Utility Tools",
-    "Generate random numbers.",
-    "random-number",
-  ],
-  [
-    "Number to Words",
-    "Utility Tools",
-    "Convert numbers to English words.",
-    "number-words",
-  ],
-  [
-    "Roman Numeral Converter",
-    "Utility Tools",
-    "Convert numbers to Roman numerals.",
-    "roman",
-  ],
-  [
-    "Business Name Generator",
-    "Utility Tools",
-    "Generate business name ideas.",
-    "business-name",
-  ],
-  [
-    "Username Generator",
-    "Utility Tools",
-    "Generate username ideas.",
-    "username",
-  ],
+  ["Email Validator", "Utility Tools", "Validate email.", "email-validator"],
+  ["Phone Number Formatter", "Utility Tools", "Format phone numbers.", "phone"],
+  ["Random Number Generator", "Utility Tools", "Generate random numbers.", "random-number"],
+  ["Number to Words", "Utility Tools", "Convert numbers to words.", "number-words"],
+  ["Roman Numeral Converter", "Utility Tools", "Convert Roman numerals.", "roman"],
+  ["Business Name Generator", "Utility Tools", "Generate business names.", "business-name"],
+  ["Username Generator", "Utility Tools", "Generate usernames.", "username"],
 ];
-
-/* =========================================================
-   CATEGORY ICONS
-========================================================= */
 
 const categoryIcons = {
   "PDF Tools": FileText,
@@ -504,14 +150,9 @@ const categoryIcons = {
   "Converter Tools": Wrench,
   "Security Tools": ShieldCheck,
   "Utility Tools": Sparkles,
-  "Network Tools": Globe2,
   "AI & Video": Sparkles,
   "AI & Education": Sparkles,
 };
-
-/* =========================================================
-   HELPERS
-========================================================= */
 
 function normalizeTool(row) {
   return {
@@ -540,141 +181,50 @@ function fallbackToObject(item, index) {
   };
 }
 
-function formatFileSize(bytes) {
-  if (!bytes) return "0 Bytes";
-
-  const units = [
-    "Bytes",
-    "KB",
-    "MB",
-    "GB",
-  ];
-
-  const index = Math.floor(
-    Math.log(bytes) / Math.log(1024)
-  );
-
-  return `${(
-    bytes /
-    Math.pow(1024, index)
-  ).toFixed(2)} ${units[index]}`;
-}
-
-function downloadBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-
-  a.href = url;
-  a.download = filename;
-
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  setTimeout(() => {
-    URL.revokeObjectURL(url);
-  }, 1000);
-}
-
-function safeClipboard(text) {
-  if (!text) return;
-
-  navigator.clipboard
-    ?.writeText(text)
-    .catch(() => {});
-}
-
 /* =========================================================
-   APP
+   MAIN APP
 ========================================================= */
 
 function App() {
   const [dbTools, setDbTools] = useState([]);
+  const [toolsLoading, setToolsLoading] = useState(true);
+  const [toolsError, setToolsError] = useState("");
 
-  const [toolsLoading, setToolsLoading] =
-    useState(true);
+  const [cat, setCat] = useState("All Tools");
+  const [query, setQuery] = useState("");
+  const [tool, setTool] = useState(null);
 
-  const [toolsError, setToolsError] =
-    useState("");
-
-  const [cat, setCat] =
-    useState("All Tools");
-
-  const [query, setQuery] =
-    useState("");
-
-  const [tool, setTool] =
-    useState(null);
-
-  const [admin, setAdmin] =
-    useState(false);
-
-  const [adminUser, setAdminUser] =
-    useState(null);
-
-  const [authLoading, setAuthLoading] =
-    useState(true);
-
-  const [showAdminLogin, setShowAdminLogin] =
-    useState(false);
+  const [admin, setAdmin] = useState(false);
+  const [adminUser, setAdminUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
 
   const loadTools = async () => {
     setToolsLoading(true);
     setToolsError("");
 
     if (!SUPABASE_URL || !SUPABASE_KEY) {
-      setToolsError(
-        "Supabase environment variables are missing."
-      );
-
-      setDbTools([]);
       setToolsLoading(false);
-
       return;
     }
 
-    try {
-      const { data, error } =
-        await supabase
-          .from("tools")
-          .select(
-            "id,name,category,description,slug,icon,is_active,sort_order,created_at"
-          )
-          .order("sort_order", {
-            ascending: true,
-          })
-          .order("created_at", {
-            ascending: true,
-          });
+    const { data, error } = await supabase
+      .from("tools")
+      .select(
+        "id,name,category,description,slug,icon,is_active,sort_order,created_at"
+      )
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
 
-      if (error) {
-        console.error(
-          "Tools load error:",
-          error
-        );
-
-        setToolsError(error.message);
-        setDbTools([]);
-      } else {
-        setDbTools(
-          (data || []).map(
-            normalizeTool
-          )
-        );
-      }
-    } catch (error) {
+    if (error) {
       console.error(error);
-
-      setToolsError(
-        error?.message ||
-          "Unable to load tools."
-      );
-
+      setToolsError(error.message);
       setDbTools([]);
-    } finally {
-      setToolsLoading(false);
+    } else {
+      setDbTools((data || []).map(normalizeTool));
     }
+
+    setToolsLoading(false);
   };
 
   useEffect(() => {
@@ -684,133 +234,89 @@ function App() {
   useEffect(() => {
     let mounted = true;
 
-    async function loadSession() {
-      try {
-        const {
-          data,
-        } =
-          await supabase.auth.getSession();
+    async function checkSession() {
+      if (!SUPABASE_URL || !SUPABASE_KEY) {
+        setAuthLoading(false);
+        return;
+      }
 
-        if (!mounted) return;
+      const { data } = await supabase.auth.getSession();
 
-        if (data.session?.user) {
-          const isAdmin =
-            await verifyAdmin(
-              data.session.user
-            );
+      if (!mounted) return;
 
-          if (!mounted) return;
+      if (data.session?.user) {
+        const ok = await verifyAdmin(data.session.user);
 
-          if (isAdmin) {
-            setAdminUser(
-              data.session.user
-            );
-
-            setAdmin(true);
-          }
-        }
-      } catch (error) {
-        console.error(
-          "Session error:",
-          error
-        );
-      } finally {
-        if (mounted) {
-          setAuthLoading(false);
+        if (ok) {
+          setAdminUser(data.session.user);
+          setAdmin(true);
         }
       }
+
+      setAuthLoading(false);
     }
 
-    loadSession();
+    checkSession();
 
     const {
       data: listener,
-    } =
-      supabase.auth.onAuthStateChange(
-        (_event, session) => {
-          setTimeout(async () => {
-            if (!mounted) return;
+    } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setTimeout(async () => {
+          if (!mounted) return;
 
-            if (!session?.user) {
-              setAdminUser(null);
-              setAdmin(false);
-              return;
-            }
+          if (!session?.user) {
+            setAdminUser(null);
+            setAdmin(false);
+            return;
+          }
 
-            const isAdmin =
-              await verifyAdmin(
-                session.user
-              );
+          const ok = await verifyAdmin(session.user);
 
-            if (!mounted) return;
-
-            if (isAdmin) {
-              setAdminUser(
-                session.user
-              );
-
-              setAdmin(true);
-            } else {
-              await supabase.auth.signOut();
-
-              setAdminUser(null);
-              setAdmin(false);
-              setShowAdminLogin(false);
-            }
-          }, 0);
-        }
-      );
+          if (ok) {
+            setAdminUser(session.user);
+            setAdmin(true);
+          } else {
+            await supabase.auth.signOut();
+            setAdminUser(null);
+            setAdmin(false);
+          }
+        }, 0);
+      }
+    );
 
     return () => {
       mounted = false;
-
       listener?.subscription?.unsubscribe();
     };
   }, []);
 
   const allTools = useMemo(() => {
-    if (dbTools.length > 0) {
-      return dbTools;
-    }
-
-    return fallbackTools.map(
-      fallbackToObject
-    );
+    if (dbTools.length) return dbTools;
+    return fallbackTools.map(fallbackToObject);
   }, [dbTools]);
 
   const activeTools = useMemo(
-    () =>
-      allTools.filter(
-        (item) =>
-          item.is_active !== false
-      ),
+    () => allTools.filter((t) => t.is_active !== false),
     [allTools]
   );
 
   const categories = useMemo(() => {
     const counts = {};
 
-    activeTools.forEach((item) => {
-      counts[item.category] =
-        (counts[item.category] || 0) + 1;
+    activeTools.forEach((t) => {
+      counts[t.category] = (counts[t.category] || 0) + 1;
     });
 
-    const result = [
-      [
-        "All Tools",
-        activeTools.length,
-        Wrench,
-      ],
-    ];
+    const result = [["All Tools", activeTools.length, Wrench]];
 
     Object.keys(counts)
       .sort()
-      .forEach((category) => {
+      .forEach((name) => {
         result.push([
-          category,
-          counts[category],
-          categoryIcons[category] ||
-            Wrench,
+          name,
+          counts[name],
+          categoryIcons[name] || Wrench,
         ]);
       });
 
@@ -818,89 +324,45 @@ function App() {
   }, [activeTools]);
 
   const filtered = useMemo(() => {
-    const q =
-      query.trim().toLowerCase();
+    const q = query.trim().toLowerCase();
 
     return activeTools.filter((t) => {
       const categoryMatch =
-        cat === "All Tools" ||
-        t.category === cat;
+        cat === "All Tools" || t.category === cat;
 
       const searchMatch =
         !q ||
-        t.name
-          .toLowerCase()
-          .includes(q) ||
-        t.category
-          .toLowerCase()
-          .includes(q) ||
-        t.description
-          .toLowerCase()
-          .includes(q);
+        t.name.toLowerCase().includes(q) ||
+        t.category.toLowerCase().includes(q) ||
+        t.description.toLowerCase().includes(q);
 
-      return (
-        categoryMatch &&
-        searchMatch
-      );
+      return categoryMatch && searchMatch;
     });
-  }, [
-    activeTools,
-    cat,
-    query,
-  ]);
-
-  const openTool = (selectedTool) => {
-    setTool(selectedTool);
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
+  }, [activeTools, cat, query]);
 
   const backHome = () => {
     setTool(null);
-
-    if (admin) {
-      setAdmin(false);
-    }
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    setAdmin(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <div className="app">
       <header>
         <div className="nav">
-          <button
-            className="brand"
-            onClick={backHome}
-            type="button"
-          >
+          <button className="brand" onClick={backHome} type="button">
             <div className="brandIcon">
               <Wrench size={22} />
             </div>
-
             <span>
               ToolMaster<span>Pro</span>
             </span>
           </button>
 
           <nav>
-            <a href="#tools">
-              Tools
-            </a>
-
-            <a href="#categories">
-              Categories
-            </a>
-
-            <a href="#about">
-              About
-            </a>
+            <a href="#tools">Tools</a>
+            <a href="#categories">Categories</a>
+            <a href="#about">About</a>
           </nav>
 
           <button
@@ -913,20 +375,13 @@ function App() {
               } else if (adminUser) {
                 setAdmin(true);
               } else {
-                setShowAdminLogin(
-                  true
-                );
+                setShowAdminLogin(true);
               }
             }}
             type="button"
           >
-            <LayoutDashboard
-              size={17}
-            />
-
-            {admin
-              ? "Close Admin"
-              : "Admin"}
+            <LayoutDashboard size={17} />
+            {admin ? "Close Admin" : "Admin"}
           </button>
         </div>
       </header>
@@ -936,71 +391,44 @@ function App() {
           user={adminUser}
           tools={allTools}
           refreshTools={loadTools}
-          onClose={() => {
-            setAdmin(false);
-            setTool(null);
-          }}
+          onClose={backHome}
           onLogout={async () => {
             await supabase.auth.signOut();
-
             setAdminUser(null);
             setAdmin(false);
-            setShowAdminLogin(
-              false
-            );
           }}
         />
       ) : tool ? (
-        <ToolPage
-          t={tool}
-          back={backHome}
-        />
+        <ToolPage t={tool} back={backHome} />
       ) : (
         <>
           <section className="hero">
             <div className="pill">
               <Sparkles size={15} />
-
-              {activeTools.length}+
-              Free Online Tools
+              {activeTools.length}+ Free Online Tools
             </div>
 
             <h1>
-              One place for{" "}
-              <span>
-                every tool
-              </span>{" "}
-              you need.
+              One place for <span>every tool</span> you need.
             </h1>
 
             <p>
-              Fast, simple and
-              privacy-friendly
-              online tools for PDF,
-              images, SEO, text,
-              developers,
-              calculators and more.
+              Fast, simple and privacy-friendly online tools for
+              PDF, images, SEO, text, developers and calculators.
             </p>
 
             <div className="search">
               <Search />
-
               <input
                 value={query}
-                onChange={(e) =>
-                  setQuery(
-                    e.target.value
-                  )
-                }
+                onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search for a tool..."
               />
 
               {query && (
                 <button
                   type="button"
-                  onClick={() =>
-                    setQuery("")
-                  }
+                  onClick={() => setQuery("")}
                 >
                   <X size={18} />
                 </button>
@@ -1009,34 +437,16 @@ function App() {
 
             <div className="stats">
               <div>
-                <b>
-                  {activeTools.length}+
-                </b>
-
-                <small>
-                  Tools
-                </small>
+                <b>{activeTools.length}+</b>
+                <small>Tools</small>
               </div>
-
               <div>
-                <b>
-                  {Math.max(
-                    0,
-                    categories.length - 1
-                  )}
-                </b>
-
-                <small>
-                  Categories
-                </small>
+                <b>{categories.length - 1}</b>
+                <small>Categories</small>
               </div>
-
               <div>
                 <b>100%</b>
-
-                <small>
-                  Browser-based
-                </small>
+                <small>Browser Tools</small>
               </div>
             </div>
           </section>
@@ -1045,72 +455,41 @@ function App() {
             {toolsError && (
               <div className="errorBox">
                 <AlertCircle size={22} />
-
                 <div>
-                  <strong>
-                    Database tools could not
-                    be loaded
-                  </strong>
-
-                  <p>
-                    {toolsError}
-                  </p>
-
+                  <strong>Database error</strong>
+                  <p>{toolsError}</p>
                   <button
                     className="secondary"
                     onClick={loadTools}
                     type="button"
                   >
-                    <RefreshCw
-                      size={16}
-                    />
                     Retry
                   </button>
                 </div>
               </div>
             )}
 
-            <section
-              id="categories"
-              className="categories"
-            >
-              {categories.map(
-                ([
-                  name,
-                  count,
-                  Icon,
-                ]) => (
-                  <button
-                    key={name}
-                    type="button"
-                    className={
-                      cat === name
-                        ? "cat active"
-                        : "cat"
-                    }
-                    onClick={() => {
-                      setCat(name);
-                      setQuery("");
-                    }}
-                  >
-                    <Icon />
-
-                    <span>
-                      {name}
-                    </span>
-
-                    <em>
-                      {count}
-                    </em>
-                  </button>
-                )
-              )}
+            <section id="categories" className="categories">
+              {categories.map(([name, count, Icon]) => (
+                <button
+                  key={name}
+                  type="button"
+                  className={cat === name ? "cat active" : "cat"}
+                  onClick={() => {
+                    setCat(name);
+                    setQuery("");
+                  }}
+                >
+                  <Icon />
+                  <span>{name}</span>
+                  <em>{count}</em>
+                </button>
+              ))}
             </section>
 
             <div className="sectionHead">
               <div>
                 <h2>{cat}</h2>
-
                 <p>
                   {toolsLoading
                     ? "Loading tools..."
@@ -1121,20 +500,13 @@ function App() {
               <button
                 className="secondary"
                 onClick={loadTools}
+                disabled={toolsLoading}
                 type="button"
-                disabled={
-                  toolsLoading
-                }
               >
                 <RefreshCw
                   size={16}
-                  className={
-                    toolsLoading
-                      ? "spin"
-                      : ""
-                  }
+                  className={toolsLoading ? "spin" : ""}
                 />
-
                 Refresh
               </button>
             </div>
@@ -1142,58 +514,35 @@ function App() {
             <div className="grid">
               {filtered.map((t) => (
                 <ToolCard
-                  key={
-                    t.id ||
-                    t.slug
-                  }
+                  key={t.id || t.slug}
                   t={t}
-                  open={() =>
-                    openTool(t)
-                  }
+                  open={() => {
+                    setTool(t);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                 />
               ))}
             </div>
-
-            {!toolsLoading &&
-              !filtered.length && (
-                <div className="empty">
-                  No active tools
-                  found.
-                </div>
-              )}
           </main>
         </>
       )}
 
-      {showAdminLogin &&
-        !admin && (
-          <AdminLogin
-            onClose={() =>
-              setShowAdminLogin(
-                false
-              )
-            }
-            onSuccess={(user) => {
-              setAdminUser(user);
-              setAdmin(true);
-              setShowAdminLogin(
-                false
-              );
-              setTool(null);
-            }}
-          />
-        )}
+      {showAdminLogin && !admin && (
+        <AdminLogin
+          onClose={() => setShowAdminLogin(false)}
+          onSuccess={(user) => {
+            setAdminUser(user);
+            setAdmin(true);
+            setShowAdminLogin(false);
+            setTool(null);
+          }}
+        />
+      )}
 
       {authLoading && (
         <div className="authLoading">
-          <Loader2
-            className="spin"
-            size={22}
-          />
-
-          <span>
-            Checking secure session...
-          </span>
+          <Loader2 className="spin" size={22} />
+          <span>Checking secure session...</span>
         </div>
       )}
 
@@ -1202,43 +551,30 @@ function App() {
           <div className="brandIcon">
             <Wrench size={20} />
           </div>
-
           <span>
             ToolMaster<span>Pro</span>
           </span>
         </div>
 
-        <p>
-          Powerful online tools,
-          made simple.
-        </p>
-
-        <small>
-          © 2026 ToolMaster Pro.
-        </small>
+        <p>Powerful online tools, made simple.</p>
+        <small>© 2026 ToolMaster Pro.</small>
       </footer>
     </div>
   );
 }
 
 /* =========================================================
-   TOOL CARD
+   CARD
 ========================================================= */
 
 function ToolCard({ t, open }) {
-  const Icon =
-    categoryIcons[t.category] ||
-    Wrench;
+  const Icon = categoryIcons[t.category] || Wrench;
 
   return (
     <article
       className="card"
       onClick={open}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          open();
-        }
-      }}
+      onKeyDown={(e) => e.key === "Enter" && open()}
       role="button"
       tabIndex={0}
     >
@@ -1248,9 +584,7 @@ function ToolCard({ t, open }) {
 
       <div className="cardBody">
         <span>{t.category}</span>
-
         <h3>{t.name}</h3>
-
         <p>{t.description}</p>
       </div>
 
@@ -1260,42 +594,41 @@ function ToolCard({ t, open }) {
 }
 
 /* =========================================================
-   TOOL PAGE
+   TOOL ROUTER
 ========================================================= */
 
 function ToolPage({ t, back }) {
-  if (t.slug === "pdf-word") {
-    return (
-      <PdfToWord back={back} />
-    );
+  if (t.slug === "pdf-word") return <PdfToWord back={back} />;
+
+  if (
+    t.category === "Image Tools"
+  ) {
+    return <ImageTool t={t} back={back} />;
   }
 
   if (
-    t.slug ===
-    "student-ai-helper"
+    t.slug === "qr-generator" ||
+    t.slug === "meta-tags" ||
+    t.slug === "sitemap" ||
+    t.slug === "robots" ||
+    t.slug === "open-graph" ||
+    t.slug === "schema" ||
+    t.slug === "utm" ||
+    t.slug === "keyword-density" ||
+    t.slug === "favicon"
   ) {
-    return (
-      <StudentAIHelper
-        back={back}
-      />
-    );
+    return <SeoTool t={t} back={back} />;
   }
 
-  if (
-    t.slug ===
-    "text-to-video"
-  ) {
-    return (
-      <TextToVideo back={back} />
-    );
+  if (t.slug === "text-to-video") {
+    return <TextToVideo back={back} />;
   }
 
-  return (
-    <GenericTool
-      t={t}
-      back={back}
-    />
-  );
+  if (t.slug === "student-ai-helper") {
+    return <StudentAIHelper back={back} />;
+  }
+
+  return <GenericTool t={t} back={back} />;
 }
 
 /* =========================================================
@@ -1303,342 +636,133 @@ function ToolPage({ t, back }) {
 ========================================================= */
 
 function PdfToWord({ back }) {
-  const fileInputRef =
-    useRef(null);
+  const [file, setFile] = useState(null);
+  const [dragging, setDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [downloadUrl, setDownloadUrl] = useState("");
+  const [downloadName, setDownloadName] = useState("");
 
-  const [selectedFile, setSelectedFile] =
-    useState(null);
-
-  const [dragging, setDragging] =
-    useState(false);
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [error, setError] =
-    useState("");
-
-  const [success, setSuccess] =
-    useState("");
-
-  const [downloadUrl, setDownloadUrl] =
-    useState("");
-
-  const [downloadName, setDownloadName] =
-    useState("");
-
-  const cleanupDownload = () => {
-    if (
-      downloadUrl &&
-      downloadUrl.startsWith(
-        "blob:"
-      )
-    ) {
-      URL.revokeObjectURL(
-        downloadUrl
-      );
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      cleanupDownload();
-    };
-  }, [downloadUrl]);
-
-  const selectFile = (file) => {
-    setError("");
-    setSuccess("");
-
-    cleanupDownload();
-
-    setDownloadUrl("");
-    setDownloadName("");
-
-    if (!file) {
-      setSelectedFile(null);
-      return;
-    }
-
-    const filename =
-      file.name.toLowerCase();
-
-    const isPdf =
-      file.type ===
-        "application/pdf" ||
-      filename.endsWith(".pdf");
-
-    if (!isPdf) {
-      setSelectedFile(null);
-
-      setError(
-        "Please select a PDF file only."
-      );
-
-      return;
-    }
-
-    if (
-      file.size >
-      20 * 1024 * 1024
-    ) {
-      setSelectedFile(null);
-
-      setError(
-        "Maximum PDF size is 20 MB."
-      );
-
-      return;
-    }
-
-    setSelectedFile(file);
-  };
-
-  const chooseFile = () => {
-    fileInputRef.current?.click();
-  };
-
-  const removeFile = () => {
-    cleanupDownload();
-
-    setSelectedFile(null);
+  const selectFile = (f) => {
     setError("");
     setSuccess("");
     setDownloadUrl("");
-    setDownloadName("");
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value =
-        "";
+    if (!f) return;
+
+    if (
+      f.type !== "application/pdf" &&
+      !f.name.toLowerCase().endsWith(".pdf")
+    ) {
+      setFile(null);
+      setError("Please select a PDF file.");
+      return;
     }
+
+    if (f.size > 20 * 1024 * 1024) {
+      setFile(null);
+      setError("Maximum PDF size is 20 MB.");
+      return;
+    }
+
+    setFile(f);
   };
 
   const convert = async () => {
-    setError("");
-    setSuccess("");
-
-    if (!selectedFile) {
-      setError(
-        "Please select a PDF file first."
-      );
-
+    if (!file) {
+      setError("Please select a PDF file.");
       return;
     }
 
-    if (!SUPABASE_URL) {
-      setError(
-        "VITE_SUPABASE_URL is missing."
-      );
-
-      return;
-    }
-
-    if (!SUPABASE_KEY) {
-      setError(
-        "VITE_SUPABASE_PUBLISHABLE_KEY or VITE_SUPABASE_ANON_KEY is missing."
-      );
-
-      return;
-    }
-
-    if (!PDF_TO_WORD_FUNCTION) {
-      setError(
-        "PDF conversion function URL is missing."
-      );
-
+    if (!SUPABASE_KEY || !PDF_TO_WORD_FUNCTION) {
+      setError("Supabase configuration is missing.");
       return;
     }
 
     setLoading(true);
+    setError("");
+    setSuccess("");
 
     try {
-      const formData =
-        new FormData();
+      const formData = new FormData();
+      formData.append("file", file);
 
-      formData.append(
-        "file",
-        selectedFile,
-        selectedFile.name
-      );
-
-      const response =
-        await fetch(
-          PDF_TO_WORD_FUNCTION,
-          {
-            method: "POST",
-            headers: {
-              Authorization:
-                `Bearer ${SUPABASE_KEY}`,
-              apikey:
-                SUPABASE_KEY,
-            },
-            body: formData,
-          }
-        );
-
-      const contentType =
-        response.headers.get(
-          "content-type"
-        ) || "";
+      const response = await fetch(PDF_TO_WORD_FUNCTION, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          apikey: SUPABASE_KEY,
+        },
+        body: formData,
+      });
 
       if (!response.ok) {
-        let message =
-          `Conversion failed (${response.status}).`;
+        let message = `Conversion failed (${response.status}).`;
 
         try {
-          if (
-            contentType.includes(
-              "application/json"
-            )
-          ) {
-            const json =
-              await response.json();
+          const type =
+            response.headers.get("content-type") || "";
 
+          if (type.includes("application/json")) {
+            const data = await response.json();
             message =
-              json.error ||
-              json.message ||
+              data.error ||
+              data.message ||
               message;
           } else {
-            const text =
-              await response.text();
-
-            if (text.trim()) {
-              message =
-                text.trim();
-            }
+            const text = await response.text();
+            if (text.trim()) message = text.trim();
           }
         } catch {}
 
-        throw new Error(
-          message
-        );
+        throw new Error(message);
       }
 
-      /*
-       * Some Edge Functions return
-       * the actual DOCX file.
-       */
-      if (
-        contentType.includes(
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        ) ||
-        contentType.includes(
-          "application/octet-stream"
-        )
-      ) {
-        const blob =
-          await response.blob();
+      const type =
+        response.headers.get("content-type") || "";
 
-        if (!blob.size) {
-          throw new Error(
-            "The server returned an empty Word file."
-          );
-        }
-
-        const name =
-          selectedFile.name.replace(
-            /\.pdf$/i,
-            ""
-          ) + ".docx";
-
-        cleanupDownload();
-
-        const url =
-          URL.createObjectURL(
-            blob
-          );
-
-        setDownloadUrl(url);
-        setDownloadName(name);
-        setSuccess(
-          "PDF converted successfully!"
-        );
-
-        return;
-      }
-
-      /*
-       * Some Edge Functions return JSON
-       * containing a download URL.
-       */
-      if (
-        contentType.includes(
-          "application/json"
-        )
-      ) {
-        const data =
-          await response.json();
-
-        const url =
-          data.downloadUrl ||
-          data.download_url ||
-          data.url;
-
-        if (!url) {
-          throw new Error(
-            data.error ||
-              data.message ||
-              "Conversion completed but no download file was returned."
-          );
-        }
-
-        setDownloadUrl(url);
-
-        setDownloadName(
-          data.filename ||
-            data.fileName ||
-            selectedFile.name.replace(
-              /\.pdf$/i,
-              ".docx"
-            )
-        );
-
-        setSuccess(
-          "PDF converted successfully!"
-        );
-
-        return;
-      }
-
-      /*
-       * Fallback: treat response as file.
-       */
-      const blob =
-        await response.blob();
+      const blob = await response.blob();
 
       if (!blob.size) {
-        throw new Error(
-          "The conversion server returned an empty file."
-        );
+        throw new Error("Server returned an empty file.");
       }
 
-      const name =
-        selectedFile.name.replace(
-          /\.pdf$/i,
-          ""
-        ) + ".docx";
+      if (
+        type.includes("application/json") ||
+        type.includes("text/plain")
+      ) {
+        const text = await blob.text();
 
-      const url =
-        URL.createObjectURL(
-          blob
-        );
+        try {
+          const data = JSON.parse(text);
+          const url =
+            data.downloadUrl ||
+            data.download_url ||
+            data.url;
+
+          if (url) {
+            setDownloadUrl(url);
+            setDownloadName(
+              data.filename ||
+                file.name.replace(/\.pdf$/i, ".docx")
+            );
+            setSuccess("PDF converted successfully!");
+            return;
+          }
+        } catch {}
+      }
+
+      const url = URL.createObjectURL(blob);
 
       setDownloadUrl(url);
-      setDownloadName(name);
-
-      setSuccess(
-        "PDF converted successfully!"
+      setDownloadName(
+        file.name.replace(/\.pdf$/i, "") + ".docx"
       );
-    } catch (error) {
-      console.error(
-        "PDF to Word error:",
-        error
-      );
-
-      setError(
-        error?.message ||
-          "Something went wrong while converting the PDF."
-      );
+      setSuccess("PDF converted successfully!");
+    } catch (e) {
+      console.error(e);
+      setError(e?.message || "Conversion failed.");
     } finally {
       setLoading(false);
     }
@@ -1647,36 +771,17 @@ function PdfToWord({ back }) {
   const download = () => {
     if (!downloadUrl) return;
 
-    const a =
-      document.createElement(
-        "a"
-      );
-
-    a.href =
-      downloadUrl;
-
-    a.download =
-      downloadName ||
-      "converted-document.docx";
-
-    a.target = "_blank";
-    a.rel = "noopener";
-
-    document.body.appendChild(
-      a
-    );
-
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = downloadName || "converted.docx";
+    document.body.appendChild(a);
     a.click();
     a.remove();
   };
 
   return (
     <main className="toolPage">
-      <button
-        className="back"
-        onClick={back}
-        type="button"
-      >
+      <button className="back" onClick={back} type="button">
         ← Back to tools
       </button>
 
@@ -1686,115 +791,49 @@ function PdfToWord({ back }) {
         </div>
 
         <div>
-          <span>
-            PDF Tools
-          </span>
-
-          <h1>
-            PDF to Word
-          </h1>
-
-          <p>
-            Convert your PDF
-            documents into editable
-            Word files.
-          </p>
+          <span>PDF Tools</span>
+          <h1>PDF to Word</h1>
+          <p>Convert PDF documents into editable Word files.</p>
         </div>
       </div>
 
       <div
-        className={
-          dragging
-            ? "pdfUpload dragging"
-            : "pdfUpload"
-        }
+        className={`pdfUpload ${dragging ? "dragging" : ""}`}
         onDragOver={(e) => {
           e.preventDefault();
-          e.stopPropagation();
           setDragging(true);
         }}
-        onDragLeave={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setDragging(false);
-        }}
+        onDragLeave={() => setDragging(false)}
         onDrop={(e) => {
           e.preventDefault();
-          e.stopPropagation();
-
           setDragging(false);
-
-          selectFile(
-            e.dataTransfer.files?.[0]
-          );
+          selectFile(e.dataTransfer.files?.[0]);
         }}
       >
-        {!selectedFile ? (
-          <div
-            className="pdfChoose"
-            onClick={chooseFile}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (
-                e.key ===
-                  "Enter" ||
-                e.key === " "
-              ) {
-                chooseFile();
-              }
-            }}
-          >
+        {!file ? (
+          <label className="pdfChoose">
             <Upload size={42} />
+            <h3>Upload your PDF</h3>
+            <p>Drag & drop or click to browse</p>
 
-            <h3>
-              Upload your PDF
-            </h3>
-
-            <p>
-              Drag & drop your PDF
-              here or click to browse
-            </p>
-
-            <span className="primary">
-              Choose PDF
-            </span>
+            <span className="primary">Choose PDF</span>
 
             <input
-              ref={fileInputRef}
               type="file"
               accept=".pdf,application/pdf"
-              onChange={(e) =>
-                selectFile(
-                  e.target.files?.[0]
-                )
-              }
-              onClick={(e) =>
-                e.stopPropagation()
-              }
-              style={{
-                display: "none",
-              }}
+              onChange={(e) => selectFile(e.target.files?.[0])}
             />
 
-            <small>
-              Maximum file size: 20 MB
-            </small>
-          </div>
+            <small>Maximum file size: 20 MB</small>
+          </label>
         ) : (
           <div className="pdfSelected">
             <div className="selectedFile">
               <FileText size={30} />
-
               <div>
-                <strong>
-                  {selectedFile.name}
-                </strong>
-
+                <strong>{file.name}</strong>
                 <small>
-                  {formatFileSize(
-                    selectedFile.size
-                  )}
+                  {(file.size / 1024 / 1024).toFixed(2)} MB
                 </small>
               </div>
             </div>
@@ -1802,36 +841,28 @@ function PdfToWord({ back }) {
             <button
               type="button"
               className="iconButton"
-              onClick={
-                removeFile
-              }
-              disabled={loading}
+              onClick={() => setFile(null)}
             >
               <X size={20} />
             </button>
           </div>
         )}
 
-        {selectedFile && (
+        {file && (
           <button
-            type="button"
             className="primary convertButton"
-            disabled={loading}
             onClick={convert}
+            disabled={loading}
+            type="button"
           >
             {loading ? (
               <>
-                <Loader2
-                  className="spin"
-                  size={19}
-                />
-
+                <Loader2 className="spin" size={19} />
                 Converting...
               </>
             ) : (
               <>
                 <FileText size={19} />
-
                 Convert to Word
               </>
             )}
@@ -1842,56 +873,36 @@ function PdfToWord({ back }) {
       {error && (
         <div className="errorBox">
           <AlertCircle size={22} />
-
           <div>
-            <strong>
-              Conversion Error
-            </strong>
-
+            <strong>Conversion Error</strong>
             <p>{error}</p>
           </div>
         </div>
       )}
 
-      {success &&
-        downloadUrl && (
-          <div className="successBox">
-            <CheckCircle2 size={27} />
+      {success && downloadUrl && (
+        <div className="successBox">
+          <CheckCircle2 size={27} />
+          <div>
+            <strong>{success}</strong>
+            <p>Your Word document is ready.</p>
 
-            <div>
-              <strong>
-                {success}
-              </strong>
-
-              <p>
-                Your Word document
-                is ready.
-              </p>
-
-              <button
-                type="button"
-                className="downloadButton"
-                onClick={download}
-              >
-                <Download size={21} />
-
-                Download Word File
-              </button>
-
-              <small>
-                {downloadName}
-              </small>
-            </div>
+            <button
+              className="downloadButton"
+              onClick={download}
+              type="button"
+            >
+              <Download size={21} />
+              Download Word File
+            </button>
           </div>
-        )}
+        </div>
+      )}
 
       <div className="notice">
         <ShieldCheck />
-
         <span>
-          Your PDF is uploaded only
-          when you press Convert to
-          Word.
+          Your PDF is sent to the configured conversion server.
         </span>
       </div>
     </main>
@@ -1899,503 +910,482 @@ function PdfToWord({ back }) {
 }
 
 /* =========================================================
-   TEXT TO VIDEO
+   IMAGE TOOLS
 ========================================================= */
 
-function TextToVideo({ back }) {
-  const [prompt, setPrompt] =
-    useState("");
+function ImageTool({ t, back }) {
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState("");
+  const [result, setResult] = useState("");
+  const [width, setWidth] = useState(1000);
+  const [height, setHeight] = useState(1000);
+  const [quality, setQuality] = useState(0.8);
+  const [loading, setLoading] = useState(false);
 
-  const [style, setStyle] =
-    useState("Cinematic");
+  const inputRef = useRef(null);
 
-  const [duration, setDuration] =
-    useState("10 seconds");
+  const choose = (f) => {
+    if (!f) return;
 
-  const [status, setStatus] =
-    useState("");
-
-  const generate = () => {
-    if (!prompt.trim()) {
-      setStatus(
-        "Please enter a video prompt first."
-      );
-
+    if (!f.type.startsWith("image/")) {
+      alert("Please select an image.");
       return;
     }
 
-    setStatus(
-      `Video project prepared: ${style}, ${duration}.`
-    );
+    setFile(f);
+    setResult("");
+
+    const url = URL.createObjectURL(f);
+    setPreview(url);
+
+    const img = new Image();
+
+    img.onload = () => {
+      setWidth(img.width);
+      setHeight(img.height);
+    };
+
+    img.src = url;
   };
 
-  return (
-    <main className="toolPage">
-      <button
-        className="back"
-        onClick={back}
-        type="button"
-      >
-        ← Back to tools
-      </button>
-
-      <div className="toolHero">
-        <div className="toolIcon big">
-          <Sparkles />
-        </div>
-
-        <div>
-          <span>
-            AI & Video
-          </span>
-
-          <h1>
-            Text to Video
-          </h1>
-
-          <p>
-            Create an AI video
-            project from a written
-            prompt.
-          </p>
-        </div>
-      </div>
-
-      <div className="aiHelper">
-        <div className="aiCard">
-          <h3>
-            🎬 Video Prompt
-          </h3>
-
-          <textarea
-            value={prompt}
-            onChange={(e) =>
-              setPrompt(
-                e.target.value
-              )
-            }
-            placeholder="Example: A cinematic drone shot of a futuristic city at sunset..."
-          />
-
-          <div className="videoOptions">
-            <label>
-              Style
-
-              <select
-                value={style}
-                onChange={(e) =>
-                  setStyle(
-                    e.target.value
-                  )
-                }
-              >
-                <option>
-                  Cinematic
-                </option>
-
-                <option>
-                  Realistic
-                </option>
-
-                <option>
-                  Anime
-                </option>
-
-                <option>
-                  3D Animation
-                </option>
-
-                <option>
-                  Documentary
-                </option>
-
-                <option>
-                  Product Ad
-                </option>
-              </select>
-            </label>
-
-            <label>
-              Duration
-
-              <select
-                value={duration}
-                onChange={(e) =>
-                  setDuration(
-                    e.target.value
-                  )
-                }
-              >
-                <option>
-                  5 seconds
-                </option>
-
-                <option>
-                  10 seconds
-                </option>
-
-                <option>
-                  15 seconds
-                </option>
-
-                <option>
-                  30 seconds
-                </option>
-              </select>
-            </label>
-          </div>
-
-          <button
-            className="primary"
-            onClick={generate}
-            type="button"
-          >
-            <Sparkles size={17} />
-
-            Generate Video
-          </button>
-        </div>
-
-        <div className="aiCard">
-          <h3>
-            🎥 Video Preview
-          </h3>
-
-          <div className="videoPlaceholder">
-            <div className="playCircle">
-              ▶
-            </div>
-
-            <b>
-              Your generated video
-              will appear here
-            </b>
-
-            <small>
-              {style} · {duration}
-            </small>
-
-            {status && (
-              <p>{status}</p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="notice">
-        <ShieldCheck />
-
-        <span>
-          Real AI video generation
-          requires a secure
-          server-side provider.
-        </span>
-      </div>
-    </main>
-  );
-}
-
-/* =========================================================
-   STUDENT AI HELPER
-========================================================= */
-
-function StudentAIHelper({ back }) {
-  const fileInputRef =
-    useRef(null);
-
-  const [question, setQuestion] =
-    useState("");
-
-  const [file, setFile] =
-    useState(null);
-
-  const [answer, setAnswer] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [error, setError] =
-    useState("");
-
-  const chooseFile = () => {
-    fileInputRef.current?.click();
-  };
-
-  const selectFile = (selected) => {
-    setError("");
-
-    if (!selected) return;
-
-    const allowed = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-      "text/plain",
-    ];
-
-    const ext =
-      selected.name
-        .split(".")
-        .pop()
-        ?.toLowerCase();
-
-    const allowedExt = [
-      "pdf",
-      "jpg",
-      "jpeg",
-      "png",
-      "webp",
-      "txt",
-      "doc",
-      "docx",
-    ];
-
-    if (
-      !allowed.includes(
-        selected.type
-      ) &&
-      !allowedExt.includes(
-        ext
-      )
-    ) {
-      setError(
-        "Please upload PDF, JPG, PNG, WebP, TXT, DOC or DOCX."
-      );
-
-      return;
-    }
-
-    if (
-      selected.size >
-      20 * 1024 * 1024
-    ) {
-      setError(
-        "Maximum file size is 20 MB."
-      );
-
-      return;
-    }
-
-    setFile(selected);
-  };
-
-  const solve = async () => {
-    setError("");
-
-    if (
-      !question.trim() &&
-      !file
-    ) {
-      setError(
-        "Please enter a question or upload study material."
-      );
-
+  const processImage = async () => {
+    if (!file) {
+      alert("Please select an image first.");
       return;
     }
 
     setLoading(true);
 
-    /*
-     * At this stage the file is correctly
-     * selected in the browser.
-     *
-     * Actual AI processing needs a
-     * server-side AI function/provider.
-     */
-    setTimeout(() => {
-      setAnswer(
-        `Your request is ready for AI processing.
+    try {
+      const img = new Image();
 
-Question:
-${question || "No text question provided."}
+      img.src = URL.createObjectURL(file);
 
-Study file:
-${file?.name || "No file uploaded."}
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
 
-Connect an AI Edge Function to send this question/file to an AI model securely.`
+      let w = img.width;
+      let h = img.height;
+
+      if (t.slug === "image-resizer") {
+        w = Math.max(1, Number(width));
+        h = Math.max(1, Number(height));
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+
+      const ctx = canvas.getContext("2d");
+
+      if (
+        t.slug === "png-jpg" ||
+        t.slug === "webp-converter"
+      ) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, w, h);
+      }
+
+      ctx.drawImage(img, 0, 0, w, h);
+
+      let mime = file.type || "image/png";
+
+      if (t.slug === "jpg-png") mime = "image/png";
+      if (t.slug === "png-jpg") mime = "image/jpeg";
+      if (t.slug === "webp-converter") mime = "image/webp";
+
+      const url = canvas.toDataURL(
+        mime,
+        Number(quality)
       );
 
+      setResult(url);
+    } catch (e) {
+      alert(e?.message || "Image processing failed.");
+    } finally {
       setLoading(false);
-    }, 700);
+    }
+  };
+
+  const download = () => {
+    if (!result) return;
+
+    let ext = "png";
+
+    if (t.slug === "png-jpg") ext = "jpg";
+    else if (t.slug === "webp-converter") ext = "webp";
+    else if (file?.type === "image/jpeg") ext = "jpg";
+
+    const a = document.createElement("a");
+    a.href = result;
+    a.download = `toolmaster-${t.slug}.${ext}`;
+    a.click();
   };
 
   return (
     <main className="toolPage">
-      <button
-        className="back"
-        onClick={back}
-        type="button"
-      >
+      <button className="back" onClick={back} type="button">
         ← Back to tools
       </button>
 
       <div className="toolHero">
         <div className="toolIcon big">
-          <Sparkles />
+          <ImageIcon />
         </div>
 
         <div>
-          <span>
-            AI & Education
-          </span>
-
-          <h1>
-            Student AI Helper
-          </h1>
-
-          <p>
-            Ask questions or upload
-            study material.
-          </p>
+          <span>{t.category}</span>
+          <h1>{t.name}</h1>
+          <p>{t.description}</p>
         </div>
       </div>
 
-      <div className="aiHelper">
-        <div className="aiCard">
-          <h3>
-            📚 Ask your question
-          </h3>
-
-          <textarea
-            value={question}
-            onChange={(e) =>
-              setQuestion(
-                e.target.value
-              )
-            }
-            placeholder="Example: Explain photosynthesis in simple words..."
-          />
+      <div className="imageWorkspace">
+        <div className="panel">
+          <label>Upload Image</label>
 
           <div
             className="uploadBox"
-            onClick={chooseFile}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (
-                e.key ===
-                  "Enter" ||
-                e.key === " "
-              ) {
-                chooseFile();
-              }
-            }}
+            onClick={() => inputRef.current?.click()}
           >
-            <Upload />
-
-            <div>
-              <b>
-                {file
-                  ? "File selected"
-                  : "Upload study material"}
-              </b>
-
-              <small>
-                PDF, JPG, PNG, TXT,
-                DOC or DOCX
-              </small>
-
-              {file && (
-                <strong>
-                  {file.name}
-                  <br />
-                  {formatFileSize(
-                    file.size
-                  )}
-                </strong>
-              )}
-            </div>
+            <Upload size={35} />
+            <b>
+              {file ? file.name : "Choose an image"}
+            </b>
+            <small>JPG, PNG or WebP</small>
 
             <input
-              ref={fileInputRef}
+              ref={inputRef}
+              hidden
               type="file"
-              accept=".pdf,.jpg,.jpeg,.png,.webp,.txt,.doc,.docx"
-              onChange={(e) =>
-                selectFile(
-                  e.target.files?.[0]
-                )
-              }
-              onClick={(e) =>
-                e.stopPropagation()
-              }
-              style={{
-                display: "none",
-              }}
+              accept="image/*"
+              onChange={(e) => choose(e.target.files?.[0])}
             />
-
-            {file && (
-              <button
-                type="button"
-                className="iconButton"
-                onClick={(e) => {
-                  e.stopPropagation();
-
-                  setFile(null);
-
-                  if (
-                    fileInputRef.current
-                  ) {
-                    fileInputRef.current.value =
-                      "";
-                  }
-                }}
-              >
-                <X size={18} />
-              </button>
-            )}
           </div>
 
-          {error && (
-            <div className="authError">
-              <AlertCircle size={18} />
+          {file && (
+            <img
+              src={preview}
+              alt="Preview"
+              style={{
+                maxWidth: "100%",
+                maxHeight: 300,
+                marginTop: 20,
+                borderRadius: 12,
+              }}
+            />
+          )}
+        </div>
 
-              <span>
-                {error}
-              </span>
+        <div className="panel">
+          {t.slug === "image-resizer" && (
+            <div className="formGrid">
+              <label>
+                Width
+                <input
+                  type="number"
+                  value={width}
+                  onChange={(e) => setWidth(e.target.value)}
+                />
+              </label>
+
+              <label>
+                Height
+                <input
+                  type="number"
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
+                />
+              </label>
             </div>
+          )}
+
+          {(
+            t.slug === "image-compressor" ||
+            t.slug === "jpg-png" ||
+            t.slug === "png-jpg" ||
+            t.slug === "webp-converter"
+          ) && (
+            <label>
+              Quality
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.1"
+                value={quality}
+                onChange={(e) => setQuality(e.target.value)}
+              />
+            </label>
+          )}
+
+          {t.slug === "image-cropper" && (
+            <p>
+              Basic crop mode uses the selected image dimensions.
+              Use Image Resizer for exact dimensions.
+            </p>
           )}
 
           <button
             className="primary"
-            onClick={solve}
+            onClick={processImage}
             disabled={loading}
             type="button"
           >
-            <Sparkles size={17} />
+            {loading ? (
+              <>
+                <Loader2 className="spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <Zap size={17} />
+                Process Image
+              </>
+            )}
+          </button>
 
-            {loading
-              ? "Preparing..."
-              : "Get AI Help"}
+          {result && (
+            <>
+              <img
+                src={result}
+                alt="Result"
+                style={{
+                  width: "100%",
+                  maxHeight: 300,
+                  objectFit: "contain",
+                  marginTop: 20,
+                  borderRadius: 12,
+                }}
+              />
+
+              <button
+                className="secondary"
+                onClick={download}
+                type="button"
+              >
+                <Download size={17} />
+                Download
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+/* =========================================================
+   SEO TOOLS
+========================================================= */
+
+function SeoTool({ t, back }) {
+  const [text, setText] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [url, setUrl] = useState("");
+  const [result, setResult] = useState("");
+
+  const run = () => {
+    let out = "";
+
+    switch (t.slug) {
+      case "qr-generator":
+        out =
+          `QR content:\n${text}\n\nUse a QR library/backend to render the image.`;
+        break;
+
+      case "meta-tags":
+        out = `<title>${title}</title>
+<meta name="description" content="${description}">
+<link rel="canonical" href="${url}">`;
+        break;
+
+      case "open-graph":
+        out = `<meta property="og:title" content="${title}">
+<meta property="og:description" content="${description}">
+<meta property="og:url" content="${url}">
+<meta property="og:type" content="website">`;
+        break;
+
+      case "schema":
+        out = JSON.stringify(
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: title,
+            description,
+            url,
+          },
+          null,
+          2
+        );
+        break;
+
+      case "sitemap":
+        out = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${url}</loc>
+  </url>
+</urlset>`;
+        break;
+
+      case "robots":
+        out = `User-agent: *
+Allow: /
+
+Sitemap: ${url.replace(/\/$/, "")}/sitemap.xml`;
+        break;
+
+      case "utm": {
+        try {
+          const u = new URL(url);
+          u.searchParams.set("utm_source", title || "website");
+          u.searchParams.set(
+            "utm_medium",
+            description || "online"
+          );
+          out = u.toString();
+        } catch {
+          out = "Please enter a valid URL.";
+        }
+        break;
+      }
+
+      case "keyword-density": {
+        const words = text
+          .toLowerCase()
+          .match(/[a-z0-9]+/g) || [];
+
+        const counts = {};
+
+        words.forEach(
+          (w) => (counts[w] = (counts[w] || 0) + 1)
+        );
+
+        out = Object.entries(counts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 30)
+          .map(
+            ([word, count]) =>
+              `${word}: ${count} (${((count / words.length) * 100).toFixed(2)}%)`
+          )
+          .join("\n");
+
+        break;
+      }
+
+      default:
+        out = text;
+    }
+
+    setResult(out);
+  };
+
+  const download = () => {
+    const blob = new Blob([result], {
+      type: "text/plain;charset=utf-8",
+    });
+
+    const url2 = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url2;
+    a.download = `${t.slug}-result.txt`;
+    a.click();
+    URL.revokeObjectURL(url2);
+  };
+
+  return (
+    <main className="toolPage">
+      <button className="back" onClick={back} type="button">
+        ← Back to tools
+      </button>
+
+      <div className="toolHero">
+        <div className="toolIcon big">
+          <Globe2 />
+        </div>
+
+        <div>
+          <span>{t.category}</span>
+          <h1>{t.name}</h1>
+          <p>{t.description}</p>
+        </div>
+      </div>
+
+      <div className="workspace">
+        <div className="panel">
+          <label>Input</label>
+
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title / source"
+          />
+
+          <input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://example.com"
+          />
+
+          <input
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description / medium"
+          />
+
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Enter content..."
+          />
+
+          <button
+            className="primary"
+            onClick={run}
+            type="button"
+          >
+            <Zap size={17} />
+            Generate
           </button>
         </div>
 
-        <div className="aiCard">
-          <h3>
-            🤖 AI Answer
-          </h3>
+        <div className="panel">
+          <label>Result</label>
 
-          <div className="answer">
-            {answer ||
-              "Your step-by-step explanation will appear here."}
-          </div>
+          <textarea
+            value={result}
+            readOnly
+            placeholder="Generated result..."
+          />
 
-          {answer && (
+          <div className="actions">
             <button
               className="secondary"
-              type="button"
               onClick={() =>
-                safeClipboard(
-                  answer
-                )
+                navigator.clipboard?.writeText(result)
               }
+              type="button"
             >
               <Copy size={17} />
-
-              Copy Answer
+              Copy
             </button>
-          )}
+
+            {result && (
+              <button
+                className="secondary"
+                onClick={download}
+                type="button"
+              >
+                <Download size={17} />
+                Download
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </main>
@@ -2407,490 +1397,285 @@ Connect an AI Edge Function to send this question/file to an AI model securely.`
 ========================================================= */
 
 function GenericTool({ t, back }) {
-  const [text, setText] =
-    useState("");
-
-  const [out, setOut] =
-    useState("");
-
-  const [extra, setExtra] =
-    useState("");
+  const [text, setText] = useState("");
+  const [out, setOut] = useState("");
 
   const run = async () => {
-    let result = text;
+    let result = "";
 
     try {
       switch (t.slug) {
-        case "word-counter":
+        case "word-counter": {
+          const words = text.trim()
+            ? text.trim().split(/\s+/).length
+            : 0;
+
+          const sentences = text
+            .split(/[.!?]+/)
+            .filter(Boolean).length;
+
           result =
-            `Words: ${
-              text.trim()
-                ? text
-                    .trim()
-                    .split(
-                      /\s+/
-                    ).length
-                : 0
-            }
-Characters: ${text.length}
-Characters without spaces: ${text.replace(
-              /\s/g,
-              ""
-            ).length}`;
+            `Words: ${words}\n` +
+            `Characters: ${text.length}\n` +
+            `Characters without spaces: ${text.replace(/\s/g, "").length}\n` +
+            `Sentences: ${sentences}`;
           break;
+        }
 
         case "characters":
           result =
-            `Characters: ${text.length}
-Without spaces: ${text.replace(
-              /\s/g,
-              ""
-            ).length}`;
+            `Characters: ${text.length}\nWithout spaces: ${text.replace(/\s/g, "").length}`;
           break;
 
         case "case-converter":
           result =
-            `UPPERCASE:
-${text.toUpperCase()}
+            `UPPERCASE:\n${text.toUpperCase()}\n\nLOWERCASE:\n${text.toLowerCase()}\n\nTitle Case:\n${toTitleCase(text)}`;
+          break;
 
-lowercase:
-${text.toLowerCase()}
-
-Title Case:
-${text
-  .toLowerCase()
-  .replace(
-    /\b\w/g,
-    (c) =>
-      c.toUpperCase()
-  )}`;
+        case "text-cleaner":
+          result = text
+            .replace(/[ \t]+/g, " ")
+            .replace(/\n\s*\n+/g, "\n")
+            .trim();
           break;
 
         case "text-reverser":
-          result =
-            [...text]
-              .reverse()
-              .join("");
+          result = [...text].reverse().join("");
           break;
 
         case "slug":
-          result =
-            text
-              .toLowerCase()
-              .trim()
-              .replace(
-                /[^a-z0-9]+/g,
-                "-"
-              )
-              .replace(
-                /^-|-$/g,
-                "");
+          result = text
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "");
           break;
 
         case "url-encoder":
-          result =
-            encodeURIComponent(
-              text
-            );
+          result = encodeURIComponent(text);
           break;
 
         case "base64-encode":
-          result =
-            btoa(
-              unescape(
-                encodeURIComponent(
-                  text
-                )
-              )
-            );
+          result = unicodeBase64Encode(text);
           break;
 
         case "base64-decode":
-          result =
-            decodeURIComponent(
-              escape(
-                atob(text)
-              )
-            );
+          result = unicodeBase64Decode(text);
           break;
 
         case "json-formatter":
-          result =
-            JSON.stringify(
-              JSON.parse(text),
-              null,
-              2
-            );
+          result = JSON.stringify(JSON.parse(text), null, 2);
           break;
 
         case "json-minifier":
-          result =
-            JSON.stringify(
-              JSON.parse(text)
-            );
+          result = JSON.stringify(JSON.parse(text));
           break;
 
         case "uuid":
-          result =
-            crypto.randomUUID();
+          result = crypto.randomUUID();
           break;
 
         case "password":
-          result =
-            generatePassword(18);
-          break;
-
-        case "password-strength":
-          result =
-            passwordStrength(
-              text
-            );
+          result = generatePassword(20);
           break;
 
         case "sha256":
-          result =
-            await sha256(text);
+        case "hash":
+          result = await sha256(text);
           break;
-
-        case "morse":
-          result =
-            textToMorse(text);
-          break;
-
-        case "palindrome": {
-          const clean =
-            text
-              .toLowerCase()
-              .replace(
-                /[^a-z0-9]/g,
-                "");
-
-          result =
-            clean ===
-            [...clean]
-              .reverse()
-              .join("")
-              ? "Yes, this is a palindrome."
-              : "No, this is not a palindrome.";
-
-          break;
-        }
-
-        case "text-cleaner":
-          result =
-            text
-              .replace(
-                /[ \t]+/g,
-                " "
-              )
-              .replace(
-                /\n\s*\n+/g,
-                "\n"
-              )
-              .trim();
-          break;
-
-        case "duplicate-lines": {
-          const lines =
-            text
-              .split("\n")
-              .map((x) =>
-                x.trim()
-              )
-              .filter(Boolean);
-
-          result = [
-            ...new Set(lines),
-          ].join("\n");
-
-          break;
-        }
-
-        case "text-sorter":
-          result =
-            text
-              .split("\n")
-              .sort(
-                (a, b) =>
-                  a.localeCompare(b)
-              )
-              .join("\n");
-          break;
-
-        case "reading-time": {
-          const words = text.trim()
-            ? text
-                .trim()
-                .split(/\s+/)
-                .length
-            : 0;
-
-          const minutes =
-            Math.max(
-              1,
-              Math.ceil(
-                words / 200
-              )
-            );
-
-          result =
-            `Words: ${words}
-Estimated reading time: ${minutes} minute(s)`;
-          break;
-        }
 
         case "url-parser": {
-          const url =
-            new URL(text);
+          const u = new URL(text);
 
-          result =
-            JSON.stringify(
-              {
-                protocol:
-                  url.protocol,
-                hostname:
-                  url.hostname,
-                port:
-                  url.port,
-                pathname:
-                  url.pathname,
-                search:
-                  url.search,
-                hash:
-                  url.hash,
-              },
-              null,
-              2
-            );
-
+          result = JSON.stringify(
+            {
+              protocol: u.protocol,
+              hostname: u.hostname,
+              port: u.port,
+              pathname: u.pathname,
+              search: u.search,
+              hash: u.hash,
+            },
+            null,
+            2
+          );
           break;
         }
 
         case "email-validator":
-          result =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-              text.trim()
-            )
-              ? "Valid email format."
-              : "Invalid email format.";
+          result = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+            text.trim()
+          )
+            ? "Valid email format."
+            : "Invalid email format.";
           break;
 
-        case "random-number": {
-          const min =
-            Number(
-              text || 0
-            );
-
-          const max =
-            Number(
-              extra || 100
-            );
-
-          if (
-            Number.isNaN(
-              min
-            ) ||
-            Number.isNaN(
-              max
-            )
-          ) {
-            throw new Error(
-              "Enter valid minimum and maximum numbers."
-            );
-          }
-
+        case "random-number":
           result = String(
-            Math.floor(
-              Math.random() *
-                (max -
-                  min +
-                  1)
-            ) + min
+            Math.floor(Math.random() * 1000000)
           );
-
           break;
-        }
 
-        case "percentage": {
-          const value =
-            Number(text);
+        case "password-strength":
+          result = passwordStrength(text);
+          break;
 
-          const percent =
-            Number(extra);
+        case "duplicate-lines":
+          result = [
+            ...new Set(
+              text
+                .split("\n")
+                .map((x) => x.trim())
+                .filter(Boolean)
+            ),
+          ].join("\n");
+          break;
 
-          if (
-            !Number.isFinite(
-              value
-            ) ||
-            !Number.isFinite(
-              percent
-            )
-          ) {
-            throw new Error(
-              "Enter number in input and percentage in Extra Value."
-            );
-          }
+        case "text-sorter":
+          result = text
+            .split("\n")
+            .sort((a, b) => a.localeCompare(b))
+            .join("\n");
+          break;
+
+        case "palindrome": {
+          const clean = text
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "");
 
           result =
-            `${percent}% of ${value} = ${
-              (value *
-                percent) /
-              100
-            }`;
-
+            clean === [...clean].reverse().join("")
+              ? "Yes, this is a palindrome."
+              : "No, this is not a palindrome.";
           break;
         }
 
-        case "discount": {
-          const price =
-            Number(text);
-
-          const discount =
-            Number(extra);
-
-          const saved =
-            (price *
-              discount) /
-            100;
+        case "reading-time": {
+          const words = text.trim()
+            ? text.trim().split(/\s+/).length
+            : 0;
 
           result =
-            `Original Price: ${price}
-Discount: ${discount}%
-You Save: ${saved.toFixed(
-              2
-            )}
-Final Price: ${(price -
-              saved).toFixed(
-              2
-            )}`;
-
+            `Words: ${words}\nEstimated reading time: ${(words / 200).toFixed(1)} minutes`;
           break;
         }
 
-        case "temperature": {
-          const value =
-            Number(text);
-
-          const celsius =
-            value;
-
-          const fahrenheit =
-            (value * 9) /
-              5 +
-            32;
-
-          const kelvin =
-            value + 273.15;
-
-          result =
-            `Celsius: ${celsius.toFixed(
-              2
-            )}
-Fahrenheit: ${fahrenheit.toFixed(
-              2
-            )}
-Kelvin: ${kelvin.toFixed(
-              2
-            )}`;
-
+        case "morse":
+          result = textToMorse(text);
           break;
-        }
+
+        case "lorem":
+          result = loremIpsum(
+            Math.max(1, Number(text) || 3)
+          );
+          break;
+
+        case "percentage":
+          result = calculatePercentage(text);
+          break;
+
+        case "discount":
+          result = calculateDiscount(text);
+          break;
+
+        case "bmi":
+          result = calculateBMI(text);
+          break;
+
+        case "gst":
+          result = calculateGST(text);
+          break;
+
+        case "tip":
+          result = calculateTip(text);
+          break;
+
+        case "temperature":
+          result = convertTemperature(text);
+          break;
+
+        case "length":
+        case "weight":
+        case "units":
+          result = convertUnits(text);
+          break;
+
+        case "number-words":
+          result = numberToWords(Number(text));
+          break;
+
+        case "roman":
+          result = numberToRoman(Number(text));
+          break;
+
+        case "business-name":
+          result = generateNames(text, "Business");
+          break;
+
+        case "username":
+          result = generateNames(text, "User");
+          break;
+
+        case "phone":
+          result = text.replace(/[^\d+]/g, "");
+          break;
+
+        case "csv-json":
+          result = JSON.stringify(csvToJson(text), null, 2);
+          break;
+
+        case "json-csv":
+          result = jsonToCsv(text);
+          break;
 
         default:
           result =
-            "This tool is ready. Enter your content and run the tool.";
+            "This tool needs a dedicated backend/library integration.";
       }
-    } catch (error) {
-      result =
-        `Invalid input: ${
-          error?.message ||
-          "Unable to process."
-        }`;
+    } catch (e) {
+      result = `Invalid input: ${
+        e?.message || "Unable to process."
+      }`;
     }
 
     setOut(result);
   };
 
-  const clear = () => {
-    setText("");
-    setExtra("");
-    setOut("");
-  };
-
-  const Icon =
-    categoryIcons[t.category] ||
-    Wrench;
-
   return (
     <main className="toolPage">
-      <button
-        className="back"
-        onClick={back}
-        type="button"
-      >
+      <button className="back" onClick={back} type="button">
         ← Back to tools
       </button>
 
       <div className="toolHero">
         <div className="toolIcon big">
-          <Icon />
+          {React.createElement(
+            categoryIcons[t.category] || Wrench
+          )}
         </div>
 
         <div>
-          <span>
-            {t.category}
-          </span>
-
+          <span>{t.category}</span>
           <h1>{t.name}</h1>
-
-          <p>
-            {t.description}
-          </p>
+          <p>{t.description}</p>
         </div>
       </div>
 
       <div className="workspace">
         <div className="panel">
-          <label>
-            Your input
-          </label>
+          <label>Your Input</label>
 
           <textarea
             value={text}
-            onChange={(e) =>
-              setText(
-                e.target.value
-              )
+            onChange={(e) => setText(e.target.value)}
+            placeholder={
+              t.slug === "bmi"
+                ? "Example: 70, 175"
+                : t.slug === "percentage"
+                ? "Example: 20, 500"
+                : "Enter or paste your content..."
             }
-            placeholder="Paste or type your content here..."
           />
-
-          {[
-            "percentage",
-            "discount",
-            "random-number",
-          ].includes(
-            t.slug
-          ) && (
-            <label>
-              Extra value
-
-              <input
-                value={extra}
-                onChange={(e) =>
-                  setExtra(
-                    e.target.value
-                  )
-                }
-                placeholder={
-                  t.slug ===
-                  "random-number"
-                    ? "Maximum"
-                    : "Percentage"
-                }
-              />
-            </label>
-          )}
 
           <div className="actions">
             <button
@@ -2899,13 +1684,15 @@ Kelvin: ${kelvin.toFixed(
               type="button"
             >
               <Zap size={17} />
-
               Run Tool
             </button>
 
             <button
               className="secondary"
-              onClick={clear}
+              onClick={() => {
+                setText("");
+                setOut("");
+              }}
               type="button"
             >
               Clear
@@ -2914,9 +1701,7 @@ Kelvin: ${kelvin.toFixed(
         </div>
 
         <div className="panel">
-          <label>
-            Result
-          </label>
+          <label>Result</label>
 
           <textarea
             value={out}
@@ -2928,229 +1713,346 @@ Kelvin: ${kelvin.toFixed(
             <button
               className="secondary"
               onClick={() =>
-                safeClipboard(out)
+                navigator.clipboard?.writeText(out)
               }
               type="button"
-              disabled={!out}
             >
               <Copy size={17} />
-
               Copy Result
             </button>
 
             {out && (
               <button
                 className="secondary"
+                onClick={() => downloadText(out, `${t.slug}.txt`)}
                 type="button"
-                onClick={() =>
-                  downloadBlob(
-                    new Blob(
-                      [out],
-                      {
-                        type:
-                          "text/plain;charset=utf-8",
-                      }
-                    ),
-                    "toolmaster-result.txt"
-                  )
-                }
               >
-                <Download
-                  size={17}
-                />
-
+                <Download size={17} />
                 Download
               </button>
             )}
           </div>
         </div>
       </div>
+    </main>
+  );
+}
+
+/* =========================================================
+   AI DEMO PAGES
+========================================================= */
+
+function TextToVideo({ back }) {
+  const [prompt, setPrompt] = useState("");
+  const [style, setStyle] = useState("Cinematic");
+  const [duration, setDuration] = useState("10 seconds");
+  const [status, setStatus] = useState("");
+
+  const generate = () => {
+    if (!prompt.trim()) {
+      setStatus("Please enter a video prompt.");
+      return;
+    }
+
+    setStatus(
+      `Video project prepared — ${style}, ${duration}.`
+    );
+  };
+
+  return (
+    <main className="toolPage">
+      <button className="back" onClick={back} type="button">
+        ← Back to tools
+      </button>
+
+      <div className="toolHero">
+        <div className="toolIcon big">
+          <Sparkles />
+        </div>
+        <div>
+          <span>AI & Video</span>
+          <h1>Text to Video</h1>
+          <p>Create a video project from text.</p>
+        </div>
+      </div>
+
+      <div className="workspace">
+        <div className="panel">
+          <label>Video Prompt</label>
+
+          <textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Describe your video..."
+          />
+
+          <label>Style</label>
+
+          <select
+            value={style}
+            onChange={(e) => setStyle(e.target.value)}
+          >
+            <option>Cinematic</option>
+            <option>Realistic</option>
+            <option>Anime</option>
+            <option>3D Animation</option>
+            <option>Documentary</option>
+            <option>Product Ad</option>
+          </select>
+
+          <label>Duration</label>
+
+          <select
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+          >
+            <option>5 seconds</option>
+            <option>10 seconds</option>
+            <option>15 seconds</option>
+            <option>30 seconds</option>
+          </select>
+
+          <button
+            className="primary"
+            onClick={generate}
+            type="button"
+          >
+            <Sparkles size={17} />
+            Generate Video
+          </button>
+        </div>
+
+        <div className="panel">
+          <h3>Video Preview</h3>
+
+          <div className="videoPlaceholder">
+            <div className="playCircle">▶</div>
+            <b>Your video will appear here</b>
+            <small>{style} · {duration}</small>
+            {status && <p>{status}</p>}
+          </div>
+        </div>
+      </div>
 
       <div className="notice">
         <ShieldCheck />
-
         <span>
-          Processing is designed to
-          happen locally in your
-          browser whenever possible.
+          Real AI video generation requires a server-side AI provider.
         </span>
       </div>
     </main>
   );
 }
 
+function StudentAIHelper({ back }) {
+  const [question, setQuestion] = useState("");
+  const [file, setFile] = useState(null);
+  const [answer, setAnswer] = useState("");
+
+  const solve = () => {
+    if (!question.trim() && !file) {
+      setAnswer("Please enter a question or upload material.");
+      return;
+    }
+
+    setAnswer(
+      `Question received.\n\n${
+        question || "Study material uploaded."
+      }\n\nA real AI model can be connected through a secure Supabase Edge Function for the final answer.`
+    );
+  };
+
+  return (
+    <main className="toolPage">
+      <button className="back" onClick={back} type="button">
+        ← Back to tools
+      </button>
+
+      <div className="toolHero">
+        <div className="toolIcon big">
+          <Sparkles />
+        </div>
+
+        <div>
+          <span>AI & Education</span>
+          <h1>Student AI Helper</h1>
+          <p>Ask questions or upload study material.</p>
+        </div>
+      </div>
+
+      <div className="workspace">
+        <div className="panel">
+          <label>Question</label>
+
+          <textarea
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Ask your question..."
+          />
+
+          <label className="uploadBox">
+            <Upload />
+            <div>
+              <b>{file ? file.name : "Upload study material"}</b>
+              <small>PDF, JPG, PNG, TXT, DOC or DOCX</small>
+            </div>
+
+            <input
+              type="file"
+              accept=".pdf,image/*,.txt,.doc,.docx"
+              onChange={(e) =>
+                setFile(e.target.files?.[0] || null)
+              }
+            />
+          </label>
+
+          <button
+            className="primary"
+            onClick={solve}
+            type="button"
+          >
+            <Sparkles size={17} />
+            Get AI Help
+          </button>
+        </div>
+
+        <div className="panel">
+          <label>AI Answer</label>
+
+          <textarea
+            value={answer}
+            readOnly
+            placeholder="Answer will appear here..."
+          />
+
+          {answer && (
+            <button
+              className="secondary"
+              onClick={() =>
+                navigator.clipboard?.writeText(answer)
+              }
+              type="button"
+            >
+              <Copy size={17} />
+              Copy Answer
+            </button>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
+
 /* =========================================================
-   ADMIN LOGIN
+   ADMIN
 ========================================================= */
 
-function AdminLogin({
-  onClose,
-  onSuccess,
-}) {
-  const [email, setEmail] =
-    useState("");
+async function verifyAdmin(user) {
+  if (!user?.id || !SUPABASE_URL || !SUPABASE_KEY) {
+    return false;
+  }
 
-  const [password, setPassword] =
-    useState("");
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
 
-  const [loading, setLoading] =
-    useState(false);
+  if (error) {
+    console.error("Admin check:", error);
+    return false;
+  }
 
-  const [error, setError] =
-    useState("");
+  return data?.role === "admin";
+}
+
+function AdminLogin({ onClose, onSuccess }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const login = async (e) => {
     e.preventDefault();
 
     setError("");
 
-    if (
-      !email.trim() ||
-      !password
-    ) {
-      setError(
-        "Please enter your admin email and password."
-      );
-
-      return;
-    }
-
-    if (
-      !SUPABASE_URL ||
-      !SUPABASE_KEY
-    ) {
-      setError(
-        "Supabase configuration is missing."
-      );
-
+    if (!email || !password) {
+      setError("Enter email and password.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const {
-        data,
-        error: authError,
-      } =
-        await supabase.auth.signInWithPassword(
-          {
-            email:
-              email.trim(),
-            password,
-          }
-        );
+      const { data, error } =
+        await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
 
-      if (authError)
-        throw authError;
+      if (error) throw error;
 
       if (!data.user) {
-        throw new Error(
-          "Login failed."
-        );
+        throw new Error("Login failed.");
       }
 
-      const isAdmin =
-        await verifyAdmin(
-          data.user
-        );
+      const ok = await verifyAdmin(data.user);
 
-      if (!isAdmin) {
+      if (!ok) {
         await supabase.auth.signOut();
-
-        throw new Error(
-          "Access denied. This account does not have the admin role."
-        );
+        throw new Error("This account is not an admin.");
       }
 
-      onSuccess(
-        data.user
-      );
-    } catch (err) {
-      setError(
-        err?.message ||
-          "Unable to sign in."
-      );
+      onSuccess(data.user);
+    } catch (e) {
+      setError(e?.message || "Unable to sign in.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      className="authOverlay"
-      role="dialog"
-      aria-modal="true"
-    >
-      <form
-        className="authCard"
-        onSubmit={login}
-      >
+    <div className="authOverlay">
+      <form className="authCard" onSubmit={login}>
         <button
           className="authClose"
           type="button"
           onClick={onClose}
         >
-          <X size={20} />
+          <X />
         </button>
 
         <div className="toolIcon big authIcon">
           <LockKeyhole />
         </div>
 
-        <span className="pill">
-          Secure Admin Access
-        </span>
+        <span className="pill">Secure Admin Access</span>
 
-        <h2>
-          Admin Login
-        </h2>
-
-        <p>
-          Sign in with an account
-          that has the{" "}
-          <b>admin</b> role.
-        </p>
+        <h2>Admin Login</h2>
 
         <label>
           Email
-
           <input
             type="email"
-            autoComplete="username"
             value={email}
-            onChange={(e) =>
-              setEmail(
-                e.target.value
-              )
-            }
-            placeholder="admin@example.com"
+            onChange={(e) => setEmail(e.target.value)}
           />
         </label>
 
         <label>
           Password
-
           <input
             type="password"
-            autoComplete="current-password"
             value={password}
-            onChange={(e) =>
-              setPassword(
-                e.target.value
-              )
-            }
-            placeholder="••••••••"
+            onChange={(e) => setPassword(e.target.value)}
           />
         </label>
 
         {error && (
           <div className="authError">
             <AlertCircle size={18} />
-
-            <span>
-              {error}
-            </span>
+            {error}
           </div>
         )}
 
@@ -3161,76 +2063,20 @@ function AdminLogin({
         >
           {loading ? (
             <>
-              <Loader2
-                className="spin"
-                size={18}
-              />
-
+              <Loader2 className="spin" />
               Signing in...
             </>
           ) : (
             <>
-              <LockKeyhole
-                size={18}
-              />
-
-              Sign in to Admin
+              <LockKeyhole size={18} />
+              Sign in
             </>
           )}
         </button>
-
-        <small className="authSecurity">
-          <ShieldCheck size={15} />
-
-          Authentication and
-          session are handled by
-          Supabase.
-        </small>
       </form>
     </div>
   );
 }
-
-/* =========================================================
-   ADMIN VERIFICATION
-========================================================= */
-
-async function verifyAdmin(user) {
-  if (!user?.id) {
-    return false;
-  }
-
-  try {
-    const {
-      data,
-      error,
-    } =
-      await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle();
-
-    if (error) {
-      console.error(
-        "Admin role check failed:",
-        error
-      );
-
-      return false;
-    }
-
-    return data?.role === "admin";
-  } catch (error) {
-    console.error(error);
-
-    return false;
-  }
-}
-
-/* =========================================================
-   ADMIN PANEL
-========================================================= */
 
 function Admin({
   user,
@@ -3239,33 +2085,7 @@ function Admin({
   onClose,
   onLogout,
 }) {
-  const [
-    activeSection,
-    setActiveSection,
-  ] = useState("dashboard");
-
-  const sections = [
-    [
-      "dashboard",
-      "Dashboard",
-      LayoutDashboard,
-    ],
-    [
-      "tools",
-      "Manage Tools",
-      Settings,
-    ],
-    [
-      "users",
-      "Manage Users",
-      LockKeyhole,
-    ],
-    [
-      "analytics",
-      "Analytics",
-      LayoutDashboard,
-    ],
-  ];
+  const [section, setSection] = useState("dashboard");
 
   return (
     <main className="admin">
@@ -3273,20 +2093,13 @@ function Admin({
         <div>
           <span className="pill">
             <ShieldCheck size={15} />
-
             Secure Admin Panel
           </span>
 
-          <h1>
-            ToolMaster Pro
-            Control Center
-          </h1>
+          <h1>ToolMaster Pro Control Center</h1>
 
           <p>
-            Welcome,{" "}
-            {user?.email ||
-              "Administrator"}
-            .
+            Welcome, {user?.email || "Administrator"}.
           </p>
         </div>
 
@@ -3310,89 +2123,50 @@ function Admin({
       </div>
 
       <div className="adminNav">
-        {sections.map(
-          ([
-            id,
-            label,
-            Icon,
-          ]) => (
-            <button
-              key={id}
-              type="button"
-              className={
-                activeSection ===
-                id
-                  ? "active"
-                  : ""
-              }
-              onClick={() =>
-                setActiveSection(
-                  id
-                )
-              }
-            >
-              <Icon size={17} />
-
-              {label}
-            </button>
-          )
-        )}
+        {[
+          ["dashboard", "Dashboard", LayoutDashboard],
+          ["tools", "Manage Tools", Settings],
+          ["users", "Manage Users", LockKeyhole],
+          ["analytics", "Analytics", LayoutDashboard],
+        ].map(([id, label, Icon]) => (
+          <button
+            key={id}
+            className={section === id ? "active" : ""}
+            onClick={() => setSection(id)}
+            type="button"
+          >
+            <Icon size={17} />
+            {label}
+          </button>
+        ))}
       </div>
 
-      {activeSection ===
-        "dashboard" && (
+      {section === "dashboard" && (
         <AdminDashboard
           tools={tools}
-          goTools={() =>
-            setActiveSection(
-              "tools"
-            )
-          }
-          goUsers={() =>
-            setActiveSection(
-              "users"
-            )
-          }
-          goAnalytics={() =>
-            setActiveSection(
-              "analytics"
-            )
-          }
+          goTools={() => setSection("tools")}
+          goUsers={() => setSection("users")}
+          goAnalytics={() => setSection("analytics")}
         />
       )}
 
-      {activeSection ===
-        "tools" && (
+      {section === "tools" && (
         <AdminTools
           tools={tools}
-          refreshTools={
-            refreshTools
-          }
+          refreshTools={refreshTools}
         />
       )}
 
-      {activeSection ===
-        "users" && (
-        <AdminUsers
-          adminEmail={
-            user?.email
-          }
-        />
+      {section === "users" && (
+        <AdminUsers adminEmail={user?.email} />
       )}
 
-      {activeSection ===
-        "analytics" && (
-        <AdminAnalytics
-          tools={tools}
-        />
+      {section === "analytics" && (
+        <AdminAnalytics tools={tools} />
       )}
     </main>
   );
 }
-
-/* =========================================================
-   ADMIN DASHBOARD
-========================================================= */
 
 function AdminDashboard({
   tools,
@@ -3400,386 +2174,188 @@ function AdminDashboard({
   goUsers,
   goAnalytics,
 }) {
-  const active =
-    tools.filter(
-      (t) => t.is_active
-    ).length;
-
-  const inactive =
-    tools.length - active;
+  const active = tools.filter((t) => t.is_active).length;
 
   return (
     <div className="adminGrid">
       <div className="adminCard">
         <Settings />
-
-        <h3>
-          Tool Management
-        </h3>
-
-        <p>
-          {tools.length} tools are
-          currently in database.
-        </p>
-
-        <button
-          className="primary"
-          onClick={goTools}
-          type="button"
-        >
+        <h3>Tool Management</h3>
+        <p>{tools.length} tools in database.</p>
+        <button className="primary" onClick={goTools}>
           Manage Tools
         </button>
       </div>
 
       <div className="adminCard">
         <CheckCircle2 />
-
-        <h3>
-          Active Tools
-        </h3>
-
-        <p>
-          {active} tools are visible
-          on website.
-        </p>
-
-        <strong className="ok">
-          Active
-        </strong>
+        <h3>Active Tools</h3>
+        <p>{active} tools visible.</p>
       </div>
 
       <div className="adminCard">
         <Power />
-
-        <h3>
-          Inactive Tools
-        </h3>
-
-        <p>
-          {inactive} tools are
-          currently disabled.
-        </p>
-
-        <strong>
-          Hidden
-        </strong>
+        <h3>Inactive Tools</h3>
+        <p>{tools.length - active} tools hidden.</p>
       </div>
 
       <div className="adminCard">
         <LockKeyhole />
-
-        <h3>
-          Users & Access
-        </h3>
-
-        <p>
-          Admin authentication is
-          protected by Supabase.
-        </p>
-
-        <button
-          className="primary"
-          onClick={goUsers}
-          type="button"
-        >
+        <h3>Users</h3>
+        <p>Admin authentication protected by Supabase.</p>
+        <button className="primary" onClick={goUsers}>
           Manage Users
         </button>
       </div>
 
       <div className="adminCard">
         <LayoutDashboard />
-
-        <h3>
-          Analytics
-        </h3>
-
-        <p>
-          Usage analytics can be
-          connected.
-        </p>
-
-        <button
-          className="primary"
-          onClick={goAnalytics}
-          type="button"
-        >
+        <h3>Analytics</h3>
+        <p>Database statistics.</p>
+        <button className="primary" onClick={goAnalytics}>
           View Analytics
         </button>
-      </div>
-
-      <div className="adminCard">
-        <ShieldCheck />
-
-        <h3>
-          Security Status
-        </h3>
-
-        <p>
-          Supabase Auth + profiles
-          role verification active.
-        </p>
-
-        <strong className="ok">
-          Protected
-        </strong>
       </div>
     </div>
   );
 }
 
+function AdminUsers({ adminEmail }) {
+  return (
+    <section className="adminCard adminWide">
+      <LockKeyhole />
+      <h2>Users & Access</h2>
+      <p>Current admin access is verified from profiles.</p>
+
+      <div className="adminInfo">
+        <b>Current admin:</b> {adminEmail || "Unknown"}
+        <br />
+        <span>Role: admin</span>
+      </div>
+    </section>
+  );
+}
+
+function AdminAnalytics({ tools }) {
+  const active = tools.filter((t) => t.is_active).length;
+  const categories = new Set(
+    tools.map((t) => t.category)
+  ).size;
+
+  return (
+    <section className="adminCard adminWide">
+      <LayoutDashboard />
+      <h2>Analytics</h2>
+
+      <div className="stats adminStats">
+        <div>
+          <b>{tools.length}</b>
+          <small>Total Tools</small>
+        </div>
+
+        <div>
+          <b>{active}</b>
+          <small>Active Tools</small>
+        </div>
+
+        <div>
+          <b>{categories}</b>
+          <small>Categories</small>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* =========================================================
-   ADMIN TOOLS CRUD
+   ADMIN CRUD
 ========================================================= */
 
-function AdminTools({
-  tools,
-  refreshTools,
-}) {
-  const [showForm, setShowForm] =
-    useState(false);
+function AdminTools({ tools, refreshTools }) {
+  const [editing, setEditing] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
-  const [editing, setEditing] =
-    useState(null);
+  const filtered = tools.filter((t) => {
+    const q = search.toLowerCase();
 
-  const [search, setSearch] =
-    useState("");
-
-  const [saving, setSaving] =
-    useState(false);
-
-  const [error, setError] =
-    useState("");
-
-  const [message, setMessage] =
-    useState("");
-
-  const filtered = useMemo(() => {
-    const q =
-      search
-        .trim()
-        .toLowerCase();
-
-    if (!q) return tools;
-
-    return tools.filter(
-      (t) =>
-        t.name
-          .toLowerCase()
-          .includes(q) ||
-        t.slug
-          .toLowerCase()
-          .includes(q) ||
-        t.category
-          .toLowerCase()
-          .includes(q)
+    return (
+      !q ||
+      t.name.toLowerCase().includes(q) ||
+      t.slug.toLowerCase().includes(q) ||
+      t.category.toLowerCase().includes(q)
     );
-  }, [tools, search]);
+  });
 
-  const saveTool = async (
-    form
-  ) => {
-    setSaving(true);
+  const save = async (form) => {
     setError("");
     setMessage("");
 
-    try {
-      const payload = {
-        name:
-          form.name.trim(),
-        category:
-          form.category.trim() ||
-          "Utility Tools",
-        description:
-          form.description.trim(),
-        slug:
-          form.slug.trim(),
-        icon:
-          form.icon.trim(),
-        is_active:
-          Boolean(
-            form.is_active
-          ),
-        sort_order:
-          Number(
-            form.sort_order || 0
-          ),
-      };
+    const payload = {
+      name: form.name.trim(),
+      category: form.category.trim(),
+      description: form.description.trim(),
+      slug: form.slug.trim(),
+      icon: form.icon.trim(),
+      is_active: Boolean(form.is_active),
+      sort_order: Number(form.sort_order || 0),
+    };
 
-      if (
-        !payload.name ||
-        !payload.slug
-      ) {
-        throw new Error(
-          "Name and slug are required."
-        );
-      }
-
-      if (editing) {
-        const {
-          error: updateError,
-        } =
-          await supabase
-            .from("tools")
-            .update(payload)
-            .eq(
-              "id",
-              editing.id
-            );
-
-        if (updateError)
-          throw updateError;
-
-        setMessage(
-          "Tool updated successfully."
-        );
-      } else {
-        const {
-          error: insertError,
-        } =
-          await supabase
-            .from("tools")
-            .insert(
-              payload
-            );
-
-        if (insertError)
-          throw insertError;
-
-        setMessage(
-          "Tool added successfully."
-        );
-      }
-
-      setShowForm(false);
-      setEditing(null);
-
-      await refreshTools();
-    } catch (err) {
-      console.error(
-        "Tool save error:",
-        err
-      );
-
-      setError(
-        err?.message ||
-          "Unable to save tool."
-      );
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const deleteTool = async (
-    id,
-    name
-  ) => {
-    if (
-      !window.confirm(
-        `Delete "${name}" permanently?`
-      )
-    ) {
+    if (!payload.name || !payload.slug) {
+      setError("Name and slug are required.");
       return;
     }
 
-    setError("");
-    setMessage("");
+    const result = editing
+      ? await supabase
+          .from("tools")
+          .update(payload)
+          .eq("id", editing.id)
+      : await supabase.from("tools").insert(payload);
 
-    const {
-      error: deleteError,
-    } =
-      await supabase
-        .from("tools")
-        .delete()
-        .eq("id", id);
-
-    if (deleteError) {
-      setError(
-        deleteError.message
-      );
-
+    if (result.error) {
+      setError(result.error.message);
       return;
     }
 
     setMessage(
-      "Tool deleted successfully."
+      editing
+        ? "Tool updated successfully."
+        : "Tool created successfully."
     );
+
+    setEditing(null);
+    setShowForm(false);
 
     await refreshTools();
   };
 
-  const toggleTool = async (
-    item
-  ) => {
-    setError("");
-    setMessage("");
+  const remove = async (item) => {
+    if (!window.confirm(`Delete "${item.name}"?`)) return;
 
-    const {
-      error: updateError,
-    } =
-      await supabase
-        .from("tools")
-        .update({
-          is_active:
-            !item.is_active,
-        })
-        .eq(
-          "id",
-          item.id
-        );
+    const { error } = await supabase
+      .from("tools")
+      .delete()
+      .eq("id", item.id);
 
-    if (updateError) {
-      setError(
-        updateError.message
-      );
-
+    if (error) {
+      setError(error.message);
       return;
     }
 
-    setMessage(
-      item.is_active
-        ? "Tool disabled."
-        : "Tool activated."
-    );
-
     await refreshTools();
   };
 
-  const moveTool = async (
-    item,
-    direction
-  ) => {
-    const current =
-      Number(
-        item.sort_order || 0
-      );
+  const toggle = async (item) => {
+    const { error } = await supabase
+      .from("tools")
+      .update({ is_active: !item.is_active })
+      .eq("id", item.id);
 
-    const next =
-      direction === "up"
-        ? current - 1
-        : current + 1;
-
-    const {
-      error: updateError,
-    } =
-      await supabase
-        .from("tools")
-        .update({
-          sort_order:
-            Math.max(
-              0,
-              next
-            ),
-        })
-        .eq(
-          "id",
-          item.id
-        );
-
-    if (updateError) {
-      setError(
-        updateError.message
-      );
-
+    if (error) {
+      setError(error.message);
       return;
     }
 
@@ -3791,30 +2367,19 @@ function AdminTools({
       <div className="adminSectionHeader">
         <div>
           <Settings />
-
-          <h2>
-            Manage Tools
-          </h2>
-
-          <p>
-            Add, edit, activate,
-            deactivate and delete
-            website tools.
-          </p>
+          <h2>Manage Tools</h2>
+          <p>Add, edit, activate and delete tools.</p>
         </div>
 
         <button
           className="primary"
-          type="button"
           onClick={() => {
             setEditing(null);
             setShowForm(true);
-            setError("");
-            setMessage("");
           }}
+          type="button"
         >
           <Plus size={18} />
-
           Add Tool
         </button>
       </div>
@@ -3822,18 +2387,14 @@ function AdminTools({
       {error && (
         <div className="authError">
           <AlertCircle size={18} />
-
-          <span>{error}</span>
+          {error}
         </div>
       )}
 
       {message && (
         <div className="successBox">
           <CheckCircle2 size={20} />
-
-          <span>
-            {message}
-          </span>
+          {message}
         </div>
       )}
 
@@ -3842,40 +2403,29 @@ function AdminTools({
           initial={
             editing || {
               name: "",
-              category:
-                "Utility Tools",
+              category: "Utility Tools",
               description: "",
               slug: "",
               icon: "",
-              is_active:
-                true,
-              sort_order:
-                tools.length,
+              is_active: true,
+              sort_order: tools.length,
             }
           }
-          editing={
-            Boolean(editing)
-          }
-          saving={saving}
+          editing={Boolean(editing)}
           onCancel={() => {
             setShowForm(false);
             setEditing(null);
           }}
-          onSave={saveTool}
+          onSave={save}
         />
       )}
 
       <div className="adminToolbar">
         <div className="search">
           <Search size={18} />
-
           <input
             value={search}
-            onChange={(e) =>
-              setSearch(
-                e.target.value
-              )
-            }
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tools..."
           />
         </div>
@@ -3886,56 +2436,28 @@ function AdminTools({
           type="button"
         >
           <RefreshCw size={16} />
-
           Refresh
         </button>
       </div>
 
       <div className="toolTable">
         <div className="toolTableHead">
-          <span>
-            Tool
-          </span>
-
-          <span>
-            Category
-          </span>
-
-          <span>
-            Status
-          </span>
-
-          <span>
-            Order
-          </span>
-
-          <span>
-            Actions
-          </span>
+          <span>Tool</span>
+          <span>Category</span>
+          <span>Status</span>
+          <span>Order</span>
+          <span>Actions</span>
         </div>
 
         {filtered.map((item) => (
-          <div
-            className="toolTableRow"
-            key={item.id}
-          >
+          <div className="toolTableRow" key={item.id}>
             <div>
-              <strong>
-                {item.name}
-              </strong>
-
-              <small>
-                /{item.slug}
-              </small>
-
-              <p>
-                {item.description}
-              </p>
+              <strong>{item.name}</strong>
+              <small>/{item.slug}</small>
+              <p>{item.description}</p>
             </div>
 
-            <span>
-              {item.category}
-            </span>
+            <span>{item.category}</span>
 
             <span>
               <b
@@ -3945,251 +2467,112 @@ function AdminTools({
                     : "statusInactive"
                 }
               >
-                {item.is_active
-                  ? "Active"
-                  : "Inactive"}
+                {item.is_active ? "Active" : "Inactive"}
               </b>
             </span>
 
-            <span className="orderButtons">
-              <button
-                type="button"
-                className="iconButton"
-                title="Move up"
-                onClick={() =>
-                  moveTool(
-                    item,
-                    "up"
-                  )
-                }
-              >
-                <ChevronUp
-                  size={17}
-                />
-              </button>
-
-              <b>
-                {item.sort_order}
-              </b>
-
-              <button
-                type="button"
-                className="iconButton"
-                title="Move down"
-                onClick={() =>
-                  moveTool(
-                    item,
-                    "down"
-                  )
-                }
-              >
-                <ChevronDown
-                  size={17}
-                />
-              </button>
-            </span>
+            <span>{item.sort_order}</span>
 
             <div className="rowActions">
               <button
                 className="iconButton"
-                title="Edit"
-                type="button"
                 onClick={() => {
-                  setEditing(
-                    item
-                  );
-
-                  setShowForm(
-                    true
-                  );
-
-                  setError("");
-                  setMessage("");
+                  setEditing(item);
+                  setShowForm(true);
                 }}
+                type="button"
               >
-                <Pencil
-                  size={17}
-                />
+                <Pencil size={17} />
               </button>
 
               <button
                 className="iconButton"
-                title={
-                  item.is_active
-                    ? "Disable"
-                    : "Enable"
-                }
+                onClick={() => toggle(item)}
                 type="button"
-                onClick={() =>
-                  toggleTool(
-                    item
-                  )
-                }
               >
-                <Power
-                  size={17}
-                />
+                <Power size={17} />
               </button>
 
               <button
                 className="iconButton danger"
-                title="Delete"
+                onClick={() => remove(item)}
                 type="button"
-                onClick={() =>
-                  deleteTool(
-                    item.id,
-                    item.name
-                  )
-                }
               >
-                <Trash2
-                  size={17}
-                />
+                <Trash2 size={17} />
               </button>
             </div>
           </div>
         ))}
-
-        {!filtered.length && (
-          <div className="empty">
-            No tools found.
-          </div>
-        )}
       </div>
     </section>
   );
 }
 
-/* =========================================================
-   TOOL FORM
-========================================================= */
-
 function ToolForm({
   initial,
   editing,
-  saving,
   onCancel,
   onSave,
 }) {
-  const [form, setForm] =
-    useState({
-      name:
-        initial.name || "",
-      category:
-        initial.category ||
-        "Utility Tools",
-      description:
-        initial.description ||
-        "",
-      slug:
-        initial.slug || "",
-      icon:
-        initial.icon || "",
-      is_active:
-        initial.is_active !==
-        false,
-      sort_order:
-        Number(
-          initial.sort_order || 0
-        ),
-    });
+  const [form, setForm] = useState({
+    name: initial.name || "",
+    category: initial.category || "Utility Tools",
+    description: initial.description || "",
+    slug: initial.slug || "",
+    icon: initial.icon || "",
+    is_active: initial.is_active !== false,
+    sort_order: Number(initial.sort_order || 0),
+  });
 
-  const change = (
-    key,
-    value
-  ) => {
-    setForm((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
+  const change = (key, value) =>
+    setForm((p) => ({ ...p, [key]: value }));
 
   return (
     <div className="toolForm">
-      <div className="formTitle">
-        <h3>
-          {editing
-            ? "Edit Tool"
-            : "Add New Tool"}
-        </h3>
-      </div>
+      <h3>{editing ? "Edit Tool" : "Add New Tool"}</h3>
 
       <div className="formGrid">
         <label>
           Tool Name
-
           <input
             value={form.name}
-            onChange={(e) =>
-              change(
-                "name",
-                e.target.value
-              )
-            }
-            placeholder="PDF to Word"
+            onChange={(e) => change("name", e.target.value)}
           />
         </label>
 
         <label>
           Category
-
           <input
-            value={
-              form.category
-            }
+            value={form.category}
             onChange={(e) =>
-              change(
-                "category",
-                e.target.value
-              )
+              change("category", e.target.value)
             }
-            placeholder="PDF Tools"
           />
         </label>
 
         <label>
           Slug
-
           <input
             value={form.slug}
-            onChange={(e) =>
-              change(
-                "slug",
-                e.target.value
-              )
-            }
-            placeholder="pdf-word"
+            onChange={(e) => change("slug", e.target.value)}
           />
         </label>
 
         <label>
           Icon
-
           <input
             value={form.icon}
-            onChange={(e) =>
-              change(
-                "icon",
-                e.target.value
-              )
-            }
-            placeholder="FileText"
+            onChange={(e) => change("icon", e.target.value)}
           />
         </label>
 
         <label>
           Sort Order
-
           <input
             type="number"
-            value={
-              form.sort_order
-            }
+            value={form.sort_order}
             onChange={(e) =>
-              change(
-                "sort_order",
-                e.target.value
-              )
+              change("sort_order", e.target.value)
             }
           />
         </label>
@@ -4197,34 +2580,21 @@ function ToolForm({
         <label className="checkboxLabel">
           <input
             type="checkbox"
-            checked={
-              form.is_active
-            }
+            checked={form.is_active}
             onChange={(e) =>
-              change(
-                "is_active",
-                e.target.checked
-              )
+              change("is_active", e.target.checked)
             }
           />
-
           Active
         </label>
 
         <label className="full">
           Description
-
           <textarea
-            value={
-              form.description
-            }
+            value={form.description}
             onChange={(e) =>
-              change(
-                "description",
-                e.target.value
-              )
+              change("description", e.target.value)
             }
-            placeholder="Describe what this tool does..."
           />
         </label>
       </div>
@@ -4232,36 +2602,17 @@ function ToolForm({
       <div className="actions">
         <button
           className="primary"
+          onClick={() => onSave(form)}
           type="button"
-          disabled={saving}
-          onClick={() =>
-            onSave(form)
-          }
         >
-          {saving ? (
-            <>
-              <Loader2
-                className="spin"
-                size={17}
-              />
-
-              Saving...
-            </>
-          ) : (
-            <>
-              <Save size={17} />
-
-              {editing
-                ? "Update Tool"
-                : "Create Tool"}
-            </>
-          )}
+          <Save size={17} />
+          {editing ? "Update Tool" : "Create Tool"}
         </button>
 
         <button
           className="secondary"
-          type="button"
           onClick={onCancel}
+          type="button"
         >
           Cancel
         </button>
@@ -4271,285 +2622,454 @@ function ToolForm({
 }
 
 /* =========================================================
-   ADMIN USERS
+   HELPERS
 ========================================================= */
 
-function AdminUsers({
-  adminEmail,
-}) {
-  return (
-    <section className="adminCard adminWide">
-      <LockKeyhole />
-
-      <h2>
-        Users & Access
-      </h2>
-
-      <p>
-        Current admin access is
-        verified using the
-        Supabase profiles table.
-      </p>
-
-      <div className="adminInfo">
-        <b>
-          Current admin:
-        </b>{" "}
-        {adminEmail ||
-          "Unknown"}
-
-        <br />
-
-        <span>
-          Role: admin
-        </span>
-      </div>
-    </section>
+function toTitleCase(text) {
+  return text.toLowerCase().replace(
+    /\b\w/g,
+    (c) => c.toUpperCase()
   );
 }
 
-/* =========================================================
-   ADMIN ANALYTICS
-========================================================= */
+function unicodeBase64Encode(text) {
+  const bytes = new TextEncoder().encode(text);
 
-function AdminAnalytics({
-  tools,
-}) {
-  const active =
-    tools.filter(
-      (t) => t.is_active
-    ).length;
+  let binary = "";
 
-  const categories =
-    new Set(
-      tools.map(
-        (t) => t.category
-      )
-    ).size;
+  bytes.forEach((b) => {
+    binary += String.fromCharCode(b);
+  });
 
-  return (
-    <section className="adminCard adminWide">
-      <LayoutDashboard />
-
-      <h2>
-        Analytics
-      </h2>
-
-      <p>
-        Basic database statistics
-        are available.
-      </p>
-
-      <div className="stats adminStats">
-        <div>
-          <b>
-            {tools.length}
-          </b>
-
-          <small>
-            Total Tools
-          </small>
-        </div>
-
-        <div>
-          <b>
-            {active}
-          </b>
-
-          <small>
-            Active Tools
-          </small>
-        </div>
-
-        <div>
-          <b>
-            {categories}
-          </b>
-
-          <small>
-            Categories
-          </small>
-        </div>
-      </div>
-
-      <div className="adminInfo">
-        <b>
-          Next analytics phase:
-        </b>
-
-        <br />
-
-        <span>
-          Total users, tool runs,
-          popular tools, daily
-          activity and usage
-          charts.
-        </span>
-      </div>
-    </section>
-  );
+  return btoa(binary);
 }
 
-/* =========================================================
-   SECURITY / TEXT HELPERS
-========================================================= */
+function unicodeBase64Decode(text) {
+  const binary = atob(text);
 
-function generatePassword(
-  length = 18
-) {
-  const chars =
-    "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*";
-
-  const values =
-    new Uint32Array(
-      length
-    );
-
-  crypto.getRandomValues(
-    values
+  const bytes = Uint8Array.from(
+    binary,
+    (c) => c.charCodeAt(0)
   );
 
-  return Array.from(
-    values,
-    (value) =>
-      chars[
-        value %
-          chars.length
-      ]
-  ).join("");
-}
-
-function passwordStrength(
-  password
-) {
-  let score = 0;
-
-  if (password.length >= 8)
-    score++;
-
-  if (password.length >= 12)
-    score++;
-
-  if (/[A-Z]/.test(password))
-    score++;
-
-  if (/[a-z]/.test(password))
-    score++;
-
-  if (/[0-9]/.test(password))
-    score++;
-
-  if (
-    /[^A-Za-z0-9]/.test(
-      password
-    )
-  )
-    score++;
-
-  if (score <= 2)
-    return "Weak password.";
-
-  if (score <= 4)
-    return "Medium password.";
-
-  return "Strong password.";
+  return new TextDecoder().decode(bytes);
 }
 
 async function sha256(text) {
-  const data =
-    new TextEncoder().encode(
-      text
-    );
+  const data = new TextEncoder().encode(text);
 
-  const hash =
-    await crypto.subtle.digest(
-      "SHA-256",
-      data
-    );
+  const hash = await crypto.subtle.digest(
+    "SHA-256",
+    data
+  );
+
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function generatePassword(length = 18) {
+  const chars =
+    "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*";
+
+  const values = new Uint32Array(length);
+
+  crypto.getRandomValues(values);
 
   return Array.from(
-    new Uint8Array(hash)
-  )
-    .map((b) =>
-      b.toString(16).padStart(
-        2,
-        "0"
-      )
-    )
-    .join("");
+    values,
+    (v) => chars[v % chars.length]
+  ).join("");
+}
+
+function passwordStrength(password) {
+  let score = 0;
+
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/\d/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score <= 2) return "Weak";
+  if (score <= 4) return "Medium";
+  return "Strong";
 }
 
 function textToMorse(text) {
   const morse = {
-    a: ".-",
-    b: "-...",
-    c: "-.-.",
-    d: "-..",
-    e: ".",
-    f: "..-.",
-    g: "--.",
-    h: "....",
-    i: "..",
-    j: ".---",
-    k: "-.-",
-    l: ".-..",
-    m: "--",
-    n: "-.",
-    o: "---",
-    p: ".--.",
-    q: "--.-",
-    r: ".-.",
-    s: "...",
-    t: "-",
-    u: "..-",
-    v: "...-",
-    w: ".--",
-    x: "-..-",
-    y: "-.--",
-    z: "--..",
-
-    0: "-----",
-    1: ".----",
-    2: "..---",
-    3: "...--",
-    4: "....-",
-    5: ".....",
-    6: "-....",
-    7: "--...",
-    8: "---..",
+    a: ".-", b: "-...", c: "-.-.", d: "-..",
+    e: ".", f: "..-.", g: "--.", h: "....",
+    i: "..", j: ".---", k: "-.-", l: ".-..",
+    m: "--", n: "-.", o: "---", p: ".--.",
+    q: "--.-", r: ".-.", s: "...", t: "-",
+    u: "..-", v: "...-", w: ".--", x: "-..-",
+    y: "-.--", z: "--..",
+    0: "-----", 1: ".----", 2: "..---",
+    3: "...--", 4: "....-", 5: ".....",
+    6: "-....", 7: "--...", 8: "---..",
     9: "----.",
   };
 
   return text
     .toLowerCase()
     .split("")
-    .map((char) =>
-      char === " "
-        ? "/"
-        : morse[char] ||
-          char
-    )
+    .map((c) => (c === " " ? "/" : morse[c] || c))
     .join(" ");
 }
 
-/* =========================================================
-   START APPLICATION
-========================================================= */
+function loremIpsum(paragraphs = 3) {
+  const base =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
-const rootElement =
-  document.getElementById(
-    "root"
-  );
-
-if (!rootElement) {
-  throw new Error(
-    "Root element not found. Check index.html."
-  );
+  return Array.from(
+    { length: paragraphs },
+    () => base
+  ).join("\n\n");
 }
 
-createRoot(
-  rootElement
-).render(
+function calculatePercentage(text) {
+  const [percent, value] = text
+    .split(/[,\s]+/)
+    .map(Number);
+
+  if (!Number.isFinite(percent) || !Number.isFinite(value)) {
+    return "Use: percentage, value — example: 20, 500";
+  }
+
+  return `${percent}% of ${value} = ${(percent * value / 100).toFixed(2)}`;
+}
+
+function calculateDiscount(text) {
+  const [price, discount] = text
+    .split(/[,\s]+/)
+    .map(Number);
+
+  if (!Number.isFinite(price) || !Number.isFinite(discount)) {
+    return "Use: price, discount — example: 1000, 20";
+  }
+
+  const saved = price * discount / 100;
+
+  return `Original: ${price}\nDiscount: ${saved.toFixed(2)}\nFinal: ${(price - saved).toFixed(2)}`;
+}
+
+function calculateBMI(text) {
+  const [weight, heightCm] = text
+    .split(/[,\s]+/)
+    .map(Number);
+
+  if (!weight || !heightCm) {
+    return "Use: weight(kg), height(cm) — example: 70, 175";
+  }
+
+  const height = heightCm / 100;
+  const bmi = weight / (height * height);
+
+  return `BMI: ${bmi.toFixed(2)}`;
+}
+
+function calculateGST(text) {
+  const [amount, rate = 18] = text
+    .split(/[,\s]+/)
+    .map(Number);
+
+  if (!Number.isFinite(amount)) {
+    return "Use: amount, GST rate — example: 1000, 18";
+  }
+
+  const gst = amount * rate / 100;
+
+  return `Amount: ${amount}\nGST: ${gst.toFixed(2)}\nTotal: ${(amount + gst).toFixed(2)}`;
+}
+
+function calculateTip(text) {
+  const [bill, tip = 10, people = 1] = text
+    .split(/[,\s]+/)
+    .map(Number);
+
+  if (!Number.isFinite(bill)) {
+    return "Use: bill, tip%, people — example: 1000, 10, 2";
+  }
+
+  const tipAmount = bill * tip / 100;
+  const total = bill + tipAmount;
+
+  return `Tip: ${tipAmount.toFixed(2)}\nTotal: ${total.toFixed(2)}\nPer person: ${(total / people).toFixed(2)}`;
+}
+
+function convertTemperature(text) {
+  const parts = text.trim().split(/[,\s]+/);
+  const value = Number(parts[0]);
+  const from = (parts[1] || "C").toUpperCase();
+
+  if (!Number.isFinite(value)) {
+    return "Use: value, unit — example: 100, C";
+  }
+
+  if (from === "C") {
+    return `Fahrenheit: ${(value * 9 / 5 + 32).toFixed(2)}\nKelvin: ${(value + 273.15).toFixed(2)}`;
+  }
+
+  if (from === "F") {
+    return `Celsius: ${((value - 32) * 5 / 9).toFixed(2)}\nKelvin: ${(((value - 32) * 5 / 9) + 273.15).toFixed(2)}`;
+  }
+
+  if (from === "K") {
+    return `Celsius: ${(value - 273.15).toFixed(2)}\nFahrenheit: ${((value - 273.15) * 9 / 5 + 32).toFixed(2)}`;
+  }
+
+  return "Unit must be C, F or K.";
+}
+
+function convertUnits(text) {
+  const parts = text.trim().split(/[,\s]+/);
+
+  const value = Number(parts[0]);
+  const from = (parts[1] || "").toLowerCase();
+
+  if (!Number.isFinite(value)) {
+    return "Use: value, unit — example: 10, km";
+  }
+
+  const conversions = {
+    km: {
+      m: value * 1000,
+      mi: value * 0.621371,
+      ft: value * 3280.84,
+    },
+    m: {
+      km: value / 1000,
+      ft: value * 3.28084,
+      mi: value * 0.000621371,
+    },
+    kg: {
+      g: value * 1000,
+      lb: value * 2.20462,
+    },
+    g: {
+      kg: value / 1000,
+      lb: value * 0.00220462,
+    },
+  };
+
+  const result = conversions[from];
+
+  if (!result) {
+    return "Supported units: km, m, kg, g";
+  }
+
+  return Object.entries(result)
+    .map(([unit, val]) => `${unit}: ${val}`)
+    .join("\n");
+}
+
+function numberToWords(num) {
+  if (!Number.isFinite(num)) return "Enter a valid number.";
+
+  if (num === 0) return "Zero";
+
+  if (num < 0) return "Minus " + numberToWords(-num);
+
+  const ones = [
+    "",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+  ];
+
+  const tens = [
+    "",
+    "",
+    "Twenty",
+    "Thirty",
+    "Forty",
+    "Fifty",
+    "Sixty",
+    "Seventy",
+    "Eighty",
+    "Ninety",
+  ];
+
+  function under1000(n) {
+    let s = "";
+
+    if (n >= 100) {
+      s += ones[Math.floor(n / 100)] + " Hundred ";
+      n %= 100;
+    }
+
+    if (n >= 20) {
+      s += tens[Math.floor(n / 10)] + " ";
+      n %= 10;
+    }
+
+    if (n > 0) s += ones[n] + " ";
+
+    return s.trim();
+  }
+
+  let n = Math.floor(num);
+  let result = "";
+
+  const millions = Math.floor(n / 1000000);
+
+  if (millions) {
+    result += under1000(millions) + " Million ";
+    n %= 1000000;
+  }
+
+  const thousands = Math.floor(n / 1000);
+
+  if (thousands) {
+    result += under1000(thousands) + " Thousand ";
+    n %= 1000;
+  }
+
+  if (n) result += under1000(n);
+
+  return result.trim();
+}
+
+function numberToRoman(num) {
+  if (!Number.isInteger(num) || num < 1 || num > 3999) {
+    return "Enter an integer from 1 to 3999.";
+  }
+
+  const values = [
+    [1000, "M"],
+    [900, "CM"],
+    [500, "D"],
+    [400, "CD"],
+    [100, "C"],
+    [90, "XC"],
+    [50, "L"],
+    [40, "XL"],
+    [10, "X"],
+    [9, "IX"],
+    [5, "V"],
+    [4, "IV"],
+    [1, "I"],
+  ];
+
+  let result = "";
+
+  for (const [value, symbol] of values) {
+    while (num >= value) {
+      result += symbol;
+      num -= value;
+    }
+  }
+
+  return result;
+}
+
+function generateNames(text, type) {
+  const base =
+    text
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)[0] || "Smart";
+
+  return [
+    `${base}${type}Hub`,
+    `${base}${type}Pro`,
+    `${base}Studio`,
+    `${base}Labs`,
+    `Get${base}`,
+    `${base}Works`,
+    `${base}Plus`,
+    `${base}Flow`,
+    `${base}Cloud`,
+    `${base}Master`,
+  ].join("\n");
+}
+
+function csvToJson(csv) {
+  const lines = csv.trim().split(/\r?\n/);
+
+  if (!lines.length) return [];
+
+  const headers = lines[0].split(",").map((x) => x.trim());
+
+  return lines.slice(1).map((line) => {
+    const values = line.split(",");
+
+    return Object.fromEntries(
+      headers.map((h, i) => [
+        h,
+        (values[i] || "").trim(),
+      ])
+    );
+  });
+}
+
+function jsonToCsv(text) {
+  const data = JSON.parse(text);
+
+  if (!Array.isArray(data) || !data.length) {
+    throw new Error("JSON must be a non-empty array.");
+  }
+
+  const headers = Object.keys(data[0]);
+
+  const rows = data.map((obj) =>
+    headers
+      .map((h) =>
+        `"${String(obj[h] ?? "").replace(/"/g, '""')}"`
+      )
+      .join(",")
+  );
+
+  return [
+    headers.join(","),
+    ...rows,
+  ].join("\n");
+}
+
+function downloadText(text, filename) {
+  const blob = new Blob([text], {
+    type: "text/plain;charset=utf-8",
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+/* =========================================================
+   START
+========================================================= */
+
+const root = document.getElementById("root");
+
+if (!root) {
+  throw new Error("Root element not found.");
+}
+
+createRoot(root).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
