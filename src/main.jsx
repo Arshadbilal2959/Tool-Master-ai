@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Search,
@@ -25,6 +25,13 @@ import {
 } from "lucide-react";
 
 import "./styles.css";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+);
 
 /* =========================================================
    CONFIGURATION
@@ -194,6 +201,66 @@ function App() {
   const [query, setQuery] = useState("");
   const [tool, setTool] = useState(null);
   const [admin, setAdmin] = useState(false);
+  const [adminUser, setAdminUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!mounted) return;
+
+      if (data.session?.user) {
+        const isAdmin = await verifyAdmin(data.session.user);
+        if (isAdmin) {
+          setAdminUser(data.session.user);
+          setAdmin(true);
+        }
+      }
+      setAuthLoading(false);
+    };
+
+    loadSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!mounted) return;
+
+        // Run database role verification outside the auth callback so
+        // Supabase's internal auth lock is not blocked by another request.
+        setTimeout(async () => {
+          if (!mounted) return;
+
+          if (!session?.user) {
+            setAdminUser(null);
+            setAdmin(false);
+            setShowAdminLogin(false);
+            return;
+          }
+
+          const isAdmin = await verifyAdmin(session.user);
+
+          if (isAdmin) {
+            setAdminUser(session.user);
+            setAdmin(true);
+          } else {
+            await supabase.auth.signOut();
+            setAdminUser(null);
+            setAdmin(false);
+            setShowAdminLogin(false);
+            window.alert("Access denied. This account is not an admin.");
+          }
+        }, 0);
+      }
+    );
+
+    return () => {
+      mounted = false;
+      listener?.subscription?.unsubscribe();
+    };
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -249,8 +316,14 @@ function App() {
           <button
             className="adminBtn"
             onClick={() => {
-              setAdmin(!admin);
               setTool(null);
+              if (admin) {
+                setAdmin(false);
+              } else if (adminUser) {
+                setAdmin(true);
+              } else {
+                setShowAdminLogin(true);
+              }
             }}
             type="button"
           >
@@ -261,7 +334,16 @@ function App() {
       </header>
 
       {admin ? (
-        <Admin onClose={backHome} />
+        <Admin
+          user={adminUser}
+          onClose={backHome}
+          onLogout={async () => {
+            await supabase.auth.signOut();
+            setAdminUser(null);
+            setAdmin(false);
+            setShowAdminLogin(false);
+          }}
+        />
       ) : tool ? (
         <ToolPage
           t={tool}
@@ -366,6 +448,25 @@ function App() {
             )}
           </main>
         </>
+      )}
+
+      {showAdminLogin && !admin && (
+        <AdminLogin
+          onClose={() => setShowAdminLogin(false)}
+          onSuccess={(user) => {
+            setAdminUser(user);
+            setAdmin(true);
+            setShowAdminLogin(false);
+            setTool(null);
+          }}
+        />
+      )}
+
+      {authLoading && (
+        <div className="authLoading">
+          <Loader2 className="spin" size={22} />
+          <span>Checking secure session...</span>
+        </div>
       )}
 
       <footer id="about">
@@ -1555,115 +1656,314 @@ function GenericTool({ t, back }) {
    ADMIN
 ========================================================= */
 
-function Admin({ onClose }) {
+function AdminLogin({ onClose, onSuccess }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const login = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!email.trim() || !password) {
+      setError("Please enter your admin email and password.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { data, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
+
+      if (authError) throw authError;
+      if (!data.user) throw new Error("Login failed.");
+
+      const isAdmin = await verifyAdmin(data.user);
+
+      if (!isAdmin) {
+        await supabase.auth.signOut();
+        throw new Error(
+          "Access denied. This account does not have the admin role."
+        );
+      }
+
+      onSuccess(data.user);
+    } catch (err) {
+      setError(err?.message || "Unable to sign in.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="authOverlay" role="dialog" aria-modal="true">
+      <form className="authCard" onSubmit={login}>
+        <button
+          className="authClose"
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          <X size={20} />
+        </button>
+
+        <div className="toolIcon big authIcon">
+          <LockKeyhole />
+        </div>
+
+        <span className="pill">Secure Admin Access</span>
+        <h2>Admin Login</h2>
+        <p>Sign in with an account that has the <b>admin</b> role.</p>
+
+        <label>
+          Email
+          <input
+            type="email"
+            autoComplete="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="admin@example.com"
+          />
+        </label>
+
+        <label>
+          Password
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+          />
+        </label>
+
+        {error && (
+          <div className="authError">
+            <AlertCircle size={18} />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <button className="primary authSubmit" disabled={loading} type="submit">
+          {loading ? (
+            <>
+              <Loader2 className="spin" size={18} />
+              Signing in...
+            </>
+          ) : (
+            <>
+              <LockKeyhole size={18} />
+              Sign in to Admin
+            </>
+          )}
+        </button>
+
+        <small className="authSecurity">
+          <ShieldCheck size={15} />
+          Authentication and session are handled by Supabase.
+        </small>
+      </form>
+    </div>
+  );
+}
+
+async function verifyAdmin(user) {
+  if (!user?.id) return false;
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Admin role check failed:", error);
+    return false;
+  }
+
+  return data?.role === "admin";
+}
+
+function Admin({ user, onClose, onLogout }) {
+  const [activeSection, setActiveSection] = useState("dashboard");
+
+  const sections = [
+    ["dashboard", "Dashboard", LayoutDashboard],
+    ["tools", "Manage Tools", Settings],
+    ["users", "Manage Users", LockKeyhole],
+    ["analytics", "Analytics", LayoutDashboard],
+  ];
+
   return (
     <main className="admin">
       <div className="adminTop">
         <div>
           <span className="pill">
-            Admin Panel
+            <ShieldCheck size={15} />
+            Secure Admin Panel
           </span>
 
-          <h1>
-            ToolMaster Pro Control Center
-          </h1>
+          <h1>ToolMaster Pro Control Center</h1>
 
           <p>
-            Manage the platform foundation
-            and tools.
+            Welcome, {user?.email || "Administrator"}. Manage your platform
+            from one secure dashboard.
           </p>
         </div>
 
-        <button
-          className="secondary"
-          onClick={onClose}
-          type="button"
-        >
-          Back to Website
-        </button>
+        <div className="adminActions">
+          <button className="secondary" onClick={onClose} type="button">
+            Back to Website
+          </button>
+
+          <button className="secondary" onClick={onLogout} type="button">
+            Logout
+          </button>
+        </div>
       </div>
 
-      <div className="adminGrid">
-        <div className="adminCard">
-          <Settings />
-
-          <h3>
-            Tool Management
-          </h3>
-
-          <p>
-            {tools.length} tools currently
-            configured.
-          </p>
-
+      <div className="adminNav">
+        {sections.map(([id, label, Icon]) => (
           <button
-            className="primary"
+            key={id}
             type="button"
+            className={activeSection === id ? "active" : ""}
+            onClick={() => setActiveSection(id)}
           >
-            Manage Tools
+            <Icon size={17} />
+            {label}
           </button>
-        </div>
-
-        <div className="adminCard">
-          <LockKeyhole />
-
-          <h3>
-            Users & Access
-          </h3>
-
-          <p>
-            Login and role management
-            foundation.
-          </p>
-
-          <button
-            className="primary"
-            type="button"
-          >
-            Manage Users
-          </button>
-        </div>
-
-        <div className="adminCard">
-          <LayoutDashboard />
-
-          <h3>
-            Analytics
-          </h3>
-
-          <p>
-            Dashboard ready for real
-            usage statistics.
-          </p>
-
-          <button
-            className="primary"
-            type="button"
-          >
-            View Analytics
-          </button>
-        </div>
-
-        <div className="adminCard">
-          <CheckCircle2 />
-
-          <h3>
-            System Status
-          </h3>
-
-          <p>
-            Frontend configuration is ready
-            for deployment.
-          </p>
-
-          <strong className="ok">
-            Ready
-          </strong>
-        </div>
+        ))}
       </div>
+
+      {activeSection === "dashboard" && (
+        <div className="adminGrid">
+          <div className="adminCard">
+            <Settings />
+            <h3>Tool Management</h3>
+            <p>{tools.length} tools are currently configured in the frontend.</p>
+            <button
+              className="primary"
+              type="button"
+              onClick={() => setActiveSection("tools")}
+            >
+              Manage Tools
+            </button>
+          </div>
+
+          <div className="adminCard">
+            <LockKeyhole />
+            <h3>Users & Access</h3>
+            <p>Admin authentication is connected to Supabase Auth.</p>
+            <button
+              className="primary"
+              type="button"
+              onClick={() => setActiveSection("users")}
+            >
+              Manage Users
+            </button>
+          </div>
+
+          <div className="adminCard">
+            <LayoutDashboard />
+            <h3>Analytics</h3>
+            <p>Analytics foundation is ready for database usage events.</p>
+            <button
+              className="primary"
+              type="button"
+              onClick={() => setActiveSection("analytics")}
+            >
+              View Analytics
+            </button>
+          </div>
+
+          <div className="adminCard">
+            <CheckCircle2 />
+            <h3>System Status</h3>
+            <p>Supabase authentication and admin role protection are active.</p>
+            <strong className="ok">Protected</strong>
+          </div>
+        </div>
+      )}
+
+      {activeSection === "tools" && (
+        <AdminToolsPlaceholder />
+      )}
+
+      {activeSection === "users" && (
+        <AdminUsersPlaceholder adminEmail={user?.email} />
+      )}
+
+      {activeSection === "analytics" && (
+        <AdminAnalyticsPlaceholder />
+      )}
     </main>
   );
 }
+
+function AdminToolsPlaceholder() {
+  return (
+    <section className="adminCard adminWide">
+      <Settings />
+      <h2>Manage Tools</h2>
+      <p>
+        Phase 1 security is complete. Tool CRUD will be connected to the
+        Supabase <code>tools</code> table in the next phase.
+      </p>
+      <div className="adminInfo">
+        <b>Current tools:</b> {tools.length}
+        <br />
+        <span>
+          Next: Add, edit, delete, enable/disable and reorder tools from the
+          database.
+        </span>
+      </div>
+    </section>
+  );
+}
+
+function AdminUsersPlaceholder({ adminEmail }) {
+  return (
+    <section className="adminCard adminWide">
+      <LockKeyhole />
+      <h2>Users & Access</h2>
+      <p>
+        Your current authenticated admin account is verified against the
+        Supabase <code>profiles.role</code> value.
+      </p>
+      <div className="adminInfo">
+        <b>Current admin:</b> {adminEmail || "Unknown"}
+        <br />
+        <span>
+          Next: connect the user-management table and admin-only RLS policies.
+        </span>
+      </div>
+    </section>
+  );
+}
+
+function AdminAnalyticsPlaceholder() {
+  return (
+    <section className="adminCard adminWide">
+      <LayoutDashboard />
+      <h2>Analytics</h2>
+      <p>
+        The dashboard is ready for usage statistics. We will connect tool
+        usage events to Supabase in the analytics phase.
+      </p>
+      <div className="adminInfo">
+        <b>Next:</b> total users, tool runs, popular tools, daily activity and
+        usage charts.
+      </div>
+    </section>
+  );
+}
+
 
 /* =========================================================
    HELPERS
