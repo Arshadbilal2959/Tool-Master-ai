@@ -250,23 +250,104 @@ function TextToVideo({back}){
 }
 
 function StudentAIHelper({back}){
-  const [question,setQuestion]=useState(""); const [files,setFiles]=useState([]);
-  const [answer,setAnswer]=useState(""); const [loading,setLoading]=useState(false);
-  const solve=async()=>{
-    if(!question.trim()&&!files.length) return setAnswer("Please enter a question or upload a study file.");
-    setLoading(true);
-    try{
-      const base=import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL;
-      if(!base){ setAnswer("Your file is selected locally. Connect a secure AI backend to receive real AI answers."); return; }
-      const fd=new FormData(); fd.append("question",question); files.forEach(f=>fd.append("files",f));
-      const r=await fetch(base,{method:"POST",body:fd}); const d=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(d.error||"AI request failed"); setAnswer(d.answer||d.message||"AI response received.");
-    }catch(e){setAnswer(e.message);} finally{setLoading(false);}
+  const PLANS={
+    free:{name:"Free",limit:5,badge:"Starter",desc:"For trying the Student AI Helper",price:"$0"},
+    silver:{name:"Silver",limit:50,badge:"Popular",desc:"For regular study help",price:"$4.99/mo"},
+    gold:{name:"Gold",limit:200,badge:"Best Value",desc:"For serious students",price:"$9.99/mo"},
+    demand:{name:"Demand",limit:500,badge:"Custom",desc:"For high-volume study use",price:"$19.99/mo"},
+    platinum:{name:"Platinum",limit:Infinity,badge:"Premium",desc:"Unlimited AI study help",price:"$39.99/mo"}
   };
-  return <Shell back={back} t={["Student AI Helper","AI & Education","",""]} status="AI processing is sent to your configured secure backend only when VITE_API_BASE_URL or VITE_SUPABASE_FUNCTION_URL is configured.">
-    <div className="aiHelper"><div className="aiCard"><h3>📚 Ask your question</h3><textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question or explain what you need help with..."/>
-      <FilePicker multiple accept=".pdf,image/*,.txt,.doc,.docx" onChange={setFiles} files={files}/><div className="actions"><button className="primary" disabled={loading} onClick={solve}><Sparkles size={17}/>{loading?"Processing...":"Get AI Help"}</button>{files.length>0&&<button className="secondary" onClick={()=>setFiles([])}><Trash2/> Clear files</button>}</div>
-    </div><div className="aiCard resultCard"><h3>🤖 AI Answer</h3><div className="answer">{answer||"Your step-by-step answer will appear here."}</div>{answer&&<div className="actions"><button className="secondary" onClick={()=>navigator.clipboard?.writeText(answer)}><Copy/> Copy</button><button className="secondary" onClick={()=>downloadText(answer,"student-ai-answer.txt")}><Download/> Download</button></div>}</div></div>
+  const [plan,setPlan]=useState(()=>localStorage.getItem("tm_student_plan")||"free");
+  const [question,setQuestion]=useState("");
+  const [files,setFiles]=useState([]);
+  const [answer,setAnswer]=useState("");
+  const [loading,setLoading]=useState(false);
+  const [language,setLanguage]=useState("English");
+  const [subject,setSubject]=useState("General");
+  const [usage,setUsage]=useState(()=>Number(localStorage.getItem("tm_student_usage")||0));
+  const [usageDate,setUsageDate]=useState(()=>localStorage.getItem("tm_student_usage_date")||"");
+  const [showPlans,setShowPlans]=useState(false);
+  const [status,setStatus]=useState("");
+
+  const today=new Date().toISOString().slice(0,10);
+  const usedToday=usageDate===today?usage:0;
+  const currentPlan=PLANS[plan]||PLANS.free;
+  const remaining=currentPlan.limit===Infinity?"Unlimited":Math.max(0,currentPlan.limit-usedToday);
+
+  const choosePlan=(id)=>{
+    setPlan(id);
+    localStorage.setItem("tm_student_plan",id);
+    if(usageDate!==today){setUsage(0);setUsageDate(today);localStorage.setItem("tm_student_usage","0");localStorage.setItem("tm_student_usage_date",today);}
+    setShowPlans(false);
+    setStatus(`${PLANS[id].name} plan selected. Payment/subscription can be connected to your existing billing system later.`);
+  };
+
+  const readFileText=async(file)=>{
+    const ext=file.name.toLowerCase().split(".").pop();
+    if(["txt","rtf","csv","md"].includes(ext)) return await file.text();
+    if(ext==="pdf") return "[PDF uploaded: the secure AI backend should extract PDF text. The file name is: "+file.name+"]";
+    if(["jpg","jpeg","png","webp"].includes(ext)) return "[Image uploaded: "+file.name+"]";
+    if(ext==="docx") return "[DOCX uploaded: "+file.name+"]";
+    return "[Uploaded file: "+file.name+"]";
+  };
+
+  const solve=async()=>{
+    if(!question.trim()&&!files.length){setAnswer("Please enter a question or upload a study file.");return;}
+    if(currentPlan.limit!==Infinity && usedToday>=currentPlan.limit){
+      setAnswer(`Daily limit reached for the ${currentPlan.name} plan. Choose a higher plan to continue.`);
+      setShowPlans(true); return;
+    }
+    setLoading(true);setStatus("");
+    try{
+      const functionUrl="https://xpjhcwowzxpiiwkteiua.supabase.co/functions/v1/student-ai-helper";
+      let material="";
+      if(files.length){
+        const parts=[];
+        for(const f of files.slice(0,5)) parts.push(`\n--- ${f.name} ---\n${(await readFileText(f)).slice(0,12000)}`);
+        material=parts.join("\n");
+      }
+      const prompt=`You are Student AI Helper.\nSubject: ${subject}\nPreferred language: ${language}\n\nStudent question:\n${question||"Please explain the uploaded study material."}\n\nStudy material:\n${material||"No file uploaded."}\n\nGive a clear, educational, step-by-step answer. For maths show calculations. For science explain concepts simply. If the material is only a file-name placeholder, answer the question and do not pretend you read hidden file contents.`;
+      const r=await fetch(functionUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:prompt,language,subject,plan:currentPlan.name})});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(d.error||`AI backend error (${r.status})`);
+      const next=usedToday+1;
+      setAnswer(d.answer||d.message||"AI response received.");
+      setUsage(next);setUsageDate(today);
+      localStorage.setItem("tm_student_usage",String(next));
+      localStorage.setItem("tm_student_usage_date",today);
+      setStatus(`${currentPlan.name} plan • ${currentPlan.limit===Infinity?"Unlimited":`${next}/${currentPlan.limit}`} questions used today`);
+    }catch(e){setAnswer("AI Helper error: "+(e?.message||String(e)));}
+    finally{setLoading(false);}
+  };
+
+  const clearAll=()=>{setQuestion("");setFiles([]);setAnswer("");setStatus("");};
+
+  return <Shell back={back} t={["Student AI Helper","AI & Education","AI study assistant with Free, Silver, Gold, Demand and Platinum plans",""]} status={status||`${currentPlan.name} plan • ${remaining==="Unlimited"?"Unlimited questions":`${remaining} questions remaining today`}`}>
+    <div className="aiHelper">
+      <div className="aiCard">
+        <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}>
+          <div><h3>📚 Ask your question</h3><small>Plan: <b>{currentPlan.name}</b> · {currentPlan.limit===Infinity?"Unlimited":"Daily limit "+currentPlan.limit}</small></div>
+          <button className="secondary" onClick={()=>setShowPlans(!showPlans)}>⭐ Plans</button>
+        </div>
+        {showPlans&&<div className="planGrid" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10,margin:"16px 0"}}>
+          {Object.entries(PLANS).map(([id,p])=><button key={id} onClick={()=>choosePlan(id)} className={plan===id?"primary":"secondary"} style={{textAlign:"left",padding:14,borderRadius:12}}>
+            <b>{p.name}</b><br/><small>{p.price}</small><br/><small>{p.limit===Infinity?"Unlimited":p.limit+" questions/day"}</small>
+          </button>)}
+        </div>}
+        <div className="videoOptions">
+          <label>Subject<select value={subject} onChange={e=>setSubject(e.target.value)}><option>General</option><option>Mathematics</option><option>Science</option><option>English</option><option>Computer Science</option><option>History</option><option>Business</option></select></label>
+          <label>Language<select value={language} onChange={e=>setLanguage(e.target.value)}><option>English</option><option>Urdu</option><option>Roman Urdu</option><option>Hindi</option><option>Arabic</option></select></label>
+        </div>
+        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question, paste homework, or ask for notes..."/>
+        <FilePicker multiple accept=".pdf,.docx,.rtf,.txt,.csv,.md,image/*" onChange={setFiles} files={files}/>
+        <div className="actions"><button className="primary" disabled={loading} onClick={solve}><Sparkles size={17}/>{loading?"Thinking...":"Get AI Help"}</button><button className="secondary" onClick={clearAll}>Clear</button></div>
+      </div>
+      <div className="aiCard resultCard">
+        <h3>🤖 AI Answer</h3>
+        <div className="answer" style={{whiteSpace:"pre-wrap"}}>{answer||"Your step-by-step answer will appear here."}</div>
+        {answer&&<div className="actions"><button className="secondary" onClick={()=>navigator.clipboard?.writeText(answer)}><Copy/> Copy</button><button className="secondary" onClick={()=>downloadText(answer,"student-ai-answer.txt")}><Download/> Download</button></div>}
+      </div>
+    </div>
   </Shell>;
 }
 
@@ -323,17 +404,35 @@ function PdfTool({t,back}){
     const doc=new Document({sections:[{children}]}); const blob=await Packer.toBlob(doc); downloadBlob(blob,file.name.replace(/\\.pdf$/i,"")+".docx"); setStatus("Editable Word file downloaded.");
   }
   async function wordToPdf(file){
-    const mammoth=await loadLib("mammoth"); const html=(await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()})).value;
+    const ext=file.name.toLowerCase().split(".").pop();
+    if(ext==="rtf"){
+      const rtf=await file.text();
+      let text=rtf.replace(/\\'[0-9a-fA-F]{2}/g,m=>String.fromCharCode(parseInt(m.slice(2),16)))
+        .replace(/\\par[d]?/g,"\n").replace(/\\line/g,"\n").replace(/\\tab/g,"\t")
+        .replace(/\\u(-?\d+)\??/g,(_,n)=>String.fromCharCode((parseInt(n,10)+65536)%65536))
+        .replace(/\\[a-zA-Z]+-?\d* ?/g,"").replace(/[{}]/g,"").trim();
+      const {jsPDF}=await loadLib("jspdf");
+      const pdf=new jsPDF({unit:"mm",format:"a4"});
+      const lines=pdf.splitTextToSize(text||"(No readable text found)",180);let y=15;
+      pdf.setFontSize(11);
+      for(const line of lines){if(y>282){pdf.addPage();y=15;}pdf.text(line,15,y);y+=6;}
+      pdf.save(file.name.replace(/\.rtf$/i,"")+".pdf");setStatus("RTF converted to PDF and downloaded.");return;
+    }
+    if(ext!=="docx") throw new Error("Please upload a .DOCX or .RTF Word document.");
+    const mammoth=await loadLib("mammoth");
+    const html=(await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()})).value;
     const w=window.open("","_blank"); if(!w) throw new Error("Popup blocked. Allow popups for this site.");
-    w.document.write(`<html><head><title>Word to PDF</title><style>body{font-family:Arial;padding:40px;line-height:1.6}img{max-width:100%}</style></head><body>${html}</body></html>`); w.document.close(); w.focus(); setTimeout(()=>w.print(),500); setStatus("Print dialog opened. Choose 'Save as PDF' to download."); 
+    w.document.write(`<html><head><title>Word to PDF</title><style>body{font-family:Arial,sans-serif;padding:40px;line-height:1.6}img{max-width:100%}@page{size:A4;margin:20mm}</style></head><body>${html}</body></html>`);
+    w.document.close();w.focus();setTimeout(()=>w.print(),700);setStatus("Print dialog opened. Choose 'Save as PDF'.");
   }
+
   async function jpgToPdf(){
     const {PDFDocument}=await loadLib("pdf-lib"); const doc=await PDFDocument.create();
     for(const f of files){const bytes=await f.arrayBuffer(); let img; try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)} const page=doc.addPage([img.width,img.height]); page.drawImage(img,{x:0,y:0,width:img.width,height:img.height});}
     downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images.pdf"); setStatus("PDF downloaded.");
   }
   if(id==="jpg-pdf") return <Shell back={back} t={t} status={status}><div className="workspace"><div className="panel"><FilePicker multiple accept="image/jpeg,image/png" onChange={setFiles} files={files}/><button className="primary" disabled={busy||!files.length} onClick={jpgToPdf}><Download/> Create & Download PDF</button></div><div className="panel"><h3>{files.length} image(s) selected</h3>{files.map(f=><p key={f.name}>✓ {f.name}</p>)}</div></div></Shell>;
-  return <Shell back={back} t={t} status={status||"Files are processed in your browser when supported."}><div className="workspace"><div className="panel"><FilePicker multiple={id==="merge-pdf"} accept=".pdf,application/pdf" onChange={setFiles} files={files}/>
+  return <Shell back={back} t={t} status={status||(id==="word-pdf"?"Upload DOCX or RTF. DOCX opens a print-to-PDF dialog; RTF downloads directly as PDF.":"Files are processed in your browser when supported.")}><div className="workspace"><div className="panel"><FilePicker multiple={id==="merge-pdf"} accept={id==="word-pdf"?".docx,.rtf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/rtf,text/rtf":".pdf,application/pdf"} onChange={setFiles} files={files}/>
     {(id==="split-pdf")&&<label>Pages (e.g. 1,3,5)<input value={pages} onChange={e=>setPages(e.target.value)} /></label>}
     {(id==="rotate-pdf")&&<label>Rotation<select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
     {(id==="pdf-watermark")&&<label>Watermark text<input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
@@ -341,7 +440,6 @@ function PdfTool({t,back}){
     <button className="primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw className="spin"/>:<Download/>}{busy?"Processing...":"Process & Download"}</button>
   </div><div className="panel"><h3>Selected files</h3>{files.map(f=><p key={f.name}>📄 {f.name} — {(f.size/1024).toFixed(1)} KB</p>)}</div></div></Shell>;
 }
-
 function ImageTool({t,back}){
   const id=t[3]; const [files,setFiles]=useState([]); const [busy,setBusy]=useState(false); const [status,setStatus]=useState("");
   const [w,setW]=useState(1200),[h,setH]=useState(800),[quality,setQuality]=useState(.75),[crop,setCrop]=useState("1:1");
