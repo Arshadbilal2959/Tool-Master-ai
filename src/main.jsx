@@ -586,6 +586,7 @@ function FilePicker({multiple=false,accept,onChange,files}) {
 }
 
 function PdfEditorTool({t,back}) {
+  const uploadRef = useRef(null);
   const [file,setFile]=useState(null);
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState("");
@@ -743,11 +744,32 @@ function PdfEditorTool({t,back}) {
           <h2>Online PDF editor <span className="beta">BETA</span></h2>
           <p>Edit PDF files for free. Fill & sign PDF</p>
         </div>
-        <button className="btn primary" disabled={!file||busy} onClick={apply}><Download size={16}/> Download PDF</button>
+        <div className="navActions">
+          <input
+            ref={uploadRef}
+            type="file"
+            accept="application/pdf,.pdf"
+            style={{display:"none"}}
+            onChange={e=>onUpload([...e.target.files])}
+          />
+          <button className="btn" onClick={()=>uploadRef.current?.click()} disabled={busy}>
+            <Upload size={16}/> {file ? "Replace PDF" : "Upload PDF"}
+          </button>
+          <button className="btn primary" disabled={!file||busy} onClick={apply}>
+            <Download size={16}/> Download PDF
+          </button>
+        </div>
       </div>
 
-      {!file ? <div style={{padding:"34px"}}>
-        <FilePicker accept="application/pdf,.pdf" onChange={onUpload} files={[]}/>
+      {!file ? <div style={{padding:"42px 34px"}}>
+        <div className="uploadBox" role="button" tabIndex={0} onClick={()=>uploadRef.current?.click()} onKeyDown={e=>{if(e.key==="Enter"||e.key===" ") uploadRef.current?.click();}}>
+          <Upload size={25}/>
+          <div>
+            <b>Upload PDF file</b>
+            <small style={{display:"block",color:"#7f93ae",marginTop:3}}>PDF only • Max supported by your browser</small>
+            <strong>Click here to choose a PDF from your computer</strong>
+          </div>
+        </div>
         <div className="notice"><ShieldCheck size={17}/> Files stay in your browser during editing. Upload a PDF to start.</div>
       </div> : <>
         <div className="pdfToolbar">
