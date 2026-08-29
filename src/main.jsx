@@ -434,6 +434,456 @@ function Shell({back,t,children,status}) {
   </main>;
 }
 
+function TextToVideo({back,user}) {
+  const [prompt,setPrompt]=useState("");
+  const [style,setStyle]=useState("Cinematic");
+  const [duration,setDuration]=useState("8 seconds");
+  const [status,setStatus]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [result,setResult]=useState(null);
+  const [progress,setProgress]=useState(0);
+
+  const getBackend=()=>{
+    const configured=import.meta.env.VITE_VIDEO_FUNCTION_URL || "";
+    if(configured) return configured;
+    if(SUPABASE_URL) return `${SUPABASE_URL}/functions/v1/video-generator`;
+    return "";
+  };
+
+  const authHeaders=()=>({
+    "Content-Type":"application/json",
+    ...(SUPABASE_KEY ? {apikey:SUPABASE_KEY} : {}),
+    ...(user?.access_token ? {Authorization:`Bearer ${user.access_token}`} : {})
+  });
+
+  const createVideo=async()=>{
+    if(!prompt.trim()) return setStatus("Please enter a video prompt first.");
+    if(!user?.access_token) return setStatus("Please sign in first. Video generation requires an authenticated account.");
+    const base=getBackend();
+    if(!base) return setStatus("Video backend is not configured. Add the Supabase video-generator Edge Function first.");
+
+    setBusy(true); setProgress(0); setResult(null); setStatus("Submitting video generation job...");
+    try{
+      const r=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({
+        action:"create",
+        prompt:`${style} video: ${prompt.trim()}`,
+        duration
+      })});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(d.error||d.message||`Video backend error (${r.status})`);
+      if(!d.video_id) throw new Error("Video job was created without a video ID.");
+      setResult({video_id:d.video_id,status:d.status||"queued"});
+      setStatus("Video job created. Rendering started...");
+      await pollVideo(d.video_id,base);
+    }catch(e){
+      setStatus(e?.message||"Video generation failed.");
+    }finally{
+      setBusy(false);
+    }
+  };
+
+  const pollVideo=async(videoId,base)=>{
+    const maxAttempts=120;
+    for(let attempt=0;attempt<maxAttempts;attempt++){
+      const r=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({action:"status",video_id:videoId})});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(d.error||d.message||`Status check failed (${r.status})`);
+      const p=Number(d.progress||0);
+      setProgress(Number.isFinite(p)?p:0);
+      setResult(prev=>({...prev, ...d, video_id:videoId}));
+
+      if(d.status==="completed"){
+        setProgress(100);
+        setStatus("Video rendered successfully. Preparing MP4...");
+        const content=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({action:"content",video_id:videoId})});
+        if(!content.ok){
+          const e=await content.text().catch(()=>"");
+          throw new Error(e||`Video download failed (${content.status})`);
+        }
+        const blob=await content.blob();
+        const videoUrl=URL.createObjectURL(blob);
+        setResult(prev=>({...prev,video_url:videoUrl}));
+        setStatus("MP4 is ready. You can play it or download it below.");
+        return;
+      }
+      if(d.status==="failed" || d.status==="cancelled"){
+        throw new Error(d.error?.message || d.error || "Video generation failed.");
+      }
+      await new Promise(resolve=>setTimeout(resolve,5000));
+    }
+    throw new Error("Video generation is taking longer than expected. Open the tool again later to check the job status.");
+  };
+
+  const downloadVideo=()=>{
+    if(!result?.video_url) return;
+    const a=document.createElement("a");
+    a.href=result.video_url; a.download="toolmaster-video.mp4";
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+
+  return <Shell back={back} t={["Text to Video","AI & Video","Generate AI video clips from text prompts.",""]} status={status}>
+    <div className="aiHelper"><div className="aiCard"><h3>🎬 Video Prompt</h3>
+      {!user?.access_token&&<div className="formError"><AlertCircle size={15}/> Sign in is required before starting a paid video generation job.</div>}
+      <textarea value={prompt} onChange={e=>setPrompt(e.target.value)} disabled={busy} placeholder="Example: A cinematic sunrise over the mountains, drone camera, soft mist..."/>
+      <div className="videoOptions"><label>Style<select value={style} disabled={busy} onChange={e=>setStyle(e.target.value)}><option>Cinematic</option><option>Realistic</option><option>Anime</option><option>3D Animation</option><option>Documentary</option><option>Product Ad</option></select></label>
+      <label>Duration<select value={duration} disabled={busy} onChange={e=>setDuration(e.target.value)}><option>4 seconds</option><option>8 seconds</option><option>12 seconds</option></select></label></div>
+      <button className="btn primary" disabled={busy||!user?.access_token} onClick={createVideo} style={{marginTop:12}}><Sparkles size={17}/>{busy?`Generating... ${progress}%`:"Generate Video"}</button>
+    </div><div className="aiCard"><h3>🎥 Video Preview</h3>
+      {result?.video_url?<>
+        <video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/>
+        <button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button>
+      </>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration}`:"Sign in and connect the video-generator Edge Function"}</small></div></div>}
+    </div></div>
+  </Shell>;
+}
+
+function PdfEditorTool({t,back}) {
+  const uploadRef = useRef(null);
+  const canvasRef = useRef(null);
+  const stageRef = useRef(null);
+  const [file,setFile]=useState(null);
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const [pdfInfo,setPdfInfo]=useState(null);
+  const [page,setPage]=useState(1);
+  const [scale,setScale]=useState(1);
+  const [active,setActive]=useState("edit");
+  const [text,setText]=useState("");
+  const [originalText,setOriginalText]=useState("");
+  const [x,setX]=useState(72);
+  const [y,setY]=useState(72);
+  const [fontSize,setFontSize]=useState(16);
+  const [fontColor,setFontColor]=useState("#111827");
+  const [bold,setBold]=useState(false);
+  const [italic,setItalic]=useState(false);
+  const [signName,setSignName]=useState("");
+  const [image,setImage]=useState(null);
+  const [imageW,setImageW]=useState(180);
+  const [imageH,setImageH]=useState(80);
+  const [linkUrl,setLinkUrl]=useState("");
+  const [linkText,setLinkText]=useState("Open link");
+  const [linkW,setLinkW]=useState(160);
+  const [linkH,setLinkH]=useState(30);
+  const [annotText,setAnnotText]=useState("");
+  const [annotW,setAnnotW]=useState(240);
+  const [annotH,setAnnotH]=useState(60);
+  const [selectedItem,setSelectedItem]=useState(null);
+  const [textItems,setTextItems]=useState([]);
+  const [viewport,setViewport]=useState({width:0,height:0});
+  const [formFields,setFormFields]=useState([]);
+  const [formValues,setFormValues]=useState({});
+
+  const loadPdf=async(f,p=1,s=1)=>{
+    const pdfjs=await loadLib("pdfjs");
+    const pdf=await pdfjs.getDocument({data:await f.arrayBuffer()}).promise;
+    const pg=await pdf.getPage(p);
+    const vp=pg.getViewport({scale:s});
+    const canvas=canvasRef.current;
+    if(!canvas) return;
+    canvas.width=Math.ceil(vp.width); canvas.height=Math.ceil(vp.height);
+    canvas.style.width=`${Math.ceil(vp.width)}px`; canvas.style.height=`${Math.ceil(vp.height)}px`;
+    await pg.render({canvasContext:canvas.getContext("2d",{alpha:false}),viewport:vp}).promise;
+    setViewport({width:vp.width,height:vp.height});
+
+    const tc=await pg.getTextContent();
+    const items=(tc.items||[]).filter(i=>String(i.str||"").trim()).map((item,index)=>{
+      const tr=item.transform||[];
+      const fs=Math.max(6,Math.abs(Number(tr[3]||tr[0]||12)));
+      const px=Number(tr[4]||0)*s;
+      const py=(Number(vp.height) - Number(tr[5]||0)*s) - fs;
+      const w=Math.max(8,Number(item.width||String(item.str||"").length*fs*.55)*s);
+      const h=Math.max(10,fs*1.25);
+      return {index,text:String(item.str),x:px,y:Math.max(0,py),width:w,height:h,pdfX:Number(tr[4]||0),pdfY:Number(tr[5]||0),pdfHeight:fs};
+    });
+    setTextItems(items);
+  };
+
+  const inspectPdf=async(f)=>{
+    setStatus("Loading PDF editor...");
+    const pdfjs=await loadLib("pdfjs");
+    const pdf=await pdfjs.getDocument({data:await f.arrayBuffer()}).promise;
+    setPdfInfo({pages:pdf.numPages});
+    setPage(1); setScale(1); setSelectedItem(null); setTextItems([]);
+    try{
+      const {PDFDocument}=await loadLib("pdf-lib");
+      const doc=await PDFDocument.load(await f.arrayBuffer());
+      const form=doc.getForm();
+      const fields=form.getFields();
+      const mapped=fields.map(field=>({name:field.getName(),type:field.constructor?.name||"Field"}));
+      const initial={}; mapped.forEach(v=>{initial[v.name]="";});
+      setFormFields(mapped); setFormValues(initial);
+    }catch{setFormFields([]);setFormValues({});}
+    await loadPdf(f,1,1);
+    setStatus(`${pdf.numPages} page${pdf.numPages===1?"":"s"} loaded. Select an editing tool.`);
+  };
+
+  const onUpload=(list)=>{
+    const f=list[0]||null;
+    if(!f) return;
+    if(!/\.pdf$/i.test(f.name) && f.type!=="application/pdf") return setStatus("Please choose a valid PDF file.");
+    setFile(f); setStatus("");
+    inspectPdf(f).catch(e=>setStatus(`Could not open PDF: ${e?.message||String(e)}`));
+  };
+
+  const changePage=async(n)=>{
+    if(!file||!pdfInfo) return;
+    const next=Math.max(1,Math.min(pdfInfo.pages,Number(n)||1));
+    setPage(next); setSelectedItem(null); setText(""); setOriginalText("");
+    try{await loadPdf(file,next,scale);setStatus(`Page ${next} of ${pdfInfo.pages}`);}catch(e){setStatus(e?.message||"Could not render page.")}
+  };
+
+  const changeScale=async(next)=>{
+    const s=Math.max(.55,Math.min(2.2,Number(next)||1));
+    setScale(s);
+    if(file) try{await loadPdf(file,page,s)}catch(e){setStatus(e?.message||"Could not zoom PDF.")}
+  };
+
+  const chooseTextItem=(item)=>{
+    setSelectedItem(item); setOriginalText(item.text); setText(item.text);
+    setX(Math.round(item.pdfX));
+    setY(Math.round(item.pdfY));
+    setFontSize(Math.max(8,Math.round(item.pdfHeight)));
+    setActive("edit");
+    setStatus(`Selected text: ${item.text.slice(0,70)}`);
+  };
+
+  const setFormValue=(name,value)=>setFormValues(v=>({...v,[name]:value}));
+
+  const apply=async()=>{
+    if(!file) return setStatus("Please upload a PDF first.");
+    setBusy(true); setStatus("Applying your changes...");
+    try{
+      const {PDFDocument,rgb,StandardFonts,PDFName,PDFArray,PDFString}=await loadLib("pdf-lib");
+      const doc=await PDFDocument.load(await file.arrayBuffer(),{updateMetadata:false});
+      const pages=doc.getPages();
+      const pdfPage=pages[Math.max(0,Math.min(pages.length-1,page-1))];
+      const {width,height}=pdfPage.getSize();
+      const regular=await doc.embedFont(StandardFonts.Helvetica);
+      const font=regular;
+      const hexToRgb=(hex)=>{
+        const h=String(hex||"#111827").replace("#","");
+        if(!/^[0-9a-f]{6}$/i.test(h)) return rgb(.07,.09,.15);
+        return rgb(parseInt(h.slice(0,2),16)/255,parseInt(h.slice(2,4),16)/255,parseInt(h.slice(4),16)/255);
+      };
+      const color=hexToRgb(fontColor);
+      const face=bold&&italic?await doc.embedFont(StandardFonts.HelveticaBoldOblique):bold?await doc.embedFont(StandardFonts.HelveticaBold):italic?await doc.embedFont(StandardFonts.HelveticaOblique):font;
+
+      if(active==="forms"){
+        const form=doc.getForm(); let changed=0;
+        for(const meta of formFields){
+          const value=formValues[meta.name]??"";
+          try{
+            if(meta.type.includes("TextField")){form.getTextField(meta.name).setText(String(value));changed++}
+            else if(meta.type.includes("CheckBox")){const cb=form.getCheckBox(meta.name);if(value===true||String(value).toLowerCase()==="true"||String(value).toLowerCase()==="yes"||String(value)==="1")cb.check();else cb.uncheck();changed++}
+            else if(meta.type.includes("Dropdown")&&String(value).trim()){form.getDropdown(meta.name).select(String(value));changed++}
+            else if(meta.type.includes("Radio")&&String(value).trim()){form.getRadioGroup(meta.name).select(String(value));changed++}
+          }catch{}
+        }
+        if(!changed) throw new Error("No supported AcroForm fields were found.");
+        form.updateFieldAppearances(regular);
+      } else if(active==="edit"){
+        if(!selectedItem) throw new Error("Click a text item on the PDF preview first.");
+        if(!text.trim()) throw new Error("Enter replacement text.");
+        const sx=Number(selectedItem.pdfX)||0;
+        const sy=Number(selectedItem.pdfY)||0;
+        const w=Number(selectedItem.width||0)/scale;
+        const fs=Number(fontSize)||16;
+        pdfPage.drawRectangle({x:sx-2,y:sy-fs*.22,width:Math.max(w,fs*3)+6,height:Math.max(fs*1.3,Number(selectedItem.height||fs*1.2)/scale)+6,color:rgb(1,1,1)});
+        pdfPage.drawText(text.trim(),{x:sx,y:sy,size:fs,font:face,color,maxWidth:Math.max(width-sx-10,60)});
+      } else if(active==="add-text"){
+        if(!text.trim()) throw new Error("Enter text to add.");
+        pdfPage.drawText(text.trim(),{x:Number(x)||0,y:height-(Number(y)||0),size:Number(fontSize)||16,font:face,color,maxWidth:Math.max(width-(Number(x)||0)-10,60)});
+      } else if(active==="sign"){
+        if(!signName.trim()) throw new Error("Enter a signature name or initials.");
+        const sigFont=await doc.embedFont(StandardFonts.TimesItalic);
+        const sy=height-(Number(y)||0), sx=Number(x)||0, fs=Math.max(18,Number(fontSize)||24);
+        pdfPage.drawText(signName.trim(),{x:sx,y:sy,size:fs,font:sigFont,color});
+        pdfPage.drawLine({start:{x:sx,y:sy-6},end:{x:sx+Math.max(120,signName.length*11),y:sy-6},thickness:1,color});
+      } else if(active==="image"){
+        if(!image) throw new Error("Upload an image first.");
+        const bytes=await image.arrayBuffer(); let img;
+        try{img=await doc.embedPng(bytes)}catch{img=await doc.embedJpg(bytes)}
+        pdfPage.drawImage(img,{x:Number(x)||0,y:height-(Number(y)||0)-Number(imageH),width:Number(imageW)||180,height:Number(imageH)||80});
+      } else if(active==="link"){
+        if(!linkUrl.trim()) throw new Error("Enter a link URL.");
+        const safe=/^https?:\/\//i.test(linkUrl.trim())?linkUrl.trim():`https://${linkUrl.trim()}`;
+        const lx=Number(x)||0, top=Number(y)||0, rw=Number(linkW)||160, rh=Number(linkH)||30;
+        const shown=linkText.trim()||safe;
+        const ly=height-top-(Number(fontSize)||16);
+        pdfPage.drawText(shown,{x:lx+3,y:ly,size:Number(fontSize)||16,font:face,color:rgb(.1,.45,.95)});
+        const ctx=doc.context;
+        const annot=ctx.obj({Type:"Annot",Subtype:"Link",Rect:[lx,height-top-rh,lx+rw,height-top],Border:[0,0,0],A:{S:"URI",URI:PDFString.of(safe)}});
+        const ref=ctx.register(annot); const existing=pdfPage.node.get(PDFName.of("Annots"));
+        if(!existing) pdfPage.node.set(PDFName.of("Annots"),ctx.obj([ref]));
+        else {const arr=ctx.lookup(existing);if(arr instanceof PDFArray)arr.push(ref)}
+      } else if(active==="annotate"){
+        if(!annotText.trim()) throw new Error("Enter annotation text.");
+        const ax=Number(x)||0, top=Number(y)||0, aw=Number(annotW)||240, ah=Number(annotH)||60;
+        const ay=height-top-ah;
+        pdfPage.drawRectangle({x:ax,y:ay,width:aw,height:ah,color:rgb(1,.9,.2),opacity:.28,borderColor:rgb(.82,.68,.08),borderWidth:1});
+        pdfPage.drawText(annotText.trim(),{x:ax+8,y:ay+ah-20,size:Math.min(Number(fontSize)||14,18),font:regular,color:rgb(.18,.15,.02),maxWidth:aw-16,lineHeight:16});
+      }
+      const out=await doc.save();
+      downloadBlob(new Blob([out],{type:"application/pdf"}),`edited-${file.name.replace(/\.pdf$/i,"")}.pdf`);
+      setStatus("Done. Your edited PDF has been downloaded.");
+    }catch(e){setStatus(`Error: ${e?.message||String(e)}`)}finally{setBusy(false)}
+  };
+
+  const reset=()=>{
+    setFile(null);setPdfInfo(null);setPage(1);setScale(1);setText("");setOriginalText("");setSelectedItem(null);setTextItems([]);setFormFields([]);setFormValues({});setImage(null);setStatus("");
+    if(uploadRef.current) uploadRef.current.value="";
+  };
+  const fieldType=(type)=>type.includes("TextField")?"Text":type.includes("CheckBox")?"Checkbox":type.includes("Dropdown")?"Dropdown":type.includes("Radio")?"Radio":"Field";
+
+  return <Shell back={back} t={t} status={status||"Upload a PDF, then edit text, add text/images, create links, annotate, sign or fill forms."}>
+    <div className="pdfProEditor">
+      <div className="pdfEditorTop">
+        <div className="pdfTopTitle"><h2>Online PDF editor <span className="beta">BETA</span></h2><p>Edit PDF files for free. Fill & sign PDF</p></div>
+        <div className="pdfTopActions">
+          <input ref={uploadRef} type="file" accept="application/pdf,.pdf" hidden onChange={e=>onUpload([...e.target.files])}/>
+          <button className="btn" onClick={()=>uploadRef.current?.click()} disabled={busy}><Upload size={16}/>{file?"Replace PDF":"Upload PDF file"}</button>
+          <button className="btn primary" onClick={apply} disabled={!file||busy}><Download size={16}/>Download PDF</button>
+        </div>
+      </div>
+
+      {!file ? <div className="pdfEmptyState" onClick={()=>uploadRef.current?.click()}>
+        <div className="pdfUploadIcon"><Upload size={34}/></div>
+        <h3>Upload PDF file</h3>
+        <p>Start editing your PDF in the browser</p>
+        <button className="btn primary" type="button" onClick={e=>{e.stopPropagation();uploadRef.current?.click()}}><Upload size={16}/> Choose PDF</button>
+        <small>PDF files stay in your browser during editing.</small>
+      </div> : <>
+        <div className="pdfEditorToolbar">
+          {[["edit","Edit Text",FileText],["add-text","Add Text",FileText],["image","Add Image",ImageIcon],["link","Create Link",ExternalLink],["annotate","Annotate",Eye],["sign","Sign",Printer],["forms","Fill Forms",CheckCircle2]].map(([v,l,I])=><button key={v} className={active===v?"pdfAction active":"pdfAction"} onClick={()=>setActive(v)}><I size={18}/><span>{l}</span></button>)}
+          <div className="spacer"/><button className="pdfAction dangerAction" onClick={reset}><Trash2 size={18}/><span>Clear</span></button>
+        </div>
+
+        <div className="pdfControlBar">
+          <div className="pageControl"><span>Page:</span><input type="number" min="1" max={pdfInfo?.pages||1} value={page} onChange={e=>changePage(e.target.value)}/><span>/ {pdfInfo?.pages||1}</span></div>
+          <div className="zoomControl"><button className="iconBtn" onClick={()=>changeScale(scale-.1)}>−</button><select value={String(Math.round(scale*100))} onChange={e=>changeScale(Number(e.target.value)/100)}><option value="75">75%</option><option value="90">90%</option><option value="100">100%</option><option value="125">125%</option><option value="150">150%</option></select><button className="iconBtn" onClick={()=>changeScale(scale+.1)}>+</button><button className="iconBtn" title="Fit width" onClick={()=>changeScale(1)}>↔</button></div>
+        </div>
+
+        <div className="pdfWorkspace">
+          <aside className="pdfToolsPanel">
+            {active==="edit" && <>
+              <h3>Edit Text</h3><p className="panelHint">Click any detected text on the PDF page to select it.</p>
+              {selectedItem?<div className="selectionInfo"><strong>Selected</strong><span>{originalText}</span></div>:<div className="emptyHint">No text selected yet.</div>}
+              <label>Replacement text<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Edit selected text here..."/></label>
+              <div className="twoFields"><label>Font Size<input type="number" min="6" max="96" value={fontSize} onChange={e=>setFontSize(e.target.value)}/></label><label>Text Color<input type="color" value={fontColor} onChange={e=>setFontColor(e.target.value)}/></label></div>
+              <div className="inlineButtons"><button className={bold?"toggle on":"toggle"} onClick={()=>setBold(v=>!v)}><b>B</b></button><button className={italic?"toggle on":"toggle"} onClick={()=>setItalic(v=>!v)}><i>I</i></button></div>
+              <div className="detectedList"><b>Detected text</b>{textItems.length?textItems.map(item=><button key={item.index} onClick={()=>chooseTextItem(item)} className={selectedItem?.index===item.index?"detected active":"detected"}>{item.text}</button>):<span>No selectable text found.</span>}</div>
+            </>}
+            {active==="add-text" && <>
+              <h3>Add Text</h3><p className="panelHint">Add new text to the current page.</p><label>Text<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Type text to add..."/></label>
+              <div className="twoFields"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div>
+              <div className="twoFields"><label>Font Size<input type="number" value={fontSize} onChange={e=>setFontSize(e.target.value)}/></label><label>Color<input type="color" value={fontColor} onChange={e=>setFontColor(e.target.value)}/></label></div>
+            </>}
+            {active==="image" && <>
+              <h3>Add Image</h3><label>Image<input type="file" accept="image/png,image/jpeg" onChange={e=>setImage(e.target.files?.[0]||null)}/></label>
+              <div className="twoFields"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div>
+              <div className="twoFields"><label>Width<input type="number" value={imageW} onChange={e=>setImageW(e.target.value)}/></label><label>Height<input type="number" value={imageH} onChange={e=>setImageH(e.target.value)}/></label></div>
+              {image&&<div className="fileBadge">✓ {image.name}</div>}
+            </>}
+            {active==="link" && <>
+              <h3>Create Link</h3><label>Link text<input value={linkText} onChange={e=>setLinkText(e.target.value)}/></label><label>URL<input value={linkUrl} onChange={e=>setLinkUrl(e.target.value)} placeholder="https://example.com"/></label>
+              <div className="twoFields"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div><div className="twoFields"><label>Width<input type="number" value={linkW} onChange={e=>setLinkW(e.target.value)}/></label><label>Height<input type="number" value={linkH} onChange={e=>setLinkH(e.target.value)}/></label></div>
+            </>}
+            {active==="annotate" && <>
+              <h3>Annotate PDF</h3><p className="panelHint">Add a visible note/highlight block.</p><label>Annotation<textarea value={annotText} onChange={e=>setAnnotText(e.target.value)} placeholder="Write a note..."/></label><div className="twoFields"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div><div className="twoFields"><label>Width<input type="number" value={annotW} onChange={e=>setAnnotW(e.target.value)}/></label><label>Height<input type="number" value={annotH} onChange={e=>setAnnotH(e.target.value)}/></label></div>
+            </>}
+            {active==="sign" && <>
+              <h3>Sign PDF</h3><p className="panelHint">Type your name or initials to place a visual signature.</p><label>Signature<input value={signName} onChange={e=>setSignName(e.target.value)} placeholder="Your name"/></label><div className="twoFields"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div><div className="selectionInfo"><strong>Note</strong><span>This is a visual signature, not a cryptographic certificate.</span></div>
+            </>}
+            {active==="forms" && <>
+              <h3>Fill Forms</h3>{!formFields.length?<div className="emptyHint">No standard AcroForm fields detected in this PDF.</div>:formFields.map(field=><label key={field.name}>{field.name}<input value={formValues[field.name]??""} onChange={e=>setFormValue(field.name,e.target.value)} placeholder={fieldType(field.type)}/></label>)}
+            </>}
+            <button className="btn primary applyBtn" disabled={!file||busy} onClick={apply}>{busy?<RefreshCw className="spin"/>:<CheckCircle2 size={17}/>} {busy?"Applying...":"Apply changes"}</button>
+          </aside>
+
+          <section className="pdfViewer" ref={stageRef}>
+            <div className="pdfPaperLive" style={{width:viewport.width||820,height:viewport.height||1060}}>
+              <canvas ref={canvasRef}/>
+              <div className="pdfTextOverlay" style={{width:viewport.width||820,height:viewport.height||1060}}>
+                {active==="edit" && textItems.map(item=><button key={item.index} className={selectedItem?.index===item.index?"textHotspot selected":"textHotspot"} style={{left:item.x,top:item.y,width:item.width,height:item.height}} title="Click to edit" onClick={()=>chooseTextItem(item)}>{item.text}</button>)}
+                {active==="add-text"&&text&&<div className="liveGhost" style={{left:Number(x)*scale,top:Number(y)*scale,fontSize:Number(fontSize)*scale,color:fontColor}}>{text}</div>}
+                {active==="sign"&&signName&&<div className="liveGhost signGhost" style={{left:Number(x)*scale,top:Number(y)*scale,fontSize:Math.max(18,Number(fontSize))*scale}}>{signName}</div>}
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div className="pdfFileBar"><div><strong>{file.name}</strong><span>{(file.size/1024).toFixed(1)} KB</span></div><span>{pdfInfo?.pages||1} page{(pdfInfo?.pages||1)===1?"":"s"}</span><button className="btn danger" onClick={reset}><Trash2 size={15}/> Remove</button></div>
+        <div className="pdfPrivacy"><ShieldCheck size={15}/> Files stay private in your browser while editing.</div>
+      </>}
+    </div>
+  </Shell>;
+}
+e)}/></label></div>
+              <label>Font Size<input type="number" min="6" max="96" value={fontSize} onChange={e=>setFontSize(e.target.value)}/></label>
+            </>}
+
+            {active==="image" && <>
+              <h4>Add Image</h4><label>Image<input type="file" accept="image/png,image/jpeg" onChange={e=>setImage(e.target.files?.[0]||null)}/></label>
+              <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Width<input type="number" value={imageW} onChange={e=>setImageW(e.target.value)}/></label><label>Height<input type="number" value={imageH} onChange={e=>setImageH(e.target.value)}/></label></div>
+            </>}
+
+            {active==="link" && <>
+              <h4>Create Link</h4><label>Link text<input value={linkText} onChange={e=>setLinkText(e.target.value)}/></label><label>URL<input value={linkUrl} onChange={e=>setLinkUrl(e.target.value)} placeholder="https://example.com"/></label>
+              <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div>
+            </>}
+
+            {active==="annotate" && <>
+              <h4>Annotate</h4><p className="hint">Add a note/highlight block to the page.</p><label>Note<textarea value={annotText} onChange={e=>setAnnotText(e.target.value)} placeholder="Type annotation..."/></label>
+              <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div>
+            </>}
+
+            {active==="sign" && <>
+              <h4>Sign PDF</h4><label>Your signature<input value={signName} onChange={e=>setSignName(e.target.value)} placeholder="Type your name"/></label>
+              <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div>
+              <p className="hint">Adds a visual signature to the PDF. It is not a cryptographic digital certificate.</p>
+            </>}
+
+            {active==="forms" && <>
+              <h4>Fill Forms</h4>
+              {!formFields.length ? <div className="notice">No standard AcroForm fields detected.</div> :
+                formFields.map(field=><label key={field.name}>{field.name}<input value={formValues[field.name]??""} onChange={e=>setFormValue(field.name,e.target.value)} placeholder={fieldType(field.type)}/></label>)
+              }
+            </>}
+
+            <div className="actions" style={{marginTop:18}}>
+              <button className="btn primary" disabled={!file||busy} onClick={apply}>{busy?<RefreshCw className="spin"/>:<CheckCircle2 size={16}/>} {busy?"Processing...":"Apply Changes"}</button>
+            </div>
+          </aside>
+
+          <div className="pdfStage">
+            <div className="pdfPaper">
+              {active==="edit" && selectedItem ? <div className="pdfSelection">
+                <small>Selected text</small><strong>{text||selectedItem.text}</strong>
+              </div> : <h1 style={{fontSize:38,margin:"12px 0 18px",letterSpacing:"-.03em"}}>Sample Document</h1>}
+              <div style={{color:"#6651c7",fontSize:20,fontWeight:800,marginBottom:20}}>An example PDF document</div>
+              <p style={{fontSize:16,lineHeight:1.7,color:"#3e4656"}}>This is a simple PDF file. You can edit this text, add new text, images, links and annotations using our free online PDF editor.</p>
+              <p style={{fontWeight:800,color:"#343b4a"}}>Features you can use:</p>
+              <div style={{lineHeight:1.8,color:"#454d5d"}}>
+                <div>• Edit existing text</div><div>• Add new text anywhere</div><div>• Add images to PDF</div>
+                <div>• Create hyperlinks</div><div>• Annotate and highlight</div><div>• Fill and sign PDF forms</div>
+              </div>
+              <a href="https://www.example.com" style={{display:"inline-block",marginTop:16,color:"#2389de",textDecoration:"underline"}}>https://www.example.com</a>
+              <div style={{marginTop:24,height:180,borderRadius:10,background:"linear-gradient(135deg,#edf8ff,#e9efff)",border:"1px solid #e2e7ef"}}/>
+            </div>
+          </div>
+        </div>
+
+        <div className="pdfEditorFooter">
+          <div className="pdfFileMeta"><strong>{file.name}</strong><span style={{color:"#8a93a5",fontSize:12}}>{(file.size/1024).toFixed(1)} KB</span></div>
+          <span style={{color:"#727d90",fontSize:13}}>{pdfInfo?.pages||1} pages</span>
+          <button className="btn danger" onClick={reset}><Trash2 size={15}/> Remove</button>
+        </div>
+        <div className="pdfPrivacy">🔒 Files stay private. Automatically deleted after 2 hours.</div>
+      </>}
+    </div>
+  </Shell>;
+}
+
 function PdfTool({t,back}) {
   const id=t[3]; const [files,setFiles]=useState([]); const [busy,setBusy]=useState(false); const [status,setStatus]=useState("");
   const [watermark,setWatermark]=useState("ToolMaster Pro"); const [angle,setAngle]=useState("90");
