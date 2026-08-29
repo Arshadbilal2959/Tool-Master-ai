@@ -38,6 +38,7 @@ const tools = [
   ["Rotate PDF","PDF Tools","Rotate PDF pages to the correct orientation.","rotate-pdf"],
   ["PDF Unlock","PDF Tools","Create an unrestricted copy of supported PDFs.","pdf-unlock"],
   ["PDF Watermark","PDF Tools","Add a watermark to PDF pages.","pdf-watermark"],
+  ["Edit & Sign PDF","PDF Tools","Edit PDF text, add text and images, fill supported forms, create links, sign and annotate PDFs online.","edit-pdf"],
   ["Image Compressor","Image Tools","Compress JPG, PNG and WebP images.","image-compressor"],
   ["Image Resizer","Image Tools","Resize images to exact dimensions.","image-resizer"],
   ["Image Cropper","Image Tools","Crop images online.","image-cropper"],
@@ -409,6 +410,7 @@ function AuthModal({mode,setMode,close,onDone}) {
 function ToolPage({t,back,user}) {
   if(t[3]==="student-ai-helper") return <StudentAIHelper back={back} user={user}/>;
   if(t[3]==="text-to-video") return <TextToVideo back={back} user={user}/>;
+  if(t[3]==="edit-pdf") return <PdfEditorTool t={t} back={back}/>;
   if(t[1]==="PDF Tools") return <PdfTool t={t} back={back}/>;
   if(t[1]==="Image Tools") return <ImageTool t={t} back={back}/>;
   if(t[1]==="SEO & Marketing") return <SeoTool t={t} back={back}/>;
@@ -574,6 +576,181 @@ function localStudyHelper(question, files) {
 
 function FilePicker({multiple=false,accept,onChange,files}) {
   return <label className="uploadBox"><Upload size={19}/><div><b>{multiple?"Upload files":"Upload file"}</b><small style={{display:"block",color:"#7f93ae",marginTop:3}}>{accept||"Supported files"}</small>{files?.length?<strong>{files.map(f=>f.name).join(", ")}</strong>:null}</div><input type="file" multiple={multiple} accept={accept} onChange={e=>onChange([...e.target.files])}/></label>;
+}
+
+function PdfEditorTool({t,back}) {
+  const [file,setFile]=useState(null);
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const [pdfInfo,setPdfInfo]=useState(null);
+  const [page,setPage]=useState(1);
+  const [active,setActive]=useState("edit");
+  const [text,setText]=useState("");
+  const [originalText,setOriginalText]=useState("");
+  const [x,setX]=useState(72);
+  const [y,setY]=useState(720);
+  const [fontSize,setFontSize]=useState(16);
+  const [signName,setSignName]=useState("");
+  const [image,setImage]=useState(null);
+  const [imageW,setImageW]=useState(180);
+  const [imageH,setImageH]=useState(80);
+  const [linkUrl,setLinkUrl]=useState("");
+  const [linkText,setLinkText]=useState("Open link");
+  const [linkW,setLinkW]=useState(140);
+  const [linkH,setLinkH]=useState(28);
+  const [annotText,setAnnotText]=useState("");
+  const [annotW,setAnnotW]=useState(220);
+  const [annotH,setAnnotH]=useState(45);
+  const [selectedItem,setSelectedItem]=useState(null);
+  const [textItems,setTextItems]=useState([]);
+  const [formFields,setFormFields]=useState([]);
+  const [formValues,setFormValues]=useState({});
+
+  const inspectPdf=async(f)=>{
+    setStatus("Reading PDF...");
+    const pdfjs=await loadLib("pdfjs");
+    const pdf=await pdfjs.getDocument({data:await f.arrayBuffer()}).promise;
+    setPdfInfo({pages:pdf.numPages});
+    await loadTextItems(pdf,1);
+    try {
+      const {PDFDocument}=await loadLib("pdf-lib");
+      const doc=await PDFDocument.load(await f.arrayBuffer());
+      const form=doc.getForm();
+      const fields=form.getFields();
+      const mapped=fields.map(field=>({name:field.getName(),type:field.constructor?.name||"Field"}));
+      setFormFields(mapped);
+      const initial={}; mapped.forEach(v=>{initial[v.name]="";}); setFormValues(initial);
+    } catch { setFormFields([]); setFormValues({}); }
+    setStatus(`${pdf.numPages} page(s) loaded. Choose an editing action.`);
+  };
+
+  const loadTextItems=async(pdf,n)=>{
+    const pg=await pdf.getPage(n);
+    const tc=await pg.getTextContent();
+    const pageHeight=Number(pg.view?.[3]||pg.getViewport({scale:1}).height);
+    const items=tc.items.filter(item=>String(item.str||"").trim()).map((item,index)=>{
+      const tr=item.transform||[];
+      const fs=Math.max(7,Math.abs(Number(tr[3]||tr[0]||12)));
+      const tx=Number(tr[4]||0);
+      const yTop=Math.max(0,pageHeight-Number(tr[5]||0));
+      return {index,text:String(item.str),x:tx,y:yTop,width:Number(item.width||Math.max(20,String(item.str).length*fs*.55)),height:Math.max(fs*1.25,Number(item.height||fs))};
+    });
+    setTextItems(items);
+  };
+
+  const onUpload=(list)=>{
+    const f=list[0]||null; setFile(f); setSelectedItem(null); setTextItems([]);
+    if(f) inspectPdf(f).catch(e=>setStatus(e.message||"Could not read PDF."));
+  };
+
+  const onPageChange=async(n)=>{
+    if(!pdfInfo||!file)return;
+    const next=Math.max(1,Math.min(pdfInfo.pages,Number(n)||1));
+    setPage(next);
+    try{const pdfjs=await loadLib("pdfjs");const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;await loadTextItems(pdf,next);}catch(e){setStatus(e.message||"Could not read page.");}
+  };
+
+  const chooseTextItem=(item)=>{
+    setSelectedItem(item); setOriginalText(item.text); setText(item.text); setX(Math.round(item.x)); setY(Math.round(item.y)); setFontSize(Math.max(8,Math.round(item.height*.8))); setActive("edit");
+    setStatus(`Selected text: ${item.text.slice(0,60)}`);
+  };
+
+  const setFormValue=(name,value)=>setFormValues(v=>({...v,[name]:value}));
+
+  const apply=async()=>{
+    if(!file)return setStatus("Please upload a PDF first.");
+    setBusy(true); setStatus("");
+    try{
+      const {PDFDocument,rgb,StandardFonts,PDFName,PDFArray,PDFString}=await loadLib("pdf-lib");
+      const doc=await PDFDocument.load(await file.arrayBuffer());
+      const pages=doc.getPages();
+      const pdfPage=pages[Math.max(0,Math.min(pages.length-1,page-1))];
+      const {height}=pdfPage.getSize();
+      const font=await doc.embedFont(StandardFonts.Helvetica);
+      if(active==="forms"){
+        const form=doc.getForm(); let changed=0;
+        for(const meta of formFields){
+          const value=formValues[meta.name]??"";
+          try{
+            if(meta.type.includes("TextField")){form.getTextField(meta.name).setText(String(value));changed++;}
+            else if(meta.type.includes("CheckBox")){const cb=form.getCheckBox(meta.name); if(value===true||String(value).toLowerCase()==="true"||String(value).toLowerCase()==="yes"||String(value)==="1") cb.check(); else cb.uncheck();changed++;}
+            else if(meta.type.includes("Dropdown") && String(value).trim()){form.getDropdown(meta.name).select(String(value));changed++;}
+            else if(meta.type.includes("Radio") && String(value).trim()){form.getRadioGroup(meta.name).select(String(value));changed++;}
+          }catch{}
+        }
+        if(!changed)throw new Error("No supported AcroForm fields were found.");
+        form.updateFieldAppearances(font);
+      }else if(active==="edit"){
+        if(!text.trim())throw new Error("Enter replacement text.");
+        if(selectedItem){
+          const sx=Number(selectedItem.x)||0;
+          const sy=Number(height)-Number(selectedItem.y)-2;
+          pdfPage.drawRectangle({x:sx-2,y:sy-2,width:(Number(selectedItem.width)||120)+5,height:(Number(selectedItem.height)||16)+6,color:rgb(1,1,1)});
+          pdfPage.drawText(text.trim(),{x:sx,y:Number(height)-Number(selectedItem.y),size:Number(fontSize)||16,font,color:rgb(0,0,0)});
+        }else{
+          pdfPage.drawText(text.trim(),{x:Number(x)||0,y:Number(height)-Number(y)||0,size:Number(fontSize)||16,font,color:rgb(0,0,0)});
+        }
+      }else if(active==="add-text"){
+        if(!text.trim())throw new Error("Enter text to add.");
+        pdfPage.drawText(text.trim(),{x:Number(x)||0,y:Number(height)-Number(y)||0,size:Number(fontSize)||16,font,color:rgb(.08,.12,.18)});
+      }else if(active==="sign"){
+        if(!signName.trim())throw new Error("Enter a signature name or initials.");
+        const sigFont=await doc.embedFont(StandardFonts.TimesItalic);
+        const sy=Number(height)-Number(y); const sx=Number(x)||0;
+        pdfPage.drawText(signName.trim(),{x:sx,y:sy,size:Math.max(18,Number(fontSize)||24),font:sigFont,color:rgb(.05,.1,.22)});
+        pdfPage.drawLine({start:{x:sx,y:sy-6},end:{x:sx+Math.max(120,signName.length*11),y:sy-6},thickness:1,color:rgb(.05,.1,.22)});
+      }else if(active==="image"){
+        if(!image)throw new Error("Upload an image first.");
+        const bytes=await image.arrayBuffer();
+        let img; try{img=await doc.embedPng(bytes)}catch{img=await doc.embedJpg(bytes)}
+        pdfPage.drawImage(img,{x:Number(x)||0,y:Number(height)-Number(y)-Number(imageH),width:Number(imageW)||180,height:Number(imageH)||80});
+      }else if(active==="link"){
+        if(!linkUrl.trim())throw new Error("Enter a link URL.");
+        const safe=/^https?:\/\//i.test(linkUrl.trim())?linkUrl.trim():`https://${linkUrl.trim()}`;
+        const lx=Number(x)||0, top=Number(y)||0, rw=Number(linkW)||140, rh=Number(linkH)||28;
+        pdfPage.drawText(linkText.trim()||safe,{x:lx+3,y:Number(height)-top-(Number(fontSize)||16),size:Number(fontSize)||16,font,color:rgb(.1,.35,.9)});
+        const ctx=doc.context; const annot=ctx.obj({Type:"Annot",Subtype:"Link",Rect:[lx,Number(height)-top-rh,lx+rw,Number(height)-top],Border:[0,0,0],A:{S:"URI",URI:PDFString.of(safe)}});
+        const ref=ctx.register(annot); const existing=pdfPage.node.get(PDFName.of("Annots"));
+        if(!existing) pdfPage.node.set(PDFName.of("Annots"),ctx.obj([ref]));
+        else {const arr=ctx.lookup(existing); if(arr instanceof PDFArray) arr.push(ref);}
+      }else if(active==="annotate"){
+        if(!annotText.trim())throw new Error("Enter annotation text.");
+        const ax=Number(x)||0, top=Number(y)||0, aw=Number(annotW)||220, ah=Number(annotH)||45;
+        const ay=Number(height)-top-ah;
+        pdfPage.drawRectangle({x:ax,y:ay,width:aw,height:ah,color:rgb(1,.9,.2),opacity:.25,borderColor:rgb(.8,.68,.05),borderWidth:1});
+        pdfPage.drawText(annotText.trim(),{x:ax+7,y:ay+ah-18,size:Math.min(Number(fontSize)||14,18),font,color:rgb(.18,.15,.02),maxWidth:aw-14,lineHeight:16});
+      }
+      const out=await doc.save();
+      downloadBlob(new Blob([out],{type:"application/pdf"}),`edited-${file.name.replace(/\.pdf$/i,"")}.pdf`);
+      setStatus(active==="forms"?"Form fields filled and PDF downloaded.":"Changes applied and PDF downloaded.");
+    }catch(e){setStatus(`Error: ${e?.message||String(e)}`)}finally{setBusy(false)}
+  };
+
+  const reset=()=>{setFile(null);setPdfInfo(null);setPage(1);setText("");setOriginalText("");setSelectedItem(null);setTextItems([]);setFormFields([]);setFormValues({});setImage(null);setStatus("");};
+  const fieldType=(type)=>type.includes("TextField")?"Text":type.includes("CheckBox")?"Checkbox":type.includes("Dropdown")?"Dropdown":type.includes("Radio")?"Radio":"Field";
+
+  return <Shell back={back} t={t} status={status||"Edit, sign, annotate and fill supported PDF forms in your browser."}>
+    <div className="workspace">
+      <div className="panel">
+        <FilePicker accept="application/pdf,.pdf" onChange={onUpload} files={file?[file]:[]}/>
+        {pdfInfo&&<div className="actions" style={{marginTop:10}}><label style={{flex:1}}>Page<input type="number" min="1" max={pdfInfo.pages} value={page} onChange={e=>onPageChange(e.target.value)}/></label><span className="pill">{pdfInfo.pages} pages</span></div>}
+        <div style={{display:"flex",flexWrap:"wrap",gap:7,margin:"15px 0"}}>{[["edit","Edit existing text"],["add-text","Add text"],["image","Add image"],["link","Create link"],["annotate","Annotate"],["sign","Sign PDF"],["forms","Fill forms"]].map(([v,l])=><button key={v} className={active===v?"btn primary":"btn"} onClick={()=>setActive(v)}>{l}</button>)}</div>
+        {(active==="edit"||active==="add-text")&&<>
+          <label>{active==="edit"?"Replacement text":"Text to add"}<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Type PDF text here..."/></label>
+          {active==="edit"&&<div className="panel" style={{padding:12,marginTop:10}}><h4 style={{margin:"0 0 8px"}}>Selectable text on page {page}</h4><div style={{maxHeight:180,overflow:"auto",display:"grid",gap:6}}>{textItems.length?textItems.map(item=><button key={item.index} className="btn ghost" style={{justifyContent:"flex-start",textAlign:"left"}} onClick={()=>chooseTextItem(item)}>{item.text.slice(0,100)}</button>):<small>No text layer found on this page.</small>}</div></div>}
+          <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Font size<input type="number" min="6" max="96" value={fontSize} onChange={e=>setFontSize(e.target.value)}/></label></div>
+          {selectedItem&&<small style={{color:"#8395ae"}}>Selected: {originalText}</small>}
+        </>}
+        {active==="image"&&<><label>Image<input type="file" accept="image/png,image/jpeg" onChange={e=>setImage(e.target.files?.[0]||null)}/></label><div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Width<input type="number" value={imageW} onChange={e=>setImageW(e.target.value)}/></label><label>Height<input type="number" value={imageH} onChange={e=>setImageH(e.target.value)}/></label></div></>}
+        {active==="link"&&<><label>Link text<input value={linkText} onChange={e=>setLinkText(e.target.value)}/></label><label>URL<input value={linkUrl} onChange={e=>setLinkUrl(e.target.value)} placeholder="https://example.com"/></label><div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Width<input type="number" value={linkW} onChange={e=>setLinkW(e.target.value)}/></label><label>Height<input type="number" value={linkH} onChange={e=>setLinkH(e.target.value)}/></label></div></>}
+        {active==="annotate"&&<><label>Annotation / note<textarea value={annotText} onChange={e=>setAnnotText(e.target.value)} placeholder="Add a note or highlight..."/></label><div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Width<input type="number" value={annotW} onChange={e=>setAnnotW(e.target.value)}/></label><label>Height<input type="number" value={annotH} onChange={e=>setAnnotH(e.target.value)}/></label></div></>}
+        {active==="sign"&&<><label>Signature / initials<input value={signName} onChange={e=>setSignName(e.target.value)} placeholder="Your name or initials"/></label><div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Size<input type="number" min="12" max="72" value={fontSize} onChange={e=>setFontSize(e.target.value)}/></label></div><small style={{color:"#8395ae"}}>This is a visual signature, not a cryptographic digital certificate.</small></>}
+        {active==="forms"&&<>{!formFields.length?<div className="notice" style={{marginTop:8}}>No standard AcroForm fields detected. This PDF may contain flattened form graphics.</div>:formFields.map(field=><label key={field.name}>{field.name} <small>({fieldType(field.type)})</small>{field.type.includes("CheckBox")?<input type="checkbox" checked={formValues[field.name]===true} onChange={e=>setFormValue(field.name,e.target.checked)}/>:<input value={formValues[field.name]??""} onChange={e=>setFormValue(field.name,e.target.value)} placeholder={`Enter ${field.name}`}/>}</label>)}</>}
+        <div className="actions"><button className="btn primary" disabled={!file||busy} onClick={apply}>{busy?<RefreshCw className="spin"/>:<CheckCircle2 size={17}/>} {busy?"Processing...":"Apply & Download PDF"}</button><button className="btn" onClick={reset}>Reset</button></div>
+      </div>
+      <div className="panel"><h3>Edit & Sign PDF</h3><p style={{color:"#8395ae",fontSize:13,lineHeight:1.6}}>Edit selectable PDF text, add new text/images, create hyperlinks, annotate, add a visual signature, and fill supported AcroForm fields. Existing text replacement uses a white cover and new text, so complex backgrounds may need manual placement.</p><div style={{padding:14,border:"1px dashed rgba(120,145,180,.25)",borderRadius:14}}><strong>Coordinate tips</strong><p style={{color:"#8395ae",fontSize:12,lineHeight:1.6}}>X/Y coordinates are PDF points. Y is measured from the top in this editor for easier placement.</p></div></div>
+    </div>
+  </Shell>;
 }
 
 function PdfTool({t,back}) {
