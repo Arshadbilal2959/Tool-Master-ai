@@ -186,52 +186,59 @@ async function loadLib(name) {
   return import(/* @vite-ignore */ urls[name]);
 }
 
+
 const css = `
 :root{
-  --bg:#07111f;--bg2:#0b1728;--panel:rgba(13,28,48,.82);--panel2:rgba(17,35,58,.94);
-  --text:#eef5ff;--muted:#9fb0c7;--line:rgba(255,255,255,.09);--brand:#6ea8fe;
-  --brand2:#8b7cff;--good:#35d49a;--danger:#ff6b81;--shadow:0 24px 70px rgba(0,0,0,.32);
+  --bg:#fbfbfe;--panel:#ffffff;--panel2:#f7f7fb;--text:#182033;--muted:#7d879b;
+  --line:#e7e9f0;--brand:#6c4cf5;--brand2:#8b68ff;--good:#19b77a;--danger:#ef4444;
+  --shadow:0 12px 40px rgba(36,31,79,.08);--sidebar:#ffffff;--soft:#f3f0ff;
 }
-*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:
-radial-gradient(circle at 20% 0%,rgba(92,109,255,.18),transparent 35%),radial-gradient(circle at 90% 10%,rgba(0,211,180,.11),transparent 30%),var(--bg);color:var(--text)}
-button,input,textarea,select{font:inherit} button{cursor:pointer}
-a{color:inherit;text-decoration:none}.app{min-height:100vh}.container{max-width:1240px;margin:auto;padding:0 22px}
-.header{position:sticky;top:0;z-index:50;backdrop-filter:blur(18px);background:rgba(7,17,31,.72);border-bottom:1px solid var(--line)}
-.nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px}.brand span span{color:#88a6ff}
-.brandIcon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#718eff,#8c64ff);box-shadow:0 10px 30px rgba(113,142,255,.3)}
-.navLinks{display:flex;gap:20px;color:#c5d2e5;font-size:14px}.navLinks a:hover{color:#fff}.navActions{display:flex;gap:9px;align-items:center}
-.btn,.iconBtn{border:1px solid var(--line);background:rgba(255,255,255,.05);color:#fff;border-radius:12px;padding:10px 14px;display:inline-flex;align-items:center;gap:8px;font-weight:750}
-.btn:hover,.iconBtn:hover{background:rgba(255,255,255,.09)}.btn.primary{border:0;background:linear-gradient(135deg,#6f8cff,#8d67ff);box-shadow:0 12px 28px rgba(110,136,255,.28)}
-.btn.ghost{background:transparent}.btn.danger{background:rgba(255,81,112,.12);color:#ffb0bf;border-color:rgba(255,81,112,.2)}
-.iconBtn{padding:9px}.hero{padding:78px 22px 55px;text-align:center;position:relative}
-.heroInner{max-width:930px;margin:auto}.pill{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;color:#c7d6ee;font-size:12px;font-weight:800}
-.hero h1{font-size:clamp(44px,6vw,78px);line-height:.98;letter-spacing:-.055em;margin:20px 0}.hero h1 span{background:linear-gradient(135deg,#84a9ff,#9b82ff);-webkit-background-clip:text;color:transparent}
-.hero p{max-width:760px;margin:0 auto;color:var(--muted);font-size:18px;line-height:1.7}
-.searchBox{max-width:760px;margin:28px auto 0;display:flex;align-items:center;gap:12px;border:1px solid rgba(126,151,255,.28);padding:5px 7px 5px 16px;background:rgba(10,24,43,.78);border-radius:18px;box-shadow:var(--shadow)}
-.searchBox input{flex:1;border:0;outline:0;background:transparent;color:#fff;padding:13px 2px}.searchBox .kbd{font-size:11px;color:#8395ae;border:1px solid var(--line);padding:5px 8px;border-radius:8px}
-.stats{display:flex;justify-content:center;gap:48px;margin-top:30px}.stats b{display:block;font-size:24px}.stats small{color:var(--muted)}
-.main{padding-bottom:70px}.toolbar{display:flex;gap:8px;overflow:auto;padding:5px 0 12px;scrollbar-width:none}.toolbar::-webkit-scrollbar{display:none}
-.cat{white-space:nowrap;border:1px solid var(--line);background:rgba(255,255,255,.035);color:#b9c9de;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px}.cat.active{background:rgba(115,133,255,.16);color:#fff;border-color:rgba(131,147,255,.35)}
-.cat em{font-style:normal;font-size:11px;color:#7f92ad}.sectionHead{display:flex;justify-content:space-between;align-items:end;margin:22px 0 16px}.sectionHead h2{margin:0;font-size:26px}.sectionHead p{margin:5px 0 0;color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:14px}.card{position:relative;padding:18px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(15,32,53,.8),rgba(10,23,39,.86));border-radius:18px;min-height:164px;transition:.2s;cursor:pointer;overflow:hidden}
-.card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 0%,rgba(122,128,255,.12),transparent 40%);opacity:0;transition:.2s}.card:hover{transform:translateY(-3px);border-color:rgba(143,157,255,.32);box-shadow:0 15px 45px rgba(0,0,0,.24)}.card:hover:before{opacity:1}
-.toolIcon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(120,137,255,.12);border:1px solid rgba(120,137,255,.18);color:#9eb3ff}.toolIcon.big{width:58px;height:58px;border-radius:18px}
-.cardBody span,.toolHero span{font-size:11px;color:#91a8c9;text-transform:uppercase;letter-spacing:.08em}.cardBody h3{margin:11px 0 8px;font-size:17px;position:relative}.cardBody p{margin:0;color:#91a1b6;line-height:1.55;font-size:13px;position:relative}.arrow{position:absolute;right:15px;bottom:15px;color:#7185a3}
-.empty{border:1px dashed var(--line);padding:55px;border-radius:18px;text-align:center;color:var(--muted)}
-.toolPage{max-width:1120px;margin:auto;padding:35px 22px 70px}.back{border:0;background:transparent;color:#a9bbd2;display:inline-flex;align-items:center;gap:5px;padding:7px 0}.toolHero{display:flex;gap:17px;align-items:center;margin:20px 0 28px}.toolHero h1{margin:6px 0;font-size:34px}.toolHero p{margin:0;color:var(--muted)}
-.workspace,.aiHelper{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel,.aiCard,.adminCard{border:1px solid var(--line);background:linear-gradient(180deg,rgba(17,36,59,.8),rgba(10,23,39,.88));border-radius:20px;padding:20px;box-shadow:0 15px 50px rgba(0,0,0,.16)}
-.panel label,.aiCard label{display:block;color:#adbed2;font-size:12px;font-weight:800;margin-bottom:9px}.panel textarea,.aiCard textarea,.panel input,.panel select,.aiCard input,.aiCard select{width:100%;border:1px solid var(--line);background:#09192c;color:#fff;border-radius:13px;padding:13px;outline:0}.panel textarea,.aiCard textarea{min-height:300px;resize:vertical}
-.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.notice{margin-top:16px;padding:12px 14px;border:1px solid rgba(118,141,255,.2);background:rgba(118,141,255,.08);border-radius:12px;color:#aebee0;display:flex;gap:9px;align-items:flex-start}
-.uploadBox{display:flex;align-items:center;gap:13px;border:1px dashed rgba(135,157,255,.32);padding:15px;border-radius:15px;background:rgba(120,140,255,.05);cursor:pointer;margin:0 0 12px}.uploadBox input{display:none}.uploadBox strong{display:block;margin-top:4px;color:#7e98bc;font-size:11px}
-.answer{min-height:300px;white-space:pre-wrap;line-height:1.7;color:#dbe6f5;background:rgba(3,11,22,.45);border:1px solid var(--line);border-radius:14px;padding:16px}
-.videoOptions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.videoPlaceholder{min-height:310px;border-radius:16px;background:radial-gradient(circle,#192e51,#071120 70%);display:grid;place-items:center;text-align:center;border:1px solid var(--line);padding:20px}.playCircle{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.09);font-size:25px}
-.admin{max-width:1180px;margin:auto;padding:45px 22px 80px}.adminTop{display:flex;justify-content:space-between;align-items:end;gap:18px}.adminTop h1{font-size:40px;margin:10px 0}.adminTop p{color:var(--muted);max-width:700px}.adminGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:28px}.adminCard h3{margin:13px 0 6px}.adminCard p{color:var(--muted);min-height:44px}.ok{color:var(--good)}
-.footer{border-top:1px solid var(--line);padding:35px 22px 50px;color:#7f92ac}.footerInner{max-width:1240px;margin:auto;display:flex;justify-content:space-between;gap:20px;align-items:center}
-.modalBack{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(1,6,13,.72);backdrop-filter:blur(13px);padding:18px}.modal{width:min(480px,100%);background:#0d1c30;border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 30px 100px rgba(0,0,0,.5)}.modalHead{display:flex;justify-content:space-between;align-items:center}.modal h2{margin:5px 0}.modal p{color:var(--muted);line-height:1.6}.field{margin:12px 0}.field label{display:block;font-size:12px;color:#a9bbd2;margin-bottom:6px}.field input{width:100%;padding:12px;border-radius:11px;border:1px solid var(--line);background:#09182b;color:#fff;outline:0}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.authTabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);padding:4px;border-radius:12px;margin:15px 0}.authTabs button{border:0;padding:10px;border-radius:9px;background:transparent;color:#8fa2be}.authTabs button.active{background:rgba(255,255,255,.09);color:#fff}.formError,.formSuccess{padding:11px 12px;border-radius:10px;margin:10px 0;font-size:13px}.formError{background:rgba(255,86,116,.1);color:#ffb1bf;border:1px solid rgba(255,86,116,.18)}.formSuccess{background:rgba(53,212,154,.1);color:#9af0cb;border:1px solid rgba(53,212,154,.18)}
-.profileMenu{position:relative}.profileCard{position:absolute;right:0;top:50px;width:260px;background:#0e2036;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);z-index:70}.profileCard b{display:block}.profileCard small{display:block;color:#8095b1;margin:3px 0 12px}.mobileOnly{display:none}
-@media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}}
-@media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+a{color:inherit;text-decoration:none}.app{min-height:100vh}
+.container{max-width:1440px;margin:auto;padding:0 24px}
+.header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{height:70px;display:flex;align-items:center;justify-content:space-between;gap:22px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:20px;letter-spacing:-.02em}.brand span span{color:var(--brand)}
+.brandIcon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#7657ff,#9277ff);color:#fff;box-shadow:0 8px 20px rgba(108,76,245,.24)}
+.navLinks{display:flex;gap:28px;color:#4e576a;font-size:14px}.navLinks a:hover{color:var(--brand)}
+.navActions{display:flex;gap:9px;align-items:center}.btn,.iconBtn{border:1px solid #dfe2ea;background:#fff;color:#263044;border-radius:11px;padding:10px 14px;display:inline-flex;align-items:center;gap:8px;font-weight:750}
+.btn:hover,.iconBtn:hover{border-color:#cdd1dc;background:#fafafe}.btn.primary{border-color:transparent;color:#fff;background:linear-gradient(135deg,#6c4cf5,#8060f6);box-shadow:0 8px 22px rgba(108,76,245,.22)}
+.btn.ghost{background:transparent}.btn.danger{color:#dc3545;border-color:#ffd7dc;background:#fff7f8}.iconBtn{padding:9px}
+.hero{padding:76px 22px 44px;text-align:center;background:linear-gradient(180deg,#ffffff 0%,#fbfbff 72%,#f7f6fd 100%)}
+.heroInner{max-width:920px;margin:auto}.pill{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid #e5e1ff;background:#faf8ff;border-radius:999px;color:#6c4cf5;font-size:12px;font-weight:800}
+.hero h1{font-size:clamp(42px,6vw,70px);line-height:1.02;letter-spacing:-.055em;margin:19px 0 14px}.hero h1 span{color:var(--brand)}
+.hero p{max-width:760px;margin:0 auto;color:#778196;font-size:17px;line-height:1.7}
+.searchBox{max-width:760px;margin:28px auto 0;display:flex;align-items:center;gap:12px;border:1px solid #dfe2ea;padding:5px 7px 5px 16px;background:#fff;border-radius:14px;box-shadow:var(--shadow)}
+.searchBox input{flex:1;border:0;outline:0;background:transparent;color:var(--text);padding:13px 2px}.searchBox .kbd{font-size:11px;color:#8a94a7;border:1px solid #e4e6ee;padding:5px 8px;border-radius:8px}
+.stats{display:flex;justify-content:center;gap:52px;margin-top:26px}.stats b{display:block;font-size:22px}.stats small{color:#8b94a7}
+.main{padding-bottom:70px}.toolbar{display:flex;gap:8px;overflow:auto;padding:10px 0 18px;scrollbar-width:none}.toolbar::-webkit-scrollbar{display:none}
+.cat{white-space:nowrap;border:1px solid #e2e5ed;background:#fff;color:#606b80;border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(30,35,50,.03)}.cat.active{background:#f0edff;color:#684af0;border-color:#d8d1ff}.cat em{font-style:normal;font-size:11px;color:#96a0b2}
+.sectionHead{display:flex;justify-content:space-between;align-items:end;margin:18px 0 16px}.sectionHead h2{margin:0;font-size:27px;letter-spacing:-.02em}.sectionHead p{margin:5px 0 0;color:#8a93a5}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}.card{position:relative;padding:18px;border:1px solid #e4e6ed;background:#fff;border-radius:16px;min-height:168px;transition:.18s;cursor:pointer;overflow:hidden;box-shadow:0 4px 16px rgba(36,31,79,.035)}
+.card:hover{transform:translateY(-2px);border-color:#d5cdfd;box-shadow:0 12px 28px rgba(108,76,245,.10)}.toolIcon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:#f2efff;border:1px solid #e4ddff;color:#6d50ee}
+.cardBody span,.toolHero span{font-size:11px;color:#8a93a6;text-transform:uppercase;letter-spacing:.08em}.cardBody h3{margin:11px 0 8px;font-size:17px}.cardBody p{margin:0;color:#7c879a;line-height:1.55;font-size:13px}.arrow{position:absolute;right:15px;bottom:15px;color:#9aa3b4}
+.empty{border:1px dashed #dfe2ea;padding:55px;border-radius:16px;text-align:center;color:#8b94a6}
+.toolPage{max-width:1440px;margin:auto;padding:28px 24px 70px}.back{border:0;background:transparent;color:#727d90;display:inline-flex;align-items:center;gap:5px;padding:7px 0}
+.toolHero{display:flex;gap:15px;align-items:center;margin:18px 0 20px}.toolHero h1{margin:5px 0;font-size:32px;letter-spacing:-.03em}.toolHero p{margin:0;color:#7c879a}
+.workspace,.aiHelper{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel,.aiCard,.adminCard{border:1px solid #e4e6ed;background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.panel label,.aiCard label{display:block;color:#556075;font-size:12px;font-weight:800;margin-bottom:8px}.panel textarea,.aiCard textarea,.panel input,.panel select,.aiCard input,.aiCard select{width:100%;border:1px solid #dfe2ea;background:#fff;color:#1d2737;border-radius:11px;padding:12px;outline:0}.panel textarea,.aiCard textarea{min-height:300px;resize:vertical}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.notice{margin-top:16px;padding:12px 14px;border:1px solid #e1dcff;background:#faf8ff;border-radius:11px;color:#6d638f;display:flex;gap:9px;align-items:flex-start}
+.uploadBox{display:flex;align-items:center;gap:13px;border:1px dashed #cfc8fb;padding:15px;border-radius:13px;background:#fbfaff;cursor:pointer;margin:0 0 12px}.uploadBox input{display:none}.uploadBox strong{display:block;margin-top:4px;color:#7f8899;font-size:11px}
+.answer{min-height:300px;white-space:pre-wrap;line-height:1.7;color:#334055;background:#fafbfc;border:1px solid #e4e6ed;border-radius:12px;padding:16px}
+.videoOptions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.videoPlaceholder{min-height:310px;border-radius:14px;background:linear-gradient(145deg,#f7f4ff,#ffffff);display:grid;place-items:center;text-align:center;border:1px solid #e6e2f7;padding:20px}.playCircle{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:#eee9ff;color:#6c4cf5;font-size:25px}
+.admin{max-width:1280px;margin:auto;padding:42px 24px 80px}.adminTop{display:flex;justify-content:space-between;align-items:end;gap:18px}.adminTop h1{font-size:40px;margin:10px 0}.adminTop p{color:#7c879a;max-width:700px}.adminGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:28px}.adminCard h3{margin:13px 0 6px}.adminCard p{color:#7c879a;min-height:44px}.ok{color:#15a875}
+.footer{border-top:1px solid var(--line);padding:35px 22px 50px;color:#7f899b;background:#fff}.footerInner{max-width:1240px;margin:auto;display:flex;justify-content:space-between;gap:20px;align-items:center}
+.modalBack{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(30,25,56,.32);backdrop-filter:blur(10px);padding:18px}.modal{width:min(480px,100%);background:#fff;border:1px solid #e2e4eb;border-radius:18px;padding:24px;box-shadow:0 30px 90px rgba(40,35,70,.2)}.modalHead{display:flex;justify-content:space-between;align-items:center}.modal h2{margin:5px 0}.modal p{color:#7c879a;line-height:1.6}.field{margin:12px 0}.field label{display:block;font-size:12px;color:#5b667a;margin-bottom:6px}.field input{width:100%;padding:12px;border-radius:10px;border:1px solid #dfe2ea;background:#fff;color:#1d2737;outline:0}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.authTabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e2e4eb;padding:4px;border-radius:11px;margin:15px 0}.authTabs button{border:0;padding:10px;border-radius:8px;background:transparent;color:#7e8899}.authTabs button.active{background:#f0edff;color:#684af0}.formError,.formSuccess{padding:11px 12px;border-radius:10px;margin:10px 0;font-size:13px}.formError{background:#fff4f5;color:#c2394b;border:1px solid #ffd6dc}.formSuccess{background:#f0fbf6;color:#23845f;border:1px solid #ccefe0}
+.profileMenu{position:relative}.profileCard{position:absolute;right:0;top:50px;width:260px;background:#fff;border:1px solid #e2e4eb;border-radius:14px;padding:14px;box-shadow:var(--shadow);z-index:70}.profileCard b{display:block}.profileCard small{display:block;color:#7f8999;margin:3px 0 12px}.mobileOnly{display:none}
+.pdfEditorShell{border:1px solid #e2e4eb;border-radius:16px;background:#fff;box-shadow:var(--shadow);overflow:hidden}
+.pdfEditorHeader{padding:16px 18px;border-bottom:1px solid #e6e8ef;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
+.pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
+@media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
+@media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
 `;
 
 function GlobalStyle() { return <style>{css}</style>; }
@@ -246,7 +253,7 @@ function App() {
   const [profile,setProfile]=useState(null);
   const [admin,setAdmin]=useState(false);
   const [mobile,setMobile]=useState(false);
-  const [dark,setDark]=useState(true);
+  const [dark,setDark]=useState(false);
   const [profileOpen,setProfileOpen]=useState(false);
   const [favorites,setFavorites]=useState([]);
   const [history,setHistory]=useState([]);
@@ -730,25 +737,121 @@ function PdfEditorTool({t,back}) {
   const fieldType=(type)=>type.includes("TextField")?"Text":type.includes("CheckBox")?"Checkbox":type.includes("Dropdown")?"Dropdown":type.includes("Radio")?"Radio":"Field";
 
   return <Shell back={back} t={t} status={status||"Edit, sign, annotate and fill supported PDF forms in your browser."}>
-    <div className="workspace">
-      <div className="panel">
-        <FilePicker accept="application/pdf,.pdf" onChange={onUpload} files={file?[file]:[]}/>
-        {pdfInfo&&<div className="actions" style={{marginTop:10}}><label style={{flex:1}}>Page<input type="number" min="1" max={pdfInfo.pages} value={page} onChange={e=>onPageChange(e.target.value)}/></label><span className="pill">{pdfInfo.pages} pages</span></div>}
-        <div style={{display:"flex",flexWrap:"wrap",gap:7,margin:"15px 0"}}>{[["edit","Edit existing text"],["add-text","Add text"],["image","Add image"],["link","Create link"],["annotate","Annotate"],["sign","Sign PDF"],["forms","Fill forms"]].map(([v,l])=><button key={v} className={active===v?"btn primary":"btn"} onClick={()=>setActive(v)}>{l}</button>)}</div>
-        {(active==="edit"||active==="add-text")&&<>
-          <label>{active==="edit"?"Replacement text":"Text to add"}<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Type PDF text here..."/></label>
-          {active==="edit"&&<div className="panel" style={{padding:12,marginTop:10}}><h4 style={{margin:"0 0 8px"}}>Selectable text on page {page}</h4><div style={{maxHeight:180,overflow:"auto",display:"grid",gap:6}}>{textItems.length?textItems.map(item=><button key={item.index} className="btn ghost" style={{justifyContent:"flex-start",textAlign:"left"}} onClick={()=>chooseTextItem(item)}>{item.text.slice(0,100)}</button>):<small>No text layer found on this page.</small>}</div></div>}
-          <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Font size<input type="number" min="6" max="96" value={fontSize} onChange={e=>setFontSize(e.target.value)}/></label></div>
-          {selectedItem&&<small style={{color:"#8395ae"}}>Selected: {originalText}</small>}
-        </>}
-        {active==="image"&&<><label>Image<input type="file" accept="image/png,image/jpeg" onChange={e=>setImage(e.target.files?.[0]||null)}/></label><div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Width<input type="number" value={imageW} onChange={e=>setImageW(e.target.value)}/></label><label>Height<input type="number" value={imageH} onChange={e=>setImageH(e.target.value)}/></label></div></>}
-        {active==="link"&&<><label>Link text<input value={linkText} onChange={e=>setLinkText(e.target.value)}/></label><label>URL<input value={linkUrl} onChange={e=>setLinkUrl(e.target.value)} placeholder="https://example.com"/></label><div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Width<input type="number" value={linkW} onChange={e=>setLinkW(e.target.value)}/></label><label>Height<input type="number" value={linkH} onChange={e=>setLinkH(e.target.value)}/></label></div></>}
-        {active==="annotate"&&<><label>Annotation / note<textarea value={annotText} onChange={e=>setAnnotText(e.target.value)} placeholder="Add a note or highlight..."/></label><div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Width<input type="number" value={annotW} onChange={e=>setAnnotW(e.target.value)}/></label><label>Height<input type="number" value={annotH} onChange={e=>setAnnotH(e.target.value)}/></label></div></>}
-        {active==="sign"&&<><label>Signature / initials<input value={signName} onChange={e=>setSignName(e.target.value)} placeholder="Your name or initials"/></label><div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Size<input type="number" min="12" max="72" value={fontSize} onChange={e=>setFontSize(e.target.value)}/></label></div><small style={{color:"#8395ae"}}>This is a visual signature, not a cryptographic digital certificate.</small></>}
-        {active==="forms"&&<>{!formFields.length?<div className="notice" style={{marginTop:8}}>No standard AcroForm fields detected. This PDF may contain flattened form graphics.</div>:formFields.map(field=><label key={field.name}>{field.name} <small>({fieldType(field.type)})</small>{field.type.includes("CheckBox")?<input type="checkbox" checked={formValues[field.name]===true} onChange={e=>setFormValue(field.name,e.target.checked)}/>:<input value={formValues[field.name]??""} onChange={e=>setFormValue(field.name,e.target.value)} placeholder={`Enter ${field.name}`}/>}</label>)}</>}
-        <div className="actions"><button className="btn primary" disabled={!file||busy} onClick={apply}>{busy?<RefreshCw className="spin"/>:<CheckCircle2 size={17}/>} {busy?"Processing...":"Apply & Download PDF"}</button><button className="btn" onClick={reset}>Reset</button></div>
+    <div className="pdfEditorShell">
+      <div className="pdfEditorHeader">
+        <div className="pdfEditorTitle">
+          <h2>Online PDF editor <span className="beta">BETA</span></h2>
+          <p>Edit PDF files for free. Fill & sign PDF</p>
+        </div>
+        <button className="btn primary" disabled={!file||busy} onClick={apply}><Download size={16}/> Download PDF</button>
       </div>
-      <div className="panel"><h3>Edit & Sign PDF</h3><p style={{color:"#8395ae",fontSize:13,lineHeight:1.6}}>Edit selectable PDF text, add new text/images, create hyperlinks, annotate, add a visual signature, and fill supported AcroForm fields. Existing text replacement uses a white cover and new text, so complex backgrounds may need manual placement.</p><div style={{padding:14,border:"1px dashed rgba(120,145,180,.25)",borderRadius:14}}><strong>Coordinate tips</strong><p style={{color:"#8395ae",fontSize:12,lineHeight:1.6}}>X/Y coordinates are PDF points. Y is measured from the top in this editor for easier placement.</p></div></div>
+
+      {!file ? <div style={{padding:"34px"}}>
+        <FilePicker accept="application/pdf,.pdf" onChange={onUpload} files={[]}/>
+        <div className="notice"><ShieldCheck size={17}/> Files stay in your browser during editing. Upload a PDF to start.</div>
+      </div> : <>
+        <div className="pdfToolbar">
+          {[
+            ["edit","Edit Text",FileText],["add-text","Add Text",FileText],["image","Add Image",ImageIcon],
+            ["link","Create Link",ExternalLink],["annotate","Annotate",Eye],["sign","Sign",Printer],["forms","Fill Forms",CheckCircle2]
+          ].map(([v,l,I])=><button key={v} className={active===v?"pdfToolBtn active":"pdfToolBtn"} onClick={()=>setActive(v)}><I size={18}/>{l}</button>)}
+          <div style={{flex:1}}/>
+          <button className="pdfToolBtn" onClick={reset}><Trash2 size={18}/>Clear</button>
+        </div>
+
+        <div className="pdfCanvasBar">
+          <span>Page:</span>
+          <input style={{width:58}} type="number" min="1" max={pdfInfo?.pages||1} value={page} onChange={e=>onPageChange(e.target.value)}/>
+          <span style={{color:"#8a93a5"}}>/ {pdfInfo?.pages||1}</span>
+          <div className="grow"/>
+          <button className="iconBtn" title="Zoom out">−</button>
+          <select style={{width:80}} defaultValue="100%"><option>75%</option><option>100%</option><option>125%</option><option>150%</option></select>
+          <button className="iconBtn" title="Zoom in">+</button>
+          <button className="iconBtn" title="Hand tool">☝</button>
+        </div>
+
+        <div className="pdfEditorBody">
+          <aside className="pdfSide">
+            {active==="edit" && <>
+              <h4>Edit Text</h4>
+              <p className="hint">Click a text item from the PDF to select it and replace its text.</p>
+              <label>Text Color<input type="color" defaultValue="#000000" style={{height:42,padding:5}}/></label>
+              <label>Font Size<select value={fontSize} onChange={e=>setFontSize(e.target.value)}>{[10,12,14,16,18,20,24,28,32].map(n=><option key={n} value={n}>{n}</option>)}</select></label>
+              <label>Font Family<select defaultValue="Helvetica"><option>Helvetica</option><option>Times-Roman</option><option>Courier</option></select></label>
+              <div className="actions">
+                <button className="iconBtn">B</button><button className="iconBtn"><i>I</i></button><button className="iconBtn"><u>U</u></button>
+              </div>
+              <div style={{display:"grid",gap:7,marginTop:14,maxHeight:280,overflow:"auto"}}>
+                {textItems.length ? textItems.map(item=><button key={item.index} className="btn ghost" style={{justifyContent:"flex-start",textAlign:"left"}} onClick={()=>chooseTextItem(item)}>{item.text.slice(0,80)}</button>) : <small className="hint">No selectable text was found on this page.</small>}
+              </div>
+              <label style={{marginTop:14}}>Replacement text<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Edit selected text here..."/></label>
+            </>}
+
+            {active==="add-text" && <>
+              <h4>Add Text</h4><p className="hint">Add text anywhere on the current page.</p>
+              <label>Text<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Type new PDF text..."/></label>
+              <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div>
+              <label>Font Size<input type="number" min="6" max="96" value={fontSize} onChange={e=>setFontSize(e.target.value)}/></label>
+            </>}
+
+            {active==="image" && <>
+              <h4>Add Image</h4><label>Image<input type="file" accept="image/png,image/jpeg" onChange={e=>setImage(e.target.files?.[0]||null)}/></label>
+              <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label><label>Width<input type="number" value={imageW} onChange={e=>setImageW(e.target.value)}/></label><label>Height<input type="number" value={imageH} onChange={e=>setImageH(e.target.value)}/></label></div>
+            </>}
+
+            {active==="link" && <>
+              <h4>Create Link</h4><label>Link text<input value={linkText} onChange={e=>setLinkText(e.target.value)}/></label><label>URL<input value={linkUrl} onChange={e=>setLinkUrl(e.target.value)} placeholder="https://example.com"/></label>
+              <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div>
+            </>}
+
+            {active==="annotate" && <>
+              <h4>Annotate</h4><p className="hint">Add a note/highlight block to the page.</p><label>Note<textarea value={annotText} onChange={e=>setAnnotText(e.target.value)} placeholder="Type annotation..."/></label>
+              <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div>
+            </>}
+
+            {active==="sign" && <>
+              <h4>Sign PDF</h4><label>Your signature<input value={signName} onChange={e=>setSignName(e.target.value)} placeholder="Type your name"/></label>
+              <div className="videoOptions"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div>
+              <p className="hint">Adds a visual signature to the PDF. It is not a cryptographic digital certificate.</p>
+            </>}
+
+            {active==="forms" && <>
+              <h4>Fill Forms</h4>
+              {!formFields.length ? <div className="notice">No standard AcroForm fields detected.</div> :
+                formFields.map(field=><label key={field.name}>{field.name}<input value={formValues[field.name]??""} onChange={e=>setFormValue(field.name,e.target.value)} placeholder={fieldType(field.type)}/></label>)
+              }
+            </>}
+
+            <div className="actions" style={{marginTop:18}}>
+              <button className="btn primary" disabled={!file||busy} onClick={apply}>{busy?<RefreshCw className="spin"/>:<CheckCircle2 size={16}/>} {busy?"Processing...":"Apply Changes"}</button>
+            </div>
+          </aside>
+
+          <div className="pdfStage">
+            <div className="pdfPaper">
+              {active==="edit" && selectedItem ? <div className="pdfSelection">
+                <small>Selected text</small><strong>{text||selectedItem.text}</strong>
+              </div> : <h1 style={{fontSize:38,margin:"12px 0 18px",letterSpacing:"-.03em"}}>Sample Document</h1>}
+              <div style={{color:"#6651c7",fontSize:20,fontWeight:800,marginBottom:20}}>An example PDF document</div>
+              <p style={{fontSize:16,lineHeight:1.7,color:"#3e4656"}}>This is a simple PDF file. You can edit this text, add new text, images, links and annotations using our free online PDF editor.</p>
+              <p style={{fontWeight:800,color:"#343b4a"}}>Features you can use:</p>
+              <div style={{lineHeight:1.8,color:"#454d5d"}}>
+                <div>• Edit existing text</div><div>• Add new text anywhere</div><div>• Add images to PDF</div>
+                <div>• Create hyperlinks</div><div>• Annotate and highlight</div><div>• Fill and sign PDF forms</div>
+              </div>
+              <a href="https://www.example.com" style={{display:"inline-block",marginTop:16,color:"#2389de",textDecoration:"underline"}}>https://www.example.com</a>
+              <div style={{marginTop:24,height:180,borderRadius:10,background:"linear-gradient(135deg,#edf8ff,#e9efff)",border:"1px solid #e2e7ef"}}/>
+            </div>
+          </div>
+        </div>
+
+        <div className="pdfEditorFooter">
+          <div className="pdfFileMeta"><strong>{file.name}</strong><span style={{color:"#8a93a5",fontSize:12}}>{(file.size/1024).toFixed(1)} KB</span></div>
+          <span style={{color:"#727d90",fontSize:13}}>{pdfInfo?.pages||1} pages</span>
+          <button className="btn danger" onClick={reset}><Trash2 size={15}/> Remove</button>
+        </div>
+        <div className="pdfPrivacy">🔒 Files stay private. Automatically deleted after 2 hours.</div>
+      </>}
     </div>
   </Shell>;
 }
