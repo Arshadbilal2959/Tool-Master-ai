@@ -542,13 +542,13 @@ function PdfTool({t,back}) {
 
   async function pdfToJpg(file){
     const pdfjs=await loadLib("pdfjs");const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;
-    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const viewport=page.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=viewport.width;c.height=viewport.height;await page.render({canvasContext:c.getContext("2d"),viewport}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${file.name.replace(/\\.pdf$/i,"")}-page-${i}.jpg`)}
+    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const viewport=page.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=viewport.width;c.height=viewport.height;await page.render({canvasContext:c.getContext("2d"),viewport}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${file.name.replace(/\.pdf$/i,"")}-page-${i}.jpg`)}
     setStatus(`${pdf.numPages} JPG page(s) downloaded.`);
   }
   async function pdfToWord(file){
     const pdfjs=await loadLib("pdfjs");const {Document,Packer,Paragraph}=await loadLib("docx");const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;const children=[];
     for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const tc=await page.getTextContent();const text=tc.items.map(x=>x.str).join(" ");children.push(new Paragraph(text))}
-    const doc=new Document({sections:[{children}]});const blob=await Packer.toBlob(doc);downloadBlob(blob,file.name.replace(/\\.pdf$/i,"")+".docx");setStatus("Editable Word file downloaded.");
+    const doc=new Document({sections:[{children}]});const blob=await Packer.toBlob(doc);downloadBlob(blob,file.name.replace(/\.pdf$/i,"")+".docx");setStatus("Editable Word file downloaded.");
   }
   async function wordToPdf(file){
     const mammoth=await loadLib("mammoth");const html=(await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()})).value;const w=window.open("","_blank");
@@ -615,7 +615,7 @@ function SeoTool({t, back}) {
   const makeSeoUrl = () => {
     const raw = url.trim();
     if (!raw) throw new Error("Enter a website URL first.");
-    return new URL(/^https?:\\/\\//i.test(raw) ? raw : `https://${raw}`);
+    return new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
   };
 
   const run = async () => {
@@ -644,20 +644,20 @@ function SeoTool({t, back}) {
         setOut(result);
       } else if (id === "robots") {
         const site = url.trim() || "https://example.com/";
-        const result = `User-agent: *\nAllow: /\n\nSitemap: ${site.replace(/\\/$/, "")}/sitemap.xml`;
+        const result = `User-agent: *\nAllow: /\n\nSitemap: ${site.replace(/\/$/, "")}/sitemap.xml`;
         setOut(result);
       } else if (id === "sitemap") {
         const site = url.trim() || "https://example.com/";
-        const normalized = site.replace(/\\/$/, "");
-        const urls = text.split(/\\r?\\n/).map(x => x.trim()).filter(Boolean);
+        const normalized = site.replace(/\/$/, "");
+        const urls = text.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
         const locations = urls.length ? urls : ["/"];
         const body = locations.map(path => {
-          const absolute = /^https?:\\/\\//i.test(path) ? path : `${normalized}${path.startsWith("/") ? path : `/${path}`}`;
+          const absolute = /^https?:\/\//i.test(path) ? path : `${normalized}${path.startsWith("/") ? path : `/${path}`}`;
           return `  <url><loc>${escapeXml(absolute)}</loc></url>`;
         }).join("\\n");
         setOut(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`);
       } else if (id === "keyword-density") {
-        const source = text.toLowerCase().match(/[\\p{L}\\p{N}]+/gu) || [];
+        const source = text.toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
         if (!source.length) throw new Error("Enter text to analyze.");
         const counts = {};
         source.forEach(word => counts[word] = (counts[word] || 0) + 1);
