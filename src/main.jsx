@@ -423,30 +423,105 @@ function Shell({back,t,children,status}) {
 }
 
 function TextToVideo({back,user}) {
-  const [prompt,setPrompt]=useState(""); const [style,setStyle]=useState("Cinematic");
-  const [duration,setDuration]=useState("10 seconds"); const [status,setStatus]=useState("");
-  const [busy,setBusy]=useState(false); const [result,setResult]=useState(null);
-  const generate=async()=>{
-    if(!prompt.trim()) return setStatus("Please enter a video prompt first.");
-    setBusy(true);setStatus("Preparing video request...");
-    try{
-      const base=import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL;
-      if(!base) { setResult({prompt,style,duration}); setStatus("Video project prepared locally. Connect a secure video backend to render an MP4."); return; }
-      const headers={"Content-Type":"application/json"}; if(user?.access_token) headers.Authorization=`Bearer ${user.access_token}`;
-      const r=await fetch(base,{method:"POST",headers,body:JSON.stringify({type:"text-to-video",prompt,style,duration})});
-      const data=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(data.error||data.message||"Video API request failed");
-      setResult(data.video_url?data:{prompt,style,duration});
-      setStatus(data.message||"Video request submitted successfully.");
-    }catch(e){setStatus(e.message||"Video request failed.");}finally{setBusy(false)}
+  const [prompt,setPrompt]=useState("");
+  const [style,setStyle]=useState("Cinematic");
+  const [duration,setDuration]=useState("8 seconds");
+  const [status,setStatus]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [result,setResult]=useState(null);
+  const [progress,setProgress]=useState(0);
+
+  const getBackend=()=>{
+    const configured=import.meta.env.VITE_VIDEO_FUNCTION_URL || "";
+    if(configured) return configured;
+    if(SUPABASE_URL) return `${SUPABASE_URL}/functions/v1/video-generator`;
+    return "";
   };
-  return <Shell back={back} t={["Text to Video","AI & Video","",""]} status={status}>
+
+  const authHeaders=()=>({
+    "Content-Type":"application/json",
+    ...(SUPABASE_KEY ? {apikey:SUPABASE_KEY} : {}),
+    ...(user?.access_token ? {Authorization:`Bearer ${user.access_token}`} : {})
+  });
+
+  const createVideo=async()=>{
+    if(!prompt.trim()) return setStatus("Please enter a video prompt first.");
+    if(!user?.access_token) return setStatus("Please sign in first. Video generation requires an authenticated account.");
+    const base=getBackend();
+    if(!base) return setStatus("Video backend is not configured. Add the Supabase video-generator Edge Function first.");
+
+    setBusy(true); setProgress(0); setResult(null); setStatus("Submitting video generation job...");
+    try{
+      const r=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({
+        action:"create",
+        prompt:`${style} video: ${prompt.trim()}`,
+        duration
+      })});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(d.error||d.message||`Video backend error (${r.status})`);
+      if(!d.video_id) throw new Error("Video job was created without a video ID.");
+      setResult({video_id:d.video_id,status:d.status||"queued"});
+      setStatus("Video job created. Rendering started...");
+      await pollVideo(d.video_id,base);
+    }catch(e){
+      setStatus(e?.message||"Video generation failed.");
+    }finally{
+      setBusy(false);
+    }
+  };
+
+  const pollVideo=async(videoId,base)=>{
+    const maxAttempts=120;
+    for(let attempt=0;attempt<maxAttempts;attempt++){
+      const r=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({action:"status",video_id:videoId})});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(d.error||d.message||`Status check failed (${r.status})`);
+      const p=Number(d.progress||0);
+      setProgress(Number.isFinite(p)?p:0);
+      setResult(prev=>({...prev, ...d, video_id:videoId}));
+
+      if(d.status==="completed"){
+        setProgress(100);
+        setStatus("Video rendered successfully. Preparing MP4...");
+        const content=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({action:"content",video_id:videoId})});
+        if(!content.ok){
+          const e=await content.text().catch(()=>"");
+          throw new Error(e||`Video download failed (${content.status})`);
+        }
+        const blob=await content.blob();
+        const videoUrl=URL.createObjectURL(blob);
+        setResult(prev=>({...prev,video_url:videoUrl}));
+        setStatus("MP4 is ready. You can play it or download it below.");
+        return;
+      }
+      if(d.status==="failed" || d.status==="cancelled"){
+        throw new Error(d.error?.message || d.error || "Video generation failed.");
+      }
+      await new Promise(resolve=>setTimeout(resolve,5000));
+    }
+    throw new Error("Video generation is taking longer than expected. Open the tool again later to check the job status.");
+  };
+
+  const downloadVideo=()=>{
+    if(!result?.video_url) return;
+    const a=document.createElement("a");
+    a.href=result.video_url; a.download="toolmaster-video.mp4";
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+
+  return <Shell back={back} t={["Text to Video","AI & Video","Generate AI video clips from text prompts.",""]} status={status}>
     <div className="aiHelper"><div className="aiCard"><h3>🎬 Video Prompt</h3>
-      <textarea value={prompt} onChange={e=>setPrompt(e.target.value)} placeholder="Example: A cinematic sunrise over the mountains, drone camera, soft mist..."/>
-      <div className="videoOptions"><label>Style<select value={style} onChange={e=>setStyle(e.target.value)}><option>Cinematic</option><option>Realistic</option><option>Anime</option><option>3D Animation</option><option>Documentary</option><option>Product Ad</option></select></label>
-      <label>Duration<select value={duration} onChange={e=>setDuration(e.target.value)}><option>5 seconds</option><option>10 seconds</option><option>15 seconds</option><option>30 seconds</option></select></label></div>
-      <button className="btn primary" disabled={busy} onClick={generate} style={{marginTop:12}}><Sparkles size={17}/>{busy?"Generating...":"Generate Video"}</button>
-    </div><div className="aiCard"><h3>🎥 Video Preview</h3>{result?.video_url?<video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?"Project ready":"Backend video output appears here"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${style} · ${duration}`:"Configure VITE_API_BASE_URL for real rendering"}</small></div></div>}</div></div>
+      {!user?.access_token&&<div className="formError"><AlertCircle size={15}/> Sign in is required before starting a paid video generation job.</div>}
+      <textarea value={prompt} onChange={e=>setPrompt(e.target.value)} disabled={busy} placeholder="Example: A cinematic sunrise over the mountains, drone camera, soft mist..."/>
+      <div className="videoOptions"><label>Style<select value={style} disabled={busy} onChange={e=>setStyle(e.target.value)}><option>Cinematic</option><option>Realistic</option><option>Anime</option><option>3D Animation</option><option>Documentary</option><option>Product Ad</option></select></label>
+      <label>Duration<select value={duration} disabled={busy} onChange={e=>setDuration(e.target.value)}><option>4 seconds</option><option>8 seconds</option><option>12 seconds</option></select></label></div>
+      <button className="btn primary" disabled={busy||!user?.access_token} onClick={createVideo} style={{marginTop:12}}><Sparkles size={17}/>{busy?`Generating... ${progress}%`:"Generate Video"}</button>
+    </div><div className="aiCard"><h3>🎥 Video Preview</h3>
+      {result?.video_url?<>
+        <video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/>
+        <button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button>
+      </>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration}`:"Sign in and connect the video-generator Edge Function"}</small></div></div>}
+    </div></div>
   </Shell>;
 }
 
