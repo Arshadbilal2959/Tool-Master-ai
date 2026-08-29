@@ -411,6 +411,7 @@ function ToolPage({t,back,user}) {
   if(t[3]==="text-to-video") return <TextToVideo back={back} user={user}/>;
   if(t[1]==="PDF Tools") return <PdfTool t={t} back={back}/>;
   if(t[1]==="Image Tools") return <ImageTool t={t} back={back}/>;
+  if(t[1]==="SEO & Marketing") return <SeoTool t={t} back={back}/>;
   return <GenericTool t={t} back={back}/>;
 }
 
@@ -590,6 +591,234 @@ function ImageTool({t,back}) {
     {id==="image-compressor"&&<label>Quality<input type="range" min=".2" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
     <button className="btn primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw/>:<Download/>}{busy?"Processing...":id==="image-text"?"Extract Text":"Process & Download"}</button>
   </div><div className="panel">{files.map(f=><p key={f.name}>🖼️ {f.name}</p>)}<p style={{color:"#8395ae",fontSize:12}}>Image Background Remover uses a simple local near-white background algorithm; complex photos need a dedicated AI model.</p></div></div></Shell>;
+}
+
+function SeoTool({t, back}) {
+  const id = t[3];
+  const [text, setText] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [url, setUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [utmBase, setUtmBase] = useState("");
+  const [utmSource, setUtmSource] = useState("");
+  const [utmMedium, setUtmMedium] = useState("");
+  const [utmCampaign, setUtmCampaign] = useState("");
+  const [utmTerm, setUtmTerm] = useState("");
+  const [utmContent, setUtmContent] = useState("");
+  const [file, setFile] = useState(null);
+  const [out, setOut] = useState("");
+  const [status, setStatus] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const makeSeoUrl = () => {
+    const raw = url.trim();
+    if (!raw) throw new Error("Enter a website URL first.");
+    return new URL(/^https?:\\/\\//i.test(raw) ? raw : `https://${raw}`);
+  };
+
+  const run = async () => {
+    setStatus("");
+    setOut("");
+    try {
+      setBusy(true);
+      if (id === "meta-tags") {
+        if (!title.trim() && !description.trim() && !url.trim()) throw new Error("Enter title, description and URL.");
+        const canonical = url.trim() || "https://example.com/";
+        const result = `<title>${escapeHtml(title || "Page Title")}</title>\n<meta name="description" content="${escapeHtml(description)}">\n<link rel="canonical" href="${escapeHtml(canonical)}">`;
+        setOut(result);
+      } else if (id === "open-graph") {
+        if (!title.trim() && !description.trim() && !url.trim()) throw new Error("Enter Open Graph details.");
+        const result = `<meta property="og:title" content="${escapeHtml(title)}">\n<meta property="og:description" content="${escapeHtml(description)}">\n<meta property="og:url" content="${escapeHtml(url)}">\n<meta property="og:image" content="${escapeHtml(imageUrl)}">\n<meta property="og:type" content="website">`;
+        setOut(result);
+      } else if (id === "schema") {
+        if (!title.trim() && !url.trim()) throw new Error("Enter site name and URL.");
+        const result = JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: title.trim(),
+          url: url.trim(),
+          description: description.trim()
+        }, null, 2);
+        setOut(result);
+      } else if (id === "robots") {
+        const site = url.trim() || "https://example.com/";
+        const result = `User-agent: *\nAllow: /\n\nSitemap: ${site.replace(/\\/$/, "")}/sitemap.xml`;
+        setOut(result);
+      } else if (id === "sitemap") {
+        const site = url.trim() || "https://example.com/";
+        const normalized = site.replace(/\\/$/, "");
+        const urls = text.split(/\\r?\\n/).map(x => x.trim()).filter(Boolean);
+        const locations = urls.length ? urls : ["/"];
+        const body = locations.map(path => {
+          const absolute = /^https?:\\/\\//i.test(path) ? path : `${normalized}${path.startsWith("/") ? path : `/${path}`}`;
+          return `  <url><loc>${escapeXml(absolute)}</loc></url>`;
+        }).join("\\n");
+        setOut(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`);
+      } else if (id === "keyword-density") {
+        const source = text.toLowerCase().match(/[\\p{L}\\p{N}]+/gu) || [];
+        if (!source.length) throw new Error("Enter text to analyze.");
+        const counts = {};
+        source.forEach(word => counts[word] = (counts[word] || 0) + 1);
+        const rows = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 50);
+        const target = keyword.trim().toLowerCase();
+        const targetCount = target ? (counts[target] || 0) : 0;
+        const lines = [
+          `Total words: ${source.length}`,
+          target ? `Target keyword: ${target}` : "Target keyword: not specified",
+          target ? `Target keyword count: ${targetCount}` : "",
+          target ? `Target density: ${(targetCount / source.length * 100).toFixed(2)}%` : "",
+          "",
+          "Top keywords:"
+        ].filter(Boolean);
+        rows.forEach(([word,count], i) => lines.push(`${i+1}. ${word}: ${count} (${(count/source.length*100).toFixed(2)}%)`));
+        setOut(lines.join("\n"));
+      } else if (id === "url-encoder") {
+        if (!text.trim()) throw new Error("Enter text or URL to encode.");
+        setOut(encodeURI(text.trim()));
+      } else if (id === "slug") {
+        if (!text.trim()) throw new Error("Enter a title or keyword phrase.");
+        setOut(slugify(text));
+      } else if (id === "utm") {
+        if (!utmBase.trim()) throw new Error("Enter the base URL first.");
+        const u = new URL(/^https?:\/\//i.test(utmBase.trim()) ? utmBase.trim() : `https://${utmBase.trim()}`);
+        if (utmSource.trim()) u.searchParams.set("utm_source", utmSource.trim());
+        if (utmMedium.trim()) u.searchParams.set("utm_medium", utmMedium.trim());
+        if (utmCampaign.trim()) u.searchParams.set("utm_campaign", utmCampaign.trim());
+        if (utmTerm.trim()) u.searchParams.set("utm_term", utmTerm.trim());
+        if (utmContent.trim()) u.searchParams.set("utm_content", utmContent.trim());
+        setOut(u.toString());
+      } else if (id === "qr-generator") {
+        if (!text.trim()) throw new Error("Enter text or a URL for the QR code.");
+        const QRCode = await loadLib("qrcode");
+        const canvas = document.createElement("canvas");
+        await QRCode.toCanvas(canvas, text.trim(), { width: 640, margin: 3, errorCorrectionLevel: "M" });
+        canvas.toBlob(blob => {
+          if (!blob) { setStatus("QR image could not be created."); return; }
+          downloadBlob(blob, "toolmaster-qr.png");
+          setStatus("QR code generated and downloaded.");
+        }, "image/png");
+        setOut("QR code generated successfully. The PNG download has started.");
+      } else if (id === "barcode") {
+        if (!text.trim()) throw new Error("Enter a value for the barcode.");
+        const JsBarcodeModule = await loadLib("jsbarcode");
+        const JsBarcode = JsBarcodeModule.default || JsBarcodeModule;
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        JsBarcode(svg, text.trim(), { format: "CODE128", width: 2, height: 100, displayValue: true, margin: 16 });
+        const serializer = new XMLSerializer();
+        const svgText = serializer.serializeToString(svg);
+        downloadText(svgText, "toolmaster-barcode.svg", "image/svg+xml;charset=utf-8");
+        setOut(svgText);
+        setStatus("Barcode generated and SVG downloaded.");
+      } else if (id === "favicon") {
+        if (!file) throw new Error("Upload an image first.");
+        const img = await loadImageFile(file);
+        const canvas = document.createElement("canvas");
+        canvas.width = 256; canvas.height = 256;
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, 256, 256);
+        const side = Math.min(img.naturalWidth, img.naturalHeight);
+        const sx = (img.naturalWidth - side) / 2;
+        const sy = (img.naturalHeight - side) / 2;
+        ctx.drawImage(img, sx, sy, side, side, 0, 0, 256, 256);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+        if (!blob) throw new Error("Favicon could not be created.");
+        downloadBlob(blob, "favicon-256x256.png");
+        setOut("Favicon PNG generated at 256 × 256 pixels.");
+        setStatus("Favicon generated and downloaded.");
+      }
+    } catch (e) {
+      setStatus(e?.message || "SEO tool failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const download = () => {
+    if (!out) return;
+    const ext = id === "sitemap" ? "xml" : id === "robots" ? "txt" : id === "barcode" ? "svg" : "txt";
+    const type = id === "sitemap" ? "application/xml;charset=utf-8" : id === "barcode" ? "image/svg+xml;charset=utf-8" : "text/plain;charset=utf-8";
+    downloadText(out, `${id}-result.${ext}`, type);
+    setStatus("Result downloaded.");
+  };
+
+  const clear = () => {
+    setText(""); setTitle(""); setDescription(""); setUrl(""); setImageUrl(""); setKeyword("");
+    setUtmBase(""); setUtmSource(""); setUtmMedium(""); setUtmCampaign(""); setUtmTerm(""); setUtmContent("");
+    setFile(null); setOut(""); setStatus("");
+  };
+
+  const commonFields = id === "meta-tags" || id === "open-graph" || id === "schema";
+  const singleText = id === "keyword-density" || id === "slug" || id === "url-encoder";
+  const fileOnly = id === "favicon";
+  const utm = id === "utm";
+  const sitemap = id === "sitemap";
+
+  return <Shell back={back} t={t} status={status || "SEO tool runs locally in your browser."}>
+    <div className="workspace">
+      <div className="panel">
+        <h3>{t[0]}</h3>
+        {commonFields && <>
+          <label>Title / Site name<input value={title} onChange={e => setTitle(e.target.value)} placeholder="ToolMaster Pro" /></label>
+          <label>Description<textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="A short SEO-friendly description..." /></label>
+          <label>URL<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com" /></label>
+          {id === "open-graph" && <label>Image URL<input value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://example.com/cover.jpg" /></label>}
+        </>}
+        {utm && <>
+          <label>Base URL<input value={utmBase} onChange={e => setUtmBase(e.target.value)} placeholder="https://example.com/page" /></label>
+          <label>UTM Source<input value={utmSource} onChange={e => setUtmSource(e.target.value)} placeholder="google" /></label>
+          <label>UTM Medium<input value={utmMedium} onChange={e => setUtmMedium(e.target.value)} placeholder="cpc" /></label>
+          <label>UTM Campaign<input value={utmCampaign} onChange={e => setUtmCampaign(e.target.value)} placeholder="summer-sale" /></label>
+          <label>UTM Term (optional)<input value={utmTerm} onChange={e => setUtmTerm(e.target.value)} placeholder="keyword" /></label>
+          <label>UTM Content (optional)<input value={utmContent} onChange={e => setUtmContent(e.target.value)} placeholder="banner-a" /></label>
+        </>}
+        {sitemap && <>
+          <label>Website URL<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com" /></label>
+          <label>Additional URLs (one per line)<textarea value={text} onChange={e => setText(e.target.value)} placeholder="/about\n/contact\n/blog" /></label>
+        </>}
+        {id === "robots" && <label>Sitemap website URL<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com" /></label>}
+        {id === "keyword-density" && <>
+          <label>Target keyword (optional)<input value={keyword} onChange={e => setKeyword(e.target.value)} placeholder="target keyword" /></label>
+          <label>Content<textarea value={text} onChange={e => setText(e.target.value)} placeholder="Paste your article/content here..." /></label>
+        </>}
+        {singleText && <label>{id === "slug" ? "Title / Phrase" : "Text / URL"}<textarea value={text} onChange={e => setText(e.target.value)} placeholder={placeholderFor(id)} /></label>}
+        {(id === "qr-generator" || id === "barcode") && <label>{id === "qr-generator" ? "Text or URL" : "Barcode value"}<textarea value={text} onChange={e => setText(e.target.value)} placeholder={id === "qr-generator" ? "https://example.com" : "123456789012"} /></label>}
+        {fileOnly && <label>Favicon source image<input type="file" accept="image/png,image/jpeg,image/webp" onChange={e => setFile(e.target.files?.[0] || null)} /></label>}
+        <div className="actions">
+          <button className="btn primary" disabled={busy} onClick={run}><Zap size={17}/> {busy ? "Processing..." : "Generate"}</button>
+          <button className="btn" onClick={clear}>Clear</button>
+        </div>
+      </div>
+      <div className="panel">
+        <label>Result</label>
+        <textarea value={out} readOnly placeholder="Generated SEO result will appear here..." style={{minHeight:320}} />
+        <div className="actions">
+          <button className="btn" disabled={!out} onClick={() => navigator.clipboard?.writeText(out)}><Copy/> Copy</button>
+          <button className="btn" disabled={!out} onClick={download}><Download/> Download</button>
+        </div>
+      </div>
+    </div>
+  </Shell>;
+}
+
+function escapeHtml(value) {
+  return String(value || "").replace(/[&<>\"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[ch]));
+}
+function escapeXml(value) {
+  return String(value || "").replace(/[&<>\"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[ch]));
+}
+function slugify(value) {
+  return String(value || "").toLowerCase().trim().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 120);
+}
+function loadImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => { URL.revokeObjectURL(objectUrl); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error("Unable to read image.")); };
+    img.src = objectUrl;
+  });
 }
 
 function GenericTool({t,back}) {
