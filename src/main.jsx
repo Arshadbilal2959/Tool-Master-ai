@@ -573,10 +573,13 @@ function PdfEditorTool({t,back}) {
     const pg=await pdf.getPage(pageNum);
     const vp=pg.getViewport({scale:s});
     const canvas=canvasRef.current;
-    if(!canvas) throw new Error("PDF canvas is not ready. Please try again.");
-    canvas.width=Math.ceil(vp.width); canvas.height=Math.ceil(vp.height);
-    canvas.style.width=`${Math.ceil(vp.width)}px`; canvas.style.height=`${Math.ceil(vp.height)}px`;
+    if(!canvas) throw new Error("PDF viewer is still loading. Please wait a moment and try again.");
+    canvas.width=Math.max(1,Math.ceil(vp.width));
+    canvas.height=Math.max(1,Math.ceil(vp.height));
+    canvas.style.width=`${Math.ceil(vp.width)}px`;
+    canvas.style.height=`${Math.ceil(vp.height)}px`;
     const ctx=canvas.getContext("2d",{alpha:false});
+    if(!ctx) throw new Error("Could not create the PDF canvas context.");
     ctx.save();ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.restore();
     await pg.render({canvasContext:ctx,viewport:vp}).promise;
     setViewport({width:vp.width,height:vp.height});
@@ -596,20 +599,43 @@ function PdfEditorTool({t,back}) {
     return {pages:pdf.numPages,width:vp.width,height:vp.height};
   };
 
+  const readPdfInfo=async(f)=>{
+    const pdf=await getPdf(f);
+    return {pages:pdf.numPages};
+  };
+
+  useEffect(()=>{
+    if(!file||!pdfInfo) return;
+    let cancelled=false;
+    (async()=>{
+      setBusy(true);
+      try{
+        await new Promise(resolve=>requestAnimationFrame(resolve));
+        if(cancelled) return;
+        await renderPage(file,page,scale);
+        if(!cancelled) setStatus(`Page ${page} of ${pdfInfo.pages}`);
+      }catch(e){
+        if(!cancelled) setStatus(`Could not render PDF page: ${e?.message||String(e)}`);
+      }finally{
+        if(!cancelled) setBusy(false);
+      }
+    })();
+    return ()=>{cancelled=true};
+  },[file,pdfInfo,page,scale]);
+
   const openPdf=async(f)=>{
-    setBusy(true); setStatus("Opening PDF…"); setPdfInfo(null); setViewport({width:0,height:0}); setTextItems([]); setSelectedItem(null);
+    setBusy(true); setStatus("Opening PDF…"); setSelectedItem(null); setTextItems([]); setViewport({width:0,height:0});
     try{
-      const info=await renderPage(f,1,1);
-      setFile(f); setPage(1); setScale(1); setPdfInfo({pages:info.pages});
+      const info=await readPdfInfo(f);
+      setFile(f); setPage(1); setScale(1); setPdfInfo(info);
       try{
         const {PDFDocument}=await loadLib("pdf-lib");
-        const bytes=await f.arrayBuffer();
-        const doc=await PDFDocument.load(bytes,{ignoreEncryption:true,updateMetadata:false});
+        const doc=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true,updateMetadata:false});
         const form=doc.getForm();
         const fields=form.getFields().map(field=>({name:field.getName(),type:field.constructor?.name||"Field"}));
-        setFormFields(fields); setFormValues(Object.fromEntries(fields.map(v=>[v.name,"" ])));
+        setFormFields(fields); setFormValues(Object.fromEntries(fields.map(v=>[v.name,""])));
       }catch{setFormFields([]);setFormValues({});}
-      setStatus(`${info.pages} page${info.pages===1?"":"s"} loaded. Click a text item to edit.`);
+      setStatus(`${info.pages} page${info.pages===1?"":"s"} loaded. Rendering page 1…`);
     }catch(e){
       setFile(null);setPdfInfo(null);setViewport({width:0,height:0});setTextItems([]);
       throw e;
@@ -621,20 +647,12 @@ function PdfEditorTool({t,back}) {
     if(!f)return;
     if(f.type!=="application/pdf"&&!/\.pdf$/i.test(f.name)){setStatus("Please choose a valid PDF file.");return}
     try{await openPdf(f)}catch(err){setStatus(`Could not open this PDF: ${err?.message||String(err)}`)}
+    e.target.value="";
   };
 
-  const changePage=async(value)=>{
-    if(!file||!pdfInfo)return;
-    const next=Math.max(1,Math.min(pdfInfo.pages,Number(value)||1));
-    setBusy(true);setStatus(`Loading page ${next}…`);
-    try{await renderPage(file,next,scale);setPage(next);setSelectedItem(null);setText("");setStatus(`Page ${next} of ${pdfInfo.pages}`)}catch(e){setStatus(`Could not render page: ${e?.message||String(e)}`)}finally{setBusy(false)}
-  };
-
-  const changeScale=async(value)=>{
-    const next=Math.max(.55,Math.min(2,Number(value)||1));
-    setScale(next);
-    if(file){setBusy(true);try{await renderPage(file,page,next)}catch(e){setStatus(`Zoom error: ${e?.message||String(e)}`)}finally{setBusy(false)}}
-  };
+  const reset=()=>{setFile(null);setPdfInfo(null);setViewport({width:0,height:0});setTextItems([]);setSelectedItem(null);setText("");setStatus("");setFormFields([]);setFormValues({});setImage(null);setSignName("");setPage(1);setScale(1);setActive("edit")};
+  const changePage=(value)=>{if(!file||!pdfInfo)return;const next=Math.max(1,Math.min(pdfInfo.pages,Number(value)||1));setPage(next);setSelectedItem(null);setText("");};
+  const changeScale=(value)=>{const next=Math.max(.55,Math.min(2,Number(value)||1));setScale(next)};
 
   const chooseTextItem=(item)=>{setSelectedItem(item);setText(item.text);setX(Math.round(item.pdfX));setY(Math.round(item.pdfY));setFontSize(Math.max(8,Math.round(item.pdfHeight)));setActive("edit");setStatus(`Selected: ${item.text.slice(0,80)}`)};
   const setFormValue=(name,value)=>setFormValues(v=>({...v,[name]:value}));
@@ -655,9 +673,9 @@ function PdfEditorTool({t,back}) {
         if(!selectedItem)throw new Error("Click existing text in the PDF first.");
         if(!text.trim())throw new Error("Enter replacement text.");
         const sx=Number(selectedItem.pdfX)||0, sy=Number(selectedItem.pdfY)||0;
-        const w=Math.max(Number(selectedItem.width||0)/scale,fs*3);
-        const hgt=Math.max(fs*1.4,Number(selectedItem.height||fs*1.2)/scale);
-        pdfPage.drawRectangle({x:sx-2,y:sy-fs*.25,width:w+6,height:hgt+6,color:rgb(1,1,1)});
+        const ww=Math.max(Number(selectedItem.width||0)/scale,fs*3);
+        const hh=Math.max(fs*1.4,Number(selectedItem.height||fs*1.2)/scale);
+        pdfPage.drawRectangle({x:sx-2,y:sy-fs*.25,width:ww+6,height:hh+6,color:rgb(1,1,1)});
         pdfPage.drawText(text.trim(),{x:sx,y:sy,size:fs,font:face,color,maxWidth:Math.max(width-sx-10,60)});
       } else if(active==="add-text"){
         if(!text.trim())throw new Error("Enter text to add.");
@@ -675,28 +693,31 @@ function PdfEditorTool({t,back}) {
         if(!linkUrl.trim())throw new Error("Enter a link URL.");
         const safe=/^https?:\/\//i.test(linkUrl.trim())?linkUrl.trim():`https://${linkUrl.trim()}`; const shown=linkText.trim()||safe; const ly=height-top-fs;
         pdfPage.drawText(shown,{x:xx+3,y:ly,size:fs,font:face,color:rgb(.1,.45,.95)});
-        const ctx=doc.context; const annot=ctx.obj({Type:"Annot",Subtype:"Link",Rect:[xx,height-top-Number(linkH),xx+Number(linkW),height-top],Border:[0,0,0],A:{S:"URI",URI:PDFString.of(safe)}}); const ref=ctx.register(annot); const existing=pdfPage.node.get(PDFName.of("Annots"));
-        if(!existing)pdfPage.node.set(PDFName.of("Annots"),ctx.obj([ref]));else{const arr=ctx.lookup(existing);if(arr instanceof PDFArray)arr.push(ref)}
+        const ctx=doc.context; const annot=ctx.obj({Type:"Annot",Subtype:"Link",Rect:[xx,ly-5,xx+Number(linkW),ly+Number(linkH)],Border:[0,0,0],A:ctx.obj({Type:"Action",S:"URI",URI:PDFString.of(safe)})});
+        let annots=pdfPage.node.lookupMaybe(PDFName.of("Annots"),PDFArray); if(!annots){annots=ctx.obj([]);pdfPage.node.set(PDFName.of("Annots"),annots)} annots.push(annot);
       } else if(active==="annotate"){
-        if(!annotText.trim())throw new Error("Enter annotation text."); const aw=Number(annotW)||240, ah=Number(annotH)||60, ay=height-top-ah;
-        pdfPage.drawRectangle({x:xx,y:ay,width:aw,height:ah,color:rgb(1,.9,.2),opacity:.28,borderColor:rgb(.82,.68,.08),borderWidth:1});
-        pdfPage.drawText(annotText.trim(),{x:xx+8,y:ay+ah-20,size:Math.min(fs,18),font:regular,color:rgb(.18,.15,.02),maxWidth:aw-16,lineHeight:16});
+        if(!annotText.trim())throw new Error("Enter annotation text.");
+        const ay=height-top-Number(annotH); pdfPage.drawRectangle({x:xx,y:ay,width:Number(annotW)||240,height:Number(annotH)||60,color:rgb(1,.98,.7),opacity:.75,borderColor:rgb(.95,.78,.1),borderWidth:1});
+        pdfPage.drawText(annotText.trim(),{x:xx+8,y:ay+Number(annotH)-20,size:12,font:regular,color:rgb(.2,.2,.2),maxWidth:Math.max(Number(annotW)-16,80)});
       } else if(active==="forms"){
-        const form=doc.getForm();let changed=0;
-        for(const meta of formFields){const value=formValues[meta.name]??"";try{if(meta.type.includes("TextField")){form.getTextField(meta.name).setText(String(value));changed++}else if(meta.type.includes("CheckBox")){const cb=form.getCheckBox(meta.name);String(value).toLowerCase()==="true"||String(value).toLowerCase()==="yes"||String(value)==="1"?cb.check():cb.uncheck();changed++}else if(meta.type.includes("Dropdown")&&String(value).trim()){form.getDropdown(meta.name).select(String(value));changed++}else if(meta.type.includes("Radio")&&String(value).trim()){form.getRadioGroup(meta.name).select(String(value));changed++}}catch{}}
-        if(!changed)throw new Error("No supported AcroForm fields were found in this PDF.");
-        form.updateFieldAppearances(regular);
+        const form=doc.getForm();
+        for(const [name,value] of Object.entries(formValues)){const field=form.getFields().find(f=>f.getName()===name);if(!field||value==null)continue;try{field.setText(String(value))}catch{}}
       }
-      const out=await doc.save();downloadBlob(new Blob([out],{type:"application/pdf"}),`edited-${file.name.replace(/\.pdf$/i,"")}.pdf`);setStatus("Done — your edited PDF has been downloaded.");
+      const out=await doc.save();
+      const blob=new Blob([out],{type:"application/pdf"});
+      downloadBlob(blob,file.name.replace(/\.pdf$/i,"")+"-edited.pdf");
+      setFile(new File([blob],file.name,{type:"application/pdf"}));
+      setStatus("Changes applied and edited PDF downloaded.");
     }catch(e){setStatus(`Error: ${e?.message||String(e)}`)}finally{setBusy(false)}
   };
 
-  const reset=()=>{setFile(null);setPdfInfo(null);setViewport({width:0,height:0});setTextItems([]);setSelectedItem(null);setFormFields([]);setFormValues({});setImage(null);setText("");setStatus("");if(uploadRef.current)uploadRef.current.value=""};
+  const topUpload=()=>uploadRef.current?.click();
 
-  return <Shell back={back} t={t} status={status||"Upload a PDF to start editing."}>
+  return <Shell back={back} t={t} status={status}>
+    <input ref={uploadRef} type="file" accept="application/pdf,.pdf" style={{display:"none"}} onChange={onUpload}/>
     <div className="pdfProEditor">
-      <div className="pdfEditorTop"><div className="pdfTopTitle"><h2>Online PDF editor <span className="beta">BETA</span></h2><p>Edit PDF files for free. Fill & sign PDF</p></div><div className="pdfTopActions"><input ref={uploadRef} type="file" accept="application/pdf,.pdf" hidden onChange={onUpload}/><button className="btn" onClick={()=>uploadRef.current?.click()} disabled={busy}><Upload size={16}/>{file?"Replace PDF":"Upload PDF file"}</button><button className="btn primary" onClick={apply} disabled={!file||busy}><Download size={16}/>Download PDF</button></div></div>
-      {!file?<div className="pdfEmptyState" onClick={()=>uploadRef.current?.click()}><div className="pdfUploadIcon"><Upload size={34}/></div><h3>Upload PDF file</h3><p>Start editing your PDF in the browser</p><button className="btn primary" type="button" onClick={e=>{e.stopPropagation();uploadRef.current?.click()}}><Upload size={16}/>Choose PDF</button><small>PDF files stay in your browser during editing.</small></div>:<>
+      <div className="pdfEditorTop"><div className="pdfTopTitle"><h2>Online PDF editor <span style={{fontSize:11,color:"#6c4cf5",background:"#f0edff",padding:"5px 8px",borderRadius:7,verticalAlign:"middle"}}>BETA</span></h2><p>Edit PDF files for free. Fill &amp; sign PDF</p></div><div className="pdfTopActions"><button type="button" className="btn primary" onClick={topUpload}><Upload size={16}/>{file?"Replace PDF":"Upload PDF"}</button>{file&&<button type="button" className="btn" onClick={()=>{setBusy(true);apply()}} disabled={busy}>Download PDF</button>}</div></div>
+      {!file?<div className="pdfEmptyState" onClick={topUpload}><div><div className="pdfUploadIcon" style={{margin:"0 auto 14px"}}><Upload size={34}/></div><h3>Upload PDF file</h3><p>Start editing your PDF in the browser</p><button className="btn primary" type="button" onClick={e=>{e.stopPropagation();topUpload()}}><Upload size={16}/>Choose PDF</button><small style={{display:"block",marginTop:10}}>PDF files stay in your browser during editing.</small></div></div>:<>
         <div className="pdfEditorToolbar">{[["edit","Edit Text",FileText],["add-text","Add Text",FileText],["image","Add Image",ImageIcon],["link","Create Link",ExternalLink],["annotate","Annotate",Eye],["sign","Sign",Printer],["forms","Fill Forms",CheckCircle2]].map(([v,l,I])=><button type="button" key={v} className={active===v?"pdfAction active":"pdfAction"} onClick={()=>setActive(v)}><I size={18}/><span>{l}</span></button>)}<div className="spacer"/><button type="button" className="pdfAction dangerAction" onClick={reset}><Trash2 size={18}/><span>Clear</span></button></div>
         <div className="pdfControlBar"><div className="pageControl"><span>Page:</span><input type="number" min="1" max={pdfInfo?.pages||1} value={page} onChange={e=>changePage(e.target.value)}/><span>/ {pdfInfo?.pages||1}</span></div><div className="zoomControl"><button type="button" className="iconBtn" onClick={()=>changeScale(scale-.1)}>−</button><select value={String(Math.round(scale*100))} onChange={e=>changeScale(Number(e.target.value)/100)}><option value="75">75%</option><option value="90">90%</option><option value="100">100%</option><option value="125">125%</option><option value="150">150%</option></select><button type="button" className="iconBtn" onClick={()=>changeScale(scale+.1)}>+</button><button type="button" className="iconBtn" onClick={()=>changeScale(1)} title="Reset zoom">↔</button></div></div>
         <div className="pdfWorkspace"><aside className="pdfToolsPanel">
@@ -715,6 +736,7 @@ function PdfEditorTool({t,back}) {
     </div>
   </Shell>;
 }
+
 function PdfTool({t,back}) {
   const id=t[3]; const [files,setFiles]=useState([]); const [busy,setBusy]=useState(false); const [status,setStatus]=useState("");
   const [watermark,setWatermark]=useState("ToolMaster Pro"); const [angle,setAngle]=useState("90");
