@@ -1,4 +1,3 @@
-/* ToolMaster Pro FINAL ALL-TOOLS BUILD */
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { createClient } from "@supabase/supabase-js";
@@ -38,7 +37,6 @@ const tools = [
   ["Compress PDF","PDF Tools","Optimize PDF objects and remove unnecessary overhead.","compress-pdf"],
   ["Rotate PDF","PDF Tools","Rotate PDF pages to the correct orientation.","rotate-pdf"],
   ["PDF Unlock","PDF Tools","Create an unrestricted copy of supported PDFs.","pdf-unlock"],
-  ["Edit & Sign PDF","PDF Tools","Edit PDF text, add text and images, fill supported forms, create links, sign and annotate PDFs online.","edit-pdf"],
   ["PDF Watermark","PDF Tools","Add a watermark to PDF pages.","pdf-watermark"],
   ["Image Compressor","Image Tools","Compress JPG, PNG and WebP images.","image-compressor"],
   ["Image Resizer","Image Tools","Resize images to exact dimensions.","image-resizer"],
@@ -177,74 +175,62 @@ async function loadLib(name) {
   const urls = {
     "pdf-lib":"https://esm.sh/pdf-lib@1.17.1",
     "pdfjs":"https://esm.sh/pdfjs-dist@4.10.38/legacy/build/pdf.mjs",
-    "docx":"https://esm.sh/docx@9.5.0",
+    "docx":"https://esm.sh/docx@9.5.1",
     "mammoth":"https://esm.sh/mammoth@1.9.0",
     "qrcode":"https://esm.sh/qrcode@1.5.4",
     "jsbarcode":"https://esm.sh/jsbarcode@3.11.6",
     "tesseract":"https://esm.sh/tesseract.js@5.1.1"
   };
   if (!urls[name]) throw new Error("Library not configured");
-  const mod=await import(/* @vite-ignore */ urls[name]);
-  if(name==="pdfjs" && mod?.GlobalWorkerOptions){mod.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";}
-  return mod;
+  return import(/* @vite-ignore */ urls[name]);
 }
-
 
 const css = `
 :root{
-  --bg:#fbfbfe;--panel:#ffffff;--panel2:#f7f7fb;--text:#182033;--muted:#7d879b;
-  --line:#e7e9f0;--brand:#6c4cf5;--brand2:#8b68ff;--good:#19b77a;--danger:#ef4444;
-  --shadow:0 12px 40px rgba(36,31,79,.08);--sidebar:#ffffff;--soft:#f3f0ff;
+  --bg:#07111f;--bg2:#0b1728;--panel:rgba(13,28,48,.82);--panel2:rgba(17,35,58,.94);
+  --text:#eef5ff;--muted:#9fb0c7;--line:rgba(255,255,255,.09);--brand:#6ea8fe;
+  --brand2:#8b7cff;--good:#35d49a;--danger:#ff6b81;--shadow:0 24px 70px rgba(0,0,0,.32);
 }
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
-button,input,textarea,select{font:inherit}button{cursor:pointer}
-a{color:inherit;text-decoration:none}.app{min-height:100vh}
-.container{max-width:1440px;margin:auto;padding:0 24px}
-.header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.nav{height:70px;display:flex;align-items:center;justify-content:space-between;gap:22px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:20px;letter-spacing:-.02em}.brand span span{color:var(--brand)}
-.brandIcon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#7657ff,#9277ff);color:#fff;box-shadow:0 8px 20px rgba(108,76,245,.24)}
-.navLinks{display:flex;gap:28px;color:#4e576a;font-size:14px}.navLinks a:hover{color:var(--brand)}
-.navActions{display:flex;gap:9px;align-items:center}.btn,.iconBtn{border:1px solid #dfe2ea;background:#fff;color:#263044;border-radius:11px;padding:10px 14px;display:inline-flex;align-items:center;gap:8px;font-weight:750}
-.btn:hover,.iconBtn:hover{border-color:#cdd1dc;background:#fafafe}.btn.primary{border-color:transparent;color:#fff;background:linear-gradient(135deg,#6c4cf5,#8060f6);box-shadow:0 8px 22px rgba(108,76,245,.22)}
-.btn.ghost{background:transparent}.btn.danger{color:#dc3545;border-color:#ffd7dc;background:#fff7f8}.iconBtn{padding:9px}
-.hero{padding:76px 22px 44px;text-align:center;background:linear-gradient(180deg,#ffffff 0%,#fbfbff 72%,#f7f6fd 100%)}
-.heroInner{max-width:920px;margin:auto}.pill{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid #e5e1ff;background:#faf8ff;border-radius:999px;color:#6c4cf5;font-size:12px;font-weight:800}
-.hero h1{font-size:clamp(42px,6vw,70px);line-height:1.02;letter-spacing:-.055em;margin:19px 0 14px}.hero h1 span{color:var(--brand)}
-.hero p{max-width:760px;margin:0 auto;color:#778196;font-size:17px;line-height:1.7}
-.searchBox{max-width:760px;margin:28px auto 0;display:flex;align-items:center;gap:12px;border:1px solid #dfe2ea;padding:5px 7px 5px 16px;background:#fff;border-radius:14px;box-shadow:var(--shadow)}
-.searchBox input{flex:1;border:0;outline:0;background:transparent;color:var(--text);padding:13px 2px}.searchBox .kbd{font-size:11px;color:#8a94a7;border:1px solid #e4e6ee;padding:5px 8px;border-radius:8px}
-.stats{display:flex;justify-content:center;gap:52px;margin-top:26px}.stats b{display:block;font-size:22px}.stats small{color:#8b94a7}
-.main{padding-bottom:70px}.toolbar{display:flex;gap:8px;overflow:auto;padding:10px 0 18px;scrollbar-width:none}.toolbar::-webkit-scrollbar{display:none}
-.cat{white-space:nowrap;border:1px solid #e2e5ed;background:#fff;color:#606b80;border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(30,35,50,.03)}.cat.active{background:#f0edff;color:#684af0;border-color:#d8d1ff}.cat em{font-style:normal;font-size:11px;color:#96a0b2}
-.sectionHead{display:flex;justify-content:space-between;align-items:end;margin:18px 0 16px}.sectionHead h2{margin:0;font-size:27px;letter-spacing:-.02em}.sectionHead p{margin:5px 0 0;color:#8a93a5}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}.card{position:relative;padding:18px;border:1px solid #e4e6ed;background:#fff;border-radius:16px;min-height:168px;transition:.18s;cursor:pointer;overflow:hidden;box-shadow:0 4px 16px rgba(36,31,79,.035)}
-.card:hover{transform:translateY(-2px);border-color:#d5cdfd;box-shadow:0 12px 28px rgba(108,76,245,.10)}.toolIcon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:#f2efff;border:1px solid #e4ddff;color:#6d50ee}
-.cardBody span,.toolHero span{font-size:11px;color:#8a93a6;text-transform:uppercase;letter-spacing:.08em}.cardBody h3{margin:11px 0 8px;font-size:17px}.cardBody p{margin:0;color:#7c879a;line-height:1.55;font-size:13px}.arrow{position:absolute;right:15px;bottom:15px;color:#9aa3b4}
-.empty{border:1px dashed #dfe2ea;padding:55px;border-radius:16px;text-align:center;color:#8b94a6}
-.toolPage{max-width:1440px;margin:auto;padding:28px 24px 70px}.back{border:0;background:transparent;color:#727d90;display:inline-flex;align-items:center;gap:5px;padding:7px 0}
-.toolHero{display:flex;gap:15px;align-items:center;margin:18px 0 20px}.toolHero h1{margin:5px 0;font-size:32px;letter-spacing:-.03em}.toolHero p{margin:0;color:#7c879a}
-.workspace,.aiHelper{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel,.aiCard,.adminCard{border:1px solid #e4e6ed;background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow)}
-.panel label,.aiCard label{display:block;color:#556075;font-size:12px;font-weight:800;margin-bottom:8px}.panel textarea,.aiCard textarea,.panel input,.panel select,.aiCard input,.aiCard select{width:100%;border:1px solid #dfe2ea;background:#fff;color:#1d2737;border-radius:11px;padding:12px;outline:0}.panel textarea,.aiCard textarea{min-height:300px;resize:vertical}
-.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.notice{margin-top:16px;padding:12px 14px;border:1px solid #e1dcff;background:#faf8ff;border-radius:11px;color:#6d638f;display:flex;gap:9px;align-items:flex-start}
-.uploadBox{display:flex;align-items:center;gap:13px;border:1px dashed #cfc8fb;padding:15px;border-radius:13px;background:#fbfaff;cursor:pointer;margin:0 0 12px}.uploadBox input{display:none}.uploadBox strong{display:block;margin-top:4px;color:#7f8899;font-size:11px}
-.answer{min-height:300px;white-space:pre-wrap;line-height:1.7;color:#334055;background:#fafbfc;border:1px solid #e4e6ed;border-radius:12px;padding:16px}
-.videoOptions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.videoPlaceholder{min-height:310px;border-radius:14px;background:linear-gradient(145deg,#f7f4ff,#ffffff);display:grid;place-items:center;text-align:center;border:1px solid #e6e2f7;padding:20px}.playCircle{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:#eee9ff;color:#6c4cf5;font-size:25px}
-.admin{max-width:1280px;margin:auto;padding:42px 24px 80px}.adminTop{display:flex;justify-content:space-between;align-items:end;gap:18px}.adminTop h1{font-size:40px;margin:10px 0}.adminTop p{color:#7c879a;max-width:700px}.adminGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:28px}.adminCard h3{margin:13px 0 6px}.adminCard p{color:#7c879a;min-height:44px}.ok{color:#15a875}
-.footer{border-top:1px solid var(--line);padding:35px 22px 50px;color:#7f899b;background:#fff}.footerInner{max-width:1240px;margin:auto;display:flex;justify-content:space-between;gap:20px;align-items:center}
-.modalBack{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(30,25,56,.32);backdrop-filter:blur(10px);padding:18px}.modal{width:min(480px,100%);background:#fff;border:1px solid #e2e4eb;border-radius:18px;padding:24px;box-shadow:0 30px 90px rgba(40,35,70,.2)}.modalHead{display:flex;justify-content:space-between;align-items:center}.modal h2{margin:5px 0}.modal p{color:#7c879a;line-height:1.6}.field{margin:12px 0}.field label{display:block;font-size:12px;color:#5b667a;margin-bottom:6px}.field input{width:100%;padding:12px;border-radius:10px;border:1px solid #dfe2ea;background:#fff;color:#1d2737;outline:0}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.authTabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e2e4eb;padding:4px;border-radius:11px;margin:15px 0}.authTabs button{border:0;padding:10px;border-radius:8px;background:transparent;color:#7e8899}.authTabs button.active{background:#f0edff;color:#684af0}.formError,.formSuccess{padding:11px 12px;border-radius:10px;margin:10px 0;font-size:13px}.formError{background:#fff4f5;color:#c2394b;border:1px solid #ffd6dc}.formSuccess{background:#f0fbf6;color:#23845f;border:1px solid #ccefe0}
-.profileMenu{position:relative}.profileCard{position:absolute;right:0;top:50px;width:260px;background:#fff;border:1px solid #e2e4eb;border-radius:14px;padding:14px;box-shadow:var(--shadow);z-index:70}.profileCard b{display:block}.profileCard small{display:block;color:#7f8999;margin:3px 0 12px}.mobileOnly{display:none}
-
-.pdfProEditor{border:1px solid #e3e5ed;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 16px 45px rgba(50,43,110,.08)}
-.pdfEditorTop{padding:18px 20px;border-bottom:1px solid #eceef4;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.pdfTopTitle h2{margin:0;font-size:27px;letter-spacing:-.03em}.pdfTopTitle p{margin:5px 0 0;color:#8992a3}.pdfTopActions{display:flex;align-items:center;gap:9px}.pdfEditorToolbar{display:flex;align-items:stretch;gap:8px;padding:10px 12px;border-bottom:1px solid #e6e8ee;overflow:auto;background:#fff}.pdfAction{min-width:94px;border:1px solid #dfe3ec;background:#fff;border-radius:11px;padding:10px 11px;color:#58647a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px;font-weight:800}.pdfAction:hover{border-color:#bfb8f9;background:#faf9ff}.pdfAction.active{color:#6648ef;border-color:#8e77fa;background:#f6f2ff;box-shadow:inset 0 0 0 1px rgba(108,76,245,.08)}.pdfAction span{white-space:nowrap}.dangerAction{color:#dc4451}.spacer{flex:1;min-width:12px}.pdfControlBar{padding:9px 14px;border-bottom:1px solid #e8eaf0;background:#fbfbfd;display:flex;justify-content:space-between;align-items:center;gap:12px}.pageControl,.zoomControl{display:flex;align-items:center;gap:8px;color:#5c6678;font-size:13px}.pageControl input,.zoomControl select{height:34px;border:1px solid #dfe2e9;border-radius:8px;padding:6px 8px;background:#fff}.zoomControl select{width:82px}.pdfWorkspace{display:grid;grid-template-columns:285px minmax(0,1fr);min-height:750px;background:#f1f2f6}.pdfToolsPanel{background:#fff;border-right:1px solid #e2e5eb;padding:18px;overflow:auto}.pdfToolsPanel h3{margin:0 0 8px;font-size:17px}.panelHint,.emptyHint{font-size:12px;line-height:1.55;color:#8891a2}.pdfToolsPanel label{display:grid;gap:6px;margin-top:13px;font-size:12px;font-weight:800;color:#566176}.pdfToolsPanel input,.pdfToolsPanel textarea,.pdfToolsPanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:9px 10px;background:#fff;color:#1b2435;outline:none}.pdfToolsPanel textarea{min-height:82px;resize:vertical}.twoFields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.inlineButtons{display:flex;gap:8px;margin-top:10px}.toggle{width:38px;height:38px;border:1px solid #dfe2ea;background:#fff;border-radius:9px}.toggle.on{border-color:#8f78f8;background:#f2eeff;color:#6848ef}.selectionInfo{display:grid;gap:5px;padding:10px;margin-top:12px;background:#faf8ff;border:1px solid #e3ddff;border-radius:10px;color:#6447ed;font-size:12px}.selectionInfo span{color:#6f7788;line-height:1.45}.detectedList{display:grid;gap:6px;margin-top:14px}.detectedList>b{font-size:12px;color:#5d6779}.detected{border:1px solid #e5e7ed;background:#fff;border-radius:8px;padding:8px;text-align:left;font-size:11px;color:#586477;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.detected.active{border-color:#8e79f6;background:#f7f4ff;color:#6142e7}.editControls{display:grid;gap:10px;margin-top:13px}.formatButtons{display:flex;gap:8px}.formatButtons .toggle{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #dfe2ea;background:#fff;border-radius:9px;padding:9px 8px;color:#596477;font-weight:700}.formatButtons .toggle.on{border-color:#8f78f8;background:#f2eeff;color:#6848ef}.downloadBtn{width:100%;justify-content:center;margin-top:8px}.fileBadge{margin-top:9px;padding:8px;border-radius:8px;background:#effaf5;color:#15966a;font-size:11px}.applyBtn{width:100%;justify-content:center;margin-top:18px}.pdfViewer{padding:24px;display:flex;justify-content:center;align-items:flex-start;overflow:auto}.pdfPaperLive{position:relative;background:#fff;box-shadow:0 10px 34px rgba(30,35,50,.16);border:1px solid #d9dce4;flex:none}.pdfPaperLive canvas{display:block;width:100%;height:100%}.pdfTextOverlay{position:absolute;left:0;top:0;z-index:6;pointer-events:none}.textEditItem{position:absolute;pointer-events:auto}.textHotspot{width:100%;height:100%;display:block;padding:0 1px;pointer-events:auto;border:1px solid transparent;background:transparent;color:transparent;cursor:text;text-align:left;overflow:hidden;border-radius:3px}.textHotspot:hover{background:rgba(112,82,245,.10);border:1px dashed rgba(112,82,245,.75)}.textHotspot.selected{background:rgba(112,82,245,.14);border:2px solid #8062f4;color:transparent}.inlinePdfInput{position:absolute;left:0;top:-2px;z-index:20;box-sizing:border-box;border:2px solid #7050f5;border-radius:4px;padding:2px 5px;background:#fff;color:#111827;font-family:Arial,sans-serif;outline:none;box-shadow:0 6px 18px rgba(67,50,170,.18)}.liveGhost{position:absolute;padding:2px 3px;background:rgba(255,255,255,.78);border:1px dashed rgba(108,76,245,.65);font-weight:500;pointer-events:none;white-space:pre-wrap;max-width:75%}.signGhost{font-family:cursive;color:#1c2a58;border-bottom:1px solid #1c2a58;background:rgba(255,255,255,.7)}.pdfFileBar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid #e7e9ef;flex-wrap:wrap}.pdfFileBar>div:first-child{display:flex;flex-direction:column;gap:3px}.pdfFileBar span{color:#8991a1;font-size:12px}.pdfPrivacy{display:flex;justify-content:center;align-items:center;gap:6px;padding:11px;background:#fbfbfd;border-top:1px solid #eef0f4;color:#7f8899;font-size:12px}.pdfEmptyState{margin:28px;border:2px dashed #dcd8fb;border-radius:18px;background:linear-gradient(180deg,#fcfbff,#f8f7ff);min-height:420px;display:grid;place-items:center;text-align:center;padding:50px 20px;cursor:pointer}.pdfUploadIcon{width:74px;height:74px;border-radius:20px;display:grid;place-items:center;color:#6c4cf5;background:#eeeaff;box-shadow:0 12px 28px rgba(108,76,245,.13)}.pdfEmptyState h3{margin:0;font-size:25px}.pdfEmptyState p{margin:0;color:#858ea0}.pdfEmptyState small{color:#9299a8}
-.pdfEditorShell{border:1px solid #e2e4eb;border-radius:16px;background:#fff;box-shadow:var(--shadow);overflow:hidden}
-.pdfEditorHeader{padding:16px 18px;border-bottom:1px solid #e6e8ef;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
-.pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
-.pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
-@media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
-@media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:
+radial-gradient(circle at 20% 0%,rgba(92,109,255,.18),transparent 35%),radial-gradient(circle at 90% 10%,rgba(0,211,180,.11),transparent 30%),var(--bg);color:var(--text)}
+button,input,textarea,select{font:inherit} button{cursor:pointer}
+a{color:inherit;text-decoration:none}.app{min-height:100vh}.container{max-width:1240px;margin:auto;padding:0 22px}
+.header{position:sticky;top:0;z-index:50;backdrop-filter:blur(18px);background:rgba(7,17,31,.72);border-bottom:1px solid var(--line)}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px}.brand span span{color:#88a6ff}
+.brandIcon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#718eff,#8c64ff);box-shadow:0 10px 30px rgba(113,142,255,.3)}
+.navLinks{display:flex;gap:20px;color:#c5d2e5;font-size:14px}.navLinks a:hover{color:#fff}.navActions{display:flex;gap:9px;align-items:center}
+.btn,.iconBtn{border:1px solid var(--line);background:rgba(255,255,255,.05);color:#fff;border-radius:12px;padding:10px 14px;display:inline-flex;align-items:center;gap:8px;font-weight:750}
+.btn:hover,.iconBtn:hover{background:rgba(255,255,255,.09)}.btn.primary{border:0;background:linear-gradient(135deg,#6f8cff,#8d67ff);box-shadow:0 12px 28px rgba(110,136,255,.28)}
+.btn.ghost{background:transparent}.btn.danger{background:rgba(255,81,112,.12);color:#ffb0bf;border-color:rgba(255,81,112,.2)}
+.iconBtn{padding:9px}.hero{padding:78px 22px 55px;text-align:center;position:relative}
+.heroInner{max-width:930px;margin:auto}.pill{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;color:#c7d6ee;font-size:12px;font-weight:800}
+.hero h1{font-size:clamp(44px,6vw,78px);line-height:.98;letter-spacing:-.055em;margin:20px 0}.hero h1 span{background:linear-gradient(135deg,#84a9ff,#9b82ff);-webkit-background-clip:text;color:transparent}
+.hero p{max-width:760px;margin:0 auto;color:var(--muted);font-size:18px;line-height:1.7}
+.searchBox{max-width:760px;margin:28px auto 0;display:flex;align-items:center;gap:12px;border:1px solid rgba(126,151,255,.28);padding:5px 7px 5px 16px;background:rgba(10,24,43,.78);border-radius:18px;box-shadow:var(--shadow)}
+.searchBox input{flex:1;border:0;outline:0;background:transparent;color:#fff;padding:13px 2px}.searchBox .kbd{font-size:11px;color:#8395ae;border:1px solid var(--line);padding:5px 8px;border-radius:8px}
+.stats{display:flex;justify-content:center;gap:48px;margin-top:30px}.stats b{display:block;font-size:24px}.stats small{color:var(--muted)}
+.main{padding-bottom:70px}.toolbar{display:flex;gap:8px;overflow:auto;padding:5px 0 12px;scrollbar-width:none}.toolbar::-webkit-scrollbar{display:none}
+.cat{white-space:nowrap;border:1px solid var(--line);background:rgba(255,255,255,.035);color:#b9c9de;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px}.cat.active{background:rgba(115,133,255,.16);color:#fff;border-color:rgba(131,147,255,.35)}
+.cat em{font-style:normal;font-size:11px;color:#7f92ad}.sectionHead{display:flex;justify-content:space-between;align-items:end;margin:22px 0 16px}.sectionHead h2{margin:0;font-size:26px}.sectionHead p{margin:5px 0 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:14px}.card{position:relative;padding:18px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(15,32,53,.8),rgba(10,23,39,.86));border-radius:18px;min-height:164px;transition:.2s;cursor:pointer;overflow:hidden}
+.card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 0%,rgba(122,128,255,.12),transparent 40%);opacity:0;transition:.2s}.card:hover{transform:translateY(-3px);border-color:rgba(143,157,255,.32);box-shadow:0 15px 45px rgba(0,0,0,.24)}.card:hover:before{opacity:1}
+.toolIcon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(120,137,255,.12);border:1px solid rgba(120,137,255,.18);color:#9eb3ff}.toolIcon.big{width:58px;height:58px;border-radius:18px}
+.cardBody span,.toolHero span{font-size:11px;color:#91a8c9;text-transform:uppercase;letter-spacing:.08em}.cardBody h3{margin:11px 0 8px;font-size:17px;position:relative}.cardBody p{margin:0;color:#91a1b6;line-height:1.55;font-size:13px;position:relative}.arrow{position:absolute;right:15px;bottom:15px;color:#7185a3}
+.empty{border:1px dashed var(--line);padding:55px;border-radius:18px;text-align:center;color:var(--muted)}
+.toolPage{max-width:1120px;margin:auto;padding:35px 22px 70px}.back{border:0;background:transparent;color:#a9bbd2;display:inline-flex;align-items:center;gap:5px;padding:7px 0}.toolHero{display:flex;gap:17px;align-items:center;margin:20px 0 28px}.toolHero h1{margin:6px 0;font-size:34px}.toolHero p{margin:0;color:var(--muted)}
+.workspace,.aiHelper{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel,.aiCard,.adminCard{border:1px solid var(--line);background:linear-gradient(180deg,rgba(17,36,59,.8),rgba(10,23,39,.88));border-radius:20px;padding:20px;box-shadow:0 15px 50px rgba(0,0,0,.16)}
+.panel label,.aiCard label{display:block;color:#adbed2;font-size:12px;font-weight:800;margin-bottom:9px}.panel textarea,.aiCard textarea,.panel input,.panel select,.aiCard input,.aiCard select{width:100%;border:1px solid var(--line);background:#09192c;color:#fff;border-radius:13px;padding:13px;outline:0}.panel textarea,.aiCard textarea{min-height:300px;resize:vertical}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.notice{margin-top:16px;padding:12px 14px;border:1px solid rgba(118,141,255,.2);background:rgba(118,141,255,.08);border-radius:12px;color:#aebee0;display:flex;gap:9px;align-items:flex-start}
+.uploadBox{display:flex;align-items:center;gap:13px;border:1px dashed rgba(135,157,255,.32);padding:15px;border-radius:15px;background:rgba(120,140,255,.05);cursor:pointer;margin:0 0 12px}.uploadBox input{display:none}.uploadBox strong{display:block;margin-top:4px;color:#7e98bc;font-size:11px}
+.answer{min-height:300px;white-space:pre-wrap;line-height:1.7;color:#dbe6f5;background:rgba(3,11,22,.45);border:1px solid var(--line);border-radius:14px;padding:16px}
+.videoOptions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.videoPlaceholder{min-height:310px;border-radius:16px;background:radial-gradient(circle,#192e51,#071120 70%);display:grid;place-items:center;text-align:center;border:1px solid var(--line);padding:20px}.playCircle{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.09);font-size:25px}
+.admin{max-width:1180px;margin:auto;padding:45px 22px 80px}.adminTop{display:flex;justify-content:space-between;align-items:end;gap:18px}.adminTop h1{font-size:40px;margin:10px 0}.adminTop p{color:var(--muted);max-width:700px}.adminGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:28px}.adminCard h3{margin:13px 0 6px}.adminCard p{color:var(--muted);min-height:44px}.ok{color:var(--good)}
+.footer{border-top:1px solid var(--line);padding:35px 22px 50px;color:#7f92ac}.footerInner{max-width:1240px;margin:auto;display:flex;justify-content:space-between;gap:20px;align-items:center}
+.modalBack{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(1,6,13,.72);backdrop-filter:blur(13px);padding:18px}.modal{width:min(480px,100%);background:#0d1c30;border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 30px 100px rgba(0,0,0,.5)}.modalHead{display:flex;justify-content:space-between;align-items:center}.modal h2{margin:5px 0}.modal p{color:var(--muted);line-height:1.6}.field{margin:12px 0}.field label{display:block;font-size:12px;color:#a9bbd2;margin-bottom:6px}.field input{width:100%;padding:12px;border-radius:11px;border:1px solid var(--line);background:#09182b;color:#fff;outline:0}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.authTabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);padding:4px;border-radius:12px;margin:15px 0}.authTabs button{border:0;padding:10px;border-radius:9px;background:transparent;color:#8fa2be}.authTabs button.active{background:rgba(255,255,255,.09);color:#fff}.formError,.formSuccess{padding:11px 12px;border-radius:10px;margin:10px 0;font-size:13px}.formError{background:rgba(255,86,116,.1);color:#ffb1bf;border:1px solid rgba(255,86,116,.18)}.formSuccess{background:rgba(53,212,154,.1);color:#9af0cb;border:1px solid rgba(53,212,154,.18)}
+.profileMenu{position:relative}.profileCard{position:absolute;right:0;top:50px;width:260px;background:#0e2036;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);z-index:70}.profileCard b{display:block}.profileCard small{display:block;color:#8095b1;margin:3px 0 12px}.mobileOnly{display:none}
+@media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}}
+@media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}}
 `;
 
 function GlobalStyle() { return <style>{css}</style>; }
@@ -259,7 +245,7 @@ function App() {
   const [profile,setProfile]=useState(null);
   const [admin,setAdmin]=useState(false);
   const [mobile,setMobile]=useState(false);
-  const [dark,setDark]=useState(false);
+  const [dark,setDark]=useState(true);
   const [profileOpen,setProfileOpen]=useState(false);
   const [favorites,setFavorites]=useState([]);
   const [history,setHistory]=useState([]);
@@ -423,10 +409,8 @@ function AuthModal({mode,setMode,close,onDone}) {
 function ToolPage({t,back,user}) {
   if(t[3]==="student-ai-helper") return <StudentAIHelper back={back} user={user}/>;
   if(t[3]==="text-to-video") return <TextToVideo back={back} user={user}/>;
-  if(t[3]==="edit-pdf") return <PdfEditorTool t={t} back={back}/>;
   if(t[1]==="PDF Tools") return <PdfTool t={t} back={back}/>;
   if(t[1]==="Image Tools") return <ImageTool t={t} back={back}/>;
-  if(t[1]==="SEO & Marketing") return <SeoTool t={t} back={back}/>;
   return <GenericTool t={t} back={back}/>;
 }
 
@@ -438,383 +422,82 @@ function Shell({back,t,children,status}) {
 }
 
 function TextToVideo({back,user}) {
-  const [prompt,setPrompt]=useState("");
-  const [style,setStyle]=useState("Cinematic");
-  const [duration,setDuration]=useState("8 seconds");
-  const [status,setStatus]=useState("");
-  const [busy,setBusy]=useState(false);
-  const [result,setResult]=useState(null);
-  const [progress,setProgress]=useState(0);
-
-  const getBackend=()=>{
-    const configured=import.meta.env.VITE_VIDEO_FUNCTION_URL || "";
-    if(configured) return configured;
-    if(SUPABASE_URL) return `${SUPABASE_URL}/functions/v1/video-generator`;
-    return "";
-  };
-
-  const authHeaders=()=>({
-    "Content-Type":"application/json",
-    ...(SUPABASE_KEY ? {apikey:SUPABASE_KEY} : {}),
-    ...(user?.access_token ? {Authorization:`Bearer ${user.access_token}`} : {})
-  });
-
-  const createVideo=async()=>{
+  const [prompt,setPrompt]=useState(""); const [style,setStyle]=useState("Cinematic");
+  const [duration,setDuration]=useState("10 seconds"); const [status,setStatus]=useState("");
+  const [busy,setBusy]=useState(false); const [result,setResult]=useState(null);
+  const generate=async()=>{
     if(!prompt.trim()) return setStatus("Please enter a video prompt first.");
-    if(!user?.access_token) return setStatus("Please sign in first. Video generation requires an authenticated account.");
-    const base=getBackend();
-    if(!base) return setStatus("Video backend is not configured. Add the Supabase video-generator Edge Function first.");
-
-    setBusy(true); setProgress(0); setResult(null); setStatus("Submitting video generation job...");
+    setBusy(true);setStatus("Preparing video request...");
     try{
-      const r=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({
-        action:"create",
-        prompt:`${style} video: ${prompt.trim()}`,
-        duration
-      })});
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(d.error||d.message||`Video backend error (${r.status})`);
-      if(!d.video_id) throw new Error("Video job was created without a video ID.");
-      setResult({video_id:d.video_id,status:d.status||"queued"});
-      setStatus("Video job created. Rendering started...");
-      await pollVideo(d.video_id,base);
-    }catch(e){
-      setStatus(e?.message||"Video generation failed.");
-    }finally{
-      setBusy(false);
-    }
+      const base=import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL;
+      if(!base) { setResult({prompt,style,duration}); setStatus("Video project prepared locally. Connect a secure video backend to render an MP4."); return; }
+      const headers={"Content-Type":"application/json"}; if(user?.access_token) headers.Authorization=`Bearer ${user.access_token}`;
+      const r=await fetch(base,{method:"POST",headers,body:JSON.stringify({type:"text-to-video",prompt,style,duration})});
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(data.error||data.message||"Video API request failed");
+      setResult(data.video_url?data:{prompt,style,duration});
+      setStatus(data.message||"Video request submitted successfully.");
+    }catch(e){setStatus(e.message||"Video request failed.");}finally{setBusy(false)}
   };
-
-  const pollVideo=async(videoId,base)=>{
-    const maxAttempts=120;
-    for(let attempt=0;attempt<maxAttempts;attempt++){
-      const r=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({action:"status",video_id:videoId})});
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(d.error||d.message||`Status check failed (${r.status})`);
-      const p=Number(d.progress||0);
-      setProgress(Number.isFinite(p)?p:0);
-      setResult(prev=>({...prev, ...d, video_id:videoId}));
-
-      if(d.status==="completed"){
-        setProgress(100);
-        setStatus("Video rendered successfully. Preparing MP4...");
-        const content=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({action:"content",video_id:videoId})});
-        if(!content.ok){
-          const e=await content.text().catch(()=>"");
-          throw new Error(e||`Video download failed (${content.status})`);
-        }
-        const blob=await content.blob();
-        const videoUrl=URL.createObjectURL(blob);
-        setResult(prev=>({...prev,video_url:videoUrl}));
-        setStatus("MP4 is ready. You can play it or download it below.");
-        return;
-      }
-      if(d.status==="failed" || d.status==="cancelled"){
-        throw new Error(d.error?.message || d.error || "Video generation failed.");
-      }
-      await new Promise(resolve=>setTimeout(resolve,5000));
-    }
-    throw new Error("Video generation is taking longer than expected. Open the tool again later to check the job status.");
-  };
-
-  const downloadVideo=()=>{
-    if(!result?.video_url) return;
-    const a=document.createElement("a");
-    a.href=result.video_url; a.download="toolmaster-video.mp4";
-    document.body.appendChild(a); a.click(); a.remove();
-  };
-
-  return <Shell back={back} t={["Text to Video","AI & Video","Generate AI video clips from text prompts.",""]} status={status}>
+  return <Shell back={back} t={["Text to Video","AI & Video","",""]} status={status}>
     <div className="aiHelper"><div className="aiCard"><h3>🎬 Video Prompt</h3>
-      {!user?.access_token&&<div className="formError"><AlertCircle size={15}/> Sign in is required before starting a paid video generation job.</div>}
-      <textarea value={prompt} onChange={e=>setPrompt(e.target.value)} disabled={busy} placeholder="Example: A cinematic sunrise over the mountains, drone camera, soft mist..."/>
-      <div className="videoOptions"><label>Style<select value={style} disabled={busy} onChange={e=>setStyle(e.target.value)}><option>Cinematic</option><option>Realistic</option><option>Anime</option><option>3D Animation</option><option>Documentary</option><option>Product Ad</option></select></label>
-      <label>Duration<select value={duration} disabled={busy} onChange={e=>setDuration(e.target.value)}><option>4 seconds</option><option>8 seconds</option><option>12 seconds</option></select></label></div>
-      <button className="btn primary" disabled={busy||!user?.access_token} onClick={createVideo} style={{marginTop:12}}><Sparkles size={17}/>{busy?`Generating... ${progress}%`:"Generate Video"}</button>
-    </div><div className="aiCard"><h3>🎥 Video Preview</h3>
-      {result?.video_url?<>
-        <video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/>
-        <button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button>
-      </>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration}`:"Sign in and connect the video-generator Edge Function"}</small></div></div>}
-    </div></div>
+      <textarea value={prompt} onChange={e=>setPrompt(e.target.value)} placeholder="Example: A cinematic sunrise over the mountains, drone camera, soft mist..."/>
+      <div className="videoOptions"><label>Style<select value={style} onChange={e=>setStyle(e.target.value)}><option>Cinematic</option><option>Realistic</option><option>Anime</option><option>3D Animation</option><option>Documentary</option><option>Product Ad</option></select></label>
+      <label>Duration<select value={duration} onChange={e=>setDuration(e.target.value)}><option>5 seconds</option><option>10 seconds</option><option>15 seconds</option><option>30 seconds</option></select></label></div>
+      <button className="btn primary" disabled={busy} onClick={generate} style={{marginTop:12}}><Sparkles size={17}/>{busy?"Generating...":"Generate Video"}</button>
+    </div><div className="aiCard"><h3>🎥 Video Preview</h3>{result?.video_url?<video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?"Project ready":"Backend video output appears here"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${style} · ${duration}`:"Configure VITE_API_BASE_URL for real rendering"}</small></div></div>}</div></div>
   </Shell>;
 }
 
-function PdfEditorTool({t,back}) {
-  const uploadRef = useRef(null);
-  const canvasRef = useRef(null);
-  const editInputRef = useRef(null);
+function StudentAIHelper({back,user}) {
+  const [question,setQuestion]=useState(""); const [files,setFiles]=useState([]);
+  const [answer,setAnswer]=useState(""); const [loading,setLoading]=useState(false);
+  const [plan,setPlan]=useState("free"); const [status,setStatus]=useState("");
 
-  const [file,setFile] = useState(null);
-  const [pdfDoc,setPdfDoc] = useState(null);
-  const [page,setPage] = useState(1);
-  const [scale,setScale] = useState(1);
-  const [viewport,setViewport] = useState({width:0,height:0});
-  const [items,setItems] = useState([]);
-  const [edits,setEdits] = useState({});
-  const [selected,setSelected] = useState(null);
-  const [editing,setEditing] = useState(false);
-  const [draft,setDraft] = useState('');
-  const [busy,setBusy] = useState(false);
-  const [status,setStatus] = useState('');
-  const [active,setActive] = useState('edit');
-  const [editStyles,setEditStyles] = useState({});
-  const [fontSize,setFontSize] = useState(16);
-  const [bold,setBold] = useState(false);
-  const [italic,setItalic] = useState(false);
-  const [underline,setUnderline] = useState(false);
-  const [textColor,setTextColor] = useState('#111827');
-
-  const getPdf = async f => {
-    const pdfjs = await loadLib('pdfjs');
-    const bytes = new Uint8Array(await f.arrayBuffer());
-    return pdfjs.getDocument({data:bytes, disableWorker:true}).promise;
-  };
-
-  const extractText = async (pg,vp) => {
-    const pdfjs = await loadLib('pdfjs');
-    const tc = await pg.getTextContent({disableCombineTextItems:false});
-    const list = [];
-    for (let i=0;i<(tc.items||[]).length;i++) {
-      const it = tc.items[i];
-      const value = String(it.str||'').trim();
-      if (!value || !/[\p{L}\p{N}]/u.test(value)) continue;
-      const tr = it.transform || [1,0,0,1,0,0];
-      const m = pdfjs.Util.transform(vp.transform,tr);
-      const x = Number(m[4]||0);
-      const yBaseline = Number(m[5]||0);
-      const height = Math.max(10, Math.abs(Number(m[3]||tr[3]||12)));
-      const width = Math.max(12, Math.abs(Number(it.width||value.length*height*.52)) * vp.scale);
-      const top = Math.max(0, yBaseline-height*0.88);
-      list.push({
-        id:i,
-        text:value,
-        x,
-        y:top,
-        width,
-        height:Math.max(12,height*1.15),
-        pdfX:Number(tr[4]||0),
-        pdfY:Number(tr[5]||0),
-        pdfWidth:Math.max(10,Number(it.width||value.length*height*.52)),
-        pdfHeight:Math.max(8,Math.abs(Number(tr[3]||height/vp.scale))),
-        page,
-        source:'pdf'
-      });
-    }
-    return list;
-  };
-
-  const renderCurrentPage = async (doc, pageNum, s) => {
-    const pg = await doc.getPage(pageNum);
-    const vp = pg.getViewport({scale:s});
-    const canvas = canvasRef.current;
-    if (!canvas) throw new Error('PDF canvas is not ready.');
-    canvas.width = Math.ceil(vp.width);
-    canvas.height = Math.ceil(vp.height);
-    canvas.style.width = `${Math.ceil(vp.width)}px`;
-    canvas.style.height = `${Math.ceil(vp.height)}px`;
-    const ctx = canvas.getContext('2d',{alpha:false});
-    if (!ctx) throw new Error('Could not create canvas context.');
-    ctx.fillStyle='#fff';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    await pg.render({canvasContext:ctx,viewport:vp}).promise;
-    const extracted = await extractText(pg,vp);
-    setViewport({width:vp.width,height:vp.height});
-    setItems(extracted);
-    setSelected(null);
-    setEditing(false);
-    setDraft('');
-    setStatus(extracted.length ? `${extracted.length} text items found. Click any item to edit.` : 'No selectable text found on this page. Use Add Text for scanned PDFs.');
-  };
-
-  useEffect(()=>{
-    if(!file || !pdfDoc) return;
-    let dead=false;
-    (async()=>{
-      setBusy(true);
-      try { await new Promise(r=>requestAnimationFrame(r)); if(!dead) await renderCurrentPage(pdfDoc,page,scale); }
-      catch(e){ if(!dead) setStatus(e?.message||String(e)); }
-      finally { if(!dead) setBusy(false); }
-    })();
-    return ()=>{dead=true};
-  },[file,pdfDoc,page,scale]);
-
-  const openPdf = async f => {
-    if(!f) return;
-    if(f.type!=='application/pdf' && !/\.pdf$/i.test(f.name)) { setStatus('Please choose a PDF file.'); return; }
-    setBusy(true); setStatus('Opening PDF…');
-    try {
-      const doc = await getPdf(f);
-      setFile(f);
-      setPdfDoc(doc);
-      setPage(1);
-      setScale(1);
-      setEdits({});
-      setSelected(null);
-      setItems([]);
-      setStatus(`${doc.numPages} page${doc.numPages===1?'':'s'} loaded.`);
-    } catch(e) {
-      setFile(null); setPdfDoc(null); setStatus(`Could not open this PDF: ${e?.message||String(e)}`);
-    } finally { setBusy(false); }
-  };
-
-  const onUpload = e => {
-    const f=e.target.files?.[0];
-    e.target.value='';
-    if(f) openPdf(f);
-  };
-
-  const selectItem = item => {
-    if(active!=='edit') return;
-    const current = Object.prototype.hasOwnProperty.call(edits,item.id) ? edits[item.id] : item.text;
-    setSelected(item);
-    setDraft(current);
-    const style = editStyles[item.id] || {};
-    setFontSize(Number(style.fontSize) || Math.max(9, Math.round(item.height * 0.72)));
-    setBold(Boolean(style.bold));
-    setItalic(Boolean(style.italic));
-    setUnderline(Boolean(style.underline));
-    setTextColor(style.textColor || '#111827');
-    setEditing(true);
-    requestAnimationFrame(()=>editInputRef.current?.focus());
-  };
-
-  const saveCurrentEdit = (message='Text change prepared. Press Apply Changes, then Download PDF.') => {
-    if(!selected) return false;
-    setEdits(prev=>({...prev,[selected.id]:draft}));
-    setEditStyles(prev=>({...prev,[selected.id]:{fontSize:Number(fontSize)||16,bold,italic,underline,textColor}}));
-    setEditing(false);
-    setStatus(message);
-    return true;
-  };
-
-  const commitDraft = () => {
-    saveCurrentEdit();
-  };
-
-  const applyChanges = () => {
-    if(!selected) {
-      setStatus('Click the exact PDF text you want to edit first.');
-      return;
-    }
-    saveCurrentEdit('Changes applied to the selected text. Click Download PDF to save the edited file.');
-  };
-
-  const cancelDraft = () => {
-    setSelected(null); setEditing(false); setDraft('');
-  };
-
-  const downloadEdited = async (editsOverride = edits, stylesOverride = editStyles) => {
-    if(!file) return;
-    setBusy(true); setStatus('Creating edited PDF…');
-    try {
-      const {PDFDocument,StandardFonts,rgb}=await loadLib('pdf-lib');
-      const doc=await PDFDocument.load(await file.arrayBuffer(),{ignoreEncryption:true,updateMetadata:false});
-      const regularFont=await doc.embedFont(StandardFonts.Helvetica);
-      const boldFont=await doc.embedFont(StandardFonts.HelveticaBold);
-      const italicFont=await doc.embedFont(StandardFonts.HelveticaOblique);
-      const boldItalicFont=await doc.embedFont(StandardFonts.HelveticaBoldOblique);
-      const pdfPages=doc.getPages();
-      for(const item of items){
-        if(!Object.prototype.hasOwnProperty.call(editsOverride,item.id)) continue;
-        const replacement=String(editsOverride[item.id] ?? '');
-        const style=stylesOverride[item.id] || {};
-        const pg=pdfPages[Math.max(0,item.page-1)];
-        const px=item.pdfX;
-        const py=item.pdfY;
-        const size=Math.max(7,Math.min(96,Number(style.fontSize)||item.pdfHeight));
-        const drawFont = style.bold && style.italic ? boldItalicFont : style.bold ? boldFont : style.italic ? italicFont : regularFont;
-        const coverW=Math.max(item.pdfWidth, drawFont.widthOfTextAtSize(item.text,size)+4);
-        pg.drawRectangle({x:px-1,y:py-size*0.18,width:coverW+3,height:size*1.25,color:rgb(1,1,1),opacity:1,borderWidth:0});
-        if(replacement) {
-          const hex=String(style.textColor||'#111827').replace('#','');
-          const rr=parseInt(hex.slice(0,2)||'11',16)/255, gg=parseInt(hex.slice(2,4)||'18',16)/255, bb=parseInt(hex.slice(4,6)||'27',16)/255;
-          pg.drawText(replacement,{x:px,y:py-size*0.05,size,color:rgb(rr,gg,bb),font:drawFont});
-          if(style.underline){
-            const uw=Math.max(8,drawFont.widthOfTextAtSize(replacement,size));
-            pg.drawLine({start:{x:px,y:py-size*0.22},end:{x:px+uw,y:py-size*0.22},thickness:Math.max(0.5,size/14),color:rgb(rr,gg,bb)});
-          }
-        }
+  const solve=async()=>{
+    if(!question.trim()&&!files.length) return setAnswer("Please enter a question or upload a study file.");
+    setLoading(true);setStatus("");
+    try{
+      const base=import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL;
+      if(!base){
+        setAnswer(localStudyHelper(question, files)); setStatus("Local study helper mode is active. Connect your AI backend for GPT-style answers.");
+        return;
       }
-      const bytes=await doc.save();
-      downloadBlob(new Blob([bytes],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
-      setStatus('Edited PDF downloaded successfully.');
-    } catch(e) { setStatus(`Could not create edited PDF: ${e?.message||String(e)}`); }
-    finally { setBusy(false); }
+      const fd=new FormData(); fd.append("type","student-ai-helper"); fd.append("question",question); fd.append("plan",plan);
+      if(user?.id) fd.append("user_id",user.id); files.forEach(f=>fd.append("files",f));
+      const headers={}; if(user?.access_token) headers.Authorization=`Bearer ${user.access_token}`;
+      const r=await fetch(base,{method:"POST",headers,body:fd}); const d=await r.json().catch(()=>({}));
+      if(!r.ok) {
+        if(r.status===401 && /credit/i.test(d.error||"")) throw new Error("AI backend is connected, but its API account has no credits. Add API credits or switch the backend to another provider.");
+        throw new Error(d.error||d.message||`AI request failed (${r.status})`);
+      }
+      setAnswer(d.answer||d.message||"AI response received."); setStatus(`Plan: ${PLANS.find(p=>p.id===plan)?.name||plan}`);
+    }catch(e){setAnswer("");setStatus(e.message||"AI request failed.");}
+    finally{setLoading(false)}
   };
 
-  const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setEdits({});setEditStyles({});setSelected(null);setEditing(false);setDraft('');setFontSize(16);setBold(false);setItalic(false);setUnderline(false);setTextColor('#111827');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
-  const changeScale=v=>setScale(Math.max(.6,Math.min(2,Number(v)||1)));
-
-  if(!file) return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Edit existing PDF text by clicking directly on the text. Add text, images, links, annotations and signatures.','']} status={status}>
-    <div className="pdfEmptyState" onClick={()=>uploadRef.current?.click()}>
-      <input ref={uploadRef} type="file" accept="application/pdf,.pdf" onChange={onUpload} style={{display:'none'}}/>
-      <div>
-        <div className="pdfUploadIcon" style={{margin:'0 auto 14px'}}><Upload size={34}/></div>
-        <h3>Upload PDF file</h3>
-        <p>After upload, click only the text you want to edit.</p>
-        <button type="button" className="btn primary" onClick={e=>{e.stopPropagation();uploadRef.current?.click()}}><Upload size={16}/> Choose PDF</button>
-      </div>
-    </div>
+  return <Shell back={back} t={["Student AI Helper","AI & Education","",""]} status={status}>
+    <div className="aiHelper"><div className="aiCard"><h3>📚 Ask your question</h3>
+      <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question, paste homework, or explain a concept..."/>
+      <label style={{marginTop:12}}>AI plan<select value={plan} onChange={e=>setPlan(e.target.value)}>{PLANS.map(p=><option key={p.id} value={p.id}>{p.name} · {p.credits.toLocaleString()} credits</option>)}</select></label>
+      <FilePicker multiple accept=".pdf,image/*,.txt,.doc,.docx" onChange={setFiles} files={files}/>
+      <div className="actions"><button className="btn primary" disabled={loading} onClick={solve}><Sparkles size={17}/>{loading?"Processing...":"Get AI Help"}</button>{files.length>0&&<button className="btn" onClick={()=>setFiles([])}><Trash2/> Clear files</button>}</div>
+      <div style={{marginTop:15,color:"#8093ae",fontSize:12}}>Plans: Free, Silver, Gold, Demand and Platinum.</div>
+    </div><div className="aiCard"><h3>🤖 AI Answer</h3><div className="answer">{answer||"Your step-by-step answer will appear here."}</div>{answer&&<div className="actions"><button className="btn" onClick={()=>navigator.clipboard?.writeText(answer)}><Copy/> Copy</button><button className="btn" onClick={()=>downloadText(answer,"student-ai-answer.txt")}><Download/> Download</button></div>}</div></div>
   </Shell>;
+}
 
-  return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Click any text directly in the document, change it inline, then download your edited PDF.','']} status={status}>
-    <div className="pdfEditor">
-      <div className="pdfEditorTop"><div className="pdfTopTitle"><h2>Online PDF editor <span className="beta">BETA</span></h2><p>Edit PDF files. Click text to change it.</p></div><div className="pdfTopActions"><button type="button" className="btn" onClick={()=>uploadRef.current?.click()}><Upload size={16}/> Replace PDF</button><button type="button" className="btn primary" onClick={downloadEdited} disabled={busy || !Object.keys(edits).length}> <Download size={16}/> Download PDF</button><input ref={uploadRef} type="file" accept="application/pdf,.pdf" onChange={onUpload} style={{display:'none'}}/></div></div>
+function localStudyHelper(question, files) {
+  const q=question.trim();
+  if(!q) return `I received ${files.length} study file(s). Start by entering the exact question you want explained.`;
+  const lower=q.toLowerCase();
+  if(lower.includes("math")||/[0-9][+*/=-][0-9]/.test(q)) return `Step 1: Identify the given values.\nStep 2: Choose the correct formula or operation.\nStep 3: Work through the calculation carefully.\nStep 4: Check the result.\n\nQuestion received:\n${q}\n\nFor an exact answer, connect the secure AI backend or paste the full problem.`;
+  if(lower.includes("define")||lower.includes("what is")) return `Simple explanation:\n${q}\n\nStart with the key definition, then explain the idea in a real-world example, and finally list the important points to remember.`;
+  return `Study plan:\n1. Break the question into smaller parts.\n2. Identify the key terms.\n3. Explain the main concept in simple language.\n4. Work through an example.\n5. Review the final answer.\n\nYour question:\n${q}\n\nThis is local helper mode; a connected AI backend can provide a detailed subject-specific answer.`;
+}
 
-      <div className="pdfEditorToolbar">{[
-        ['edit','Edit Text',FileText],['add-text','Add Text',FileText],['image','Add Image',ImageIcon],['link','Create Link',ExternalLink],['annotate','Annotate',Eye],['sign','Sign',Printer],['forms','Fill Forms',CheckCircle2]
-      ].map(([v,l,I])=><button type="button" key={v} className={active===v?'pdfAction active':'pdfAction'} onClick={()=>setActive(v)}><I size={18}/><span>{l}</span></button>)}<div className="spacer"/><button type="button" className="pdfAction dangerAction" onClick={reset}><Trash2 size={18}/><span>Clear</span></button></div>
-
-      <div className="pdfControlBar"><div className="pageControl"><span>Page:</span><input type="number" min="1" max={pdfDoc?.numPages||1} value={page} onChange={e=>setPage(Math.max(1,Math.min(pdfDoc?.numPages||1,Number(e.target.value)||1)))}/><span>/ {pdfDoc?.numPages||1}</span></div><div className="zoomControl"><button type="button" className="iconBtn" onClick={()=>changeScale(scale-.1)}>−</button><select value={String(Math.round(scale*100))} onChange={e=>changeScale(Number(e.target.value)/100)}><option value="75">75%</option><option value="90">90%</option><option value="100">100%</option><option value="125">125%</option><option value="150">150%</option><option value="200">200%</option></select><button type="button" className="iconBtn" onClick={()=>changeScale(scale+.1)}>+</button></div></div>
-
-      <div className="pdfWorkspace"><aside className="pdfToolsPanel">
-        {active==='edit' ? <>
-          <h3>Edit Text</h3>
-          <p className="panelHint"><b>Click only the text you want to edit.</b><br/>An inline editor will appear exactly over that text.</p>
-          {selected && <div className="selectionInfo"><strong>Editing</strong><span>{selected.text}</span></div>}
-          <div className="editControls">
-            <div className="formatRow">
-              <label>Font Size<input type="number" min="6" max="96" value={fontSize} onChange={e=>setFontSize(e.target.value)} /></label>
-              <label>Text Color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)} /></label>
-            </div>
-            <div className="formatButtons">
-              <button type="button" className={bold?'toggle on':'toggle'} onClick={()=>setBold(v=>!v)}><b>B</b> Bold</button>
-              <button type="button" className={italic?'toggle on':'toggle'} onClick={()=>setItalic(v=>!v)}><i>I</i> Italic</button>
-              <button type="button" className={underline?'toggle on':'toggle'} onClick={()=>setUnderline(v=>!v)}><u>U</u> Underline</button>
-            </div>
-          </div>
-          <div className="fileBadge">✓ {items.length} text items detected on this page</div>
-          <div className="advancedHint">Advanced: click text → edit → choose size, color, bold, italic or underline → Apply Changes.</div>
-          <div className="detectedList"><b>Click a text item</b>{items.length?items.map(item=><button type="button" key={item.id} className="detected" onClick={()=>selectItem(item)}>{edits[item.id] ?? item.text}</button>):<span>No selectable text found. Use Add Text for scanned/image PDFs.</span>}</div>
-          <div className="applyActions">
-            <button type="button" className="btn primary applyBtn" onClick={applyChanges} disabled={busy || !selected}><Check size={16}/> Apply Changes</button>
-            <button type="button" className="btn secondary" onClick={cancelDraft} disabled={!selected}>Cancel</button>
-          </div>
-          <button type="button" className="btn downloadBtn" onClick={()=>downloadEdited()} disabled={busy || !Object.keys(edits).length}><Download size={16}/> Download PDF</button>
-        </> : <>
-          <h3>{active==='add-text'?'Add Text':active==='image'?'Add Image':active==='link'?'Create Link':active==='annotate'?'Annotate PDF':active==='sign'?'Sign PDF':'Fill Forms'}</h3>
-          <p className="panelHint">Use this mode for adding content. For existing text, switch back to <b>Edit Text</b> and click the exact text.</p>
-          <button type="button" className="btn primary" onClick={()=>setActive('edit')}>Back to Edit Text</button>
-        </>}
-      </aside>
-
-      <section className="pdfViewer"><div className="pdfPaperLive" style={{width:viewport.width||820,height:viewport.height||1060}} onClick={()=>{if(active==='edit'&&!editing)setStatus('Click directly on a text item to edit it.')}}>
-        <canvas ref={canvasRef}/>
-        {viewport.width>0 && <div className="pdfTextOverlay" style={{width:viewport.width,height:viewport.height}}>
-          {active==='edit' && items.map(item=>{
-            const value=edits[item.id] ?? item.text;
-            const isSelected=selected?.id===item.id;
-            return <div key={item.id} className="textEditItem" style={{left:item.x,top:item.y,width:Math.max(12,item.width),height:Math.max(12,item.height)}} onClick={e=>{e.stopPropagation();selectItem(item)}}>
-              {isSelected && editing ? <input ref={editInputRef} value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();applyChanges()}if(e.key==='Escape'){e.preventDefault();cancelDraft()}}} className="inlinePdfInput" style={{fontSize:Number(fontSize)||14,fontWeight:bold?'700':'400',fontStyle:italic?'italic':'normal',textDecoration:underline?'underline':'none',color:textColor,width:Math.max(90,item.width+30),height:Math.max(24,(Number(fontSize)||14)+10)}} /> : <button type="button" className={isSelected?'textHotspot selected':'textHotspot'}>{value}</button>}
-            </div>
-          })}
-        </div>}
-      </div></section></div>
-      <div className="pdfFileBar"><div><strong>{file.name}</strong><span>{(file.size/1024).toFixed(1)} KB</span></div><span>{pdfDoc?.numPages||1} page{(pdfDoc?.numPages||1)===1?'':'s'} · {Object.keys(edits).length} change{Object.keys(edits).length===1?'':'s'}</span><button type="button" className="btn danger" onClick={reset}><Trash2 size={15}/>Remove</button></div>
-      <div className="pdfPrivacy"><ShieldCheck size={15}/>Files stay in your browser while editing.</div>
-    </div>
-  </Shell>;
+function FilePicker({multiple=false,accept,onChange,files}) {
+  return <label className="uploadBox"><Upload size={19}/><div><b>{multiple?"Upload files":"Upload file"}</b><small style={{display:"block",color:"#7f93ae",marginTop:3}}>{accept||"Supported files"}</small>{files?.length?<strong>{files.map(f=>f.name).join(", ")}</strong>:null}</div><input type="file" multiple={multiple} accept={accept} onChange={e=>onChange([...e.target.files])}/></label>;
 }
 
 function PdfTool({t,back}) {
@@ -858,13 +541,13 @@ function PdfTool({t,back}) {
 
   async function pdfToJpg(file){
     const pdfjs=await loadLib("pdfjs");const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;
-    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const viewport=page.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=viewport.width;c.height=viewport.height;await page.render({canvasContext:c.getContext("2d"),viewport}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${file.name.replace(/\.pdf$/i,"")}-page-${i}.jpg`)}
+    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const viewport=page.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=viewport.width;c.height=viewport.height;await page.render({canvasContext:c.getContext("2d"),viewport}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${file.name.replace(/\\.pdf$/i,"")}-page-${i}.jpg`)}
     setStatus(`${pdf.numPages} JPG page(s) downloaded.`);
   }
   async function pdfToWord(file){
     const pdfjs=await loadLib("pdfjs");const {Document,Packer,Paragraph}=await loadLib("docx");const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;const children=[];
     for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const tc=await page.getTextContent();const text=tc.items.map(x=>x.str).join(" ");children.push(new Paragraph(text))}
-    const doc=new Document({sections:[{children}]});const blob=await Packer.toBlob(doc);downloadBlob(blob,file.name.replace(/\.pdf$/i,"")+".docx");setStatus("Editable Word file downloaded.");
+    const doc=new Document({sections:[{children}]});const blob=await Packer.toBlob(doc);downloadBlob(blob,file.name.replace(/\\.pdf$/i,"")+".docx");setStatus("Editable Word file downloaded.");
   }
   async function wordToPdf(file){
     const mammoth=await loadLib("mammoth");const html=(await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()})).value;const w=window.open("","_blank");
@@ -885,256 +568,127 @@ function PdfTool({t,back}) {
   </div><div className="panel"><h3>Selected files</h3>{files.map(f=><p key={f.name}>📄 {f.name} — {(f.size/1024).toFixed(1)} KB</p>)}</div></div></Shell>;
 }
 
+class ToolErrorBoundary extends React.Component {
+  constructor(props){ super(props); this.state={error:null}; }
+  static getDerivedStateFromError(error){ return {error}; }
+  componentDidCatch(error){ console.error("Tool rendering error", error); }
+  render(){
+    if(this.state.error) return <main className="toolPage"><button className="back" onClick={this.props.back}>← Back to tools</button><div className="panel" style={{marginTop:25}}><h2>Tool could not open</h2><p style={{color:"#9fb0c8"}}>The image tool hit a browser error instead of showing a blank page.</p><pre style={{whiteSpace:"pre-wrap",color:"#ffb4b4"}}>{this.state.error?.message||String(this.state.error)}</pre><button className="btn primary" onClick={()=>this.setState({error:null})}>Retry</button></div></main>;
+    return this.props.children;
+  }
+}
+
 function ImageTool({t,back}) {
-  const id=t[3];const [files,setFiles]=useState([]);const [busy,setBusy]=useState(false);const [status,setStatus]=useState("");const [w,setW]=useState(1200),[h,setH]=useState(800),[quality,setQuality]=useState(.75),[crop,setCrop]=useState("1:1");
-  const run=async()=>{
-    if(!files.length)return setStatus("Please upload an image.");setBusy(true);setStatus("");
+  const id=t[3];
+  const [files,setFiles]=useState([]); const [busy,setBusy]=useState(false); const [status,setStatus]=useState("");
+  const [w,setW]=useState(1200),[h,setH]=useState(800),[quality,setQuality]=useState(.75),[crop,setCrop]=useState("1:1");
+  const [preview,setPreview]=useState("");
+
+  useEffect(()=>{
+    if(!files[0]){setPreview("");return;}
+    const url=URL.createObjectURL(files[0]); setPreview(url);
+    return ()=>URL.revokeObjectURL(url);
+  },[files]);
+
+  const process=async()=>{
+    if(!files.length){setStatus("Please upload an image first.");return;}
+    setBusy(true);setStatus("");
     try{
-      const file=files[0]; if(id==="image-text"){setStatus("Running browser OCR...");const {createWorker}=await loadLib("tesseract");const worker=await createWorker("eng");const {data}=await worker.recognize(file);await worker.terminate();downloadText(data.text.trim()||"No text found.","ocr-result.txt");setStatus("OCR complete. Text file downloaded.");return}
-      const img=await loadImage(file),c=document.createElement("canvas"),ctx=c.getContext("2d");let ow=img.naturalWidth,oh=img.naturalHeight;
-      if(id==="image-resizer"){c.width=Number(w)||ow;c.height=Number(h)||oh;ctx.drawImage(img,0,0,c.width,c.height)}
-      else if(id==="image-cropper"){const [rw,rh]=crop.split(":").map(Number);const target=rw/rh;let cw=ow,ch=oh;if(ow/oh>target)cw=oh*target;else ch=ow/target;const sx=(ow-cw)/2,sy=(oh-ch)/2;c.width=Math.round(cw);c.height=Math.round(ch);ctx.drawImage(img,sx,sy,cw,ch,0,0,c.width,c.height)}
-      else if(id==="background-remover"){c.width=ow;c.height=oh;const image=ctx.createImageData(ow,oh);const temp=document.createElement("canvas");temp.width=ow;temp.height=oh;temp.getContext("2d").drawImage(img,0,0);const source=temp.getContext("2d").getImageData(0,0,ow,oh);for(let i=0;i<source.data.length;i+=4){const r=source.data[i],g=source.data[i+1],b=source.data[i+2];if(r>235&&g>235&&b>235||Math.max(r,g,b)-Math.min(r,g,b)<9&&r>220)source.data[i+3]=0}image.data.set(source.data);ctx.putImageData(image,0,0)}
-      else {c.width=ow;c.height=oh;ctx.drawImage(img,0,0)}
-      let type="image/png",name=file.name.replace(/\.[^.]+$/,"")+".png";if(id==="png-jpg"||id==="image-compressor"){type="image/jpeg";name=file.name.replace(/\.[^.]+$/,"")+".jpg"}if(id==="webp-converter"){type="image/webp";name=file.name.replace(/\.[^.]+$/,"")+".webp"}if(id==="jpg-png")type="image/png";
-      const blob=await new Promise(r=>c.toBlob(r,type,Number(quality)));downloadBlob(blob,name);setStatus("Image downloaded.");
-    }catch(e){setStatus(e.message||"Image processing failed.")}finally{setBusy(false)}
-  };
-  const loadImage=file=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>{URL.revokeObjectURL(i.src);res(i)};i.onerror=rej;i.src=URL.createObjectURL(file)});
-  return <Shell back={back} t={t} status={status}><div className="workspace"><div className="panel"><FilePicker accept="image/*" onChange={setFiles} files={files}/>
-    {id==="image-resizer"&&<div className="videoOptions"><label>Width<input type="number" value={w} onChange={e=>setW(e.target.value)}/></label><label>Height<input type="number" value={h} onChange={e=>setH(e.target.value)}/></label></div>}
-    {id==="image-cropper"&&<label>Aspect ratio<select value={crop} onChange={e=>setCrop(e.target.value)}><option>1:1</option><option>4:3</option><option>16:9</option><option>3:4</option><option>9:16</option></select></label>}
-    {id==="image-compressor"&&<label>Quality<input type="range" min=".2" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
-    <button className="btn primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw/>:<Download/>}{busy?"Processing...":id==="image-text"?"Extract Text":"Process & Download"}</button>
-  </div><div className="panel">{files.map(f=><p key={f.name}>🖼️ {f.name}</p>)}<p style={{color:"#8395ae",fontSize:12}}>Image Background Remover uses a simple local near-white background algorithm; complex photos need a dedicated AI model.</p></div></div></Shell>;
-}
+      const file=files[0];
+      if(!file.type.startsWith("image/")) throw new Error("Please choose a valid image file.");
 
-function SeoTool({t, back}) {
-  const id = t[3];
-  const [text, setText] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [url, setUrl] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [keyword, setKeyword] = useState("");
-  const [utmBase, setUtmBase] = useState("");
-  const [utmSource, setUtmSource] = useState("");
-  const [utmMedium, setUtmMedium] = useState("");
-  const [utmCampaign, setUtmCampaign] = useState("");
-  const [utmTerm, setUtmTerm] = useState("");
-  const [utmContent, setUtmContent] = useState("");
-  const [file, setFile] = useState(null);
-  const [out, setOut] = useState("");
-  const [status, setStatus] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  const makeSeoUrl = () => {
-    const raw = url.trim();
-    if (!raw) throw new Error("Enter a website URL first.");
-    return new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
-  };
-
-  const run = async () => {
-    setStatus("");
-    setOut("");
-    try {
-      setBusy(true);
-      if (id === "meta-tags") {
-        if (!title.trim() && !description.trim() && !url.trim()) throw new Error("Enter title, description and URL.");
-        const canonical = url.trim() || "https://example.com/";
-        const result = `<title>${escapeHtml(title || "Page Title")}</title>\n<meta name="description" content="${escapeHtml(description)}">\n<link rel="canonical" href="${escapeHtml(canonical)}">`;
-        setOut(result);
-      } else if (id === "open-graph") {
-        if (!title.trim() && !description.trim() && !url.trim()) throw new Error("Enter Open Graph details.");
-        const result = `<meta property="og:title" content="${escapeHtml(title)}">\n<meta property="og:description" content="${escapeHtml(description)}">\n<meta property="og:url" content="${escapeHtml(url)}">\n<meta property="og:image" content="${escapeHtml(imageUrl)}">\n<meta property="og:type" content="website">`;
-        setOut(result);
-      } else if (id === "schema") {
-        if (!title.trim() && !url.trim()) throw new Error("Enter site name and URL.");
-        const result = JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: title.trim(),
-          url: url.trim(),
-          description: description.trim()
-        }, null, 2);
-        setOut(result);
-      } else if (id === "robots") {
-        const site = url.trim() || "https://example.com/";
-        const result = `User-agent: *\nAllow: /\n\nSitemap: ${site.replace(/\/$/, "")}/sitemap.xml`;
-        setOut(result);
-      } else if (id === "sitemap") {
-        const site = url.trim() || "https://example.com/";
-        const normalized = site.replace(/\/$/, "");
-        const urls = text.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
-        const locations = urls.length ? urls : ["/"];
-        const body = locations.map(path => {
-          const absolute = /^https?:\/\//i.test(path) ? path : `${normalized}${path.startsWith("/") ? path : `/${path}`}`;
-          return `  <url><loc>${escapeXml(absolute)}</loc></url>`;
-        }).join("\\n");
-        setOut(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`);
-      } else if (id === "keyword-density") {
-        const source = text.toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
-        if (!source.length) throw new Error("Enter text to analyze.");
-        const counts = {};
-        source.forEach(word => counts[word] = (counts[word] || 0) + 1);
-        const rows = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 50);
-        const target = keyword.trim().toLowerCase();
-        const targetCount = target ? (counts[target] || 0) : 0;
-        const lines = [
-          `Total words: ${source.length}`,
-          target ? `Target keyword: ${target}` : "Target keyword: not specified",
-          target ? `Target keyword count: ${targetCount}` : "",
-          target ? `Target density: ${(targetCount / source.length * 100).toFixed(2)}%` : "",
-          "",
-          "Top keywords:"
-        ].filter(Boolean);
-        rows.forEach(([word,count], i) => lines.push(`${i+1}. ${word}: ${count} (${(count/source.length*100).toFixed(2)}%)`));
-        setOut(lines.join("\n"));
-      } else if (id === "url-encoder") {
-        if (!text.trim()) throw new Error("Enter text or URL to encode.");
-        setOut(encodeURI(text.trim()));
-      } else if (id === "slug") {
-        if (!text.trim()) throw new Error("Enter a title or keyword phrase.");
-        setOut(slugify(text));
-      } else if (id === "utm") {
-        if (!utmBase.trim()) throw new Error("Enter the base URL first.");
-        const u = new URL(/^https?:\/\//i.test(utmBase.trim()) ? utmBase.trim() : `https://${utmBase.trim()}`);
-        if (utmSource.trim()) u.searchParams.set("utm_source", utmSource.trim());
-        if (utmMedium.trim()) u.searchParams.set("utm_medium", utmMedium.trim());
-        if (utmCampaign.trim()) u.searchParams.set("utm_campaign", utmCampaign.trim());
-        if (utmTerm.trim()) u.searchParams.set("utm_term", utmTerm.trim());
-        if (utmContent.trim()) u.searchParams.set("utm_content", utmContent.trim());
-        setOut(u.toString());
-      } else if (id === "qr-generator") {
-        if (!text.trim()) throw new Error("Enter text or a URL for the QR code.");
-        const QRCode = await loadLib("qrcode");
-        const canvas = document.createElement("canvas");
-        await QRCode.toCanvas(canvas, text.trim(), { width: 640, margin: 3, errorCorrectionLevel: "M" });
-        canvas.toBlob(blob => {
-          if (!blob) { setStatus("QR image could not be created."); return; }
-          downloadBlob(blob, "toolmaster-qr.png");
-          setStatus("QR code generated and downloaded.");
-        }, "image/png");
-        setOut("QR code generated successfully. The PNG download has started.");
-      } else if (id === "barcode") {
-        if (!text.trim()) throw new Error("Enter a value for the barcode.");
-        const JsBarcodeModule = await loadLib("jsbarcode");
-        const JsBarcode = JsBarcodeModule.default || JsBarcodeModule;
-        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        JsBarcode(svg, text.trim(), { format: "CODE128", width: 2, height: 100, displayValue: true, margin: 16 });
-        const serializer = new XMLSerializer();
-        const svgText = serializer.serializeToString(svg);
-        downloadText(svgText, "toolmaster-barcode.svg", "image/svg+xml;charset=utf-8");
-        setOut(svgText);
-        setStatus("Barcode generated and SVG downloaded.");
-      } else if (id === "favicon") {
-        if (!file) throw new Error("Upload an image first.");
-        const img = await loadImageFile(file);
-        const canvas = document.createElement("canvas");
-        canvas.width = 256; canvas.height = 256;
-        const ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, 256, 256);
-        const side = Math.min(img.naturalWidth, img.naturalHeight);
-        const sx = (img.naturalWidth - side) / 2;
-        const sy = (img.naturalHeight - side) / 2;
-        ctx.drawImage(img, sx, sy, side, side, 0, 0, 256, 256);
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
-        if (!blob) throw new Error("Favicon could not be created.");
-        downloadBlob(blob, "favicon-256x256.png");
-        setOut("Favicon PNG generated at 256 × 256 pixels.");
-        setStatus("Favicon generated and downloaded.");
+      if(id==="image-text"){
+        setStatus("Loading OCR engine...");
+        const {createWorker}=await loadLib("tesseract");
+        const worker=await createWorker("eng");
+        setStatus("Running OCR... This can take a little time on the first run.");
+        const {data}=await worker.recognize(file);
+        await worker.terminate();
+        const text=(data?.text||"").trim();
+        setStatus(text?"OCR complete.":"No readable text was detected.");
+        if(text) downloadText(text, `${file.name.replace(/\.[^.]+$/,'')}-text.txt`);
+        return;
       }
-    } catch (e) {
-      setStatus(e?.message || "SEO tool failed.");
-    } finally {
-      setBusy(false);
-    }
+
+      const img=await loadImageSafe(file);
+      const ow=img.naturalWidth||img.width, oh=img.naturalHeight||img.height;
+      if(!ow||!oh) throw new Error("Could not read image dimensions.");
+      const c=document.createElement("canvas"); const ctx=c.getContext("2d");
+      if(!ctx) throw new Error("Your browser could not create an image canvas.");
+
+      if(id==="image-resizer"){
+        c.width=Math.max(1,Number(w)||ow); c.height=Math.max(1,Number(h)||oh);
+        ctx.drawImage(img,0,0,c.width,c.height);
+      }else if(id==="image-cropper"){
+        const [rw,rh]=crop.split(":").map(Number); const target=(rw||1)/(rh||1);
+        let cw=ow,ch=oh;
+        if(ow/oh>target) cw=oh*target; else ch=ow/target;
+        const sx=(ow-cw)/2,sy=(oh-ch)/2;
+        c.width=Math.max(1,Math.round(cw)); c.height=Math.max(1,Math.round(ch));
+        ctx.drawImage(img,sx,sy,cw,ch,0,0,c.width,c.height);
+      }else if(id==="background-remover"){
+        c.width=ow;c.height=oh;ctx.drawImage(img,0,0);
+        const data=ctx.getImageData(0,0,ow,oh); const p=data.data;
+        const sample=[p[0]||255,p[1]||255,p[2]||255];
+        for(let i=0;i<p.length;i+=4){
+          const r=p[i],g=p[i+1],b=p[i+2];
+          const nearWhite=r>235&&g>235&&b>235;
+          const nearSample=Math.abs(r-sample[0])+Math.abs(g-sample[1])+Math.abs(b-sample[2])<24;
+          if(nearWhite||nearSample) p[i+3]=0;
+        }
+        ctx.putImageData(data,0,0);
+      }else{
+        c.width=ow;c.height=oh;ctx.drawImage(img,0,0);
+      }
+
+      let type="image/png", suffix="png";
+      if(id==="png-jpg"||id==="image-compressor"){type="image/jpeg";suffix="jpg";}
+      if(id==="webp-converter"){type="image/webp";suffix="webp";}
+      if(id==="jpg-png"){type="image/png";suffix="png";}
+      const blob=await canvasBlob(c,type,Number(quality));
+      downloadBlob(blob,`${file.name.replace(/\.[^.]+$/,'')}.${suffix}`);
+      setStatus("Done. Your processed image has been downloaded.");
+    }catch(e){
+      console.error(e); setStatus(`Image tool error: ${e?.message||String(e)}`);
+    }finally{setBusy(false);}
   };
 
-  const download = () => {
-    if (!out) return;
-    const ext = id === "sitemap" ? "xml" : id === "robots" ? "txt" : id === "barcode" ? "svg" : "txt";
-    const type = id === "sitemap" ? "application/xml;charset=utf-8" : id === "barcode" ? "image/svg+xml;charset=utf-8" : "text/plain;charset=utf-8";
-    downloadText(out, `${id}-result.${ext}`, type);
-    setStatus("Result downloaded.");
-  };
-
-  const clear = () => {
-    setText(""); setTitle(""); setDescription(""); setUrl(""); setImageUrl(""); setKeyword("");
-    setUtmBase(""); setUtmSource(""); setUtmMedium(""); setUtmCampaign(""); setUtmTerm(""); setUtmContent("");
-    setFile(null); setOut(""); setStatus("");
-  };
-
-  const commonFields = id === "meta-tags" || id === "open-graph" || id === "schema";
-  const singleText = id === "keyword-density" || id === "slug" || id === "url-encoder";
-  const fileOnly = id === "favicon";
-  const utm = id === "utm";
-  const sitemap = id === "sitemap";
-
-  return <Shell back={back} t={t} status={status || "SEO tool runs locally in your browser."}>
-    <div className="workspace">
-      <div className="panel">
-        <h3>{t[0]}</h3>
-        {commonFields && <>
-          <label>Title / Site name<input value={title} onChange={e => setTitle(e.target.value)} placeholder="ToolMaster Pro" /></label>
-          <label>Description<textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="A short SEO-friendly description..." /></label>
-          <label>URL<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com" /></label>
-          {id === "open-graph" && <label>Image URL<input value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://example.com/cover.jpg" /></label>}
-        </>}
-        {utm && <>
-          <label>Base URL<input value={utmBase} onChange={e => setUtmBase(e.target.value)} placeholder="https://example.com/page" /></label>
-          <label>UTM Source<input value={utmSource} onChange={e => setUtmSource(e.target.value)} placeholder="google" /></label>
-          <label>UTM Medium<input value={utmMedium} onChange={e => setUtmMedium(e.target.value)} placeholder="cpc" /></label>
-          <label>UTM Campaign<input value={utmCampaign} onChange={e => setUtmCampaign(e.target.value)} placeholder="summer-sale" /></label>
-          <label>UTM Term (optional)<input value={utmTerm} onChange={e => setUtmTerm(e.target.value)} placeholder="keyword" /></label>
-          <label>UTM Content (optional)<input value={utmContent} onChange={e => setUtmContent(e.target.value)} placeholder="banner-a" /></label>
-        </>}
-        {sitemap && <>
-          <label>Website URL<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com" /></label>
-          <label>Additional URLs (one per line)<textarea value={text} onChange={e => setText(e.target.value)} placeholder="/about\n/contact\n/blog" /></label>
-        </>}
-        {id === "robots" && <label>Sitemap website URL<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com" /></label>}
-        {id === "keyword-density" && <>
-          <label>Target keyword (optional)<input value={keyword} onChange={e => setKeyword(e.target.value)} placeholder="target keyword" /></label>
-          <label>Content<textarea value={text} onChange={e => setText(e.target.value)} placeholder="Paste your article/content here..." /></label>
-        </>}
-        {singleText && <label>{id === "slug" ? "Title / Phrase" : "Text / URL"}<textarea value={text} onChange={e => setText(e.target.value)} placeholder={placeholderFor(id)} /></label>}
-        {(id === "qr-generator" || id === "barcode") && <label>{id === "qr-generator" ? "Text or URL" : "Barcode value"}<textarea value={text} onChange={e => setText(e.target.value)} placeholder={id === "qr-generator" ? "https://example.com" : "123456789012"} /></label>}
-        {fileOnly && <label>Favicon source image<input type="file" accept="image/png,image/jpeg,image/webp" onChange={e => setFile(e.target.files?.[0] || null)} /></label>}
-        <div className="actions">
-          <button className="btn primary" disabled={busy} onClick={run}><Zap size={17}/> {busy ? "Processing..." : "Generate"}</button>
-          <button className="btn" onClick={clear}>Clear</button>
+  return <ToolErrorBoundary back={back}>
+    <Shell back={back} t={t} status={status}>
+      <div className="workspace">
+        <div className="panel">
+          <h3 style={{marginTop:0}}>Upload Image</h3>
+          <FilePicker accept="image/jpeg,image/png,image/webp,image/gif" onChange={setFiles} files={files}/>
+          {preview&&<div style={{marginTop:14,border:"1px solid var(--line)",borderRadius:16,padding:10,background:"#06101c"}}><img src={preview} alt="Preview" style={{display:"block",width:"100%",maxHeight:340,objectFit:"contain",borderRadius:10}}/></div>}
+          {id==="image-resizer"&&<div className="videoOptions"><label>Width<input type="number" min="1" value={w} onChange={e=>setW(e.target.value)}/></label><label>Height<input type="number" min="1" value={h} onChange={e=>setH(e.target.value)}/></label></div>}
+          {id==="image-cropper"&&<label>Aspect ratio<select value={crop} onChange={e=>setCrop(e.target.value)}><option>1:1</option><option>4:3</option><option>16:9</option><option>3:4</option><option>9:16</option></select></label>}
+          {id==="image-compressor"&&<label>Quality<input type="range" min=".2" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/><small style={{color:"#8ea1ba"}}>{Math.round(Number(quality)*100)}%</small></label>}
+          <div className="actions" style={{marginTop:14}}><button className="btn primary" disabled={busy||!files.length} onClick={process}>{busy?<RefreshCw className="spin" size={16}/>:<Download size={16}/>} {busy?"Processing...":id==="image-text"?"Extract Text":"Process & Download"}</button><button className="btn" disabled={busy||!files.length} onClick={()=>setFiles([])}><Trash2 size={15}/> Clear</button></div>
+        </div>
+        <div className="panel">
+          <h3 style={{marginTop:0}}>Tool</h3>
+          <p style={{color:"#9fb0c8",lineHeight:1.65}}>{t[2]}</p>
+          <div style={{display:"grid",gap:10,marginTop:18}}>
+            <div className="notice"><ShieldCheck size={16}/> Images are processed in your browser when possible.</div>
+            {id==="background-remover"&&<div className="notice"><AlertCircle size={16}/> Background remover works best on clean/near-uniform backgrounds.</div>}
+            {id==="image-text"&&<div className="notice"><Sparkles size={16}/> OCR uses the browser OCR engine and downloads the extracted text as a .txt file.</div>}
+          </div>
         </div>
       </div>
-      <div className="panel">
-        <label>Result</label>
-        <textarea value={out} readOnly placeholder="Generated SEO result will appear here..." style={{minHeight:320}} />
-        <div className="actions">
-          <button className="btn" disabled={!out} onClick={() => navigator.clipboard?.writeText(out)}><Copy/> Copy</button>
-          <button className="btn" disabled={!out} onClick={download}><Download/> Download</button>
-        </div>
-      </div>
-    </div>
-  </Shell>;
+    </Shell>
+  </ToolErrorBoundary>;
 }
 
-function escapeHtml(value) {
-  return String(value || "").replace(/[&<>\"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[ch]));
-}
-function escapeXml(value) {
-  return String(value || "").replace(/[&<>\"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[ch]));
-}
-function slugify(value) {
-  return String(value || "").toLowerCase().trim().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 120);
-}
-function loadImageFile(file) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const objectUrl = URL.createObjectURL(file);
-    img.onload = () => { URL.revokeObjectURL(objectUrl); resolve(img); };
-    img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error("Unable to read image.")); };
-    img.src = objectUrl;
+function loadImageSafe(file){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file); const img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("The browser could not decode this image. Try JPG, PNG or WebP."))};
+    img.src=url;
   });
+}
+function canvasBlob(canvas,type,quality){
+  return new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error("Could not create the output image.")),type,quality));
 }
 
 function GenericTool({t,back}) {
