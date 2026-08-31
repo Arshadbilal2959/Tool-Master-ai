@@ -558,6 +558,12 @@ function PdfEditorTool({t,back}) {
   const [busy,setBusy] = useState(false);
   const [status,setStatus] = useState('');
   const [active,setActive] = useState('edit');
+  const [editStyles,setEditStyles] = useState({});
+  const [fontSize,setFontSize] = useState(16);
+  const [bold,setBold] = useState(false);
+  const [italic,setItalic] = useState(false);
+  const [underline,setUnderline] = useState(false);
+  const [textColor,setTextColor] = useState('#111827');
 
   const getPdf = async f => {
     const pdfjs = await loadLib('pdfjs');
