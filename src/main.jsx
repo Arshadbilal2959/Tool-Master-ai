@@ -238,7 +238,7 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .profileMenu{position:relative}.profileCard{position:absolute;right:0;top:50px;width:260px;background:#fff;border:1px solid #e2e4eb;border-radius:14px;padding:14px;box-shadow:var(--shadow);z-index:70}.profileCard b{display:block}.profileCard small{display:block;color:#7f8999;margin:3px 0 12px}.mobileOnly{display:none}
 
 .pdfProEditor{border:1px solid #e3e5ed;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 16px 45px rgba(50,43,110,.08)}
-.pdfEditorTop{padding:18px 20px;border-bottom:1px solid #eceef4;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.pdfTopTitle h2{margin:0;font-size:27px;letter-spacing:-.03em}.pdfTopTitle p{margin:5px 0 0;color:#8992a3}.pdfTopActions{display:flex;align-items:center;gap:9px}.pdfEditorToolbar{display:flex;align-items:stretch;gap:8px;padding:10px 12px;border-bottom:1px solid #e6e8ee;overflow:auto;background:#fff}.pdfAction{min-width:94px;border:1px solid #dfe3ec;background:#fff;border-radius:11px;padding:10px 11px;color:#58647a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px;font-weight:800}.pdfAction:hover{border-color:#bfb8f9;background:#faf9ff}.pdfAction.active{color:#6648ef;border-color:#8e77fa;background:#f6f2ff;box-shadow:inset 0 0 0 1px rgba(108,76,245,.08)}.pdfAction span{white-space:nowrap}.dangerAction{color:#dc4451}.spacer{flex:1;min-width:12px}.pdfControlBar{padding:9px 14px;border-bottom:1px solid #e8eaf0;background:#fbfbfd;display:flex;justify-content:space-between;align-items:center;gap:12px}.pageControl,.zoomControl{display:flex;align-items:center;gap:8px;color:#5c6678;font-size:13px}.pageControl input,.zoomControl select{height:34px;border:1px solid #dfe2e9;border-radius:8px;padding:6px 8px;background:#fff}.zoomControl select{width:82px}.pdfWorkspace{display:grid;grid-template-columns:285px minmax(0,1fr);min-height:750px;background:#f1f2f6}.pdfToolsPanel{background:#fff;border-right:1px solid #e2e5eb;padding:18px;overflow:auto}.pdfToolsPanel h3{margin:0 0 8px;font-size:17px}.panelHint,.emptyHint{font-size:12px;line-height:1.55;color:#8891a2}.pdfToolsPanel label{display:grid;gap:6px;margin-top:13px;font-size:12px;font-weight:800;color:#566176}.pdfToolsPanel input,.pdfToolsPanel textarea,.pdfToolsPanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:9px 10px;background:#fff;color:#1b2435;outline:none}.pdfToolsPanel textarea{min-height:82px;resize:vertical}.twoFields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.inlineButtons{display:flex;gap:8px;margin-top:10px}.toggle{width:38px;height:38px;border:1px solid #dfe2ea;background:#fff;border-radius:9px}.toggle.on{border-color:#8f78f8;background:#f2eeff;color:#6848ef}.selectionInfo{display:grid;gap:5px;padding:10px;margin-top:12px;background:#faf8ff;border:1px solid #e3ddff;border-radius:10px;color:#6447ed;font-size:12px}.selectionInfo span{color:#6f7788;line-height:1.45}.detectedList{display:grid;gap:6px;margin-top:14px}.detectedList>b{font-size:12px;color:#5d6779}.detected{border:1px solid #e5e7ed;background:#fff;border-radius:8px;padding:8px;text-align:left;font-size:11px;color:#586477;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.detected.active{border-color:#8e79f6;background:#f7f4ff;color:#6142e7}.fileBadge{margin-top:9px;padding:8px;border-radius:8px;background:#effaf5;color:#15966a;font-size:11px}.applyBtn{width:100%;justify-content:center;margin-top:18px}.pdfViewer{padding:24px;display:flex;justify-content:center;align-items:flex-start;overflow:auto}.pdfPaperLive{position:relative;background:#fff;box-shadow:0 10px 34px rgba(30,35,50,.16);border:1px solid #d9dce4;flex:none}.pdfPaperLive canvas{display:block;width:100%;height:100%}.pdfTextOverlay{position:absolute;left:0;top:0;z-index:6;pointer-events:none}.textEditItem{position:absolute;pointer-events:auto}.textHotspot{width:100%;height:100%;display:block;padding:0 1px;pointer-events:auto;border:1px solid transparent;background:transparent;color:transparent;cursor:text;text-align:left;overflow:hidden;border-radius:3px}.textHotspot:hover{background:rgba(112,82,245,.10);border:1px dashed rgba(112,82,245,.75)}.textHotspot.selected{background:rgba(112,82,245,.14);border:2px solid #8062f4;color:transparent}.inlinePdfInput{position:absolute;left:0;top:-2px;z-index:20;box-sizing:border-box;border:2px solid #7050f5;border-radius:4px;padding:2px 5px;background:#fff;color:#111827;font-family:Arial,sans-serif;outline:none;box-shadow:0 6px 18px rgba(67,50,170,.18)}.liveGhost{position:absolute;padding:2px 3px;background:rgba(255,255,255,.78);border:1px dashed rgba(108,76,245,.65);font-weight:500;pointer-events:none;white-space:pre-wrap;max-width:75%}.signGhost{font-family:cursive;color:#1c2a58;border-bottom:1px solid #1c2a58;background:rgba(255,255,255,.7)}.pdfFileBar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid #e7e9ef;flex-wrap:wrap}.pdfFileBar>div:first-child{display:flex;flex-direction:column;gap:3px}.pdfFileBar span{color:#8991a1;font-size:12px}.pdfPrivacy{display:flex;justify-content:center;align-items:center;gap:6px;padding:11px;background:#fbfbfd;border-top:1px solid #eef0f4;color:#7f8899;font-size:12px}.pdfEmptyState{margin:28px;border:2px dashed #dcd8fb;border-radius:18px;background:linear-gradient(180deg,#fcfbff,#f8f7ff);min-height:420px;display:grid;place-items:center;text-align:center;padding:50px 20px;cursor:pointer}.pdfUploadIcon{width:74px;height:74px;border-radius:20px;display:grid;place-items:center;color:#6c4cf5;background:#eeeaff;box-shadow:0 12px 28px rgba(108,76,245,.13)}.pdfEmptyState h3{margin:0;font-size:25px}.pdfEmptyState p{margin:0;color:#858ea0}.pdfEmptyState small{color:#9299a8}
+.pdfEditorTop{padding:18px 20px;border-bottom:1px solid #eceef4;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.pdfTopTitle h2{margin:0;font-size:27px;letter-spacing:-.03em}.pdfTopTitle p{margin:5px 0 0;color:#8992a3}.pdfTopActions{display:flex;align-items:center;gap:9px}.pdfEditorToolbar{display:flex;align-items:stretch;gap:8px;padding:10px 12px;border-bottom:1px solid #e6e8ee;overflow:auto;background:#fff}.pdfAction{min-width:94px;border:1px solid #dfe3ec;background:#fff;border-radius:11px;padding:10px 11px;color:#58647a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px;font-weight:800}.pdfAction:hover{border-color:#bfb8f9;background:#faf9ff}.pdfAction.active{color:#6648ef;border-color:#8e77fa;background:#f6f2ff;box-shadow:inset 0 0 0 1px rgba(108,76,245,.08)}.pdfAction span{white-space:nowrap}.dangerAction{color:#dc4451}.spacer{flex:1;min-width:12px}.pdfControlBar{padding:9px 14px;border-bottom:1px solid #e8eaf0;background:#fbfbfd;display:flex;justify-content:space-between;align-items:center;gap:12px}.pageControl,.zoomControl{display:flex;align-items:center;gap:8px;color:#5c6678;font-size:13px}.pageControl input,.zoomControl select{height:34px;border:1px solid #dfe2e9;border-radius:8px;padding:6px 8px;background:#fff}.zoomControl select{width:82px}.pdfWorkspace{display:grid;grid-template-columns:285px minmax(0,1fr);min-height:750px;background:#f1f2f6}.pdfToolsPanel{background:#fff;border-right:1px solid #e2e5eb;padding:18px;overflow:auto}.pdfToolsPanel h3{margin:0 0 8px;font-size:17px}.panelHint,.emptyHint{font-size:12px;line-height:1.55;color:#8891a2}.pdfToolsPanel label{display:grid;gap:6px;margin-top:13px;font-size:12px;font-weight:800;color:#566176}.pdfToolsPanel input,.pdfToolsPanel textarea,.pdfToolsPanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:9px 10px;background:#fff;color:#1b2435;outline:none}.pdfToolsPanel textarea{min-height:82px;resize:vertical}.twoFields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.inlineButtons{display:flex;gap:8px;margin-top:10px}.toggle{width:38px;height:38px;border:1px solid #dfe2ea;background:#fff;border-radius:9px}.toggle.on{border-color:#8f78f8;background:#f2eeff;color:#6848ef}.selectionInfo{display:grid;gap:5px;padding:10px;margin-top:12px;background:#faf8ff;border:1px solid #e3ddff;border-radius:10px;color:#6447ed;font-size:12px}.selectionInfo span{color:#6f7788;line-height:1.45}.detectedList{display:grid;gap:6px;margin-top:14px}.detectedList>b{font-size:12px;color:#5d6779}.detected{border:1px solid #e5e7ed;background:#fff;border-radius:8px;padding:8px;text-align:left;font-size:11px;color:#586477;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.detected.active{border-color:#8e79f6;background:#f7f4ff;color:#6142e7}.editControls{display:grid;gap:10px;margin-top:13px}.formatButtons{display:flex;gap:8px}.formatButtons .toggle{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #dfe2ea;background:#fff;border-radius:9px;padding:9px 8px;color:#596477;font-weight:700}.formatButtons .toggle.on{border-color:#8f78f8;background:#f2eeff;color:#6848ef}.downloadBtn{width:100%;justify-content:center;margin-top:8px}.fileBadge{margin-top:9px;padding:8px;border-radius:8px;background:#effaf5;color:#15966a;font-size:11px}.applyBtn{width:100%;justify-content:center;margin-top:18px}.pdfViewer{padding:24px;display:flex;justify-content:center;align-items:flex-start;overflow:auto}.pdfPaperLive{position:relative;background:#fff;box-shadow:0 10px 34px rgba(30,35,50,.16);border:1px solid #d9dce4;flex:none}.pdfPaperLive canvas{display:block;width:100%;height:100%}.pdfTextOverlay{position:absolute;left:0;top:0;z-index:6;pointer-events:none}.textEditItem{position:absolute;pointer-events:auto}.textHotspot{width:100%;height:100%;display:block;padding:0 1px;pointer-events:auto;border:1px solid transparent;background:transparent;color:transparent;cursor:text;text-align:left;overflow:hidden;border-radius:3px}.textHotspot:hover{background:rgba(112,82,245,.10);border:1px dashed rgba(112,82,245,.75)}.textHotspot.selected{background:rgba(112,82,245,.14);border:2px solid #8062f4;color:transparent}.inlinePdfInput{position:absolute;left:0;top:-2px;z-index:20;box-sizing:border-box;border:2px solid #7050f5;border-radius:4px;padding:2px 5px;background:#fff;color:#111827;font-family:Arial,sans-serif;outline:none;box-shadow:0 6px 18px rgba(67,50,170,.18)}.liveGhost{position:absolute;padding:2px 3px;background:rgba(255,255,255,.78);border:1px dashed rgba(108,76,245,.65);font-weight:500;pointer-events:none;white-space:pre-wrap;max-width:75%}.signGhost{font-family:cursive;color:#1c2a58;border-bottom:1px solid #1c2a58;background:rgba(255,255,255,.7)}.pdfFileBar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid #e7e9ef;flex-wrap:wrap}.pdfFileBar>div:first-child{display:flex;flex-direction:column;gap:3px}.pdfFileBar span{color:#8991a1;font-size:12px}.pdfPrivacy{display:flex;justify-content:center;align-items:center;gap:6px;padding:11px;background:#fbfbfd;border-top:1px solid #eef0f4;color:#7f8899;font-size:12px}.pdfEmptyState{margin:28px;border:2px dashed #dcd8fb;border-radius:18px;background:linear-gradient(180deg,#fcfbff,#f8f7ff);min-height:420px;display:grid;place-items:center;text-align:center;padding:50px 20px;cursor:pointer}.pdfUploadIcon{width:74px;height:74px;border-radius:20px;display:grid;place-items:center;color:#6c4cf5;background:#eeeaff;box-shadow:0 12px 28px rgba(108,76,245,.13)}.pdfEmptyState h3{margin:0;font-size:25px}.pdfEmptyState p{margin:0;color:#858ea0}.pdfEmptyState small{color:#9299a8}
 .pdfEditorShell{border:1px solid #e2e4eb;border-radius:16px;background:#fff;box-shadow:var(--shadow);overflow:hidden}
 .pdfEditorHeader{padding:16px 18px;border-bottom:1px solid #e6e8ef;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
 .pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
@@ -663,40 +663,72 @@ function PdfEditorTool({t,back}) {
     const current = Object.prototype.hasOwnProperty.call(edits,item.id) ? edits[item.id] : item.text;
     setSelected(item);
     setDraft(current);
+    const style = editStyles[item.id] || {};
+    setFontSize(Number(style.fontSize) || Math.max(9, Math.round(item.height * 0.72)));
+    setBold(Boolean(style.bold));
+    setItalic(Boolean(style.italic));
+    setUnderline(Boolean(style.underline));
+    setTextColor(style.textColor || '#111827');
     setEditing(true);
     requestAnimationFrame(()=>editInputRef.current?.focus());
   };
 
-  const commitDraft = () => {
-    if(!selected) return;
+  const saveCurrentEdit = (message='Text change prepared. Press Apply Changes, then Download PDF.') => {
+    if(!selected) return false;
     setEdits(prev=>({...prev,[selected.id]:draft}));
-    setSelected(null);
+    setEditStyles(prev=>({...prev,[selected.id]:{fontSize:Number(fontSize)||16,bold,italic,underline,textColor}}));
     setEditing(false);
-    setStatus('Text changed. Click another text item or Download PDF to save the edits.');
+    setStatus(message);
+    return true;
+  };
+
+  const commitDraft = () => {
+    saveCurrentEdit();
+  };
+
+  const applyChanges = () => {
+    if(!selected) {
+      setStatus('Click the exact PDF text you want to edit first.');
+      return;
+    }
+    saveCurrentEdit('Changes applied to the selected text. Click Download PDF to save the edited file.');
   };
 
   const cancelDraft = () => {
     setSelected(null); setEditing(false); setDraft('');
   };
 
-  const downloadEdited = async () => {
+  const downloadEdited = async (editsOverride = edits, stylesOverride = editStyles) => {
     if(!file) return;
     setBusy(true); setStatus('Creating edited PDF…');
     try {
       const {PDFDocument,StandardFonts,rgb}=await loadLib('pdf-lib');
       const doc=await PDFDocument.load(await file.arrayBuffer(),{ignoreEncryption:true,updateMetadata:false});
-      const font=await doc.embedFont(StandardFonts.Helvetica);
+      const regularFont=await doc.embedFont(StandardFonts.Helvetica);
+      const boldFont=await doc.embedFont(StandardFonts.HelveticaBold);
+      const italicFont=await doc.embedFont(StandardFonts.HelveticaOblique);
+      const boldItalicFont=await doc.embedFont(StandardFonts.HelveticaBoldOblique);
       const pdfPages=doc.getPages();
       for(const item of items){
-        if(!Object.prototype.hasOwnProperty.call(edits,item.id)) continue;
-        const replacement=String(edits[item.id] ?? '');
+        if(!Object.prototype.hasOwnProperty.call(editsOverride,item.id)) continue;
+        const replacement=String(editsOverride[item.id] ?? '');
+        const style=stylesOverride[item.id] || {};
         const pg=pdfPages[Math.max(0,item.page-1)];
         const px=item.pdfX;
         const py=item.pdfY;
-        const size=Math.max(7,Math.min(72,item.pdfHeight));
-        const coverW=Math.max(item.pdfWidth, font.widthOfTextAtSize(item.text,size)+4);
+        const size=Math.max(7,Math.min(96,Number(style.fontSize)||item.pdfHeight));
+        const drawFont = style.bold && style.italic ? boldItalicFont : style.bold ? boldFont : style.italic ? italicFont : regularFont;
+        const coverW=Math.max(item.pdfWidth, drawFont.widthOfTextAtSize(item.text,size)+4);
         pg.drawRectangle({x:px-1,y:py-size*0.18,width:coverW+3,height:size*1.25,color:rgb(1,1,1),opacity:1,borderWidth:0});
-        if(replacement) pg.drawText(replacement,{x:px,y:py-size*0.05,size,color:rgb(0.07,0.09,0.14),font});
+        if(replacement) {
+          const hex=String(style.textColor||'#111827').replace('#','');
+          const rr=parseInt(hex.slice(0,2)||'11',16)/255, gg=parseInt(hex.slice(2,4)||'18',16)/255, bb=parseInt(hex.slice(4,6)||'27',16)/255;
+          pg.drawText(replacement,{x:px,y:py-size*0.05,size,color:rgb(rr,gg,bb),font:drawFont});
+          if(style.underline){
+            const uw=Math.max(8,drawFont.widthOfTextAtSize(replacement,size));
+            pg.drawLine({start:{x:px,y:py-size*0.22},end:{x:px+uw,y:py-size*0.22},thickness:Math.max(0.5,size/14),color:rgb(rr,gg,bb)});
+          }
+        }
       }
       const bytes=await doc.save();
       downloadBlob(new Blob([bytes],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
@@ -705,7 +737,7 @@ function PdfEditorTool({t,back}) {
     finally { setBusy(false); }
   };
 
-  const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setEdits({});setSelected(null);setEditing(false);setDraft('');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
+  const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setEdits({});setEditStyles({});setSelected(null);setEditing(false);setDraft('');setFontSize(16);setBold(false);setItalic(false);setUnderline(false);setTextColor('#111827');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
   const changeScale=v=>setScale(Math.max(.6,Math.min(2,Number(v)||1)));
 
   if(!file) return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Edit existing PDF text by clicking directly on the text. Add text, images, links, annotations and signatures.','']} status={status}>
@@ -735,9 +767,25 @@ function PdfEditorTool({t,back}) {
           <h3>Edit Text</h3>
           <p className="panelHint"><b>Click only the text you want to edit.</b><br/>An inline editor will appear exactly over that text.</p>
           {selected && <div className="selectionInfo"><strong>Editing</strong><span>{selected.text}</span></div>}
+          <div className="editControls">
+            <div className="formatRow">
+              <label>Font Size<input type="number" min="6" max="96" value={fontSize} onChange={e=>setFontSize(e.target.value)} /></label>
+              <label>Text Color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)} /></label>
+            </div>
+            <div className="formatButtons">
+              <button type="button" className={bold?'toggle on':'toggle'} onClick={()=>setBold(v=>!v)}><b>B</b> Bold</button>
+              <button type="button" className={italic?'toggle on':'toggle'} onClick={()=>setItalic(v=>!v)}><i>I</i> Italic</button>
+              <button type="button" className={underline?'toggle on':'toggle'} onClick={()=>setUnderline(v=>!v)}><u>U</u> Underline</button>
+            </div>
+          </div>
           <div className="fileBadge">✓ {items.length} text items detected on this page</div>
+          <div className="advancedHint">Advanced: click text → edit → choose size, color, bold, italic or underline → Apply Changes.</div>
           <div className="detectedList"><b>Click a text item</b>{items.length?items.map(item=><button type="button" key={item.id} className="detected" onClick={()=>selectItem(item)}>{edits[item.id] ?? item.text}</button>):<span>No selectable text found. Use Add Text for scanned/image PDFs.</span>}</div>
-          <button type="button" className="btn primary applyBtn" onClick={downloadEdited} disabled={!Object.keys(edits).length || busy}><Download size={16}/> {busy?'Processing…':'Save & Download PDF'}</button>
+          <div className="applyActions">
+            <button type="button" className="btn primary applyBtn" onClick={applyChanges} disabled={busy || !selected}><Check size={16}/> Apply Changes</button>
+            <button type="button" className="btn secondary" onClick={cancelDraft} disabled={!selected}>Cancel</button>
+          </div>
+          <button type="button" className="btn downloadBtn" onClick={()=>downloadEdited()} disabled={busy || !Object.keys(edits).length}><Download size={16}/> Download PDF</button>
         </> : <>
           <h3>{active==='add-text'?'Add Text':active==='image'?'Add Image':active==='link'?'Create Link':active==='annotate'?'Annotate PDF':active==='sign'?'Sign PDF':'Fill Forms'}</h3>
           <p className="panelHint">Use this mode for adding content. For existing text, switch back to <b>Edit Text</b> and click the exact text.</p>
@@ -752,7 +800,7 @@ function PdfEditorTool({t,back}) {
             const value=edits[item.id] ?? item.text;
             const isSelected=selected?.id===item.id;
             return <div key={item.id} className="textEditItem" style={{left:item.x,top:item.y,width:Math.max(12,item.width),height:Math.max(12,item.height)}} onClick={e=>{e.stopPropagation();selectItem(item)}}>
-              {isSelected && editing ? <input ref={editInputRef} value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();commitDraft()}if(e.key==='Escape'){e.preventDefault();cancelDraft()}}} onBlur={commitDraft} className="inlinePdfInput" style={{fontSize:Math.max(8,item.height*.72),width:Math.max(70,item.width+30),height:Math.max(20,item.height+8)}} /> : <button type="button" className={isSelected?'textHotspot selected':'textHotspot'}>{value}</button>}
+              {isSelected && editing ? <input ref={editInputRef} value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();applyChanges()}if(e.key==='Escape'){e.preventDefault();cancelDraft()}}} className="inlinePdfInput" style={{fontSize:Number(fontSize)||14,fontWeight:bold?'700':'400',fontStyle:italic?'italic':'normal',textDecoration:underline?'underline':'none',color:textColor,width:Math.max(90,item.width+30),height:Math.max(24,(Number(fontSize)||14)+10)}} /> : <button type="button" className={isSelected?'textHotspot selected':'textHotspot'}>{value}</button>}
             </div>
           })}
         </div>}
