@@ -570,19 +570,29 @@ function PdfEditorTool({t,back}) {
   };
 
   const extractEmbeddedText=async(pg,vp,s)=>{
-    const tc=await pg.getTextContent();
-    return (tc.items||[]).filter(i=>String(i.str||"").trim()).map((item,index)=>{
-      const tr=item.transform||[1,0,0,1,0,0];
-      const pdfX=Number(tr[4]||0);
-      const pdfY=Number(tr[5]||0);
-      const fontH=Math.max(6,Math.hypot(Number(tr[2]||0),Number(tr[3]||12)));
-      const transformed=window.pdfjsLib?.Util?.transform ? window.pdfjsLib.Util.transform(vp.transform,tr) : null;
-      const screenX=transformed?Number(transformed[4]||0):pdfX*s;
-      const screenY=transformed?Number(transformed[5]||0)-fontH*s:(vp.height-(pdfY+fontH))*s;
-      const itemW=Math.max(10,Number(item.width||String(item.str||"").length*fontH*.55)*s);
-      const itemH=Math.max(12,fontH*1.35*s);
-      return {index,text:String(item.str),x:screenX,y:Math.max(0,screenY),width:itemW,height:itemH,pdfX,pdfY,pdfHeight:fontH,source:"text"};
-    });
+    const tc=await pg.getTextContent({disableCombineTextItems:false});
+    const util=window.pdfjsLib?.Util;
+    return (tc.items||[])
+      .map((item,index)=>({item,index,text:String(item.str||"").trim()}))
+      .filter(({text})=>text && /[\p{L}\p{N}]/u.test(text))
+      .map(({item,index,text})=>{
+        const tr=item.transform||[1,0,0,1,0,0];
+        const pdfX=Number(tr[4]||0);
+        const pdfY=Number(tr[5]||0);
+        const fontH=Math.max(6,Math.hypot(Number(tr[2]||0),Number(tr[3]||12)));
+        const pdfW=Math.max(6,Number(item.width||text.length*fontH*.55));
+        let x=pdfX*s;
+        let y=(vp.height-(pdfY+fontH))*s;
+        let w=pdfW*s;
+        let h=Math.max(10,fontH*1.35*s);
+        if(util?.transform && util?.applyTransform){
+          const m=util.transform(vp.transform,tr);
+          const pts=[util.applyTransform([0,0],m),util.applyTransform([pdfW,0],m),util.applyTransform([0,fontH],m),util.applyTransform([pdfW,fontH],m)];
+          const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+          x=Math.min(...xs); y=Math.min(...ys); w=Math.max(8,Math.max(...xs)-x); h=Math.max(10,Math.max(...ys)-y);
+        }
+        return {index,text,x:Math.max(0,x),y:Math.max(0,y),width:w,height:h,pdfX,pdfY,pdfWidth:pdfW,pdfHeight:fontH,source:"text"};
+      });
   };
 
   const runOcr=async(pg,vp,s)=>{
@@ -598,14 +608,15 @@ function PdfEditorTool({t,back}) {
       const octx=canvas.getContext("2d",{alpha:false});
       await pg.render({canvasContext:octx,viewport:ocrVp}).promise;
       const result=await worker.recognize(canvas);
-      const words=(result?.data?.words||[]).filter(w=>String(w.text||"").trim() && (w.confidence==null || w.confidence>=35));
+      const words=(result?.data?.words||[]).filter(w=>String(w.text||"").trim() && /[\p{L}\p{N}]/u.test(String(w.text||"")) && (w.confidence==null || w.confidence>=35));
       const items=words.map((w,index)=>{
         const b=w.bbox||{};
         const sx=b.x0/factor*s, sy=b.y0/factor*s, sw=Math.max(8,(b.x1-b.x0)/factor*s), sh=Math.max(12,(b.y1-b.y0)/factor*s);
         const pdfX=b.x0/factor;
         const pdfY=vp.height/s - (b.y1/factor);
+        const pdfWidth=Math.max(8,(b.x1-b.x0)/factor);
         const pdfHeight=Math.max(8,(b.y1-b.y0)/factor);
-        return {index,text:String(w.text).trim(),x:sx,y:sy,width:sw,height:sh,pdfX,pdfY,pdfHeight,source:"ocr",confidence:w.confidence};
+        return {index,text:String(w.text).trim(),x:sx,y:sy,width:sw,height:sh,pdfX,pdfY,pdfWidth,pdfHeight,source:"ocr",confidence:w.confidence};
       });
       setOcrUsed(true);
       setTextItems(items);
@@ -699,9 +710,13 @@ function PdfEditorTool({t,back}) {
         if(!text.trim())throw new Error("Enter replacement text.");
         const sx=Math.max(0,Number(selectedItem.pdfX)||0);
         const baseY=Math.max(0,Number(selectedItem.pdfY)||0);
-        const ww=Math.max(12,Number(selectedItem.width||0)/Math.max(scale,.01));
-        const hh=Math.max(fs*1.15,Number(selectedItem.height||fs*1.2)/Math.max(scale,.01));
-        pdfPage.drawRectangle({x:Math.max(0,sx-2),y:Math.max(0,baseY-fs*.35),width:Math.min(width-sx+2,ww+8),height:Math.min(height,hh+8),color:rgb(1,1,1)});
+        const ww=Math.max(12,Number(selectedItem.pdfWidth||selectedItem.width||0));
+        const hh=Math.max(fs*1.15,Number(selectedItem.pdfHeight||selectedItem.height||fs*1.2));
+        const rx=Math.max(0,sx-2);
+        const ry=Math.max(0,baseY-fs*.35);
+        const rw=Math.min(Math.max(12,ww+8),Math.max(12,width-rx));
+        const rh=Math.min(Math.max(12,hh+8),Math.max(12,height-ry));
+        pdfPage.drawRectangle({x:rx,y:ry,width:rw,height:rh,color:rgb(1,1,1)});
         pdfPage.drawText(text.trim(),{x:sx,y:baseY,size:fs,font:face,color,maxWidth:Math.max(width-sx-10,60)});
       } else if(active==="add-text"){
         if(!text.trim())throw new Error("Enter text to add.");
