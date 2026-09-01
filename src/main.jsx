@@ -181,8 +181,7 @@ async function loadLib(name) {
     "mammoth":"https://esm.sh/mammoth@1.9.0",
     "qrcode":"https://esm.sh/qrcode@1.5.4",
     "jsbarcode":"https://esm.sh/jsbarcode@3.11.6",
-    "tesseract":"https://esm.sh/tesseract.js@5.1.1",
-    "jspdf":"https://esm.sh/jspdf@2.5.2"
+    "tesseract":"https://esm.sh/tesseract.js@5.1.1"
   };
   if (!urls[name]) throw new Error("Library not configured");
   const mod=await import(/* @vite-ignore */ urls[name]);
@@ -337,7 +336,7 @@ function App() {
       </div>
     </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
 
-    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user}/></ToolErrorBoundary> :
+    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolPage t={tool} back={()=>setTool(null)} user={user}/> :
       <>
         <section className="hero"><div className="heroInner">
           <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
@@ -419,102 +418,6 @@ function AuthModal({mode,setMode,close,onDone}) {
     </form>
     {mode==="signin"&&<button className="btn ghost" onClick={forgot} disabled={busy} style={{width:"100%",justifyContent:"center",marginTop:10}}><KeyRound size={15}/> Forgot password</button>}
   </div></div>
-}
-
-
-class ToolErrorBoundary extends React.Component {
-  constructor(props){
-    super(props);
-    this.state={hasError:false,error:null};
-  }
-  static getDerivedStateFromError(error){
-    return {hasError:true,error};
-  }
-  componentDidCatch(error,info){
-    console.error('ToolMaster Pro tool error:',error,info);
-  }
-  render(){
-    if(this.state.hasError){
-      return <main className="toolPage"><div className="panel" style={{maxWidth:760,margin:'40px auto'}}>
-        <div className="pill"><AlertCircle size={14}/> Tool error</div>
-        <h2 style={{marginTop:14}}>This tool could not be opened</h2>
-        <p style={{color:'#7c879a',lineHeight:1.6}}>{this.state.error?.message||'An unexpected error occurred.'}</p>
-        <div className="actions">
-          <button className="btn primary" onClick={()=>this.setState({hasError:false,error:null})}>Try Again</button>
-          <button className="btn" onClick={()=>window.location.reload()}>Reload Website</button>
-        </div>
-      </div></main>;
-    }
-    return this.props.children;
-  }
-}
-
-function FilePicker({multiple=false,accept,onChange,files}){
-  return <label className="uploadBox">
-    <Upload size={20}/>
-    <div style={{flex:1}}>
-      <b>{multiple?'Upload files':'Upload file'}</b>
-      <small style={{display:'block',color:'#8b94a7',marginTop:4}}>{accept||'Supported files'}</small>
-      {files?.length ? <strong>{files.map(f=>f.name).join(', ')}</strong> : null}
-    </div>
-    <input type="file" multiple={multiple} accept={accept} onChange={e=>onChange([...e.target.files])}/>
-  </label>;
-}
-
-function StudentAIHelper({back,user}){
-  const [question,setQuestion]=useState('');
-  const [files,setFiles]=useState([]);
-  const [answer,setAnswer]=useState('');
-  const [loading,setLoading]=useState(false);
-  const [status,setStatus]=useState('');
-
-  const solve=async()=>{
-    if(!question.trim()&&!files.length){
-      setAnswer('Please enter a question or upload a study file.');
-      return;
-    }
-    setLoading(true);setStatus('');
-    try{
-      const base=import.meta.env.VITE_API_BASE_URL||import.meta.env.VITE_SUPABASE_FUNCTION_URL;
-      if(!base){
-        setAnswer('AI backend is not configured yet. Your question/file is ready, but a secure AI Edge Function is required for real AI answers.');
-        return;
-      }
-      const session= supabase ? (await supabase.auth.getSession()).data.session : null;
-      const fd=new FormData();
-      fd.append('question',question);
-      files.forEach(f=>fd.append('files',f));
-      const headers={...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),...(session?.access_token?{Authorization:`Bearer ${session.access_token}`}:{})};
-      const r=await fetch(base,{method:'POST',headers,body:fd});
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(d.error||d.message||`AI request failed (${r.status})`);
-      setAnswer(d.answer||d.message||'AI response received.');
-    }catch(e){
-      setAnswer(`AI Helper error: ${e?.message||String(e)}`);
-    }finally{setLoading(false)}
-  };
-
-  return <Shell back={back} t={['Student AI Helper','AI & Education','Ask questions and upload study files for step-by-step AI help.','']} status={status||'Use a secure backend for production AI processing.'}>
-    <div className="aiHelper">
-      <div className="aiCard">
-        <h3>📚 Ask your question</h3>
-        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question or explain what you need help with..."/>
-        <FilePicker multiple accept=".pdf,image/*,.txt,.doc,.docx" onChange={setFiles} files={files}/>
-        <div className="actions">
-          <button className="btn primary" disabled={loading} onClick={solve}><Sparkles size={17}/>{loading?'Processing...':'Get AI Help'}</button>
-          {files.length>0&&<button className="btn" onClick={()=>setFiles([])}><Trash2 size={16}/> Clear files</button>}
-        </div>
-      </div>
-      <div className="aiCard">
-        <h3>🤖 AI Answer</h3>
-        <div className="answer">{answer||'Your step-by-step answer will appear here.'}</div>
-        <div className="actions">
-          <button className="btn" disabled={!answer} onClick={()=>navigator.clipboard?.writeText(answer)}><Copy size={16}/> Copy</button>
-          <button className="btn" disabled={!answer} onClick={()=>downloadText(answer,'student-ai-answer.txt')}><Download size={16}/> Download</button>
-        </div>
-      </div>
-    </div>
-  </Shell>;
 }
 
 function ToolPage({t,back,user}) {
@@ -984,79 +887,14 @@ function PdfTool({t,back}) {
     setStatus(`${pdf.numPages} JPG page(s) downloaded.`);
   }
   async function pdfToWord(file){
-    const pdfjs=await loadLib("pdfjs");
-    const docx=await loadLib("docx");
-    const {Document,Packer,Paragraph,TextRun,PageBreak}=docx;
-    const pdf=await pdfjs.getDocument({data:new Uint8Array(await file.arrayBuffer()),disableWorker:true}).promise;
-    const sections=[];
-    for(let i=1;i<=pdf.numPages;i++){
-      const page=await pdf.getPage(i);
-      const tc=await page.getTextContent({disableCombineTextItems:false});
-      const parts=(tc.items||[]).map(x=>String(x.str||"")).filter(Boolean);
-      const text=parts.join(" ").replace(/\s+/g," ").trim();
-      const children=[];
-      if(text) children.push(new Paragraph({children:[new TextRun({text})],spacing:{after:160,line:276}}));
-      else children.push(new Paragraph({children:[new TextRun({text:`[Page ${i}: no selectable text found]`,italics:true})]}));
-      if(i<pdf.numPages) children.push(new Paragraph({children:[new PageBreak()]}));
-      sections.push(children);
-    }
-    const flat=sections.flat();
-    const outDoc=new Document({sections:[{properties:{},children:flat}]});
-    const blob=await Packer.toBlob(outDoc);
-    downloadBlob(blob,file.name.replace(/\.pdf$/i,"")+".docx");
-    setStatus(`Word file created from ${pdf.numPages} PDF page(s), preserving page order.`);
+    setStatus("Uploading PDF to the secure document converter…");
+    const data = await convertWithSecureBackend(file, "docx");
+    setStatus(data.message || "PDF converted to Word and downloaded.");
   }
   async function wordToPdf(file){
-    const mammoth=await loadLib("mammoth");
-    const pdfMod=await loadLib("jspdf");
-    const JsPDF=pdfMod.jsPDF || pdfMod.default?.jsPDF || pdfMod.default;
-    if(!JsPDF) throw new Error("PDF engine could not be loaded.");
-    const result=await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()},{
-      convertImage:mammoth.images.inline(async image=>({src:`data:${image.contentType};base64,${await image.read("base64")}`}))
-    });
-    const html=result.value;
-    const host=document.createElement("div");
-    host.style.position="fixed";
-    host.style.left="-100000px";
-    host.style.top="0";
-    host.style.width="794px";
-    host.style.background="#fff";
-    host.style.color="#111";
-    host.style.padding="48px";
-    host.style.boxSizing="border-box";
-    host.style.fontFamily="Arial, Helvetica, sans-serif";
-    host.style.fontSize="14px";
-    host.style.lineHeight="1.55";
-    host.innerHTML=`<style>
-      *{box-sizing:border-box} body{margin:0} h1,h2,h3,h4{margin:0 0 14px} p{margin:0 0 10px}
-      table{width:100%;border-collapse:collapse;margin:12px 0} td,th{border:1px solid #bbb;padding:6px;vertical-align:top}
-      img{max-width:100%;height:auto} ul,ol{margin:8px 0 10px 24px}
-      blockquote{margin:10px 0;padding-left:12px;border-left:3px solid #bbb}
-    </style>${html}`;
-    document.body.appendChild(host);
-    try{
-      const images=Array.from(host.querySelectorAll("img"));
-      await Promise.all(images.map(img=>new Promise(resolve=>{
-        if(img.complete) return resolve();
-        img.onload=img.onerror=resolve;
-      })));
-      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-      const pageW=210,pageH=297,margin=10;
-      const pdf=new JsPDF({unit:"mm",format:"a4",orientation:"p",compress:true});
-      await pdf.html(host,{
-        x:margin,y:margin,
-        width:pageW-(margin*2),
-        windowWidth:host.scrollWidth,
-        autoPaging:"text",
-        margin:[margin,margin,margin,margin],
-        html2canvas:{scale:1.5,useCORS:true,backgroundColor:"#ffffff",logging:false},
-        pagebreak:{mode:["css","legacy"]}
-      });
-      pdf.save(file.name.replace(/\.docx?$/i,"")+".pdf");
-      setStatus("Word document converted to PDF with layout, images and tables preserved as closely as browser rendering allows.");
-    }finally{
-      host.remove();
-    }
+    setStatus("Uploading Word document to the secure document converter…");
+    const data = await convertWithSecureBackend(file, "pdf");
+    setStatus(data.message || "Word document converted to PDF and downloaded.");
   }
   async function jpgToPdf(){
     const {PDFDocument}=await loadLib("pdf-lib");const doc=await PDFDocument.create();
@@ -1064,7 +902,8 @@ function PdfTool({t,back}) {
     downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images.pdf");setStatus("PDF downloaded.");
   }
   if(id==="jpg-pdf") return <Shell back={back} t={t} status={status}><div className="workspace"><div className="panel"><FilePicker multiple accept="image/jpeg,image/png" onChange={setFiles} files={files}/><button className="btn primary" disabled={busy||!files.length} onClick={jpgToPdf}><Download/> Create PDF</button></div><div className="panel"><h3>{files.length} image(s) selected</h3>{files.map(f=><p key={f.name}>✓ {f.name}</p>)}</div></div></Shell>;
-  return <Shell back={back} t={t} status={status||"Files are processed in your browser when supported."}><div className="workspace"><div className="panel"><FilePicker multiple={id==="merge-pdf"} accept=".pdf,application/pdf" onChange={setFiles} files={files}/>
+  const accepted = id === "word-pdf" ? ".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" : ".pdf,application/pdf";
+  return <Shell back={back} t={t} status={status||"Files are processed in your browser when supported."}><div className="workspace"><div className="panel"><FilePicker multiple={id==="merge-pdf"} accept={accepted} onChange={setFiles} files={files}/>
     {id==="split-pdf"&&<label>Pages (e.g. 1,3,5)<input value={pages} onChange={e=>setPages(e.target.value)}/></label>}
     {id==="rotate-pdf"&&<label>Rotation<select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
     {id==="pdf-watermark"&&<label>Watermark text<input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
