@@ -181,7 +181,9 @@ async function loadLib(name) {
     "mammoth":"https://esm.sh/mammoth@1.9.0",
     "qrcode":"https://esm.sh/qrcode@1.5.4",
     "jsbarcode":"https://esm.sh/jsbarcode@3.11.6",
-    "tesseract":"https://esm.sh/tesseract.js@5.1.1"
+    "tesseract":"https://esm.sh/tesseract.js@5.1.1",
+    "backgroundRemoval":"https://esm.sh/@imgly/background-removal@1.7.0?bundle",
+    "onnxruntime":"https://esm.sh/onnxruntime-web@1.21.0-dev.20250206-d981b153d3"
   };
   if (!urls[name]) throw new Error("Library not configured");
   const mod=await import(/* @vite-ignore */ urls[name]);
@@ -620,7 +622,6 @@ function PdfEditorTool({t,back}) {
   const [scale,setScale] = useState(1);
   const [viewport,setViewport] = useState({width:0,height:0});
   const [items,setItems] = useState([]);
-  const [allItems,setAllItems] = useState([]);
   const [edits,setEdits] = useState({});
   const [selected,setSelected] = useState(null);
   const [editing,setEditing] = useState(false);
@@ -642,7 +643,7 @@ function PdfEditorTool({t,back}) {
     return pdfjs.getDocument({data:bytes, disableWorker:true}).promise;
   };
 
-  const extractText = async (pg,vp,pageNum) => {
+  const extractText = async (pg,vp) => {
     const pdfjs = await loadLib('pdfjs');
     const tc = await pg.getTextContent({disableCombineTextItems:false});
     const list = [];
@@ -658,49 +659,21 @@ function PdfEditorTool({t,back}) {
       const width = Math.max(12, Math.abs(Number(it.width||value.length*height*.52)) * vp.scale);
       const top = Math.max(0, yBaseline-height*0.88);
       list.push({
-        id:`pdf-${pageNum}-${i}`, index:i, text:value, x, y:top,
-        width, height:Math.max(12,height*1.15),
-        pdfX:Number(tr[4]||0), pdfY:Number(tr[5]||0),
+        id:i,
+        text:value,
+        x,
+        y:top,
+        width,
+        height:Math.max(12,height*1.15),
+        pdfX:Number(tr[4]||0),
+        pdfY:Number(tr[5]||0),
         pdfWidth:Math.max(10,Number(it.width||value.length*height*.52)),
         pdfHeight:Math.max(8,Math.abs(Number(tr[3]||height/vp.scale))),
-        page:pageNum, source:'pdf'
+        page,
+        source:'pdf'
       });
     }
-    if (list.length) return list;
-
-    setStatus(`No selectable text on page ${pageNum}. Running OCR…`);
-    const off = document.createElement('canvas');
-    const ocrScale = Math.min(2, Math.max(1.5, 1800 / Math.max(vp.width,vp.height)));
-    const ocrVp = pg.getViewport({scale:ocrScale});
-    off.width=Math.ceil(ocrVp.width); off.height=Math.ceil(ocrVp.height);
-    const octx=off.getContext('2d');
-    if(!octx) throw new Error('Could not create OCR canvas.');
-    await pg.render({canvasContext:octx,viewport:ocrVp}).promise;
-    const {createWorker}=await loadLib('tesseract');
-    const worker=await createWorker('eng');
-    try {
-      const {data}=await worker.recognize(off);
-      const words=Array.isArray(data?.words)?data.words:[];
-      const ocr=[];
-      for(let i=0;i<words.length;i++){
-        const w=words[i]; const value=String(w?.text||'').trim();
-        const bb=w?.bbox;
-        if(!value || !bb || !/[\p{L}\p{N}]/u.test(value)) continue;
-        const x=bb.x0*(vp.width/ocrVp.width);
-        const y=bb.y0*(vp.height/ocrVp.height);
-        const width=Math.max(10,(bb.x1-bb.x0)*(vp.width/ocrVp.width));
-        const height=Math.max(12,(bb.y1-bb.y0)*(vp.height/ocrVp.height));
-        const pdfH=height/vp.scale;
-        const pdfX=x/vp.scale;
-        const pdfY=(vp.height-y)/vp.scale;
-        ocr.push({
-          id:`ocr-${pageNum}-${i}`, index:i, text:value, x,y,width,height,
-          pdfX,pdfY,pdfWidth:width/vp.scale,pdfHeight:pdfH,page:pageNum,source:'ocr',
-          ocrX:x,ocrY:y,ocrW:width,ocrH:height
-        });
-      }
-      return ocr;
-    } finally { await worker.terminate(); }
+    return list;
   };
 
   const renderCurrentPage = async (doc, pageNum, s) => {
@@ -717,10 +690,9 @@ function PdfEditorTool({t,back}) {
     ctx.fillStyle='#fff';
     ctx.fillRect(0,0,canvas.width,canvas.height);
     await pg.render({canvasContext:ctx,viewport:vp}).promise;
-    const extracted = await extractText(pg,vp,pageNum);
+    const extracted = await extractText(pg,vp);
     setViewport({width:vp.width,height:vp.height});
     setItems(extracted);
-    setAllItems(prev=>[...prev.filter(x=>x.page!==pageNum),...extracted]);
     setSelected(null);
     setEditing(false);
     setDraft('');
@@ -831,74 +803,42 @@ function PdfEditorTool({t,back}) {
     setBusy(true); setStatus('Creating edited PDF…');
     try {
       const {PDFDocument,StandardFonts,rgb}=await loadLib('pdf-lib');
-      const originalBytes=await file.arrayBuffer();
-      const hasOcr=allItems.some(item=>item.source==='ocr' && Object.prototype.hasOwnProperty.call(editsOverride,item.id));
-      if(hasOcr){
-        const pdfjs=await loadLib('pdfjs');
-        const sourcePdf=await pdfjs.getDocument({data:new Uint8Array(originalBytes),disableWorker:true}).promise;
-        const out=await PDFDocument.create();
-        const regular=await out.embedFont(StandardFonts.Helvetica);
-        const boldFont=await out.embedFont(StandardFonts.HelveticaBold);
-        const italicFont=await out.embedFont(StandardFonts.HelveticaOblique);
-        const boldItalic=await out.embedFont(StandardFonts.HelveticaBoldOblique);
-        for(let pno=1;pno<=sourcePdf.numPages;pno++){
-          const srcPage=await sourcePdf.getPage(pno);
-          const baseVp=srcPage.getViewport({scale:1});
-          const renderScale=2;
-          const rvp=srcPage.getViewport({scale:renderScale});
-          const c=document.createElement('canvas'); c.width=Math.ceil(rvp.width); c.height=Math.ceil(rvp.height);
-          const ctx=c.getContext('2d'); if(!ctx) throw new Error('Could not create PDF raster canvas.');
-          await srcPage.render({canvasContext:ctx,viewport:rvp}).promise;
-          const pageItems=allItems.filter(x=>x.page===pno && Object.prototype.hasOwnProperty.call(editsOverride,x.id));
-          for(const item of pageItems){
-            const replacement=String(editsOverride[item.id] ?? '');
-            const style=stylesOverride[item.id]||{};
-            const sx=item.x*renderScale, sy=item.y*renderScale, sw=Math.max(item.width, item.pdfWidth*renderScale), sh=Math.max(item.height,item.pdfHeight*renderScale);
-            ctx.save(); ctx.fillStyle='#fff'; ctx.fillRect(sx-2,sy-2,Math.max(sw,40)+6,Math.max(sh,14)+6);
-            if(replacement){
-              const size=Math.max(8,Number(style.fontSize)||Math.max(10,Math.round(item.height*.8)));
-              const fontWeight=style.bold?'700':'400'; const fontStyle=style.italic?'italic':'normal';
-              ctx.font=`${fontStyle} ${fontWeight} ${size*renderScale}px Arial`;
-              const hex=String(style.textColor||'#111827'); ctx.fillStyle=hex; ctx.textBaseline='alphabetic';
-              ctx.fillText(replacement,sx,sy+size*renderScale);
-              if(style.underline){const tw=ctx.measureText(replacement).width;ctx.strokeStyle=hex;ctx.lineWidth=Math.max(1,renderScale);ctx.beginPath();ctx.moveTo(sx,sy+(size+2)*renderScale);ctx.lineTo(sx+tw,sy+(size+2)*renderScale);ctx.stroke();}
-            } ctx.restore();
-          }
-          const png=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error('PNG encoding failed.')),'image/png'));
-          const image=await out.embedPng(await png.arrayBuffer());
-          const pp=out.addPage([baseVp.width,baseVp.height]);
-          pp.drawImage(image,{x:0,y:0,width:baseVp.width,height:baseVp.height});
-        }
-        const bytes=await out.save();
-        downloadBlob(new Blob([bytes],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
-        setStatus('Edited scanned PDF downloaded successfully.');
-        return;
-      }
-      const doc=await PDFDocument.load(originalBytes,{ignoreEncryption:true,updateMetadata:false});
+      const doc=await PDFDocument.load(await file.arrayBuffer(),{ignoreEncryption:true,updateMetadata:false});
       const regularFont=await doc.embedFont(StandardFonts.Helvetica);
       const boldFont=await doc.embedFont(StandardFonts.HelveticaBold);
       const italicFont=await doc.embedFont(StandardFonts.HelveticaOblique);
       const boldItalicFont=await doc.embedFont(StandardFonts.HelveticaBoldOblique);
       const pdfPages=doc.getPages();
-      for(const item of allItems){
-        if(item.source==='ocr' || !Object.prototype.hasOwnProperty.call(editsOverride,item.id)) continue;
+      for(const item of items){
+        if(!Object.prototype.hasOwnProperty.call(editsOverride,item.id)) continue;
         const replacement=String(editsOverride[item.id] ?? '');
         const style=stylesOverride[item.id] || {};
-        const pg=pdfPages[Math.max(0,item.page-1)]; if(!pg) continue;
-        const px=item.pdfX, py=item.pdfY;
+        const pg=pdfPages[Math.max(0,item.page-1)];
+        const px=item.pdfX;
+        const py=item.pdfY;
         const size=Math.max(7,Math.min(96,Number(style.fontSize)||item.pdfHeight));
-        const drawFont=style.bold&&style.italic?boldItalicFont:style.bold?boldFont:style.italic?italicFont:regularFont;
-        const coverW=Math.max(item.pdfWidth,drawFont.widthOfTextAtSize(item.text,size)+4);
-        pg.drawRectangle({x:px-1,y:py-size*.18,width:coverW+3,height:size*1.25,color:rgb(1,1,1),borderWidth:0});
-        if(replacement){const hex=String(style.textColor||'#111827').replace('#','');const rr=parseInt(hex.slice(0,2)||'11',16)/255,gg=parseInt(hex.slice(2,4)||'18',16)/255,bb=parseInt(hex.slice(4,6)||'27',16)/255;pg.drawText(replacement,{x:px,y:py-size*.05,size,color:rgb(rr,gg,bb),font:drawFont});if(style.underline){const uw=drawFont.widthOfTextAtSize(replacement,size);pg.drawLine({start:{x:px,y:py-size*.22},end:{x:px+uw,y:py-size*.22},thickness:Math.max(.5,size/14),color:rgb(rr,gg,bb)});}}
+        const drawFont = style.bold && style.italic ? boldItalicFont : style.bold ? boldFont : style.italic ? italicFont : regularFont;
+        const coverW=Math.max(item.pdfWidth, drawFont.widthOfTextAtSize(item.text,size)+4);
+        pg.drawRectangle({x:px-1,y:py-size*0.18,width:coverW+3,height:size*1.25,color:rgb(1,1,1),opacity:1,borderWidth:0});
+        if(replacement) {
+          const hex=String(style.textColor||'#111827').replace('#','');
+          const rr=parseInt(hex.slice(0,2)||'11',16)/255, gg=parseInt(hex.slice(2,4)||'18',16)/255, bb=parseInt(hex.slice(4,6)||'27',16)/255;
+          pg.drawText(replacement,{x:px,y:py-size*0.05,size,color:rgb(rr,gg,bb),font:drawFont});
+          if(style.underline){
+            const uw=Math.max(8,drawFont.widthOfTextAtSize(replacement,size));
+            pg.drawLine({start:{x:px,y:py-size*0.22},end:{x:px+uw,y:py-size*0.22},thickness:Math.max(0.5,size/14),color:rgb(rr,gg,bb)});
+          }
+        }
       }
       const bytes=await doc.save();
-      downloadBlob(new Blob([bytes],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
+      const safeBytes = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+      const pdfBlob = new Blob([new Uint8Array(safeBytes)],{type:'application/pdf'}); downloadBlob(pdfBlob,file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
       setStatus('Edited PDF downloaded successfully.');
     } catch(e) { setStatus(`Could not create edited PDF: ${e?.message||String(e)}`); }
     finally { setBusy(false); }
   };
-  const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setAllItems([]);setEdits({});setEditStyles({});setSelected(null);setEditing(false);setDraft('');setHasApplied(false);setFontSize(16);setBold(false);setItalic(false);setUnderline(false);setTextColor('#111827');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
+
+  const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setEdits({});setEditStyles({});setSelected(null);setEditing(false);setDraft('');setHasApplied(false);setFontSize(16);setBold(false);setItalic(false);setUnderline(false);setTextColor('#111827');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
   const changeScale=v=>setScale(Math.max(.6,Math.min(2,Number(v)||1)));
 
   if(!file) return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Edit existing PDF text by clicking directly on the text. Add text, images, links, annotations and signatures.','']} status={status}>
@@ -1096,29 +1036,147 @@ function PdfTool({t,back}) {
 }
 
 function ImageTool({t,back}) {
-  const id=t[3];const [files,setFiles]=useState([]);const [busy,setBusy]=useState(false);const [status,setStatus]=useState("");const [w,setW]=useState(1200),[h,setH]=useState(800),[quality,setQuality]=useState(.75),[crop,setCrop]=useState("1:1");
-  const run=async()=>{
-    if(!files.length)return setStatus("Please upload an image.");setBusy(true);setStatus("");
-    try{
-      const file=files[0]; if(id==="image-text"){setStatus("Running browser OCR...");const {createWorker}=await loadLib("tesseract");const worker=await createWorker("eng");const {data}=await worker.recognize(file);await worker.terminate();downloadText(data.text.trim()||"No text found.","ocr-result.txt");setStatus("OCR complete. Text file downloaded.");return}
-      const img=await loadImage(file),c=document.createElement("canvas"),ctx=c.getContext("2d");let ow=img.naturalWidth,oh=img.naturalHeight;
-      if(id==="image-resizer"){c.width=Number(w)||ow;c.height=Number(h)||oh;ctx.drawImage(img,0,0,c.width,c.height)}
-      else if(id==="image-cropper"){const [rw,rh]=crop.split(":").map(Number);const target=rw/rh;let cw=ow,ch=oh;if(ow/oh>target)cw=oh*target;else ch=ow/target;const sx=(ow-cw)/2,sy=(oh-ch)/2;c.width=Math.round(cw);c.height=Math.round(ch);ctx.drawImage(img,sx,sy,cw,ch,0,0,c.width,c.height)}
-      else if(id==="background-remover"){c.width=ow;c.height=oh;const image=ctx.createImageData(ow,oh);const temp=document.createElement("canvas");temp.width=ow;temp.height=oh;temp.getContext("2d").drawImage(img,0,0);const source=temp.getContext("2d").getImageData(0,0,ow,oh);for(let i=0;i<source.data.length;i+=4){const r=source.data[i],g=source.data[i+1],b=source.data[i+2];if(r>235&&g>235&&b>235||Math.max(r,g,b)-Math.min(r,g,b)<9&&r>220)source.data[i+3]=0}image.data.set(source.data);ctx.putImageData(image,0,0)}
-      else {c.width=ow;c.height=oh;ctx.drawImage(img,0,0)}
-      let type="image/png",name=file.name.replace(/\.[^.]+$/,"")+".png";if(id==="png-jpg"||id==="image-compressor"){type="image/jpeg";name=file.name.replace(/\.[^.]+$/,"")+".jpg"}if(id==="webp-converter"){type="image/webp";name=file.name.replace(/\.[^.]+$/,"")+".webp"}if(id==="jpg-png")type="image/png";
-      const blob=await new Promise(r=>c.toBlob(r,type,Number(quality)));downloadBlob(blob,name);setStatus("Image downloaded.");
-    }catch(e){setStatus(e.message||"Image processing failed.")}finally{setBusy(false)}
+  const id=t[3];
+  const [files,setFiles]=useState([]);
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const [previewUrl,setPreviewUrl]=useState("");
+  const [resultUrl,setResultUrl]=useState("");
+  const [originalUrl,setOriginalUrl]=useState("");
+  const [w,setW]=useState(1200),[h,setH]=useState(800),[quality,setQuality]=useState(.85),[crop,setCrop]=useState("1:1");
+  const [background,setBackground]=useState("transparent");
+  const [bgColor,setBgColor]=useState("#ffffff");
+  const [addShadow,setAddShadow]=useState(false);
+  const objectUrls=useRef([]);
+
+  useEffect(()=>()=>{objectUrls.current.forEach(u=>URL.revokeObjectURL(u));},[]);
+
+  const setBlobUrl=(blob,setter)=>{
+    const u=URL.createObjectURL(blob); objectUrls.current.push(u); setter(u); return u;
   };
-  const loadImage=file=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>{URL.revokeObjectURL(i.src);res(i)};i.onerror=rej;i.src=URL.createObjectURL(file)});
+  const resetResults=()=>{
+    setResultUrl("");setOriginalUrl("");setStatus("");
+  };
+  const loadImage=file=>new Promise((res,rej)=>{
+    const i=new Image();
+    i.onload=()=>res(i); i.onerror=()=>rej(new Error("Could not read image."));
+    i.src=URL.createObjectURL(file);
+  });
+
+  const downloadResult=async(hd=false)=>{
+    if(!resultUrl) return setStatus("Remove the background first.");
+    try{
+      const r=await fetch(resultUrl); const blob=await r.blob();
+      const name=(files[0]?.name||"image").replace(/\.[^.]+$/i,"")+(hd?"-hd":"")+".png";
+      downloadBlob(blob,name);setStatus(hd?"HD PNG downloaded.":"PNG downloaded.");
+    }catch(e){setStatus(e.message||"Download failed.");}
+  };
+
+  const composeBackground=async()=>{
+    if(!resultUrl) return;
+    try{
+      setBusy(true);setStatus("Applying background settings...");
+      const base=await loadImage(await (await fetch(resultUrl)).blob());
+      const c=document.createElement("canvas");c.width=base.naturalWidth;c.height=base.naturalHeight;
+      const ctx=c.getContext("2d");
+      if(background!=="transparent") {ctx.fillStyle=background==="color"?bgColor:background;ctx.fillRect(0,0,c.width,c.height);}
+      if(addShadow){ctx.save();ctx.shadowColor="rgba(0,0,0,.28)";ctx.shadowBlur=Math.max(12,c.width*.015);ctx.shadowOffsetY=Math.max(6,c.height*.008);}
+      ctx.drawImage(base,0,0); if(addShadow)ctx.restore();
+      const blob=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error("Could not create output.")),"image/png"));
+      setBlobUrl(blob,setResultUrl);setStatus("Image updated.");
+    }catch(e){setStatus(e.message||"Could not apply edit.");}
+    finally{setBusy(false);}
+  };
+
+  const run=async()=>{
+    if(!files.length)return setStatus("Please upload an image first.");
+    setBusy(true);setStatus("");resetResults();
+    try{
+      const file=files[0];
+      const original=URL.createObjectURL(file); objectUrls.current.push(original); setOriginalUrl(original); setPreviewUrl(original);
+
+      if(id==="image-text"){
+        setStatus("Running OCR... first run may take a little longer.");
+        const {createWorker}=await loadLib("tesseract");
+        const worker=await createWorker("eng");
+        const {data}=await worker.recognize(file); await worker.terminate();
+        const text=(data.text||"").trim();
+        downloadText(text||"No text found.","ocr-result.txt"); setStatus("OCR complete. Text file downloaded."); return;
+      }
+
+      if(id==="background-remover"){
+        setStatus("AI background removal starting... first run downloads the model and may take a while.");
+        const mod=await loadLib("backgroundRemoval");
+        const removeBackground=mod.default||mod.removeBackground;
+        if(typeof removeBackground!=="function") throw new Error("Background removal engine could not be loaded.");
+        const blob=await removeBackground(file,{output:{format:"image/png",quality:1},progress:(key,current,total)=>{
+          if(total) setStatus(`Removing background... ${Math.min(100,Math.round((current/total)*100))}%`);
+        }});
+        setBlobUrl(blob,setResultUrl); setStatus("Background removed successfully. Choose Edit or Download."); return;
+      }
+
+      const img=await loadImage(file),c=document.createElement("canvas"),ctx=c.getContext("2d");
+      let ow=img.naturalWidth,oh=img.naturalHeight;
+      if(id==="image-resizer"){c.width=Number(w)||ow;c.height=Number(h)||oh;ctx.drawImage(img,0,0,c.width,c.height);}
+      else if(id==="image-cropper"){const [rw,rh]=crop.split(":").map(Number);const target=rw/rh;let cw=ow,ch=oh;if(ow/oh>target)cw=oh*target;else ch=ow/target;const sx=(ow-cw)/2,sy=(oh-ch)/2;c.width=Math.round(cw);c.height=Math.round(ch);ctx.drawImage(img,sx,sy,cw,ch,0,0,c.width,c.height);}
+      else {c.width=ow;c.height=oh;ctx.drawImage(img,0,0);}
+      let type="image/png",name=file.name.replace(/\.[^.]+$/i,"")+".png";
+      if(id==="png-jpg"||id==="image-compressor"){type="image/jpeg";name=file.name.replace(/\.[^.]+$/i,"")+".jpg";}
+      if(id==="webp-converter"){type="image/webp";name=file.name.replace(/\.[^.]+$/i,"")+".webp";}
+      if(id==="jpg-png")type="image/png";
+      const blob=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error("Could not create output image.")),type,Number(quality)));
+      downloadBlob(blob,name);setStatus("Image downloaded.");
+    }catch(e){setStatus(e.message||"Image processing failed.");}
+    finally{setBusy(false);}
+  };
+
+  if(id==="background-remover") return <Shell back={back} t={t} status={status}>
+    <div style={{background:"#fff",border:"1px solid #e7eaf0",borderRadius:20,overflow:"hidden",boxShadow:"0 18px 60px rgba(15,23,42,.08)"}}>
+      <div style={{padding:"22px 28px",borderBottom:"1px solid #edf0f5",display:"flex",justifyContent:"space-between",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+        <div><h2 style={{margin:0,fontSize:28}}>Remove Image Background</h2><p style={{margin:"6px 0 0",color:"#6b7280"}}>Automatically remove backgrounds from JPG, PNG and WEBP images.</p></div>
+        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+          <button className="secondary" onClick={()=>setFiles([])}>Clear</button>
+          <button className="primary" disabled={busy||!resultUrl} onClick={()=>downloadResult(false)}><Download size={17}/> Download</button>
+        </div>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"minmax(280px,380px) 1fr",minHeight:560}}>
+        <div style={{padding:28,borderRight:"1px solid #edf0f5"}}>
+          <div style={{display:"flex",gap:18,borderBottom:"1px solid #edf0f5",paddingBottom:12,marginBottom:20}}><b style={{color:"#1769e8"}}>Upload Image</b><span style={{color:"#64748b"}}>Paste URL</span></div>
+          <FilePicker accept="image/jpeg,image/png,image/webp" onChange={(fs)=>{setFiles(fs);setPreviewUrl(fs[0]?URL.createObjectURL(fs[0]):"");setOriginalUrl(fs[0]?URL.createObjectURL(fs[0]):"");setResultUrl("");setStatus("");}} files={files}/>
+          <div style={{marginTop:20,fontSize:13,color:"#64748b",lineHeight:1.7}}>Supported: JPG, PNG, WEBP<br/>Maximum recommended size: 12 MP</div>
+          <button className="primary" style={{width:"100%",marginTop:22,justifyContent:"center"}} disabled={busy||!files.length} onClick={run}><Sparkles size={17}/>{busy?"Processing...":"Remove Background"}</button>
+          <div style={{marginTop:26,padding:16,borderRadius:14,background:"#f8fafc",fontSize:13,color:"#475569"}}><b>Privacy-first</b><br/>AI processing runs in your browser. The model is downloaded on first use and then cached by the browser.</div>
+        </div>
+        <div style={{padding:28,background:"#fafbfc"}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18}}>
+            <div><h3 style={{margin:"0 0 12px"}}>Original</h3><div style={{background:"#fff",border:"1px solid #e5e7eb",borderRadius:16,overflow:"hidden",minHeight:310,display:"grid",placeItems:"center"}}>{originalUrl?<img src={originalUrl} alt="Original" style={{maxWidth:"100%",maxHeight:390,display:"block"}}/>:<span style={{color:"#94a3b8"}}>Upload an image</span>}</div></div>
+            <div><h3 style={{margin:"0 0 12px",color:"#1769e8"}}>Removed Background</h3><div style={{backgroundImage:"linear-gradient(45deg,#eef1f5 25%,transparent 25%),linear-gradient(-45deg,#eef1f5 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eef1f5 75%),linear-gradient(-45deg,transparent 75%,#eef1f5 75%)",backgroundSize:"22px 22px",backgroundPosition:"0 0,0 11px,11px -11px,-11px 0",border:"1px solid #e5e7eb",borderRadius:16,overflow:"hidden",minHeight:310,display:"grid",placeItems:"center"}}>{resultUrl?<img src={resultUrl} alt="Removed background" style={{maxWidth:"100%",maxHeight:390,display:"block"}}/>:<span style={{color:"#94a3b8"}}>Result will appear here</span>}</div></div>
+          </div>
+          {resultUrl&&<div style={{marginTop:22,padding:18,borderRadius:16,border:"1px solid #e5e7eb",background:"#fff"}}>
+            <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"center"}}>
+              <button className="primary" onClick={()=>downloadResult(false)}><Download size={17}/> Download</button>
+              <button className="secondary" onClick={()=>downloadResult(true)}><Download size={17}/> Download HD</button>
+              <button className="secondary" onClick={composeBackground}><Eye size={17}/> Apply Edit</button>
+            </div>
+            <div style={{display:"flex",gap:16,flexWrap:"wrap",alignItems:"center",marginTop:18}}>
+              <label>Background<select value={background} onChange={e=>setBackground(e.target.value)}><option value="transparent">Transparent</option><option value="#ffffff">White</option><option value="#000000">Black</option><option value="color">Custom color</option></select></label>
+              {background==="color"&&<label>Color<input type="color" value={bgColor} onChange={e=>setBgColor(e.target.value)}/></label>}
+              <label style={{display:"flex",alignItems:"center",gap:8}}><input type="checkbox" checked={addShadow} onChange={e=>setAddShadow(e.target.checked)}/> Add soft shadow</label>
+            </div>
+          </div>}
+          <div style={{marginTop:22,display:"flex",gap:18,flexWrap:"wrap",color:"#475569",fontSize:14}}><span><b>✓</b> Transparent PNG</span><span><b>✓</b> Full-resolution export</span><span><b>✓</b> One-click download</span></div>
+        </div>
+      </div>
+    </div>
+  </Shell>;
+
   return <Shell back={back} t={t} status={status}><div className="workspace"><div className="panel"><FilePicker accept="image/*" onChange={setFiles} files={files}/>
     {id==="image-resizer"&&<div className="videoOptions"><label>Width<input type="number" value={w} onChange={e=>setW(e.target.value)}/></label><label>Height<input type="number" value={h} onChange={e=>setH(e.target.value)}/></label></div>}
     {id==="image-cropper"&&<label>Aspect ratio<select value={crop} onChange={e=>setCrop(e.target.value)}><option>1:1</option><option>4:3</option><option>16:9</option><option>3:4</option><option>9:16</option></select></label>}
     {id==="image-compressor"&&<label>Quality<input type="range" min=".2" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
     <button className="btn primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw/>:<Download/>}{busy?"Processing...":id==="image-text"?"Extract Text":"Process & Download"}</button>
-  </div><div className="panel">{files.map(f=><p key={f.name}>🖼️ {f.name}</p>)}<p style={{color:"#8395ae",fontSize:12}}>Image Background Remover uses a simple local near-white background algorithm; complex photos need a dedicated AI model.</p></div></div></Shell>;
+  </div><div className="panel">{files.map(f=><p key={f.name}>🖼️ {f.name}</p>)}</div></div></Shell>;
 }
-
 function SeoTool({t, back}) {
   const id = t[3];
   const [text, setText] = useState("");
