@@ -984,9 +984,27 @@ function PdfTool({t,back}) {
     setStatus(`${pdf.numPages} JPG page(s) downloaded.`);
   }
   async function pdfToWord(file){
-    const pdfjs=await loadLib("pdfjs");const {Document,Packer,Paragraph}=await loadLib("docx");const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;const children=[];
-    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const tc=await page.getTextContent();const text=tc.items.map(x=>x.str).join(" ");children.push(new Paragraph(text))}
-    const doc=new Document({sections:[{children}]});const blob=await Packer.toBlob(doc);downloadBlob(blob,file.name.replace(/\.pdf$/i,"")+".docx");setStatus("Editable Word file downloaded.");
+    const pdfjs=await loadLib("pdfjs");
+    const docx=await loadLib("docx");
+    const {Document,Packer,Paragraph,TextRun,PageBreak}=docx;
+    const pdf=await pdfjs.getDocument({data:new Uint8Array(await file.arrayBuffer()),disableWorker:true}).promise;
+    const sections=[];
+    for(let i=1;i<=pdf.numPages;i++){
+      const page=await pdf.getPage(i);
+      const tc=await page.getTextContent({disableCombineTextItems:false});
+      const parts=(tc.items||[]).map(x=>String(x.str||"")).filter(Boolean);
+      const text=parts.join(" ").replace(/\s+/g," ").trim();
+      const children=[];
+      if(text) children.push(new Paragraph({children:[new TextRun({text})],spacing:{after:160,line:276}}));
+      else children.push(new Paragraph({children:[new TextRun({text:`[Page ${i}: no selectable text found]`,italics:true})]}));
+      if(i<pdf.numPages) children.push(new Paragraph({children:[new PageBreak()]}));
+      sections.push(children);
+    }
+    const flat=sections.flat();
+    const outDoc=new Document({sections:[{properties:{},children:flat}]});
+    const blob=await Packer.toBlob(outDoc);
+    downloadBlob(blob,file.name.replace(/\.pdf$/i,"")+".docx");
+    setStatus(`Word file created from ${pdf.numPages} PDF page(s), preserving page order.`);
   }
   async function wordToPdf(file){
     const mammoth=await loadLib("mammoth");
