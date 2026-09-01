@@ -181,7 +181,8 @@ async function loadLib(name) {
     "mammoth":"https://esm.sh/mammoth@1.9.0",
     "qrcode":"https://esm.sh/qrcode@1.5.4",
     "jsbarcode":"https://esm.sh/jsbarcode@3.11.6",
-    "tesseract":"https://esm.sh/tesseract.js@5.1.1"
+    "tesseract":"https://esm.sh/tesseract.js@5.1.1",
+    "jspdf":"https://esm.sh/jspdf@2.5.2"
   };
   if (!urls[name]) throw new Error("Library not configured");
   const mod=await import(/* @vite-ignore */ urls[name]);
@@ -988,8 +989,56 @@ function PdfTool({t,back}) {
     const doc=new Document({sections:[{children}]});const blob=await Packer.toBlob(doc);downloadBlob(blob,file.name.replace(/\.pdf$/i,"")+".docx");setStatus("Editable Word file downloaded.");
   }
   async function wordToPdf(file){
-    const mammoth=await loadLib("mammoth");const html=(await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()})).value;const w=window.open("","_blank");
-    if(!w)throw new Error("Popup blocked. Allow popups for this site.");w.document.write(`<html><head><title>Word to PDF</title><style>body{font-family:Arial;padding:48px;line-height:1.6;max-width:850px;margin:auto}img{max-width:100%}</style></head><body>${html}</body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),500);setStatus("Print dialog opened. Choose Save as PDF.");
+    const mammoth=await loadLib("mammoth");
+    const pdfMod=await loadLib("jspdf");
+    const JsPDF=pdfMod.jsPDF || pdfMod.default?.jsPDF || pdfMod.default;
+    if(!JsPDF) throw new Error("PDF engine could not be loaded.");
+    const result=await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()},{
+      convertImage:mammoth.images.inline(async image=>({src:`data:${image.contentType};base64,${await image.read("base64")}`}))
+    });
+    const html=result.value;
+    const host=document.createElement("div");
+    host.style.position="fixed";
+    host.style.left="-100000px";
+    host.style.top="0";
+    host.style.width="794px";
+    host.style.background="#fff";
+    host.style.color="#111";
+    host.style.padding="48px";
+    host.style.boxSizing="border-box";
+    host.style.fontFamily="Arial, Helvetica, sans-serif";
+    host.style.fontSize="14px";
+    host.style.lineHeight="1.55";
+    host.innerHTML=`<style>
+      *{box-sizing:border-box} body{margin:0} h1,h2,h3,h4{margin:0 0 14px} p{margin:0 0 10px}
+      table{width:100%;border-collapse:collapse;margin:12px 0} td,th{border:1px solid #bbb;padding:6px;vertical-align:top}
+      img{max-width:100%;height:auto} ul,ol{margin:8px 0 10px 24px}
+      blockquote{margin:10px 0;padding-left:12px;border-left:3px solid #bbb}
+    </style>${html}`;
+    document.body.appendChild(host);
+    try{
+      const images=[...host.images];
+      await Promise.all(images.map(img=>new Promise(resolve=>{
+        if(img.complete) return resolve();
+        img.onload=img.onerror=resolve;
+      })));
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      const pageW=210,pageH=297,margin=10;
+      const pdf=new JsPDF({unit:"mm",format:"a4",orientation:"p",compress:true});
+      await pdf.html(host,{
+        x:margin,y:margin,
+        width:pageW-(margin*2),
+        windowWidth:host.scrollWidth,
+        autoPaging:"text",
+        margin:[margin,margin,margin,margin],
+        html2canvas:{scale:1.5,useCORS:true,backgroundColor:"#ffffff",logging:false},
+        pagebreak:{mode:["css","legacy"]}
+      });
+      pdf.save(file.name.replace(/\.docx?$/i,"")+".pdf");
+      setStatus("Word document converted to PDF with layout, images and tables preserved as closely as browser rendering allows.");
+    }finally{
+      host.remove();
+    }
   }
   async function jpgToPdf(){
     const {PDFDocument}=await loadLib("pdf-lib");const doc=await PDFDocument.create();
