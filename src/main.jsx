@@ -234,7 +234,7 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .videoOptions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.videoPlaceholder{min-height:310px;border-radius:14px;background:linear-gradient(145deg,#f7f4ff,#ffffff);display:grid;place-items:center;text-align:center;border:1px solid #e6e2f7;padding:20px}.playCircle{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:#eee9ff;color:#6c4cf5;font-size:25px}
 .admin{max-width:1280px;margin:auto;padding:42px 24px 80px}.adminTop{display:flex;justify-content:space-between;align-items:end;gap:18px}.adminTop h1{font-size:40px;margin:10px 0}.adminTop p{color:#7c879a;max-width:700px}.adminGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:28px}.adminCard h3{margin:13px 0 6px}.adminCard p{color:#7c879a;min-height:44px}.ok{color:#15a875}
 .footer{border-top:1px solid var(--line);padding:35px 22px 50px;color:#7f899b;background:#fff}.footerInner{max-width:1240px;margin:auto;display:flex;justify-content:space-between;gap:20px;align-items:center}
-.modalBack{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(30,25,56,.32);backdrop-filter:blur(10px);padding:18px}.modal{width:min(480px,100%);background:#fff;border:1px solid #e2e4eb;border-radius:18px;padding:24px;box-shadow:0 30px 90px rgba(40,35,70,.2)}.modalHead{display:flex;justify-content:space-between;align-items:center}.modal h2{margin:5px 0}.modal p{color:#7c879a;line-height:1.6}.field{margin:12px 0}.field label{display:block;font-size:12px;color:#5b667a;margin-bottom:6px}.field input{width:100%;padding:12px;border-radius:10px;border:1px solid #dfe2ea;background:#fff;color:#1d2737;outline:0}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.authTabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e2e4eb;padding:4px;border-radius:11px;margin:15px 0}.authTabs button{border:0;padding:10px;border-radius:8px;background:transparent;color:#7e8899}.authTabs button.active{background:#f0edff;color:#684af0}.googleBtn{width:100%;justify-content:center;margin-top:12px;border-color:#dfe2ea;background:#fff}.googleBtn:hover{background:#fafafa;border-color:#cfd3dc}.googleIcon{width:20px;height:20px;display:grid;place-items:center;font-weight:900;font-size:16px}.authDivider{display:flex;align-items:center;gap:9px;margin:14px 0;color:#98a0af;font-size:11px}.authDivider::before,.authDivider::after{content:"";height:1px;background:#e7e9ef;flex:1}.formError,.formSuccess{padding:11px 12px;border-radius:10px;margin:10px 0;font-size:13px}.formError{background:#fff4f5;color:#c2394b;border:1px solid #ffd6dc}.formSuccess{background:#f0fbf6;color:#23845f;border:1px solid #ccefe0}
+.modalBack{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(30,25,56,.32);backdrop-filter:blur(10px);padding:18px}.modal{width:min(480px,100%);background:#fff;border:1px solid #e2e4eb;border-radius:18px;padding:24px;box-shadow:0 30px 90px rgba(40,35,70,.2)}.modalHead{display:flex;justify-content:space-between;align-items:center}.modal h2{margin:5px 0}.modal p{color:#7c879a;line-height:1.6}.field{margin:12px 0}.field label{display:block;font-size:12px;color:#5b667a;margin-bottom:6px}.field input{width:100%;padding:12px;border-radius:10px;border:1px solid #dfe2ea;background:#fff;color:#1d2737;outline:0}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.authTabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e2e4eb;padding:4px;border-radius:11px;margin:15px 0}.authTabs button{border:0;padding:10px;border-radius:8px;background:transparent;color:#7e8899}.authTabs button.active{background:#f0edff;color:#684af0}.formError,.formSuccess{padding:11px 12px;border-radius:10px;margin:10px 0;font-size:13px}.formError{background:#fff4f5;color:#c2394b;border:1px solid #ffd6dc}.formSuccess{background:#f0fbf6;color:#23845f;border:1px solid #ccefe0}
 .profileMenu{position:relative}.profileCard{position:absolute;right:0;top:50px;width:260px;background:#fff;border:1px solid #e2e4eb;border-radius:14px;padding:14px;box-shadow:var(--shadow);z-index:70}.profileCard b{display:block}.profileCard small{display:block;color:#7f8999;margin:3px 0 12px}.mobileOnly{display:none}
 
 .pdfProEditor{border:1px solid #e3e5ed;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 16px 45px rgba(50,43,110,.08)}
@@ -392,24 +392,6 @@ function AuthModal({mode,setMode,close,onDone}) {
     }catch(e){setError(e.message || "Authentication failed.");}finally{setBusy(false);}
   };
 
-  const signInWithGoogle=async()=>{
-    setError("");
-    setMsg("");
-    if(!supabase) return setError("Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.");
-    setBusy(true);
-    try{
-      const redirectTo=window.location.origin;
-      const {error}=await supabase.auth.signInWithOAuth({
-        provider:"google",
-        options:{redirectTo}
-      });
-      if(error) throw error;
-    }catch(e){
-      setError(e?.message||"Google sign-in failed.");
-      setBusy(false);
-    }
-  };
-
   const forgot=async()=>{
     setError("");setMsg("");
     if(!supabase) return setError("Supabase is not configured.");
@@ -425,9 +407,7 @@ function AuthModal({mode,setMode,close,onDone}) {
 
   return <div className="modalBack" onMouseDown={close}><div className="modal" onMouseDown={e=>e.stopPropagation()}>
     <div className="modalHead"><div><div className="pill"><LockKeyhole size={13}/> Secure Auth</div><h2>{mode==="signup"?"Create your account":"Welcome back"}</h2></div><button className="iconBtn" onClick={close}><X size={17}/></button></div>
-    <div className="authTabs"><button type="button" className={mode==="signin"?"active":""} onClick={()=>{setMode("signin");setError("");setMsg("")}}>Sign in</button><button type="button" className={mode==="signup"?"active":""} onClick={()=>{setMode("signup");setError("");setMsg("")}}>Sign up</button></div>
-    <button type="button" className="btn googleBtn" onClick={signInWithGoogle} disabled={busy}><span className="googleIcon">G</span>{mode==="signup"?"Sign up with Google":"Continue with Google"}</button>
-    <div className="authDivider"><span>OR</span></div>
+    <div className="authTabs"><button className={mode==="signin"?"active":""} onClick={()=>{setMode("signin");setError("");setMsg("")}}>Sign in</button><button className={mode==="signup"?"active":""} onClick={()=>{setMode("signup");setError("");setMsg("")}}>Sign up</button></div>
     <form onSubmit={submit}>
       {mode==="signup"&&<div className="formGrid"><div className="field"><label>Full name</label><input value={fullName} onChange={e=>setFullName(e.target.value)} required/></div><div className="field"><label>Username</label><input value={username} onChange={e=>setUsername(e.target.value)} required/></div></div>}
       <div className="field"><label>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></div>
@@ -640,6 +620,7 @@ function PdfEditorTool({t,back}) {
   const [scale,setScale] = useState(1);
   const [viewport,setViewport] = useState({width:0,height:0});
   const [items,setItems] = useState([]);
+  const [allItems,setAllItems] = useState([]);
   const [edits,setEdits] = useState({});
   const [selected,setSelected] = useState(null);
   const [editing,setEditing] = useState(false);
@@ -661,7 +642,7 @@ function PdfEditorTool({t,back}) {
     return pdfjs.getDocument({data:bytes, disableWorker:true}).promise;
   };
 
-  const extractText = async (pg,vp) => {
+  const extractText = async (pg,vp,pageNum) => {
     const pdfjs = await loadLib('pdfjs');
     const tc = await pg.getTextContent({disableCombineTextItems:false});
     const list = [];
@@ -677,21 +658,49 @@ function PdfEditorTool({t,back}) {
       const width = Math.max(12, Math.abs(Number(it.width||value.length*height*.52)) * vp.scale);
       const top = Math.max(0, yBaseline-height*0.88);
       list.push({
-        id:i,
-        text:value,
-        x,
-        y:top,
-        width,
-        height:Math.max(12,height*1.15),
-        pdfX:Number(tr[4]||0),
-        pdfY:Number(tr[5]||0),
+        id:`pdf-${pageNum}-${i}`, index:i, text:value, x, y:top,
+        width, height:Math.max(12,height*1.15),
+        pdfX:Number(tr[4]||0), pdfY:Number(tr[5]||0),
         pdfWidth:Math.max(10,Number(it.width||value.length*height*.52)),
         pdfHeight:Math.max(8,Math.abs(Number(tr[3]||height/vp.scale))),
-        page,
-        source:'pdf'
+        page:pageNum, source:'pdf'
       });
     }
-    return list;
+    if (list.length) return list;
+
+    setStatus(`No selectable text on page ${pageNum}. Running OCR…`);
+    const off = document.createElement('canvas');
+    const ocrScale = Math.min(2, Math.max(1.5, 1800 / Math.max(vp.width,vp.height)));
+    const ocrVp = pg.getViewport({scale:ocrScale});
+    off.width=Math.ceil(ocrVp.width); off.height=Math.ceil(ocrVp.height);
+    const octx=off.getContext('2d');
+    if(!octx) throw new Error('Could not create OCR canvas.');
+    await pg.render({canvasContext:octx,viewport:ocrVp}).promise;
+    const {createWorker}=await loadLib('tesseract');
+    const worker=await createWorker('eng');
+    try {
+      const {data}=await worker.recognize(off);
+      const words=Array.isArray(data?.words)?data.words:[];
+      const ocr=[];
+      for(let i=0;i<words.length;i++){
+        const w=words[i]; const value=String(w?.text||'').trim();
+        const bb=w?.bbox;
+        if(!value || !bb || !/[\p{L}\p{N}]/u.test(value)) continue;
+        const x=bb.x0*(vp.width/ocrVp.width);
+        const y=bb.y0*(vp.height/ocrVp.height);
+        const width=Math.max(10,(bb.x1-bb.x0)*(vp.width/ocrVp.width));
+        const height=Math.max(12,(bb.y1-bb.y0)*(vp.height/ocrVp.height));
+        const pdfH=height/vp.scale;
+        const pdfX=x/vp.scale;
+        const pdfY=(vp.height-y)/vp.scale;
+        ocr.push({
+          id:`ocr-${pageNum}-${i}`, index:i, text:value, x,y,width,height,
+          pdfX,pdfY,pdfWidth:width/vp.scale,pdfHeight:pdfH,page:pageNum,source:'ocr',
+          ocrX:x,ocrY:y,ocrW:width,ocrH:height
+        });
+      }
+      return ocr;
+    } finally { await worker.terminate(); }
   };
 
   const renderCurrentPage = async (doc, pageNum, s) => {
@@ -708,9 +717,10 @@ function PdfEditorTool({t,back}) {
     ctx.fillStyle='#fff';
     ctx.fillRect(0,0,canvas.width,canvas.height);
     await pg.render({canvasContext:ctx,viewport:vp}).promise;
-    const extracted = await extractText(pg,vp);
+    const extracted = await extractText(pg,vp,pageNum);
     setViewport({width:vp.width,height:vp.height});
     setItems(extracted);
+    setAllItems(prev=>[...prev.filter(x=>x.page!==pageNum),...extracted]);
     setSelected(null);
     setEditing(false);
     setDraft('');
@@ -821,42 +831,74 @@ function PdfEditorTool({t,back}) {
     setBusy(true); setStatus('Creating edited PDF…');
     try {
       const {PDFDocument,StandardFonts,rgb}=await loadLib('pdf-lib');
-      const doc=await PDFDocument.load(await file.arrayBuffer(),{ignoreEncryption:true,updateMetadata:false});
+      const originalBytes=await file.arrayBuffer();
+      const hasOcr=allItems.some(item=>item.source==='ocr' && Object.prototype.hasOwnProperty.call(editsOverride,item.id));
+      if(hasOcr){
+        const pdfjs=await loadLib('pdfjs');
+        const sourcePdf=await pdfjs.getDocument({data:new Uint8Array(originalBytes),disableWorker:true}).promise;
+        const out=await PDFDocument.create();
+        const regular=await out.embedFont(StandardFonts.Helvetica);
+        const boldFont=await out.embedFont(StandardFonts.HelveticaBold);
+        const italicFont=await out.embedFont(StandardFonts.HelveticaOblique);
+        const boldItalic=await out.embedFont(StandardFonts.HelveticaBoldOblique);
+        for(let pno=1;pno<=sourcePdf.numPages;pno++){
+          const srcPage=await sourcePdf.getPage(pno);
+          const baseVp=srcPage.getViewport({scale:1});
+          const renderScale=2;
+          const rvp=srcPage.getViewport({scale:renderScale});
+          const c=document.createElement('canvas'); c.width=Math.ceil(rvp.width); c.height=Math.ceil(rvp.height);
+          const ctx=c.getContext('2d'); if(!ctx) throw new Error('Could not create PDF raster canvas.');
+          await srcPage.render({canvasContext:ctx,viewport:rvp}).promise;
+          const pageItems=allItems.filter(x=>x.page===pno && Object.prototype.hasOwnProperty.call(editsOverride,x.id));
+          for(const item of pageItems){
+            const replacement=String(editsOverride[item.id] ?? '');
+            const style=stylesOverride[item.id]||{};
+            const sx=item.x*renderScale, sy=item.y*renderScale, sw=Math.max(item.width, item.pdfWidth*renderScale), sh=Math.max(item.height,item.pdfHeight*renderScale);
+            ctx.save(); ctx.fillStyle='#fff'; ctx.fillRect(sx-2,sy-2,Math.max(sw,40)+6,Math.max(sh,14)+6);
+            if(replacement){
+              const size=Math.max(8,Number(style.fontSize)||Math.max(10,Math.round(item.height*.8)));
+              const fontWeight=style.bold?'700':'400'; const fontStyle=style.italic?'italic':'normal';
+              ctx.font=`${fontStyle} ${fontWeight} ${size*renderScale}px Arial`;
+              const hex=String(style.textColor||'#111827'); ctx.fillStyle=hex; ctx.textBaseline='alphabetic';
+              ctx.fillText(replacement,sx,sy+size*renderScale);
+              if(style.underline){const tw=ctx.measureText(replacement).width;ctx.strokeStyle=hex;ctx.lineWidth=Math.max(1,renderScale);ctx.beginPath();ctx.moveTo(sx,sy+(size+2)*renderScale);ctx.lineTo(sx+tw,sy+(size+2)*renderScale);ctx.stroke();}
+            } ctx.restore();
+          }
+          const png=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error('PNG encoding failed.')),'image/png'));
+          const image=await out.embedPng(await png.arrayBuffer());
+          const pp=out.addPage([baseVp.width,baseVp.height]);
+          pp.drawImage(image,{x:0,y:0,width:baseVp.width,height:baseVp.height});
+        }
+        const bytes=await out.save();
+        downloadBlob(new Blob([bytes],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
+        setStatus('Edited scanned PDF downloaded successfully.');
+        return;
+      }
+      const doc=await PDFDocument.load(originalBytes,{ignoreEncryption:true,updateMetadata:false});
       const regularFont=await doc.embedFont(StandardFonts.Helvetica);
       const boldFont=await doc.embedFont(StandardFonts.HelveticaBold);
       const italicFont=await doc.embedFont(StandardFonts.HelveticaOblique);
       const boldItalicFont=await doc.embedFont(StandardFonts.HelveticaBoldOblique);
       const pdfPages=doc.getPages();
-      for(const item of items){
-        if(!Object.prototype.hasOwnProperty.call(editsOverride,item.id)) continue;
+      for(const item of allItems){
+        if(item.source==='ocr' || !Object.prototype.hasOwnProperty.call(editsOverride,item.id)) continue;
         const replacement=String(editsOverride[item.id] ?? '');
         const style=stylesOverride[item.id] || {};
-        const pg=pdfPages[Math.max(0,item.page-1)];
-        const px=item.pdfX;
-        const py=item.pdfY;
+        const pg=pdfPages[Math.max(0,item.page-1)]; if(!pg) continue;
+        const px=item.pdfX, py=item.pdfY;
         const size=Math.max(7,Math.min(96,Number(style.fontSize)||item.pdfHeight));
-        const drawFont = style.bold && style.italic ? boldItalicFont : style.bold ? boldFont : style.italic ? italicFont : regularFont;
-        const coverW=Math.max(item.pdfWidth, drawFont.widthOfTextAtSize(item.text,size)+4);
-        pg.drawRectangle({x:px-1,y:py-size*0.18,width:coverW+3,height:size*1.25,color:rgb(1,1,1),opacity:1,borderWidth:0});
-        if(replacement) {
-          const hex=String(style.textColor||'#111827').replace('#','');
-          const rr=parseInt(hex.slice(0,2)||'11',16)/255, gg=parseInt(hex.slice(2,4)||'18',16)/255, bb=parseInt(hex.slice(4,6)||'27',16)/255;
-          pg.drawText(replacement,{x:px,y:py-size*0.05,size,color:rgb(rr,gg,bb),font:drawFont});
-          if(style.underline){
-            const uw=Math.max(8,drawFont.widthOfTextAtSize(replacement,size));
-            pg.drawLine({start:{x:px,y:py-size*0.22},end:{x:px+uw,y:py-size*0.22},thickness:Math.max(0.5,size/14),color:rgb(rr,gg,bb)});
-          }
-        }
+        const drawFont=style.bold&&style.italic?boldItalicFont:style.bold?boldFont:style.italic?italicFont:regularFont;
+        const coverW=Math.max(item.pdfWidth,drawFont.widthOfTextAtSize(item.text,size)+4);
+        pg.drawRectangle({x:px-1,y:py-size*.18,width:coverW+3,height:size*1.25,color:rgb(1,1,1),borderWidth:0});
+        if(replacement){const hex=String(style.textColor||'#111827').replace('#','');const rr=parseInt(hex.slice(0,2)||'11',16)/255,gg=parseInt(hex.slice(2,4)||'18',16)/255,bb=parseInt(hex.slice(4,6)||'27',16)/255;pg.drawText(replacement,{x:px,y:py-size*.05,size,color:rgb(rr,gg,bb),font:drawFont});if(style.underline){const uw=drawFont.widthOfTextAtSize(replacement,size);pg.drawLine({start:{x:px,y:py-size*.22},end:{x:px+uw,y:py-size*.22},thickness:Math.max(.5,size/14),color:rgb(rr,gg,bb)});}}
       }
       const bytes=await doc.save();
-      const safeBytes = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
-      const pdfBlob = new Blob([new Uint8Array(safeBytes)],{type:'application/pdf'}); downloadBlob(pdfBlob,file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
+      downloadBlob(new Blob([bytes],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
       setStatus('Edited PDF downloaded successfully.');
     } catch(e) { setStatus(`Could not create edited PDF: ${e?.message||String(e)}`); }
     finally { setBusy(false); }
   };
-
-  const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setEdits({});setEditStyles({});setSelected(null);setEditing(false);setDraft('');setHasApplied(false);setFontSize(16);setBold(false);setItalic(false);setUnderline(false);setTextColor('#111827');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
+  const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setAllItems([]);setEdits({});setEditStyles({});setSelected(null);setEditing(false);setDraft('');setHasApplied(false);setFontSize(16);setBold(false);setItalic(false);setUnderline(false);setTextColor('#111827');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
   const changeScale=v=>setScale(Math.max(.6,Math.min(2,Number(v)||1)));
 
   if(!file) return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Edit existing PDF text by clicking directly on the text. Add text, images, links, annotations and signatures.','']} status={status}>
