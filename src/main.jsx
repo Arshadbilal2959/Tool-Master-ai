@@ -921,7 +921,7 @@ async function convertWithSecureBackend(file, target) {
 
   const form = new FormData();
   form.append("file", file, file.name);
-  form.append("target", target);
+  form.append("output_format", target);
 
   const headers = {};
   if (SUPABASE_KEY) headers.apikey = SUPABASE_KEY;
@@ -929,9 +929,13 @@ async function convertWithSecureBackend(file, target) {
   const response = await fetch(base, { method: "POST", headers, body: form });
   const contentType = response.headers.get("content-type") || "";
   if (!response.ok) {
-    const message = contentType.includes("application/json")
-      ? ((await response.json().catch(() => ({}))).error || (await response.json().catch(() => ({}))).message)
-      : await response.text().catch(() => "");
+    let message = "";
+    if (contentType.includes("application/json")) {
+      const errData = await response.json().catch(() => ({}));
+      message = errData?.error || errData?.message || "";
+    } else {
+      message = await response.text().catch(() => "");
+    }
     throw new Error(message || `Document converter failed (${response.status}).`);
   }
 
