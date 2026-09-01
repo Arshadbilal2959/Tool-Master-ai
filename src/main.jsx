@@ -1017,7 +1017,7 @@ function PdfTool({t,back}) {
     </style>${html}`;
     document.body.appendChild(host);
     try{
-      const images=[...host.images];
+      const images=Array.from(host.querySelectorAll("img"));
       await Promise.all(images.map(img=>new Promise(resolve=>{
         if(img.complete) return resolve();
         img.onload=img.onerror=resolve;
