@@ -336,7 +336,7 @@ function App() {
       </div>
     </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
 
-    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolPage t={tool} back={()=>setTool(null)} user={user}/> :
+    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user}/></ToolErrorBoundary> :
       <>
         <section className="hero"><div className="heroInner">
           <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
@@ -418,6 +418,75 @@ function AuthModal({mode,setMode,close,onDone}) {
     </form>
     {mode==="signin"&&<button className="btn ghost" onClick={forgot} disabled={busy} style={{width:"100%",justifyContent:"center",marginTop:10}}><KeyRound size={15}/> Forgot password</button>}
   </div></div>
+}
+
+
+function FilePicker({multiple=false,accept,onChange,files=[]}) {
+  const inputRef = useRef(null);
+  return <label className="uploadBox" onClick={e=>{ if(e.target===inputRef.current) return; }}>
+    <Upload size={20}/>
+    <div style={{flex:1}}>
+      <b>{multiple ? "Upload files" : "Upload file"}</b>
+      <small style={{display:"block",marginTop:4}}>{accept || "Supported files"}</small>
+      {files.length>0 && <strong>{files.map(f=>f.name).join(", ")}</strong>}
+    </div>
+    <input ref={inputRef} type="file" multiple={multiple} accept={accept} onChange={e=>onChange(Array.from(e.target.files||[]))}/>
+  </label>;
+}
+
+function StudentAIHelper({back,user}) {
+  const [question,setQuestion]=useState("");
+  const [files,setFiles]=useState([]);
+  const [answer,setAnswer]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const endpoint = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/student-ai-helper` : "");
+  const solve=async()=>{
+    if(!question.trim() && !files.length){setStatus("Enter a question or upload a study file.");return;}
+    if(!endpoint){setStatus("AI backend is not configured. Your question is ready, but no secure AI function is connected.");return;}
+    setBusy(true);setStatus("Processing...");setAnswer("");
+    try{
+      const fd=new FormData();
+      fd.append("question",question.trim());
+      files.forEach(f=>fd.append("files",f));
+      const headers={...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),...(user?.access_token?{Authorization:`Bearer ${user.access_token}`}:{})};
+      const r=await fetch(endpoint,{method:"POST",headers,body:fd});
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(data.error||data.message||`AI backend error (${r.status})`);
+      setAnswer(data.answer||data.message||"No answer returned.");
+      setStatus("AI response received.");
+    }catch(e){setStatus(e?.message||"AI request failed.");}
+    finally{setBusy(false);}
+  };
+  return <Shell back={back} t={["Student AI Helper","AI & Education","Ask questions or upload study material for step-by-step help.",""]} status={status}>
+    <div className="aiHelper">
+      <div className="aiCard">
+        <h3>📚 Ask your question</h3>
+        {!user && <div className="formError"><AlertCircle size={15}/> Sign in for your account-backed AI usage.</div>}
+        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question or explain what you need help with..."/>
+        <FilePicker multiple accept=".pdf,image/*,.txt,.doc,.docx" onChange={setFiles} files={files}/>
+        <div className="actions">
+          <button className="btn primary" disabled={busy} onClick={solve}><Sparkles size={16}/>{busy?"Processing...":"Get AI Help"}</button>
+          {files.length>0&&<button className="btn" onClick={()=>setFiles([])}><Trash2 size={15}/>Clear files</button>}
+        </div>
+      </div>
+      <div className="aiCard">
+        <h3>🤖 AI Answer</h3>
+        <div className="answer">{answer||"Your step-by-step answer will appear here."}</div>
+        {answer&&<div className="actions"><button className="btn" onClick={()=>navigator.clipboard?.writeText(answer)}><Copy size={15}/>Copy</button><button className="btn" onClick={()=>downloadText(answer,"student-ai-answer.txt")}><Download size={15}/>Download</button></div>}
+      </div>
+    </div>
+  </Shell>;
+}
+
+class ToolErrorBoundary extends React.Component {
+  constructor(props){super(props);this.state={error:null};}
+  static getDerivedStateFromError(error){return {error};}
+  componentDidCatch(error,info){console.error("Tool runtime error",error,info);}
+  render(){
+    if(this.state.error) return <div className="toolPage"><div className="panel"><div className="formError"><AlertCircle size={18}/><div><b>Tool error</b><div style={{marginTop:5}}>{this.state.error.message||String(this.state.error)}</div></div></div><div className="actions"><button className="btn primary" onClick={()=>this.setState({error:null})}>Try Again</button><button className="btn" onClick={()=>window.location.reload()}>Reload Website</button></div></div></div>;
+    return this.props.children;
+  }
 }
 
 function ToolPage({t,back,user}) {
