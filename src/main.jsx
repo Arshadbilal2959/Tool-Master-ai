@@ -699,7 +699,13 @@ function PdfEditorTool({t,back}) {
       setStatus('Click the exact PDF text you want to edit first.');
       return;
     }
-    saveCurrentEdit('Change applied. The edited text is now visible in the preview. Click Download PDF to save the PDF.');
+    const nextEdits = {...edits,[selected.id]:draft};
+    const nextStyles = {...editStyles,[selected.id]:{fontSize:Number(fontSize)||16,bold,italic,underline,textColor}};
+    setEdits(nextEdits);
+    setEditStyles(nextStyles);
+    setHasApplied(true);
+    setEditing(false);
+    setStatus('Changes applied successfully. The edited text is now visible.');
   };
 
   const applyAndDownload = async () => {
@@ -755,7 +761,7 @@ function PdfEditorTool({t,back}) {
       }
       const bytes=await doc.save();
       const safeBytes = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
-      downloadBlob(new Blob([safeBytes],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
+      const pdfBlob = new Blob([new Uint8Array(safeBytes)],{type:'application/pdf'}); downloadBlob(pdfBlob,file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
       setStatus('Edited PDF downloaded successfully.');
     } catch(e) { setStatus(`Could not create edited PDF: ${e?.message||String(e)}`); }
     finally { setBusy(false); }
@@ -778,7 +784,7 @@ function PdfEditorTool({t,back}) {
 
   return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Click any text directly in the document, change it inline, then download your edited PDF.','']} status={status}>
     <div className="pdfEditor">
-      <div className="pdfEditorTop"><div className="pdfTopTitle"><h2>Online PDF editor <span className="beta">BETA</span></h2><p>Edit PDF files. Click text to change it.</p></div><div className="pdfTopActions"><button type="button" className="btn" onClick={()=>uploadRef.current?.click()}><Upload size={16}/> Replace PDF</button><button type="button" className="btn primary" onClick={downloadEdited} disabled={busy || !hasApplied || !Object.keys(edits).length}> <Download size={16}/> Download PDF</button><input ref={uploadRef} type="file" accept="application/pdf,.pdf" onChange={onUpload} style={{display:'none'}}/></div></div>
+      <div className="pdfEditorTop"><div className="pdfTopTitle"><h2>Online PDF editor <span className="beta">BETA</span></h2><p>Edit PDF files. Click text to change it.</p></div><div className="pdfTopActions"><button type="button" className="btn" onClick={()=>uploadRef.current?.click()}><Upload size={16}/> Replace PDF</button><button type="button" className="btn primary" onClick={applyChanges} disabled={busy || !selected}><Check size={16}/> Apply Changes</button><button type="button" className="btn primary" onClick={()=>downloadEdited()} disabled={busy || !hasApplied || !Object.keys(edits).length}> <Download size={16}/> Download PDF</button><input ref={uploadRef} type="file" accept="application/pdf,.pdf" onChange={onUpload} style={{display:'none'}}/></div></div>
 
       <div className="pdfEditorToolbar">{[
         ['edit','Edit Text',FileText],['add-text','Add Text',FileText],['image','Add Image',ImageIcon],['link','Create Link',ExternalLink],['annotate','Annotate',Eye],['sign','Sign',Printer],['forms','Fill Forms',CheckCircle2]
