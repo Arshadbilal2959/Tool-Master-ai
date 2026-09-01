@@ -181,9 +181,7 @@ async function loadLib(name) {
     "mammoth":"https://esm.sh/mammoth@1.9.0",
     "qrcode":"https://esm.sh/qrcode@1.5.4",
     "jsbarcode":"https://esm.sh/jsbarcode@3.11.6",
-    "tesseract":"https://esm.sh/tesseract.js@5.1.1",
-    "backgroundRemoval":"https://esm.sh/@imgly/background-removal@1.7.0?bundle",
-    "onnxruntime":"https://esm.sh/onnxruntime-web@1.21.0-dev.20250206-d981b153d3"
+    "tesseract":"https://esm.sh/tesseract.js@5.1.1"
   };
   if (!urls[name]) throw new Error("Library not configured");
   const mod=await import(/* @vite-ignore */ urls[name]);
@@ -247,6 +245,9 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
 @media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
+.bgRemoveApp{border:1px solid #e2e5ec;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 18px 50px rgba(23,33,54,.08)}
+.bgRemoveHeader{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 20px;border-bottom:1px solid #e7e9ef;flex-wrap:wrap}.bgRemoveHeader h2{margin:0;font-size:25px}.bgRemoveHeader p{margin:5px 0 0;color:#8490a4}.bgHeaderActions{display:flex;gap:8px;flex-wrap:wrap}.bgToolbar{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #e8e9ef;overflow:auto}.bgToolBtn{min-width:86px;border:1px solid #e0e3ea;background:#fff;border-radius:10px;padding:9px 10px;color:#5d687b;display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:800}.bgToolBtn.active{border-color:#8f77f8;background:#f6f3ff;color:#6849ed}.bgEditorBody{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:680px;background:#f5f6f9}.bgSide{background:#fff;border-right:1px solid #e2e5eb;padding:16px;overflow:auto}.uploadCard{border:1px dashed #d9d4fb;background:#faf9ff;border-radius:12px;padding:8px}.uploadCard .uploadBox{margin:0;border:0;background:transparent;padding:10px}.uploadCard small{display:block;color:#9098a8;text-align:center;font-size:10px;padding-bottom:4px}.sideHint,.sideSection p{font-size:12px;color:#8690a2;line-height:1.55}.sideSection{margin-top:18px;padding-top:16px;border-top:1px solid #edf0f4}.sideSection h3{margin:0 0 7px;font-size:16px}.sideSection label{display:grid;gap:5px;margin-top:12px;font-size:12px;font-weight:800;color:#5c6779}.sideSection label input[type=range]{width:100%}.sideSection label>span{font-size:11px;color:#8790a0;font-weight:500}.sideSection select,.sideSection input[type=color]{width:100%;border:1px solid #dfe3ea;border-radius:8px;padding:8px;background:#fff}.checkRow{display:flex!important;grid-template-columns:none!important;align-items:center;gap:7px}.checkRow input{width:16px!important}.full{width:100%;justify-content:center}.successBadge{display:flex;align-items:center;gap:6px;margin-top:10px;padding:8px 9px;border-radius:9px;background:#eafaf3;color:#15976d;font-size:11px;font-weight:800}.bgStage{padding:22px;overflow:auto}.bgPreviewGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.previewCard{background:#fff;border:1px solid #e0e3e9;border-radius:14px;overflow:hidden}.previewTitle{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #eef0f3;font-size:12px;color:#596578}.previewTitle span{font-size:10px;color:#8992a1}.previewCanvas{min-height:470px;display:grid;place-items:center;padding:18px;background:#eef0f3}.originalPreview img{max-width:100%;max-height:430px;object-fit:contain;border-radius:10px;box-shadow:0 8px 24px rgba(20,30,45,.12)}.checker{background-color:#fff;background-image:linear-gradient(45deg,#eef0f4 25%,transparent 25%),linear-gradient(-45deg,#eef0f4 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eef0f4 75%),linear-gradient(-45deg,transparent 75%,#eef0f4 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}.previewStageInner{width:100%;height:100%;min-height:430px;display:grid;place-items:center}.previewStageInner img{max-width:100%;max-height:430px;object-fit:contain;border-radius:10px}.resultPlaceholder{display:flex;flex-direction:column;align-items:center;gap:10px;color:#788397;font-size:13px;text-align:center}.bgBottomBar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-top:18px;padding:14px 16px;background:#fff;border:1px solid #e1e4ea;border-radius:12px;flex-wrap:wrap}.bgBottomBar>div:first-child{display:flex;flex-direction:column;gap:4px}.bgBottomBar span{color:#8b93a2;font-size:11px}.bottomActions{display:flex;gap:8px;flex-wrap:wrap}.bgEmpty{min-height:620px;border:2px dashed #dbd6fb;border-radius:16px;display:grid;place-items:center;text-align:center;color:#7457eb;background:#fbfaff}.bgEmpty h3{margin:0;color:#293347;font-size:23px}.bgEmpty p{margin:0;color:#8791a2}.bgPrivacy{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 15px;border-top:1px solid #eceef3;background:#fbfbfd;color:#80899a;font-size:11px}@media(max-width:900px){.bgEditorBody{grid-template-columns:1fr}.bgSide{border-right:0;border-bottom:1px solid #e2e5eb}.bgPreviewGrid{grid-template-columns:1fr}}@media(max-width:560px){.bgStage{padding:12px}.previewCanvas{min-height:330px}.previewStageInner{min-height:290px}.bgBottomBar{align-items:flex-start}}
+
 `;
 
 function GlobalStyle() { return <style>{css}</style>; }
@@ -1037,146 +1038,207 @@ function PdfTool({t,back}) {
 
 function ImageTool({t,back}) {
   const id=t[3];
-  const [files,setFiles]=useState([]);
+  const [file,setFile]=useState(null);
+  const [originalUrl,setOriginalUrl]=useState("");
+  const [resultBlob,setResultBlob]=useState(null);
+  const [resultUrl,setResultUrl]=useState("");
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState("");
-  const [previewUrl,setPreviewUrl]=useState("");
-  const [resultUrl,setResultUrl]=useState("");
-  const [originalUrl,setOriginalUrl]=useState("");
-  const [w,setW]=useState(1200),[h,setH]=useState(800),[quality,setQuality]=useState(.85),[crop,setCrop]=useState("1:1");
+  const [activeTab,setActiveTab]=useState("cutout");
   const [background,setBackground]=useState("transparent");
-  const [bgColor,setBgColor]=useState("#ffffff");
-  const [addShadow,setAddShadow]=useState(false);
-  const objectUrls=useRef([]);
+  const [customBg,setCustomBg]=useState("#ffffff");
+  const [shadow,setShadow]=useState(true);
+  const [brightness,setBrightness]=useState(100);
+  const [contrast,setContrast]=useState(100);
+  const [saturation,setSaturation]=useState(100);
+  const [grayscale,setGrayscale]=useState(0);
+  const [blur,setBlur]=useState(0);
+  const [design,setDesign]=useState("auto");
+  const [fit,setFit]=useState("contain");
+  const [history,setHistory]=useState([]);
+  const [future,setFuture]=useState([]);
 
-  useEffect(()=>()=>{objectUrls.current.forEach(u=>URL.revokeObjectURL(u));},[]);
+  useEffect(()=>{
+    return ()=>{
+      if(originalUrl) URL.revokeObjectURL(originalUrl);
+      if(resultUrl) URL.revokeObjectURL(resultUrl);
+    };
+  },[originalUrl,resultUrl]);
 
-  const setBlobUrl=(blob,setter)=>{
-    const u=URL.createObjectURL(blob); objectUrls.current.push(u); setter(u); return u;
+  const chooseFile=(list)=>{
+    const f=list?.[0]||null;
+    if(!f) return;
+    if(!/^image\/(jpeg|png|webp)$/i.test(f.type)) return setStatus("Please upload JPG, PNG or WEBP.");
+    if(f.size>22*1024*1024) return setStatus("Maximum image size is 22 MB.");
+    if(originalUrl) URL.revokeObjectURL(originalUrl);
+    if(resultUrl) URL.revokeObjectURL(resultUrl);
+    setFile(f); setOriginalUrl(URL.createObjectURL(f)); setResultBlob(null); setResultUrl("");
+    setStatus("Image ready. Choose Cutout to remove the background."); setActiveTab("cutout");
+    setBrightness(100);setContrast(100);setSaturation(100);setGrayscale(0);setBlur(0);setBackground("transparent");setShadow(true);setDesign("auto");setFit("contain");
+    setHistory([]);setFuture([]);
   };
-  const resetResults=()=>{
-    setResultUrl("");setOriginalUrl("");setStatus("");
-  };
-  const loadImage=file=>new Promise((res,rej)=>{
-    const i=new Image();
-    i.onload=()=>res(i); i.onerror=()=>rej(new Error("Could not read image."));
-    i.src=URL.createObjectURL(file);
+
+  const loadImg=(blob)=>new Promise((resolve,reject)=>{
+    const u=URL.createObjectURL(blob); const img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(u);resolve(img)}; img.onerror=()=>{URL.revokeObjectURL(u);reject(new Error("Could not read image."))}; img.src=u;
   });
 
+  const snapshot=()=>({brightness,contrast,saturation,grayscale,blur,background,customBg,shadow,design,fit});
+  const restore=(x)=>{if(!x)return;setBrightness(x.brightness);setContrast(x.contrast);setSaturation(x.saturation);setGrayscale(x.grayscale);setBlur(x.blur);setBackground(x.background);setCustomBg(x.customBg);setShadow(x.shadow);setDesign(x.design);setFit(x.fit)};
+  const applySnapshot=()=>{setHistory(h=>[...h.slice(-19),snapshot()]);setFuture([])};
+
+  const removeBackground=async()=>{
+    if(!file) return setStatus("Please upload an image first.");
+    setBusy(true);setStatus("AI background removal starting… first run may take a little longer while the model loads.");
+    try{
+      const mod=await loadLib("bg-remove");
+      const fn=mod.default||mod.removeBackground;
+      if(typeof fn!=="function") throw new Error("Background-removal engine could not be loaded.");
+      const blob=await fn(file,{model:"isnet_fp16",output:{format:"image/png",quality:.92,type:"foreground"},progress:(key,current,total)=>{
+        if(total) setStatus(`AI cutout: ${key} ${Math.round(current/total*100)}%`);
+      }});
+      if(resultUrl) URL.revokeObjectURL(resultUrl);
+      setResultBlob(blob);setResultUrl(URL.createObjectURL(blob));setActiveTab("background");setStatus("Background removed successfully. Choose Background, Effects, Adjust or Design.");
+    }catch(e){
+      setStatus(`AI cutout failed: ${e?.message||String(e)}. You can still use the local editing tools below.`);
+    }finally{setBusy(false)}
+  };
+
+  const sourceBlob=()=>resultBlob||file;
+
+  const renderOutput=async({hd=false}={})=>{
+    const src=sourceBlob(); if(!src) throw new Error("Upload an image first.");
+    const img=await loadImg(src);
+    const ow=img.naturalWidth, oh=img.naturalHeight;
+    let outW=ow,outH=oh;
+    if(design==="square"){const side=Math.max(600,Math.max(ow,oh));outW=side;outH=side}
+    if(design==="landscape"){outW=1600;outH=1000}
+    if(design==="portrait"){outW=1000;outH=1600}
+    if(!hd){const max=1600;const scale=Math.min(1,max/Math.max(outW,outH));outW=Math.max(1,Math.round(outW*scale));outH=Math.max(1,Math.round(outH*scale));}
+    const c=document.createElement("canvas");c.width=outW;c.height=outH;const ctx=c.getContext("2d");
+    const bg=background==="transparent"?null:background==="white"?"#fff":background==="black"?"#000":customBg;
+    if(bg){ctx.fillStyle=bg;ctx.fillRect(0,0,outW,outH)}
+    ctx.save();
+    ctx.filter=`brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) grayscale(${grayscale}%) blur(${blur}px)`;
+    const pad=design==="auto"?0:Math.round(Math.min(outW,outH)*.04);
+    const aw=outW-pad*2,ah=outH-pad*2;
+    let dw=aw,dh=ah,dx=pad,dy=pad;
+    if(fit==="contain"){
+      const scale=Math.min(aw/ow,ah/oh);dw=ow*scale;dh=oh*scale;dx=(outW-dw)/2;dy=(outH-dh)/2;
+    }else if(fit==="cover"){
+      const scale=Math.max(aw/ow,ah/oh);dw=ow*scale;dh=oh*scale;dx=(outW-dw)/2;dy=(outH-dh)/2;
+    }
+    if(shadow && resultBlob){ctx.shadowColor="rgba(0,0,0,.22)";ctx.shadowBlur=22;ctx.shadowOffsetY=9}
+    ctx.drawImage(img,dx,dy,dw,dh);ctx.restore();
+    const mime=background==="transparent"?"image/png":"image/jpeg";
+    return await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error("Could not create output image.")),mime,.92));
+  };
+
   const downloadResult=async(hd=false)=>{
-    if(!resultUrl) return setStatus("Remove the background first.");
+    if(!sourceBlob()) return setStatus("Please upload an image first.");
+    setBusy(true);setStatus(hd?"Preparing HD download…":"Preparing download…");
     try{
-      const r=await fetch(resultUrl); const blob=await r.blob();
-      const name=(files[0]?.name||"image").replace(/\.[^.]+$/i,"")+(hd?"-hd":"")+".png";
-      downloadBlob(blob,name);setStatus(hd?"HD PNG downloaded.":"PNG downloaded.");
-    }catch(e){setStatus(e.message||"Download failed.");}
+      const blob=await renderOutput({hd});
+      const ext=blob.type.includes("png")?"png":"jpg";
+      downloadBlob(blob,`${(file?.name||"image").replace(/\.[^.]+$/i,"")}-toolmaster.${ext}`);
+      setResultBlob(blob); if(resultUrl) URL.revokeObjectURL(resultUrl);setResultUrl(URL.createObjectURL(blob));
+      setStatus(hd?"HD image downloaded.":"Image downloaded.");
+    }catch(e){setStatus(e?.message||"Download failed.")}finally{setBusy(false)}
   };
 
-  const composeBackground=async()=>{
-    if(!resultUrl) return;
+  const applyEdits=async()=>{
+    if(!sourceBlob()) return setStatus("Please upload an image first.");
+    setBusy(true);setStatus("Applying edits…");
     try{
-      setBusy(true);setStatus("Applying background settings...");
-      const base=await loadImage(await (await fetch(resultUrl)).blob());
-      const c=document.createElement("canvas");c.width=base.naturalWidth;c.height=base.naturalHeight;
-      const ctx=c.getContext("2d");
-      if(background!=="transparent") {ctx.fillStyle=background==="color"?bgColor:background;ctx.fillRect(0,0,c.width,c.height);}
-      if(addShadow){ctx.save();ctx.shadowColor="rgba(0,0,0,.28)";ctx.shadowBlur=Math.max(12,c.width*.015);ctx.shadowOffsetY=Math.max(6,c.height*.008);}
-      ctx.drawImage(base,0,0); if(addShadow)ctx.restore();
-      const blob=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error("Could not create output.")),"image/png"));
-      setBlobUrl(blob,setResultUrl);setStatus("Image updated.");
-    }catch(e){setStatus(e.message||"Could not apply edit.");}
-    finally{setBusy(false);}
+      const blob=await renderOutput({hd:true});
+      if(resultUrl) URL.revokeObjectURL(resultUrl);setResultBlob(blob);setResultUrl(URL.createObjectURL(blob));
+      applySnapshot(); setStatus("Changes applied. Use Download or Download HD.");
+    }catch(e){setStatus(e?.message||"Could not apply edits.")}finally{setBusy(false)}
   };
 
-  const run=async()=>{
-    if(!files.length)return setStatus("Please upload an image first.");
-    setBusy(true);setStatus("");resetResults();
+  const runBasic=async()=>{
+    if(!file) return setStatus("Please upload an image first.");
+    if(id==="background-remover") return removeBackground();
+    setBusy(true);setStatus("Processing image…");
     try{
-      const file=files[0];
-      const original=URL.createObjectURL(file); objectUrls.current.push(original); setOriginalUrl(original); setPreviewUrl(original);
-
-      if(id==="image-text"){
-        setStatus("Running OCR... first run may take a little longer.");
-        const {createWorker}=await loadLib("tesseract");
-        const worker=await createWorker("eng");
-        const {data}=await worker.recognize(file); await worker.terminate();
-        const text=(data.text||"").trim();
-        downloadText(text||"No text found.","ocr-result.txt"); setStatus("OCR complete. Text file downloaded."); return;
-      }
-
-      if(id==="background-remover"){
-        setStatus("AI background removal starting... first run downloads the model and may take a while.");
-        const mod=await loadLib("backgroundRemoval");
-        const removeBackground=mod.default||mod.removeBackground;
-        if(typeof removeBackground!=="function") throw new Error("Background removal engine could not be loaded.");
-        const blob=await removeBackground(file,{output:{format:"image/png",quality:1},progress:(key,current,total)=>{
-          if(total) setStatus(`Removing background... ${Math.min(100,Math.round((current/total)*100))}%`);
-        }});
-        setBlobUrl(blob,setResultUrl); setStatus("Background removed successfully. Choose Edit or Download."); return;
-      }
-
-      const img=await loadImage(file),c=document.createElement("canvas"),ctx=c.getContext("2d");
+      const img=await loadImg(file); const c=document.createElement("canvas"); const ctx=c.getContext("2d");
       let ow=img.naturalWidth,oh=img.naturalHeight;
-      if(id==="image-resizer"){c.width=Number(w)||ow;c.height=Number(h)||oh;ctx.drawImage(img,0,0,c.width,c.height);}
-      else if(id==="image-cropper"){const [rw,rh]=crop.split(":").map(Number);const target=rw/rh;let cw=ow,ch=oh;if(ow/oh>target)cw=oh*target;else ch=ow/target;const sx=(ow-cw)/2,sy=(oh-ch)/2;c.width=Math.round(cw);c.height=Math.round(ch);ctx.drawImage(img,sx,sy,cw,ch,0,0,c.width,c.height);}
-      else {c.width=ow;c.height=oh;ctx.drawImage(img,0,0);}
-      let type="image/png",name=file.name.replace(/\.[^.]+$/i,"")+".png";
-      if(id==="png-jpg"||id==="image-compressor"){type="image/jpeg";name=file.name.replace(/\.[^.]+$/i,"")+".jpg";}
-      if(id==="webp-converter"){type="image/webp";name=file.name.replace(/\.[^.]+$/i,"")+".webp";}
-      if(id==="jpg-png")type="image/png";
-      const blob=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error("Could not create output image.")),type,Number(quality)));
-      downloadBlob(blob,name);setStatus("Image downloaded.");
-    }catch(e){setStatus(e.message||"Image processing failed.");}
-    finally{setBusy(false);}
+      if(id==="image-resizer"){c.width=1200;c.height=800;ctx.drawImage(img,0,0,c.width,c.height)}
+      else if(id==="image-cropper"){const target=1;let cw=ow,ch=oh;if(ow/oh>target)cw=oh;else ch=ow;const sx=(ow-cw)/2,sy=(oh-ch)/2;c.width=Math.round(cw);c.height=Math.round(ch);ctx.drawImage(img,sx,sy,cw,ch,0,0,c.width,c.height)}
+      else {c.width=ow;c.height=oh;ctx.drawImage(img,0,0)}
+      const outType=id==="png-jpg"||id==="image-compressor"?"image/jpeg":id==="webp-converter"?"image/webp":"image/png";
+      const ext=outType.split("/")[1].replace("jpeg","jpg");const blob=await new Promise(r=>c.toBlob(r,outType,.8));downloadBlob(blob,`${file.name.replace(/\.[^.]+$/i,"")}.${ext}`);setStatus("Image downloaded.");
+    }catch(e){setStatus(e?.message||"Image processing failed.")}finally{setBusy(false)}
   };
 
-  if(id==="background-remover") return <Shell back={back} t={t} status={status}>
-    <div style={{background:"#fff",border:"1px solid #e7eaf0",borderRadius:20,overflow:"hidden",boxShadow:"0 18px 60px rgba(15,23,42,.08)"}}>
-      <div style={{padding:"22px 28px",borderBottom:"1px solid #edf0f5",display:"flex",justifyContent:"space-between",alignItems:"center",gap:16,flexWrap:"wrap"}}>
-        <div><h2 style={{margin:0,fontSize:28}}>Remove Image Background</h2><p style={{margin:"6px 0 0",color:"#6b7280"}}>Automatically remove backgrounds from JPG, PNG and WEBP images.</p></div>
-        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-          <button className="secondary" onClick={()=>setFiles([])}>Clear</button>
-          <button className="primary" disabled={busy||!resultUrl} onClick={()=>downloadResult(false)}><Download size={17}/> Download</button>
-        </div>
-      </div>
-      <div style={{display:"grid",gridTemplateColumns:"minmax(280px,380px) 1fr",minHeight:560}}>
-        <div style={{padding:28,borderRight:"1px solid #edf0f5"}}>
-          <div style={{display:"flex",gap:18,borderBottom:"1px solid #edf0f5",paddingBottom:12,marginBottom:20}}><b style={{color:"#1769e8"}}>Upload Image</b><span style={{color:"#64748b"}}>Paste URL</span></div>
-          <FilePicker accept="image/jpeg,image/png,image/webp" onChange={(fs)=>{setFiles(fs);setPreviewUrl(fs[0]?URL.createObjectURL(fs[0]):"");setOriginalUrl(fs[0]?URL.createObjectURL(fs[0]):"");setResultUrl("");setStatus("");}} files={files}/>
-          <div style={{marginTop:20,fontSize:13,color:"#64748b",lineHeight:1.7}}>Supported: JPG, PNG, WEBP<br/>Maximum recommended size: 12 MP</div>
-          <button className="primary" style={{width:"100%",marginTop:22,justifyContent:"center"}} disabled={busy||!files.length} onClick={run}><Sparkles size={17}/>{busy?"Processing...":"Remove Background"}</button>
-          <div style={{marginTop:26,padding:16,borderRadius:14,background:"#f8fafc",fontSize:13,color:"#475569"}}><b>Privacy-first</b><br/>AI processing runs in your browser. The model is downloaded on first use and then cached by the browser.</div>
-        </div>
-        <div style={{padding:28,background:"#fafbfc"}}>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18}}>
-            <div><h3 style={{margin:"0 0 12px"}}>Original</h3><div style={{background:"#fff",border:"1px solid #e5e7eb",borderRadius:16,overflow:"hidden",minHeight:310,display:"grid",placeItems:"center"}}>{originalUrl?<img src={originalUrl} alt="Original" style={{maxWidth:"100%",maxHeight:390,display:"block"}}/>:<span style={{color:"#94a3b8"}}>Upload an image</span>}</div></div>
-            <div><h3 style={{margin:"0 0 12px",color:"#1769e8"}}>Removed Background</h3><div style={{backgroundImage:"linear-gradient(45deg,#eef1f5 25%,transparent 25%),linear-gradient(-45deg,#eef1f5 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eef1f5 75%),linear-gradient(-45deg,transparent 75%,#eef1f5 75%)",backgroundSize:"22px 22px",backgroundPosition:"0 0,0 11px,11px -11px,-11px 0",border:"1px solid #e5e7eb",borderRadius:16,overflow:"hidden",minHeight:310,display:"grid",placeItems:"center"}}>{resultUrl?<img src={resultUrl} alt="Removed background" style={{maxWidth:"100%",maxHeight:390,display:"block"}}/>:<span style={{color:"#94a3b8"}}>Result will appear here</span>}</div></div>
+  const undo=()=>{if(!history.length)return;const current=snapshot();const prev=history[history.length-1];setHistory(h=>h.slice(0,-1));setFuture(f=>[current,...f.slice(0,19)]);restore(prev);setStatus("Undid the last applied change.")};
+  const redo=()=>{if(!future.length)return;const current=snapshot();const next=future[0];setFuture(f=>f.slice(1));setHistory(h=>[...h.slice(-19),current]);restore(next);setStatus("Redid the change.")};
+  const tabs=["cutout","background","effects","adjust","design"];
+
+  if(id!=="background-remover"){
+    return (
+      <Shell back={back} t={t} status={status}>
+        <div className="workspace">
+          <div className="panel">
+            <FilePicker accept="image/*" onChange={chooseFile} files={file ? [file] : []}/>
+            {id==="image-resizer" && <p style={{color:"#8395ae",fontSize:12}}>Resize mode uses a safe 1200×800 export. Use the advanced Background Remover for full editing controls.</p>}
+            <button className="btn primary" disabled={busy || !file} onClick={runBasic}>
+              {busy ? <RefreshCw/> : <Download/>}
+              {busy ? "Processing..." : "Process & Download"}
+            </button>
           </div>
-          {resultUrl&&<div style={{marginTop:22,padding:18,borderRadius:16,border:"1px solid #e5e7eb",background:"#fff"}}>
-            <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"center"}}>
-              <button className="primary" onClick={()=>downloadResult(false)}><Download size={17}/> Download</button>
-              <button className="secondary" onClick={()=>downloadResult(true)}><Download size={17}/> Download HD</button>
-              <button className="secondary" onClick={composeBackground}><Eye size={17}/> Apply Edit</button>
-            </div>
-            <div style={{display:"flex",gap:16,flexWrap:"wrap",alignItems:"center",marginTop:18}}>
-              <label>Background<select value={background} onChange={e=>setBackground(e.target.value)}><option value="transparent">Transparent</option><option value="#ffffff">White</option><option value="#000000">Black</option><option value="color">Custom color</option></select></label>
-              {background==="color"&&<label>Color<input type="color" value={bgColor} onChange={e=>setBgColor(e.target.value)}/></label>}
-              <label style={{display:"flex",alignItems:"center",gap:8}}><input type="checkbox" checked={addShadow} onChange={e=>setAddShadow(e.target.checked)}/> Add soft shadow</label>
-            </div>
-          </div>}
-          <div style={{marginTop:22,display:"flex",gap:18,flexWrap:"wrap",color:"#475569",fontSize:14}}><span><b>✓</b> Transparent PNG</span><span><b>✓</b> Full-resolution export</span><span><b>✓</b> One-click download</span></div>
+          <div className="panel">
+            <h3>{file ? file.name : "No image selected"}</h3>
+            {file && <img src={originalUrl} alt="preview" style={{width:"100%",maxHeight:420,objectFit:"contain",borderRadius:12,background:"#f4f5f7"}}/>}
+          </div>
+        </div>
+      </Shell>
+    );
+  }
+
+  return <Shell back={back} t={t} status={status}>
+    <div className="bgRemoveApp">
+      <div className="bgRemoveHeader">
+        <div><h2>Remove Image Background</h2><p>Upload an image and edit the cutout with professional controls.</p></div>
+        <div className="bgHeaderActions">
+          <button className="btn" onClick={undo} disabled={!history.length}><History size={16}/> Undo</button>
+          <button className="btn" onClick={redo} disabled={!future.length}><History size={16}/> Redo</button>
+          <button className="btn" onClick={()=>downloadResult(false)} disabled={busy||!sourceBlob()}><Download size={16}/> Download</button>
+          <button className="btn primary" onClick={()=>downloadResult(true)} disabled={busy||!sourceBlob()}><Download size={16}/> Download HD</button>
         </div>
       </div>
+      <div className="bgToolbar">
+        {tabs.map(tab=><button key={tab} className={`bgToolBtn ${activeTab===tab?"active":""}`} onClick={()=>setActiveTab(tab)}>
+          {tab==="cutout"?<Sparkles size={17}/>:tab==="background"?<ImageIcon size={17}/>:tab==="effects"?<Star size={17}/>:tab==="adjust"?<Settings size={17}/>:<LayoutDashboard size={17}/>}<span>{tab[0].toUpperCase()+tab.slice(1)}</span>
+        </button>)}
+        <div className="spacer"/>
+        <button className="btn primary" onClick={applyEdits} disabled={busy||!sourceBlob()}>{busy?<RefreshCw className="spin"/>:<Check size={16}/>} Apply Changes</button>
+      </div>
+      <div className="bgEditorBody">
+        <aside className="bgSide">
+          <div className="uploadCard"><FilePicker accept="image/jpeg,image/png,image/webp" onChange={chooseFile} files={file?[file]:[]}/><small>JPG, PNG, WEBP · Max 22MB</small></div>
+          {!file&&<div className="sideHint">Upload an image to start.</div>}
+          {activeTab==="cutout"&&<div className="sideSection"><h3>Cutout</h3><p>AI removes the background from people, products and common objects.</p><button className="btn primary full" disabled={!file||busy} onClick={removeBackground}><Sparkles size={16}/> {busy?"Removing…":"Remove Background"}</button>{resultBlob&&<div className="successBadge"><CheckCircle2 size={15}/> Cutout ready</div>}</div>}
+          {activeTab==="background"&&<div className="sideSection"><h3>Background</h3><p>Choose what should appear behind the cutout.</p><label>Background<select value={background} onChange={e=>setBackground(e.target.value)}><option value="transparent">Transparent</option><option value="white">White</option><option value="black">Black</option><option value="custom">Custom color</option></select></label>{background==="custom"&&<label>Custom color<input type="color" value={customBg} onChange={e=>setCustomBg(e.target.value)}/></label>}<label className="checkRow"><input type="checkbox" checked={shadow} onChange={e=>setShadow(e.target.checked)}/> Add soft shadow</label></div>}
+          {activeTab==="effects"&&<div className="sideSection"><h3>Effects</h3><label>Blur<input type="range" min="0" max="8" step="1" value={blur} onChange={e=>setBlur(Number(e.target.value))}/></label><label>Grayscale<input type="range" min="0" max="100" value={grayscale} onChange={e=>setGrayscale(Number(e.target.value))}/></label><label className="checkRow"><input type="checkbox" checked={shadow} onChange={e=>setShadow(e.target.checked)}/> Soft shadow</label></div>}
+          {activeTab==="adjust"&&<div className="sideSection"><h3>Adjust</h3><label>Brightness<input type="range" min="60" max="140" value={brightness} onChange={e=>setBrightness(Number(e.target.value))}/><span>{brightness}%</span></label><label>Contrast<input type="range" min="60" max="140" value={contrast} onChange={e=>setContrast(Number(e.target.value))}/><span>{contrast}%</span></label><label>Saturation<input type="range" min="0" max="160" value={saturation} onChange={e=>setSaturation(Number(e.target.value))}/><span>{saturation}%</span></label></div>}
+          {activeTab==="design"&&<div className="sideSection"><h3>Design</h3><label>Canvas<select value={design} onChange={e=>setDesign(e.target.value)}><option value="auto">Original size</option><option value="square">Square</option><option value="landscape">Landscape</option><option value="portrait">Portrait</option></select></label><label>Fit<select value={fit} onChange={e=>setFit(e.target.value)}><option value="contain">Contain</option><option value="cover">Cover</option></select></label></div>}
+        </aside>
+        <section className="bgStage">
+          {!file?<div className="bgEmpty"><Upload size={44}/><h3>Upload Image</h3><p>Drop an image here or use the upload button.</p></div>:<>
+            <div className="bgPreviewGrid">
+              <div className="previewCard"><div className="previewTitle"><b>Original</b><span>{file.type.split("/")[1].toUpperCase()}</span></div><div className="previewCanvas originalPreview"><img src={originalUrl} alt="Original"/></div></div>
+              <div className="previewCard"><div className="previewTitle"><b>{resultBlob?"Removed Background":"Preview"}</b><span>{resultBlob?"PNG":"Ready"}</span></div><div className="previewCanvas checker"><div className="previewStageInner">{resultUrl?<img src={resultUrl} alt="Result" style={{filter:`brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) grayscale(${grayscale}%) blur(${blur}px)`}}/>:<div className="resultPlaceholder"><Sparkles size={28}/><span>{busy?"Processing…":"Press Remove Background"}</span></div>}</div></div></div>
+            </div>
+            <div className="bgBottomBar"><div><b>{resultBlob?"Cutout ready":"Image uploaded"}</b><span>{resultBlob?"Use the tools on the left, then Apply Changes.":"AI removal works locally in your browser after the model loads."}</span></div><div className="bottomActions"><button className="btn" onClick={()=>setActiveTab("cutout")}><Sparkles size={15}/> Cutout</button><button className="btn" onClick={()=>setActiveTab("background")}><ImageIcon size={15}/> Background</button><button className="btn" onClick={()=>downloadResult(false)} disabled={busy||!sourceBlob()}><Download size={15}/> Download</button></div></div>
+          </>}
+        </section>
+      </div>
+      <div className="bgPrivacy"><ShieldCheck size={15}/> Images are processed in your browser when the local AI model is available. The first AI run downloads and caches model assets.</div>
     </div>
   </Shell>;
-
-  return <Shell back={back} t={t} status={status}><div className="workspace"><div className="panel"><FilePicker accept="image/*" onChange={setFiles} files={files}/>
-    {id==="image-resizer"&&<div className="videoOptions"><label>Width<input type="number" value={w} onChange={e=>setW(e.target.value)}/></label><label>Height<input type="number" value={h} onChange={e=>setH(e.target.value)}/></label></div>}
-    {id==="image-cropper"&&<label>Aspect ratio<select value={crop} onChange={e=>setCrop(e.target.value)}><option>1:1</option><option>4:3</option><option>16:9</option><option>3:4</option><option>9:16</option></select></label>}
-    {id==="image-compressor"&&<label>Quality<input type="range" min=".2" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
-    <button className="btn primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw/>:<Download/>}{busy?"Processing...":id==="image-text"?"Extract Text":"Process & Download"}</button>
-  </div><div className="panel">{files.map(f=><p key={f.name}>🖼️ {f.name}</p>)}</div></div></Shell>;
 }
+
 function SeoTool({t, back}) {
   const id = t[3];
   const [text, setText] = useState("");
