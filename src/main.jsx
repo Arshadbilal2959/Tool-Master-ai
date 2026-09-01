@@ -336,7 +336,7 @@ function App() {
       </div>
     </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
 
-    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolPage t={tool} back={()=>setTool(null)} user={user}/> :
+    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user}/></ToolErrorBoundary> :
       <>
         <section className="hero"><div className="heroInner">
           <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
@@ -418,6 +418,102 @@ function AuthModal({mode,setMode,close,onDone}) {
     </form>
     {mode==="signin"&&<button className="btn ghost" onClick={forgot} disabled={busy} style={{width:"100%",justifyContent:"center",marginTop:10}}><KeyRound size={15}/> Forgot password</button>}
   </div></div>
+}
+
+
+class ToolErrorBoundary extends React.Component {
+  constructor(props){
+    super(props);
+    this.state={hasError:false,error:null};
+  }
+  static getDerivedStateFromError(error){
+    return {hasError:true,error};
+  }
+  componentDidCatch(error,info){
+    console.error('ToolMaster Pro tool error:',error,info);
+  }
+  render(){
+    if(this.state.hasError){
+      return <main className="toolPage"><div className="panel" style={{maxWidth:760,margin:'40px auto'}}>
+        <div className="pill"><AlertCircle size={14}/> Tool error</div>
+        <h2 style={{marginTop:14}}>This tool could not be opened</h2>
+        <p style={{color:'#7c879a',lineHeight:1.6}}>{this.state.error?.message||'An unexpected error occurred.'}</p>
+        <div className="actions">
+          <button className="btn primary" onClick={()=>this.setState({hasError:false,error:null})}>Try Again</button>
+          <button className="btn" onClick={()=>window.location.reload()}>Reload Website</button>
+        </div>
+      </div></main>;
+    }
+    return this.props.children;
+  }
+}
+
+function FilePicker({multiple=false,accept,onChange,files}){
+  return <label className="uploadBox">
+    <Upload size={20}/>
+    <div style={{flex:1}}>
+      <b>{multiple?'Upload files':'Upload file'}</b>
+      <small style={{display:'block',color:'#8b94a7',marginTop:4}}>{accept||'Supported files'}</small>
+      {files?.length ? <strong>{files.map(f=>f.name).join(', ')}</strong> : null}
+    </div>
+    <input type="file" multiple={multiple} accept={accept} onChange={e=>onChange([...e.target.files])}/>
+  </label>;
+}
+
+function StudentAIHelper({back,user}){
+  const [question,setQuestion]=useState('');
+  const [files,setFiles]=useState([]);
+  const [answer,setAnswer]=useState('');
+  const [loading,setLoading]=useState(false);
+  const [status,setStatus]=useState('');
+
+  const solve=async()=>{
+    if(!question.trim()&&!files.length){
+      setAnswer('Please enter a question or upload a study file.');
+      return;
+    }
+    setLoading(true);setStatus('');
+    try{
+      const base=import.meta.env.VITE_API_BASE_URL||import.meta.env.VITE_SUPABASE_FUNCTION_URL;
+      if(!base){
+        setAnswer('AI backend is not configured yet. Your question/file is ready, but a secure AI Edge Function is required for real AI answers.');
+        return;
+      }
+      const session= supabase ? (await supabase.auth.getSession()).data.session : null;
+      const fd=new FormData();
+      fd.append('question',question);
+      files.forEach(f=>fd.append('files',f));
+      const headers={...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),...(session?.access_token?{Authorization:`Bearer ${session.access_token}`}:{})};
+      const r=await fetch(base,{method:'POST',headers,body:fd});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(d.error||d.message||`AI request failed (${r.status})`);
+      setAnswer(d.answer||d.message||'AI response received.');
+    }catch(e){
+      setAnswer(`AI Helper error: ${e?.message||String(e)}`);
+    }finally{setLoading(false)}
+  };
+
+  return <Shell back={back} t={['Student AI Helper','AI & Education','Ask questions and upload study files for step-by-step AI help.','']} status={status||'Use a secure backend for production AI processing.'}>
+    <div className="aiHelper">
+      <div className="aiCard">
+        <h3>📚 Ask your question</h3>
+        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question or explain what you need help with..."/>
+        <FilePicker multiple accept=".pdf,image/*,.txt,.doc,.docx" onChange={setFiles} files={files}/>
+        <div className="actions">
+          <button className="btn primary" disabled={loading} onClick={solve}><Sparkles size={17}/>{loading?'Processing...':'Get AI Help'}</button>
+          {files.length>0&&<button className="btn" onClick={()=>setFiles([])}><Trash2 size={16}/> Clear files</button>}
+        </div>
+      </div>
+      <div className="aiCard">
+        <h3>🤖 AI Answer</h3>
+        <div className="answer">{answer||'Your step-by-step answer will appear here.'}</div>
+        <div className="actions">
+          <button className="btn" disabled={!answer} onClick={()=>navigator.clipboard?.writeText(answer)}><Copy size={16}/> Copy</button>
+          <button className="btn" disabled={!answer} onClick={()=>downloadText(answer,'student-ai-answer.txt')}><Download size={16}/> Download</button>
+        </div>
+      </div>
+    </div>
+  </Shell>;
 }
 
 function ToolPage({t,back,user}) {
