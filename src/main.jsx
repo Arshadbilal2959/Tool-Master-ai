@@ -238,36 +238,16 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .profileMenu{position:relative}.profileCard{position:absolute;right:0;top:50px;width:260px;background:#fff;border:1px solid #e2e4eb;border-radius:14px;padding:14px;box-shadow:var(--shadow);z-index:70}.profileCard b{display:block}.profileCard small{display:block;color:#7f8999;margin:3px 0 12px}.mobileOnly{display:none}
 
 .pdfProEditor{border:1px solid #e3e5ed;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 16px 45px rgba(50,43,110,.08)}
-.pdfEditorTop{padding:18px 20px;border-bottom:1px solid #eceef4;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.pdfTopTitle h2{margin:0;font-size:27px;letter-spacing:-.03em}.pdfTopTitle p{margin:5px 0 0;color:#8992a3}.pdfTopActions{display:flex;align-items:center;gap:9px}.pdfEditorToolbar{display:flex;align-items:stretch;gap:8px;padding:10px 12px;border-bottom:1px solid #e6e8ee;overflow:auto;background:#fff}.pdfAction{min-width:94px;border:1px solid #dfe3ec;background:#fff;border-radius:11px;padding:10px 11px;color:#58647a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px;font-weight:800}.pdfAction:hover{border-color:#bfb8f9;background:#faf9ff}.pdfAction.active{color:#6648ef;border-color:#8e77fa;background:#f6f2ff;box-shadow:inset 0 0 0 1px rgba(108,76,245,.08)}.pdfAction span{white-space:nowrap}.dangerAction{color:#dc4451}.spacer{flex:1;min-width:12px}.pdfControlBar{padding:9px 14px;border-bottom:1px solid #e8eaf0;background:#fbfbfd;display:flex;justify-content:space-between;align-items:center;gap:12px}.pageControl,.zoomControl{display:flex;align-items:center;gap:8px;color:#5c6678;font-size:13px}.pageControl input,.zoomControl select{height:34px;border:1px solid #dfe2e9;border-radius:8px;padding:6px 8px;background:#fff}.zoomControl select{width:82px}.pdfWorkspace{display:grid;grid-template-columns:285px minmax(0,1fr);min-height:750px;background:#f1f2f6}.pdfToolsPanel{background:#fff;border-right:1px solid #e2e5eb;padding:18px;overflow:auto}.pdfToolsPanel h3{margin:0 0 8px;font-size:17px}.panelHint,.emptyHint{font-size:12px;line-height:1.55;color:#8891a2}.pdfToolsPanel label{display:grid;gap:6px;margin-top:13px;font-size:12px;font-weight:800;color:#566176}.pdfToolsPanel input,.pdfToolsPanel textarea,.pdfToolsPanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:9px 10px;background:#fff;color:#1b2435;outline:none}.pdfToolsPanel textarea{min-height:82px;resize:vertical}.twoFields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.inlineButtons{display:flex;gap:8px;margin-top:10px}.toggle{width:38px;height:38px;border:1px solid #dfe2ea;background:#fff;border-radius:9px}.toggle.on{border-color:#8f78f8;background:#f2eeff;color:#6848ef}.selectionInfo{display:grid;gap:5px;padding:10px;margin-top:12px;background:#faf8ff;border:1px solid #e3ddff;border-radius:10px;color:#6447ed;font-size:12px}.selectionInfo span{color:#6f7788;line-height:1.45}.detectedList{display:grid;gap:6px;margin-top:14px}.detectedList>b{font-size:12px;color:#5d6779}.detected{border:1px solid #e5e7ed;background:#fff;border-radius:8px;padding:8px;text-align:left;font-size:11px;color:#586477;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.detected.active{border-color:#8e79f6;background:#f7f4ff;color:#6142e7}.fileBadge{margin-top:9px;padding:8px;border-radius:8px;background:#effaf5;color:#15966a;font-size:11px}.applyBtn{width:100%;justify-content:center;margin-top:18px}.pdfViewer{padding:24px;display:flex;justify-content:center;align-items:flex-start;overflow:auto}.pdfPaperLive{position:relative;background:#fff;box-shadow:0 10px 34px rgba(30,35,50,.16);border:1px solid #d9dce4;flex:none}.pdfPaperLive canvas{display:block;width:100%;height:100%}.pdfTextOverlay{position:absolute;left:0;top:0;z-index:5;pointer-events:none}.textHotspot{position:absolute;padding:0;pointer-events:auto;border:1px solid transparent;background:rgba(255,255,255,0);color:transparent;cursor:text;text-align:left;overflow:hidden}.textHotspot:hover{background:rgba(112,82,245,.06);border:1px dashed rgba(112,82,245,.65)}.textHotspot.selected{background:rgba(112,82,245,.10);border:2px solid #8062f4;color:transparent}.liveGhost{position:absolute;padding:2px 3px;background:rgba(255,255,255,.78);border:1px dashed rgba(108,76,245,.65);font-weight:500;pointer-events:none;white-space:pre-wrap;max-width:75%}.signGhost{font-family:cursive;color:#1c2a58;border-bottom:1px solid #1c2a58;background:rgba(255,255,255,.7)}.pdfFileBar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid #e7e9ef;flex-wrap:wrap}.pdfFileBar>div:first-child{display:flex;flex-direction:column;gap:3px}.pdfFileBar span{color:#8991a1;font-size:12px}.pdfPrivacy{display:flex;justify-content:center;align-items:center;gap:6px;padding:11px;background:#fbfbfd;border-top:1px solid #eef0f4;color:#7f8899;font-size:12px}.pdfEmptyState{margin:28px;border:2px dashed #dcd8fb;border-radius:18px;background:linear-gradient(180deg,#fcfbff,#f8f7ff);min-height:420px;display:grid;place-items:center;text-align:center;padding:50px 20px;cursor:pointer}.pdfUploadIcon{width:74px;height:74px;border-radius:20px;display:grid;place-items:center;color:#6c4cf5;background:#eeeaff;box-shadow:0 12px 28px rgba(108,76,245,.13)}.pdfEmptyState h3{margin:0;font-size:25px}.pdfEmptyState p{margin:0;color:#858ea0}.pdfEmptyState small{color:#9299a8}
+.pdfEditorTop{padding:18px 20px;border-bottom:1px solid #eceef4;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.pdfTopTitle h2{margin:0;font-size:27px;letter-spacing:-.03em}.pdfTopTitle p{margin:5px 0 0;color:#8992a3}.pdfTopActions{display:flex;align-items:center;gap:9px}.pdfEditorToolbar{display:flex;align-items:stretch;gap:8px;padding:10px 12px;border-bottom:1px solid #e6e8ee;overflow:auto;background:#fff}.pdfAction{min-width:94px;border:1px solid #dfe3ec;background:#fff;border-radius:11px;padding:10px 11px;color:#58647a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px;font-weight:800}.pdfAction:hover{border-color:#bfb8f9;background:#faf9ff}.pdfAction.active{color:#6648ef;border-color:#8e77fa;background:#f6f2ff;box-shadow:inset 0 0 0 1px rgba(108,76,245,.08)}.pdfAction span{white-space:nowrap}.dangerAction{color:#dc4451}.spacer{flex:1;min-width:12px}.pdfControlBar{padding:9px 14px;border-bottom:1px solid #e8eaf0;background:#fbfbfd;display:flex;justify-content:space-between;align-items:center;gap:12px}.pageControl,.zoomControl{display:flex;align-items:center;gap:8px;color:#5c6678;font-size:13px}.pageControl input,.zoomControl select{height:34px;border:1px solid #dfe2e9;border-radius:8px;padding:6px 8px;background:#fff}.zoomControl select{width:82px}.pdfWorkspace{display:grid;grid-template-columns:285px minmax(0,1fr);min-height:750px;background:#f1f2f6}.pdfToolsPanel{background:#fff;border-right:1px solid #e2e5eb;padding:18px;overflow:auto}.pdfToolsPanel h3{margin:0 0 8px;font-size:17px}.panelHint,.emptyHint{font-size:12px;line-height:1.55;color:#8891a2}.pdfToolsPanel label{display:grid;gap:6px;margin-top:13px;font-size:12px;font-weight:800;color:#566176}.pdfToolsPanel input,.pdfToolsPanel textarea,.pdfToolsPanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:9px 10px;background:#fff;color:#1b2435;outline:none}.pdfToolsPanel textarea{min-height:82px;resize:vertical}.twoFields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.inlineButtons{display:flex;gap:8px;margin-top:10px}.toggle{width:38px;height:38px;border:1px solid #dfe2ea;background:#fff;border-radius:9px}.toggle.on{border-color:#8f78f8;background:#f2eeff;color:#6848ef}.selectionInfo{display:grid;gap:5px;padding:10px;margin-top:12px;background:#faf8ff;border:1px solid #e3ddff;border-radius:10px;color:#6447ed;font-size:12px}.selectionInfo span{color:#6f7788;line-height:1.45}.detectedList{display:grid;gap:6px;margin-top:14px}.detectedList>b{font-size:12px;color:#5d6779}.detected{border:1px solid #e5e7ed;background:#fff;border-radius:8px;padding:8px;text-align:left;font-size:11px;color:#586477;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.detected.active{border-color:#8e79f6;background:#f7f4ff;color:#6142e7}.editControls{display:grid;gap:10px;margin-top:13px}.formatButtons{display:flex;gap:8px}.formatButtons .toggle{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #dfe2ea;background:#fff;border-radius:9px;padding:9px 8px;color:#596477;font-weight:700}.formatButtons .toggle.on{border-color:#8f78f8;background:#f2eeff;color:#6848ef}.downloadBtn{width:100%;justify-content:center;margin-top:8px}.fileBadge{margin-top:9px;padding:8px;border-radius:8px;background:#effaf5;color:#15966a;font-size:11px}.applyBtn{width:100%;justify-content:center;margin-top:18px}.pdfViewer{padding:24px;display:flex;justify-content:center;align-items:flex-start;overflow:auto}.pdfPaperLive{position:relative;background:#fff;box-shadow:0 10px 34px rgba(30,35,50,.16);border:1px solid #d9dce4;flex:none}.pdfPaperLive canvas{display:block;width:100%;height:100%}.pdfTextOverlay{position:absolute;left:0;top:0;z-index:6;pointer-events:none}.textEditItem{position:absolute;pointer-events:auto}.textHotspot{width:100%;height:100%;display:block;padding:0 1px;pointer-events:auto;border:1px solid transparent;background:transparent;color:transparent;cursor:text;text-align:left;overflow:hidden;border-radius:3px}.textHotspot:hover{background:rgba(112,82,245,.10);border:1px dashed rgba(112,82,245,.75)}.textHotspot.selected{background:rgba(112,82,245,.14);border:2px solid #8062f4;color:transparent}.editedPreviewText{display:block;box-sizing:border-box;line-height:1.05;position:relative;z-index:18}.inlinePdfInput{position:absolute;left:0;top:-2px;z-index:20;box-sizing:border-box;border:2px solid #7050f5;border-radius:4px;padding:2px 5px;background:#fff;color:#111827;font-family:Arial,sans-serif;outline:none;box-shadow:0 6px 18px rgba(67,50,170,.18)}.liveGhost{position:absolute;padding:2px 3px;background:rgba(255,255,255,.78);border:1px dashed rgba(108,76,245,.65);font-weight:500;pointer-events:none;white-space:pre-wrap;max-width:75%}.signGhost{font-family:cursive;color:#1c2a58;border-bottom:1px solid #1c2a58;background:rgba(255,255,255,.7)}.pdfFileBar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid #e7e9ef;flex-wrap:wrap}.pdfFileBar>div:first-child{display:flex;flex-direction:column;gap:3px}.pdfFileBar span{color:#8991a1;font-size:12px}.pdfPrivacy{display:flex;justify-content:center;align-items:center;gap:6px;padding:11px;background:#fbfbfd;border-top:1px solid #eef0f4;color:#7f8899;font-size:12px}.pdfEmptyState{margin:28px;border:2px dashed #dcd8fb;border-radius:18px;background:linear-gradient(180deg,#fcfbff,#f8f7ff);min-height:420px;display:grid;place-items:center;text-align:center;padding:50px 20px;cursor:pointer}.pdfUploadIcon{width:74px;height:74px;border-radius:20px;display:grid;place-items:center;color:#6c4cf5;background:#eeeaff;box-shadow:0 12px 28px rgba(108,76,245,.13)}.pdfEmptyState h3{margin:0;font-size:25px}.pdfEmptyState p{margin:0;color:#858ea0}.pdfEmptyState small{color:#9299a8}
 .pdfEditorShell{border:1px solid #e2e4eb;border-radius:16px;background:#fff;box-shadow:var(--shadow);overflow:hidden}
 .pdfEditorHeader{padding:16px 18px;border-bottom:1px solid #e6e8ef;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
 .pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
-
-.adminStats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}.statCard{background:#fff;border:1px solid #e4e6ed;border-radius:15px;padding:16px;box-shadow:0 8px 24px rgba(36,31,79,.04)}.statCard span{display:block;font-size:12px;color:#7f899b}.statCard b{display:block;font-size:25px;margin:5px 0}.statCard small{color:#929bab}.adminTabs{margin-top:22px}.adminToolTable{margin-top:15px;border:1px solid #e4e6ed;border-radius:13px;overflow:auto}.adminToolRow{display:grid;grid-template-columns:minmax(260px,1fr) 95px 105px 90px 24px;align-items:center;gap:10px;padding:11px 13px;border-bottom:1px solid #eef0f4;min-width:720px}.adminToolRow:last-child{border-bottom:0}.adminToolMain b{display:block}.adminToolMain small{display:block;color:#8a93a4;margin-top:3px}.checkLine{display:flex;align-items:center;gap:6px;font-size:12px;color:#697286}.sortInput{width:70px;padding:8px;border:1px solid #dfe2ea;border-radius:8px}.checkList{display:grid;gap:9px;color:#5f697d;font-size:13px}.spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:900px){.adminStats{grid-template-columns:1fr 1fr}.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
+@media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
 `;
 
 function GlobalStyle() { return <style>{css}</style>; }
-
-class AppErrorBoundary extends React.Component {
-  constructor(props){ super(props); this.state={error:null}; }
-  static getDerivedStateFromError(error){ return {error}; }
-  componentDidCatch(error,info){ console.error("ToolMaster Pro runtime error",error,info); }
-  render(){
-    if(this.state.error){
-      return <div style={{minHeight:"100vh",display:"grid",placeItems:"center",padding:24,background:"#f8f8fc",fontFamily:"system-ui"}}>
-        <div style={{maxWidth:650,background:"#fff",border:"1px solid #e4e6ed",borderRadius:18,padding:28,boxShadow:"0 20px 60px rgba(0,0,0,.08)"}}>
-          <div style={{fontWeight:900,fontSize:22,marginBottom:8}}>ToolMaster Pro recovered from an error</div>
-          <div style={{color:"#6f7788",lineHeight:1.6,marginBottom:18}}>A tool crashed instead of taking down the whole website. Reload the page and try the tool again.</div>
-          <button className="btn primary" onClick={()=>window.location.reload()}>Reload website</button>
-        </div>
-      </div>;
-    }
-    return this.props.children;
-  }
-}
 
 function App() {
   const [cat,setCat]=useState("All Tools");
@@ -290,14 +270,9 @@ function App() {
   ), [cat,query]);
 
   useEffect(() => {
-    try {
-      const savedFav = JSON.parse(localStorage.getItem("tm_favorites") || "[]");
-      const savedHist = JSON.parse(localStorage.getItem("tm_history") || "[]");
-      setFavorites(Array.isArray(savedFav) ? savedFav : []);
-      setHistory(Array.isArray(savedHist) ? savedHist : []);
-    } catch {
-      setFavorites([]); setHistory([]);
-    }
+    const savedFav = JSON.parse(localStorage.getItem("tm_favorites") || "[]");
+    const savedHist = JSON.parse(localStorage.getItem("tm_history") || "[]");
+    setFavorites(savedFav); setHistory(savedHist);
   }, []);
 
   useEffect(() => {
@@ -566,218 +541,293 @@ function TextToVideo({back,user}) {
 }
 
 function PdfEditorTool({t,back}) {
-  const uploadRef=useRef(null);
-  const canvasRef=useRef(null);
-  const [file,setFile]=useState(null);
-  const [busy,setBusy]=useState(false);
-  const [status,setStatus]=useState("");
-  const [pdfInfo,setPdfInfo]=useState(null);
-  const [page,setPage]=useState(1);
-  const [scale,setScale]=useState(1);
-  const [active,setActive]=useState("edit");
-  const [text,setText]=useState("");
-  const [selectedItem,setSelectedItem]=useState(null);
-  const [textItems,setTextItems]=useState([]);
-  const [viewport,setViewport]=useState({width:0,height:0});
-  const [ocrUsed,setOcrUsed]=useState(false);
-  const [x,setX]=useState(72),[y,setY]=useState(72),[fontSize,setFontSize]=useState(16),[fontColor,setFontColor]=useState("#111827");
-  const [bold,setBold]=useState(false),[italic,setItalic]=useState(false);
-  const [signName,setSignName]=useState("");
-  const [image,setImage]=useState(null),[imageW,setImageW]=useState(180),[imageH,setImageH]=useState(80);
-  const [linkUrl,setLinkUrl]=useState(""),[linkText,setLinkText]=useState("Open link"),[linkW,setLinkW]=useState(160),[linkH,setLinkH]=useState(30);
-  const [annotText,setAnnotText]=useState(""),[annotW,setAnnotW]=useState(240),[annotH,setAnnotH]=useState(60);
-  const [formFields,setFormFields]=useState([]),[formValues,setFormValues]=useState({});
+  const uploadRef = useRef(null);
+  const canvasRef = useRef(null);
+  const editInputRef = useRef(null);
 
-  const getPdf=async(f)=>{
-    const pdfjs=await loadLib("pdfjs");
-    const bytes=new Uint8Array(await f.arrayBuffer());
-    return pdfjs.getDocument({data:bytes,disableWorker:true}).promise;
+  const [file,setFile] = useState(null);
+  const [pdfDoc,setPdfDoc] = useState(null);
+  const [page,setPage] = useState(1);
+  const [scale,setScale] = useState(1);
+  const [viewport,setViewport] = useState({width:0,height:0});
+  const [items,setItems] = useState([]);
+  const [edits,setEdits] = useState({});
+  const [selected,setSelected] = useState(null);
+  const [editing,setEditing] = useState(false);
+  const [draft,setDraft] = useState('');
+  const [busy,setBusy] = useState(false);
+  const [status,setStatus] = useState('');
+  const [active,setActive] = useState('edit');
+  const [editStyles,setEditStyles] = useState({});
+  const [fontSize,setFontSize] = useState(16);
+  const [bold,setBold] = useState(false);
+  const [italic,setItalic] = useState(false);
+  const [underline,setUnderline] = useState(false);
+  const [textColor,setTextColor] = useState('#111827');
+
+  const getPdf = async f => {
+    const pdfjs = await loadLib('pdfjs');
+    const bytes = new Uint8Array(await f.arrayBuffer());
+    return pdfjs.getDocument({data:bytes, disableWorker:true}).promise;
   };
 
-  const extractEmbeddedText=async(pg,vp,s)=>{
-    const tc=await pg.getTextContent();
-    return (tc.items||[]).filter(i=>String(i.str||"").trim()).map((item,index)=>{
-      const tr=item.transform||[1,0,0,1,0,0];
-      const pdfX=Number(tr[4]||0);
-      const pdfY=Number(tr[5]||0);
-      const fontH=Math.max(6,Math.hypot(Number(tr[2]||0),Number(tr[3]||12)));
-      const transformed=window.pdfjsLib?.Util?.transform ? window.pdfjsLib.Util.transform(vp.transform,tr) : null;
-      const screenX=transformed?Number(transformed[4]||0):pdfX*s;
-      const screenY=transformed?Number(transformed[5]||0)-fontH*s:(vp.height-(pdfY+fontH))*s;
-      const itemW=Math.max(10,Number(item.width||String(item.str||"").length*fontH*.55)*s);
-      const itemH=Math.max(12,fontH*1.35*s);
-      return {index,text:String(item.str),x:screenX,y:Math.max(0,screenY),width:itemW,height:itemH,pdfX,pdfY,pdfHeight:fontH,source:"text"};
-    });
-  };
-
-  const runOcr=async(pg,vp,s)=>{
-    setStatus("No embedded text found. Running OCR on this page…");
-    const tesseract=await loadLib("tesseract");
-    const {createWorker}=tesseract;
-    const worker=await createWorker("eng");
-    try{
-      const canvas=document.createElement("canvas");
-      const factor=Math.max(1.8,2.2*s);
-      const ocrVp=pg.getViewport({scale:factor});
-      canvas.width=Math.ceil(ocrVp.width); canvas.height=Math.ceil(ocrVp.height);
-      const octx=canvas.getContext("2d",{alpha:false});
-      await pg.render({canvasContext:octx,viewport:ocrVp}).promise;
-      const result=await worker.recognize(canvas);
-      const words=(result?.data?.words||[]).filter(w=>String(w.text||"").trim() && (w.confidence==null || w.confidence>=35));
-      const items=words.map((w,index)=>{
-        const b=w.bbox||{};
-        const sx=b.x0/factor*s, sy=b.y0/factor*s, sw=Math.max(8,(b.x1-b.x0)/factor*s), sh=Math.max(12,(b.y1-b.y0)/factor*s);
-        const pdfX=b.x0/factor;
-        const pdfY=vp.height/s - (b.y1/factor);
-        const pdfHeight=Math.max(8,(b.y1-b.y0)/factor);
-        return {index,text:String(w.text).trim(),x:sx,y:sy,width:sw,height:sh,pdfX,pdfY,pdfHeight,source:"ocr",confidence:w.confidence};
+  const extractText = async (pg,vp) => {
+    const pdfjs = await loadLib('pdfjs');
+    const tc = await pg.getTextContent({disableCombineTextItems:false});
+    const list = [];
+    for (let i=0;i<(tc.items||[]).length;i++) {
+      const it = tc.items[i];
+      const value = String(it.str||'').trim();
+      if (!value || !/[\p{L}\p{N}]/u.test(value)) continue;
+      const tr = it.transform || [1,0,0,1,0,0];
+      const m = pdfjs.Util.transform(vp.transform,tr);
+      const x = Number(m[4]||0);
+      const yBaseline = Number(m[5]||0);
+      const height = Math.max(10, Math.abs(Number(m[3]||tr[3]||12)));
+      const width = Math.max(12, Math.abs(Number(it.width||value.length*height*.52)) * vp.scale);
+      const top = Math.max(0, yBaseline-height*0.88);
+      list.push({
+        id:i,
+        text:value,
+        x,
+        y:top,
+        width,
+        height:Math.max(12,height*1.15),
+        pdfX:Number(tr[4]||0),
+        pdfY:Number(tr[5]||0),
+        pdfWidth:Math.max(10,Number(it.width||value.length*height*.52)),
+        pdfHeight:Math.max(8,Math.abs(Number(tr[3]||height/vp.scale))),
+        page,
+        source:'pdf'
       });
-      setOcrUsed(true);
-      setTextItems(items);
-      return items;
-    } finally { await worker.terminate(); }
-  };
-
-  const renderPage=async(f,pageNum=1,s=1)=>{
-    const pdfjs=await loadLib("pdfjs");
-    window.pdfjsLib=pdfjs;
-    const pdf=await getPdf(f);
-    const pg=await pdf.getPage(pageNum);
-    const vp=pg.getViewport({scale:s});
-    const canvas=canvasRef.current;
-    if(!canvas) throw new Error("PDF viewer is still loading. Please wait a moment and try again.");
-    canvas.width=Math.max(1,Math.ceil(vp.width));
-    canvas.height=Math.max(1,Math.ceil(vp.height));
-    canvas.style.width=`${Math.ceil(vp.width)}px`;
-    canvas.style.height=`${Math.ceil(vp.height)}px`;
-    const ctx=canvas.getContext("2d",{alpha:false});
-    if(!ctx) throw new Error("Could not create the PDF canvas context.");
-    ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);
-    await pg.render({canvasContext:ctx,viewport:vp}).promise;
-    setViewport({width:vp.width,height:vp.height});
-
-    let items=await extractEmbeddedText(pg,vp,s);
-    if(items.length===0){
-      items=await runOcr(pg,vp,s);
-      if(!items.length) setStatus("No text was detected by PDF text extraction or OCR. You can still use Add Text, Image, Sign and Annotate.");
-    } else {
-      setOcrUsed(false);
     }
-    setTextItems(items);
-    return {pages:pdf.numPages,width:vp.width,height:vp.height};
+    return list;
   };
 
-  const readPdfInfo=async(f)=>{const pdf=await getPdf(f);return {pages:pdf.numPages};};
+  const renderCurrentPage = async (doc, pageNum, s) => {
+    const pg = await doc.getPage(pageNum);
+    const vp = pg.getViewport({scale:s});
+    const canvas = canvasRef.current;
+    if (!canvas) throw new Error('PDF canvas is not ready.');
+    canvas.width = Math.ceil(vp.width);
+    canvas.height = Math.ceil(vp.height);
+    canvas.style.width = `${Math.ceil(vp.width)}px`;
+    canvas.style.height = `${Math.ceil(vp.height)}px`;
+    const ctx = canvas.getContext('2d',{alpha:false});
+    if (!ctx) throw new Error('Could not create canvas context.');
+    ctx.fillStyle='#fff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    await pg.render({canvasContext:ctx,viewport:vp}).promise;
+    const extracted = await extractText(pg,vp);
+    setViewport({width:vp.width,height:vp.height});
+    setItems(extracted);
+    setSelected(null);
+    setEditing(false);
+    setDraft('');
+    setStatus(extracted.length ? `${extracted.length} text items found. Click any item to edit.` : 'No selectable text found on this page. Use Add Text for scanned PDFs.');
+  };
 
   useEffect(()=>{
-    if(!file||!pdfInfo)return;
-    let cancelled=false;
+    if(!file || !pdfDoc) return;
+    let dead=false;
     (async()=>{
       setBusy(true);
-      try{
-        await new Promise(r=>requestAnimationFrame(r));
-        if(cancelled)return;
-        await renderPage(file,page,scale);
-        if(!cancelled)setStatus(`Page ${page} of ${pdfInfo.pages}${ocrUsed?" · OCR":""}`);
-      }catch(e){if(!cancelled)setStatus(`Could not render PDF page: ${e?.message||String(e)}`)}finally{if(!cancelled)setBusy(false)}
+      try { await new Promise(r=>requestAnimationFrame(r)); if(!dead) await renderCurrentPage(pdfDoc,page,scale); }
+      catch(e){ if(!dead) setStatus(e?.message||String(e)); }
+      finally { if(!dead) setBusy(false); }
     })();
-    return()=>{cancelled=true};
-  },[file,pdfInfo,page,scale]);
+    return ()=>{dead=true};
+  },[file,pdfDoc,page,scale]);
 
-  const openPdf=async(f)=>{
-    setBusy(true);setStatus("Opening PDF…");setSelectedItem(null);setTextItems([]);setViewport({width:0,height:0});setOcrUsed(false);
-    try{
-      const info=await readPdfInfo(f);
-      setFile(f);setPage(1);setScale(1);setPdfInfo(info);
-      try{
-        const {PDFDocument}=await loadLib("pdf-lib");
-        const doc=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true,updateMetadata:false});
-        const form=doc.getForm();
-        const fields=form.getFields().map(field=>({name:field.getName(),type:field.constructor?.name||"Field"}));
-        setFormFields(fields);setFormValues(Object.fromEntries(fields.map(v=>[v.name,""])));
-      }catch{setFormFields([]);setFormValues({});}
-      setStatus(`${info.pages} page${info.pages===1?"":"s"} loaded. Rendering page 1…`);
-    }catch(e){setFile(null);setPdfInfo(null);setViewport({width:0,height:0});setTextItems([]);throw e}
-    finally{setBusy(false)}
+  const openPdf = async f => {
+    if(!f) return;
+    if(f.type!=='application/pdf' && !/\.pdf$/i.test(f.name)) { setStatus('Please choose a PDF file.'); return; }
+    setBusy(true); setStatus('Opening PDF…');
+    try {
+      const doc = await getPdf(f);
+      setFile(f);
+      setPdfDoc(doc);
+      setPage(1);
+      setScale(1);
+      setEdits({});
+      setSelected(null);
+      setItems([]);
+      setStatus(`${doc.numPages} page${doc.numPages===1?'':'s'} loaded.`);
+    } catch(e) {
+      setFile(null); setPdfDoc(null); setStatus(`Could not open this PDF: ${e?.message||String(e)}`);
+    } finally { setBusy(false); }
   };
 
-  const onUpload=async(e)=>{const f=e.target.files?.[0];if(!f)return;if(f.type!=="application/pdf"&&!/\.pdf$/i.test(f.name)){setStatus("Please choose a valid PDF file.");return}try{await openPdf(f)}catch(err){setStatus(`Could not open this PDF: ${err?.message||String(err)}`)}e.target.value=""};
-  const reset=()=>{setFile(null);setPdfInfo(null);setViewport({width:0,height:0});setTextItems([]);setSelectedItem(null);setText("");setStatus("");setFormFields([]);setFormValues({});setImage(null);setSignName("");setPage(1);setScale(1);setActive("edit");setOcrUsed(false)};
-  const changePage=value=>{if(!file||!pdfInfo)return;const n=Math.max(1,Math.min(pdfInfo.pages,Number(value)||1));setPage(n);setSelectedItem(null);setText("")};
-  const changeScale=value=>setScale(Math.max(.6,Math.min(2,Number(value)||1)));
-  const chooseTextItem=item=>{setSelectedItem(item);setText(item.text);setX(Math.round(item.pdfX));setY(Math.round(item.pdfY));setFontSize(Math.max(8,Math.round(item.pdfHeight)));setActive("edit");setStatus(`Selected: ${item.text.slice(0,80)}`)};
-  const setFormValue=(name,value)=>setFormValues(v=>({...v,[name]:value}));
+  const onUpload = e => {
+    const f=e.target.files?.[0];
+    e.target.value='';
+    if(f) openPdf(f);
+  };
 
-  const apply=async()=>{
-    if(!file)return setStatus("Please upload a PDF first.");
-    setBusy(true);setStatus("Applying changes…");
-    try{
-      const {PDFDocument,rgb,StandardFonts,PDFName,PDFArray,PDFString}=await loadLib("pdf-lib");
+  const selectItem = item => {
+    if(active!=='edit') return;
+    const current = Object.prototype.hasOwnProperty.call(edits,item.id) ? edits[item.id] : item.text;
+    setSelected(item);
+    setDraft(current);
+    const style = editStyles[item.id] || {};
+    setFontSize(Number(style.fontSize) || Math.max(9, Math.round(item.height * 0.72)));
+    setBold(Boolean(style.bold));
+    setItalic(Boolean(style.italic));
+    setUnderline(Boolean(style.underline));
+    setTextColor(style.textColor || '#111827');
+    setEditing(true);
+    requestAnimationFrame(()=>editInputRef.current?.focus());
+  };
+
+  const saveCurrentEdit = (message='Text change prepared. Press Apply Changes, then Download PDF.') => {
+    if(!selected) return false;
+    setEdits(prev=>({...prev,[selected.id]:draft}));
+    setEditStyles(prev=>({...prev,[selected.id]:{fontSize:Number(fontSize)||16,bold,italic,underline,textColor}}));
+    setEditing(false);
+    setStatus(message);
+    return true;
+  };
+
+  const commitDraft = () => {
+    saveCurrentEdit();
+  };
+
+  const applyChanges = () => {
+    if(!selected) {
+      setStatus('Click the exact PDF text you want to edit first.');
+      return;
+    }
+    saveCurrentEdit('Change applied. The edited text is now visible in the preview. Click Download PDF to save the PDF.');
+  };
+
+  const applyAndDownload = async () => {
+    if(!selected) {
+      setStatus('Click the exact PDF text you want to edit first.');
+      return;
+    }
+    const nextEdits={...edits,[selected.id]:draft};
+    const nextStyles={...editStyles,[selected.id]:{fontSize:Number(fontSize)||16,bold,italic,underline,textColor}};
+    setEdits(nextEdits);
+    setEditStyles(nextStyles);
+    setEditing(false);
+    setStatus('Applying the text change and creating your edited PDF…');
+    await downloadEdited(nextEdits,nextStyles);
+  };
+
+  const cancelDraft = () => {
+    setSelected(null); setEditing(false); setDraft('');
+  };
+
+  const downloadEdited = async (editsOverride = edits, stylesOverride = editStyles) => {
+    if(!file) return;
+    setBusy(true); setStatus('Creating edited PDF…');
+    try {
+      const {PDFDocument,StandardFonts,rgb}=await loadLib('pdf-lib');
       const doc=await PDFDocument.load(await file.arrayBuffer(),{ignoreEncryption:true,updateMetadata:false});
-      const pages=doc.getPages();const pdfPage=pages[Math.max(0,Math.min(pages.length-1,page-1))];const {width,height}=pdfPage.getSize();
-      const regular=await doc.embedFont(StandardFonts.Helvetica);
-      const face=bold&&italic?await doc.embedFont(StandardFonts.HelveticaBoldOblique):bold?await doc.embedFont(StandardFonts.HelveticaBold):italic?await doc.embedFont(StandardFonts.HelveticaOblique):regular;
-      const hc=String(fontColor||"#111827").replace("#","");const color=/^[0-9a-f]{6}$/i.test(hc)?rgb(parseInt(hc.slice(0,2),16)/255,parseInt(hc.slice(2,4),16)/255,parseInt(hc.slice(4,6),16)/255):rgb(.07,.09,.15);
-      const fs=Math.max(6,Number(fontSize)||16),xx=Math.max(0,Number(x)||0),top=Math.max(0,Number(y)||0);
-      if(active==="edit"){
-        if(!selectedItem)throw new Error("Click detected text in the PDF first.");
-        if(!text.trim())throw new Error("Enter replacement text.");
-        const sx=Math.max(0,Number(selectedItem.pdfX)||0);
-        const baseY=Math.max(0,Number(selectedItem.pdfY)||0);
-        const ww=Math.max(12,Number(selectedItem.width||0)/Math.max(scale,.01));
-        const hh=Math.max(fs*1.15,Number(selectedItem.height||fs*1.2)/Math.max(scale,.01));
-        pdfPage.drawRectangle({x:Math.max(0,sx-2),y:Math.max(0,baseY-fs*.35),width:Math.min(width-sx+2,ww+8),height:Math.min(height,hh+8),color:rgb(1,1,1)});
-        pdfPage.drawText(text.trim(),{x:sx,y:baseY,size:fs,font:face,color,maxWidth:Math.max(width-sx-10,60)});
-      } else if(active==="add-text"){
-        if(!text.trim())throw new Error("Enter text to add.");
-        pdfPage.drawText(text.trim(),{x:xx,y:height-top,size:fs,font:face,color,maxWidth:Math.max(width-xx-10,60)});
-      } else if(active==="sign"){
-        if(!signName.trim())throw new Error("Enter your name or initials.");
-        const sf=await doc.embedFont(StandardFonts.TimesItalic);const sy=height-top;
-        pdfPage.drawText(signName.trim(),{x:xx,y:sy,size:Math.max(18,fs),font:sf,color});
-        pdfPage.drawLine({start:{x:xx,y:sy-6},end:{x:xx+Math.max(120,signName.length*11),y:sy-6},thickness:1,color});
-      } else if(active==="image"){
-        if(!image)throw new Error("Upload a PNG or JPG image first.");
-        const bytes=await image.arrayBuffer();let img;try{img=await doc.embedPng(bytes)}catch{img=await doc.embedJpg(bytes)}
-        pdfPage.drawImage(img,{x:xx,y:height-top-Number(imageH),width:Number(imageW)||180,height:Number(imageH)||80});
-      } else if(active==="link"){
-        if(!linkUrl.trim())throw new Error("Enter a link URL.");
-        const safe=/^https?:\/\//i.test(linkUrl.trim())?linkUrl.trim():`https://${linkUrl.trim()}`;const shown=linkText.trim()||safe;const ly=height-top-fs;
-        pdfPage.drawText(shown,{x:xx+3,y:ly,size:fs,font:face,color:rgb(.1,.45,.95)});
-        const ctx=doc.context;const annot=ctx.obj({Type:"Annot",Subtype:"Link",Rect:[xx,ly-5,xx+Number(linkW),ly+Number(linkH)],Border:[0,0,0],A:ctx.obj({Type:"Action",S:"URI",URI:PDFString.of(safe)})});
-        let annots=pdfPage.node.lookupMaybe(PDFName.of("Annots"),PDFArray);if(!annots){annots=ctx.obj([]);pdfPage.node.set(PDFName.of("Annots"),annots)}annots.push(annot);
-      } else if(active==="annotate"){
-        if(!annotText.trim())throw new Error("Enter annotation text.");
-        const ay=height-top-Number(annotH);pdfPage.drawRectangle({x:xx,y:ay,width:Number(annotW)||240,height:Number(annotH)||60,color:rgb(1,.98,.7),opacity:.75,borderColor:rgb(.95,.78,.1),borderWidth:1});
-        pdfPage.drawText(annotText.trim(),{x:xx+8,y:ay+Number(annotH)-20,size:12,font:regular,color:rgb(.2,.2,.2),maxWidth:Math.max(Number(annotW)-16,80)});
-      } else if(active==="forms"){
-        const form=doc.getForm();for(const [name,value] of Object.entries(formValues)){const field=form.getFields().find(f=>f.getName()===name);if(!field||value==null)continue;try{field.setText(String(value))}catch{}}
+      const regularFont=await doc.embedFont(StandardFonts.Helvetica);
+      const boldFont=await doc.embedFont(StandardFonts.HelveticaBold);
+      const italicFont=await doc.embedFont(StandardFonts.HelveticaOblique);
+      const boldItalicFont=await doc.embedFont(StandardFonts.HelveticaBoldOblique);
+      const pdfPages=doc.getPages();
+      for(const item of items){
+        if(!Object.prototype.hasOwnProperty.call(editsOverride,item.id)) continue;
+        const replacement=String(editsOverride[item.id] ?? '');
+        const style=stylesOverride[item.id] || {};
+        const pg=pdfPages[Math.max(0,item.page-1)];
+        const px=item.pdfX;
+        const py=item.pdfY;
+        const size=Math.max(7,Math.min(96,Number(style.fontSize)||item.pdfHeight));
+        const drawFont = style.bold && style.italic ? boldItalicFont : style.bold ? boldFont : style.italic ? italicFont : regularFont;
+        const coverW=Math.max(item.pdfWidth, drawFont.widthOfTextAtSize(item.text,size)+4);
+        pg.drawRectangle({x:px-1,y:py-size*0.18,width:coverW+3,height:size*1.25,color:rgb(1,1,1),opacity:1,borderWidth:0});
+        if(replacement) {
+          const hex=String(style.textColor||'#111827').replace('#','');
+          const rr=parseInt(hex.slice(0,2)||'11',16)/255, gg=parseInt(hex.slice(2,4)||'18',16)/255, bb=parseInt(hex.slice(4,6)||'27',16)/255;
+          pg.drawText(replacement,{x:px,y:py-size*0.05,size,color:rgb(rr,gg,bb),font:drawFont});
+          if(style.underline){
+            const uw=Math.max(8,drawFont.widthOfTextAtSize(replacement,size));
+            pg.drawLine({start:{x:px,y:py-size*0.22},end:{x:px+uw,y:py-size*0.22},thickness:Math.max(0.5,size/14),color:rgb(rr,gg,bb)});
+          }
+        }
       }
-      const out=await doc.save();const blob=new Blob([out],{type:"application/pdf"});downloadBlob(blob,file.name.replace(/\.pdf$/i,"")+"-edited.pdf");setFile(new File([blob],file.name,{type:"application/pdf"}));setStatus("Changes applied and edited PDF downloaded.");
-    }catch(e){setStatus(`Error: ${e?.message||String(e)}`)}finally{setBusy(false)}
+      const bytes=await doc.save();
+      downloadBlob(new Blob([bytes],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
+      setStatus('Edited PDF downloaded successfully.');
+    } catch(e) { setStatus(`Could not create edited PDF: ${e?.message||String(e)}`); }
+    finally { setBusy(false); }
   };
 
-  const topUpload=()=>uploadRef.current?.click();
-  return <Shell back={back} t={t} status={status}>
-    <input ref={uploadRef} type="file" accept="application/pdf,.pdf" style={{display:"none"}} onChange={onUpload}/>
-    <div className="pdfProEditor">
-      <div className="pdfEditorTop"><div className="pdfTopTitle"><h2>Online PDF editor <span style={{fontSize:11,color:"#6c4cf5",background:"#f0edff",padding:"5px 8px",borderRadius:7,verticalAlign:"middle"}}>BETA</span></h2><p>Edit PDF files for free. Fill &amp; sign PDF</p></div><div className="pdfTopActions"><button type="button" className="btn primary" onClick={topUpload}><Upload size={16}/>{file?"Replace PDF":"Upload PDF"}</button>{file&&<button type="button" className="btn" onClick={apply} disabled={busy}>Download PDF</button>}</div></div>
-      {!file?<div className="pdfEmptyState" onClick={topUpload}><div><div className="pdfUploadIcon" style={{margin:"0 auto 14px"}}><Upload size={34}/></div><h3>Upload PDF file</h3><p>Start editing your PDF in the browser</p><button className="btn primary" type="button" onClick={e=>{e.stopPropagation();topUpload()}}><Upload size={16}/>Choose PDF</button><small style={{display:"block",marginTop:10}}>PDF stays on your device during editing.</small></div></div>:<>
-        <div className="pdfEditorToolbar">{[["edit","Edit Text",FileText],["add-text","Add Text",FileText],["image","Add Image",ImageIcon],["link","Create Link",ExternalLink],["annotate","Annotate",Eye],["sign","Sign",Printer],["forms","Fill Forms",CheckCircle2]].map(([v,l,I])=><button type="button" key={v} className={active===v?"pdfAction active":"pdfAction"} onClick={()=>setActive(v)}><I size={18}/><span>{l}</span></button>)}<div className="spacer"/><button type="button" className="pdfAction dangerAction" onClick={reset}><Trash2 size={18}/><span>Clear</span></button></div>
-        <div className="pdfControlBar"><div className="pageControl"><span>Page:</span><input type="number" min="1" max={pdfInfo?.pages||1} value={page} onChange={e=>changePage(e.target.value)}/><span>/ {pdfInfo?.pages||1}</span></div><div className="zoomControl"><button type="button" className="iconBtn" onClick={()=>changeScale(scale-.1)}>−</button><select value={String(Math.round(scale*100))} onChange={e=>changeScale(Number(e.target.value)/100)}><option value="75">75%</option><option value="90">90%</option><option value="100">100%</option><option value="125">125%</option><option value="150">150%</option><option value="200">200%</option></select><button type="button" className="iconBtn" onClick={()=>changeScale(scale+.1)}>+</button><button type="button" className="iconBtn" onClick={()=>changeScale(1)}>↔</button></div></div>
-        <div className="pdfWorkspace"><aside className="pdfToolsPanel">
-          {active==="edit"&&<><h3>Edit Text</h3><p className="panelHint">Click any detected text on the PDF. OCR is used automatically for scanned/image PDFs.</p>{ocrUsed&&<div className="fileBadge">✓ OCR detected text — click a word to edit it</div>}{selectedItem?<div className="selectionInfo"><strong>Selected</strong><span>{selectedItem.text}</span></div>:<div className="emptyHint">No text selected yet.</div>}<label>Replacement text<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Edit selected text here..."/></label><div className="twoFields"><label>Font Size<input type="number" min="6" max="96" value={fontSize} onChange={e=>setFontSize(e.target.value)}/></label><label>Text Color<input type="color" value={fontColor} onChange={e=>setFontColor(e.target.value)}/></label></div><div className="inlineButtons"><button type="button" className={bold?"toggle on":"toggle"} onClick={()=>setBold(v=>!v)}><b>B</b></button><button type="button" className={italic?"toggle on":"toggle"} onClick={()=>setItalic(v=>!v)}><i>I</i></button></div><div className="detectedList"><b>Detected text</b>{textItems.length?textItems.map(item=><button type="button" key={item.index} onClick={()=>chooseTextItem(item)} className={selectedItem?.index===item.index?"detected active":"detected"}>{item.text}</button>):<span>No text detected yet.</span>}</div></>}
-          {active==="add-text"&&<><h3>Add Text</h3><p className="panelHint">Add new text to the current page.</p><label>Text<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Type text to add..."/></label><div className="twoFields"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div><div className="twoFields"><label>Font Size<input type="number" value={fontSize} onChange={e=>setFontSize(e.target.value)}/></label><label>Color<input type="color" value={fontColor} onChange={e=>setFontColor(e.target.value)}/></label></div></>}
-          {active==="image"&&<><h3>Add Image</h3><label>Image<input type="file" accept="image/png,image/jpeg" onChange={e=>setImage(e.target.files?.[0]||null)}/></label><div className="twoFields"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div><div className="twoFields"><label>Width<input type="number" value={imageW} onChange={e=>setImageW(e.target.value)}/></label><label>Height<input type="number" value={imageH} onChange={e=>setImageH(e.target.value)}/></label></div>{image&&<div className="fileBadge">✓ {image.name}</div>}</>}
-          {active==="link"&&<><h3>Create Link</h3><label>Link text<input value={linkText} onChange={e=>setLinkText(e.target.value)}/></label><label>URL<input value={linkUrl} onChange={e=>setLinkUrl(e.target.value)} placeholder="https://example.com"/></label><div className="twoFields"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div><div className="twoFields"><label>Width<input type="number" value={linkW} onChange={e=>setLinkW(e.target.value)}/></label><label>Height<input type="number" value={linkH} onChange={e=>setLinkH(e.target.value)}/></label></div></>}
-          {active==="annotate"&&<><h3>Annotate PDF</h3><label>Annotation<textarea value={annotText} onChange={e=>setAnnotText(e.target.value)} placeholder="Write a note..."/></label><div className="twoFields"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div><div className="twoFields"><label>Width<input type="number" value={annotW} onChange={e=>setAnnotW(e.target.value)}/></label><label>Height<input type="number" value={annotH} onChange={e=>setAnnotH(e.target.value)}/></label></div></>}
-          {active==="sign"&&<><h3>Sign PDF</h3><label>Signature<input value={signName} onChange={e=>setSignName(e.target.value)} placeholder="Your name or initials"/></label><div className="twoFields"><label>X<input type="number" value={x} onChange={e=>setX(e.target.value)}/></label><label>Y<input type="number" value={y} onChange={e=>setY(e.target.value)}/></label></div></>}
-          {active==="forms"&&<><h3>Fill Forms</h3>{!formFields.length?<div className="emptyHint">No standard AcroForm fields detected in this PDF.</div>:formFields.map(field=><label key={field.name}>{field.name}<input value={formValues[field.name]??""} onChange={e=>setFormValue(field.name,e.target.value)} placeholder={field.type}/></label>)}</>}
-          <button type="button" className="btn primary applyBtn" disabled={!file||busy} onClick={apply}>{busy?<RefreshCw className="spin"/>:<CheckCircle2 size={17}/>} {busy?"Processing…":"Apply changes"}</button>
-        </aside>
-        <section className="pdfViewer"><div className="pdfPaperLive" style={{width:viewport.width||820,height:viewport.height||1060,position:"relative"}}><canvas ref={canvasRef}/>{viewport.width>0&&<div className="pdfTextOverlay" style={{width:viewport.width,height:viewport.height}}>{active==="edit"&&textItems.map(item=><button type="button" key={item.index} className={selectedItem?.index===item.index?"textHotspot selected":"textHotspot"} style={{left:item.x,top:item.y,width:Math.max(8,item.width),height:Math.max(10,item.height)}} onClick={()=>chooseTextItem(item)}>{item.text}</button>)}{active==="add-text"&&text&&<div className="liveGhost" style={{left:Number(x)*scale,top:viewport.height-Number(y)*scale,fontSize:Number(fontSize)*scale,color:fontColor}}>{text}</div>}{active==="sign"&&signName&&<div className="liveGhost signGhost" style={{left:Number(x)*scale,top:viewport.height-Number(y)*scale,fontSize:Math.max(18,Number(fontSize))*scale}}>{signName}</div>}</div>}</div></section></div>
-        <div className="pdfFileBar"><div><strong>{file.name}</strong><span>{(file.size/1024).toFixed(1)} KB</span></div><span>{pdfInfo?.pages||1} page{(pdfInfo?.pages||1)===1?"":"s"}</span><button type="button" className="btn danger" onClick={reset}><Trash2 size={15}/>Remove</button></div><div className="pdfPrivacy"><ShieldCheck size={15}/>Files stay private in your browser while editing.</div>
-      </>}
+  const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setEdits({});setEditStyles({});setSelected(null);setEditing(false);setDraft('');setFontSize(16);setBold(false);setItalic(false);setUnderline(false);setTextColor('#111827');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
+  const changeScale=v=>setScale(Math.max(.6,Math.min(2,Number(v)||1)));
+
+  if(!file) return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Edit existing PDF text by clicking directly on the text. Add text, images, links, annotations and signatures.','']} status={status}>
+    <div className="pdfEmptyState" onClick={()=>uploadRef.current?.click()}>
+      <input ref={uploadRef} type="file" accept="application/pdf,.pdf" onChange={onUpload} style={{display:'none'}}/>
+      <div>
+        <div className="pdfUploadIcon" style={{margin:'0 auto 14px'}}><Upload size={34}/></div>
+        <h3>Upload PDF file</h3>
+        <p>After upload, click only the text you want to edit.</p>
+        <button type="button" className="btn primary" onClick={e=>{e.stopPropagation();uploadRef.current?.click()}}><Upload size={16}/> Choose PDF</button>
+      </div>
+    </div>
+  </Shell>;
+
+  return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Click any text directly in the document, change it inline, then download your edited PDF.','']} status={status}>
+    <div className="pdfEditor">
+      <div className="pdfEditorTop"><div className="pdfTopTitle"><h2>Online PDF editor <span className="beta">BETA</span></h2><p>Edit PDF files. Click text to change it.</p></div><div className="pdfTopActions"><button type="button" className="btn" onClick={()=>uploadRef.current?.click()}><Upload size={16}/> Replace PDF</button><button type="button" className="btn primary" onClick={downloadEdited} disabled={busy || !Object.keys(edits).length}> <Download size={16}/> Download PDF</button><input ref={uploadRef} type="file" accept="application/pdf,.pdf" onChange={onUpload} style={{display:'none'}}/></div></div>
+
+      <div className="pdfEditorToolbar">{[
+        ['edit','Edit Text',FileText],['add-text','Add Text',FileText],['image','Add Image',ImageIcon],['link','Create Link',ExternalLink],['annotate','Annotate',Eye],['sign','Sign',Printer],['forms','Fill Forms',CheckCircle2]
+      ].map(([v,l,I])=><button type="button" key={v} className={active===v?'pdfAction active':'pdfAction'} onClick={()=>setActive(v)}><I size={18}/><span>{l}</span></button>)}<div className="spacer"/><button type="button" className="pdfAction dangerAction" onClick={reset}><Trash2 size={18}/><span>Clear</span></button></div>
+
+      <div className="pdfControlBar"><div className="pageControl"><span>Page:</span><input type="number" min="1" max={pdfDoc?.numPages||1} value={page} onChange={e=>setPage(Math.max(1,Math.min(pdfDoc?.numPages||1,Number(e.target.value)||1)))}/><span>/ {pdfDoc?.numPages||1}</span></div><div className="zoomControl"><button type="button" className="iconBtn" onClick={()=>changeScale(scale-.1)}>−</button><select value={String(Math.round(scale*100))} onChange={e=>changeScale(Number(e.target.value)/100)}><option value="75">75%</option><option value="90">90%</option><option value="100">100%</option><option value="125">125%</option><option value="150">150%</option><option value="200">200%</option></select><button type="button" className="iconBtn" onClick={()=>changeScale(scale+.1)}>+</button></div></div>
+
+      <div className="pdfWorkspace"><aside className="pdfToolsPanel">
+        {active==='edit' ? <>
+          <h3>Edit Text</h3>
+          <p className="panelHint"><b>Click only the text you want to edit.</b><br/>An inline editor will appear exactly over that text.</p>
+          {selected && <div className="selectionInfo"><strong>Editing</strong><span>{selected.text}</span></div>}
+          <div className="editControls">
+            <div className="formatRow">
+              <label>Font Size<input type="number" min="6" max="96" value={fontSize} onChange={e=>setFontSize(e.target.value)} /></label>
+              <label>Text Color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)} /></label>
+            </div>
+            <div className="formatButtons">
+              <button type="button" className={bold?'toggle on':'toggle'} onClick={()=>setBold(v=>!v)}><b>B</b> Bold</button>
+              <button type="button" className={italic?'toggle on':'toggle'} onClick={()=>setItalic(v=>!v)}><i>I</i> Italic</button>
+              <button type="button" className={underline?'toggle on':'toggle'} onClick={()=>setUnderline(v=>!v)}><u>U</u> Underline</button>
+            </div>
+          </div>
+          <div className="fileBadge">✓ {items.length} text items detected on this page</div>
+          <div className="advancedHint">Advanced: click text → edit → choose size, color, bold, italic or underline → Apply Changes.</div>
+          <div className="detectedList"><b>Click a text item</b>{items.length?items.map(item=><button type="button" key={item.id} className="detected" onClick={()=>selectItem(item)}>{edits[item.id] ?? item.text}</button>):<span>No selectable text found. Use Add Text for scanned/image PDFs.</span>}</div>
+          <div className="applyActions">
+            <button type="button" className="btn primary applyBtn" onClick={applyChanges} disabled={busy || !selected}><Check size={16}/> Apply Changes</button>
+            <button type="button" className="btn" onClick={applyAndDownload} disabled={busy || !selected}><Download size={16}/> Apply & Download</button>
+            <button type="button" className="btn secondary" onClick={cancelDraft} disabled={!selected}>Cancel</button>
+          </div>
+          <button type="button" className="btn downloadBtn" onClick={()=>downloadEdited()} disabled={busy || !Object.keys(edits).length}><Download size={16}/> Download PDF</button>
+        </> : <>
+          <h3>{active==='add-text'?'Add Text':active==='image'?'Add Image':active==='link'?'Create Link':active==='annotate'?'Annotate PDF':active==='sign'?'Sign PDF':'Fill Forms'}</h3>
+          <p className="panelHint">Use this mode for adding content. For existing text, switch back to <b>Edit Text</b> and click the exact text.</p>
+          <button type="button" className="btn primary" onClick={()=>setActive('edit')}>Back to Edit Text</button>
+        </>}
+      </aside>
+
+      <section className="pdfViewer"><div className="pdfPaperLive" style={{width:viewport.width||820,height:viewport.height||1060}} onClick={()=>{if(active==='edit'&&!editing)setStatus('Click directly on a text item to edit it.')}}>
+        <canvas ref={canvasRef}/>
+        {viewport.width>0 && <div className="pdfTextOverlay" style={{width:viewport.width,height:viewport.height}}>
+          {active==='edit' && items.map(item=>{
+            const value=edits[item.id] ?? item.text;
+            const isSelected=selected?.id===item.id;
+            return <div key={item.id} className="textEditItem" style={{left:item.x,top:item.y,width:Math.max(12,item.width),height:Math.max(12,item.height)}} onClick={e=>{e.stopPropagation();selectItem(item)}}>
+              {isSelected && editing ? <input ref={editInputRef} value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();applyChanges()}if(e.key==='Escape'){e.preventDefault();cancelDraft()}}} className="inlinePdfInput" style={{fontSize:Number(fontSize)||14,fontWeight:bold?'700':'400',fontStyle:italic?'italic':'normal',textDecoration:underline?'underline':'none',color:textColor,width:Math.max(90,item.width+30),height:Math.max(24,(Number(fontSize)||14)+10)}} /> : edits[item.id] ? <div className="editedPreviewText" style={{fontSize:Number(editStyles[item.id]?.fontSize)||Math.max(9,Math.round(item.height*.72)),fontWeight:editStyles[item.id]?.bold?'700':'400',fontStyle:editStyles[item.id]?.italic?'italic':'normal',textDecoration:editStyles[item.id]?.underline?'underline':'none',color:editStyles[item.id]?.textColor||'#111827',minHeight:Math.max(12,item.height),minWidth:Math.max(12,item.width),background:'#fff',border:'1px solid rgba(108,76,245,.45)',borderRadius:3,padding:'1px 2px',whiteSpace:'nowrap',overflow:'visible'}}>{value}</div> : <button type="button" className={isSelected?'textHotspot selected':'textHotspot'}>{value}</button>}
+            </div>
+          })}
+        </div>}
+      </div></section></div>
+      <div className="pdfFileBar"><div><strong>{file.name}</strong><span>{(file.size/1024).toFixed(1)} KB</span></div><span>{pdfDoc?.numPages||1} page{(pdfDoc?.numPages||1)===1?'':'s'} · {Object.keys(edits).length} change{Object.keys(edits).length===1?'':'s'}</span><button type="button" className="btn danger" onClick={reset}><Trash2 size={15}/>Remove</button></div>
+      <div className="pdfPrivacy"><ShieldCheck size={15}/>Files stay in your browser while editing.</div>
     </div>
   </Shell>;
 }
@@ -1193,149 +1243,15 @@ function placeholderFor(id){
 }
 
 function Admin({user,profile}){
-  const [tab,setTab]=useState("overview");
-  const [msg,setMsg]=useState("");
-  const [backend,setBackend]=useState("checking");
-  const [dbTools,setDbTools]=useState([]);
-  const [adminUsers,setAdminUsers]=useState([]);
-  const [loadingUsers,setLoadingUsers]=useState(false);
-  const [loadingTools,setLoadingTools]=useState(false);
-  const [savingId,setSavingId]=useState("");
-  const [plans,setPlans]=useState(()=>{
-    try{ const x=JSON.parse(localStorage.getItem("tm_student_plans")||""); return Array.isArray(x)&&x.length?x:PLANS; }catch{return PLANS;}
-  });
-
-  const adminFunctionUrl = import.meta.env.VITE_ADMIN_FUNCTION_URL ||
-    (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/admin-control` : "");
-
-  const role = profile?.role || user?.app_metadata?.role || user?.user_metadata?.role || "user";
-
-  const headers = {
-    "Content-Type":"application/json",
-    ...(SUPABASE_KEY ? {apikey:SUPABASE_KEY}:{}),
-    ...(user?.access_token ? {Authorization:`Bearer ${user.access_token}`}:{})
-  };
-
-  const loadDbTools = async()=>{
-    if(!supabase) return;
-    setLoadingTools(true);
-    try{
-      if(adminFunctionUrl && user?.access_token){
-        const r=await fetch(adminFunctionUrl,{method:"POST",headers,body:JSON.stringify({action:"tools_list"})});
-        const d=await r.json().catch(()=>({}));
-        if(r.ok && Array.isArray(d.tools)){ setDbTools(d.tools); setMsg(`${d.tools.length} tools loaded through the secure admin function.`); return; }
-      }
-      const {data,error}=await supabase.from("tools").select("id,name,slug,description,is_active,is_featured,sort_order,category_id,tool_type").order("sort_order",{ascending:true});
-      if(error) throw error;
-      setDbTools(data||[]);
-      setMsg(`${(data||[]).length} tools loaded from Supabase.`);
-    }catch(e){
-      setMsg(`Tools DB error: ${e.message}`);
-    }finally{setLoadingTools(false)}
-  };
-
-  const loadUsers = async()=>{
-    if(!adminFunctionUrl || !user?.access_token){
-      setMsg("Deploy the secure admin-control Edge Function to load the full user directory.");
-      return;
-    }
-    setLoadingUsers(true);
-    try{
-      const r=await fetch(adminFunctionUrl,{method:"POST",headers,body:JSON.stringify({action:"users_list",page:1,perPage:100})});
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(d.error||`Users request failed (${r.status})`);
-      setAdminUsers(Array.isArray(d.users)?d.users:[]);
-      setMsg(`${Array.isArray(d.users)?d.users.length:0} users loaded securely.`);
-    }catch(e){setMsg(e.message)}finally{setLoadingUsers(false)}
-  };
-
-  useEffect(()=>{
-    let cancelled=false;
-    (async()=>{
-      const base=import.meta.env.VITE_API_BASE_URL||import.meta.env.VITE_SUPABASE_FUNCTION_URL;
-      try{
-        if(!base){ if(!cancelled)setBackend("not configured"); return; }
-        const r=await fetch(base,{method:"GET",headers});
-        if(!cancelled)setBackend(`${r.status}${r.ok?" · online":" · error"}`);
-      }catch(e){ if(!cancelled)setBackend("offline"); }
-    })();
-    loadDbTools();
-    return ()=>{cancelled=true};
-  },[]);
-
-  const updateTool = async(tool,patch)=>{
-    if(!tool?.id) return;
-    setSavingId(tool.id);
-    try{
-      if(adminFunctionUrl && user?.access_token){
-        const r=await fetch(adminFunctionUrl,{method:"POST",headers,body:JSON.stringify({action:"tool_update",tool_id:tool.id,patch})});
-        const d=await r.json().catch(()=>({}));
-        if(r.ok && d.tool){ setDbTools(prev=>prev.map(x=>x.id===tool.id?d.tool:x)); setMsg(`Saved ${tool.name} securely.`); return; }
-        if(!r.ok) throw new Error(d.error||`Admin update failed (${r.status})`);
-      }
-      if(!supabase) throw new Error("Supabase tools table is not available.");
-      const {data,error}=await supabase.from("tools").update(patch).eq("id",tool.id).select("id,name,slug,description,is_active,is_featured,sort_order,category_id,tool_type").single();
-      if(error) throw error;
-      setDbTools(prev=>prev.map(x=>x.id===tool.id?data:x));
-      setMsg(`Saved ${tool.name}.`);
-    }catch(e){ setMsg(`Could not save ${tool.name}: ${e.message}`); }finally{setSavingId("");}
-  };
-
-  const savePlans=next=>{ setPlans(next); localStorage.setItem("tm_student_plans",JSON.stringify(next)); setMsg("Student AI plans saved locally for this deployment/browser."); };
-  const pingAdminFunction=async()=>{
-    if(!adminFunctionUrl) return setMsg("Admin backend function is not configured. Client-side role checks remain active.");
-    try{
-      const r=await fetch(adminFunctionUrl,{method:"POST",headers,body:JSON.stringify({action:"health"})});
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(d.error||`Admin backend error (${r.status})`);
-      setMsg(d.message||"Admin backend is online.");
-    }catch(e){setMsg(e.message)}
-  };
-
-  return <main className="admin">
-    <div className="adminTop">
-      <div>
-        <div className="pill"><LayoutDashboard size={14}/> Admin Control Center</div>
-        <h1>ToolMaster Pro</h1>
-        <p>Signed in as <b>{profile?.full_name||user?.email}</b> · Role: <b>{role}</b>. Manage tools, plans, system health and your admin session from one place.</p>
-      </div>
-      <div className="actions"><button className="btn" onClick={()=>setMsg("Admin session is active.")}><ShieldCheck size={15}/> Security check</button><button className="btn primary" onClick={pingAdminFunction}><RefreshCw size={15}/> Check admin backend</button></div>
-    </div>
-
-    <div className="adminStats">
-      <div className="statCard"><span>Frontend tools</span><b>{tools.length}</b><small>Catalog items</small></div>
-      <div className="statCard"><span>DB tools</span><b>{dbTools.length||"—"}</b><small>{dbTools.length?"Loaded from Supabase":"Not loaded"}</small></div>
-      <div className="statCard"><span>Auth</span><b>{supabase?"ON":"OFF"}</b><small>Supabase client</small></div>
-      <div className="statCard"><span>Backend</span><b>{backend.split(" ")[0]}</b><small>{backend}</small></div>
-    </div>
-
-    <div className="toolbar adminTabs">
-      {["overview","tools","plans","users"].map(x=><button key={x} className={tab===x?"cat active":"cat"} onClick={()=>setTab(x)}>{x==="overview"?<LayoutDashboard size={17}/>:x==="tools"?<Settings size={17}/>:x==="plans"?<CreditCard size={17}/>:<User size={17}/>} {x[0].toUpperCase()+x.slice(1)}</button>)}
-    </div>
-
-    {msg&&<div className="notice"><CheckCircle2 size={16}/> {msg}</div>}
-
-    {tab==="overview"&&<div className="adminGrid">
-      <div className="adminCard"><Wrench/><h3>Tool Engine</h3><p>{tools.length} frontend tools are bundled. Supabase tools are loaded separately when available.</p><div className="actions"><button className="btn primary" onClick={loadDbTools} disabled={loadingTools}>{loadingTools?"Refreshing...":"Refresh tool DB"}</button><button className="btn" onClick={()=>setMsg(`Frontend registry: ${tools.length} tools.`)}>Inspect</button></div></div>
-      <div className="adminCard"><LockKeyhole/><h3>Authentication</h3><p>Supabase Auth is {supabase?"configured and available":"not configured"}. Admin access is determined by the current user's role.</p><strong className={supabase?"ok":"formError"}>{supabase?"Connected":"Action required"}</strong></div>
-      <div className="adminCard"><Globe2/><h3>Backend health</h3><p>Current server/API state: <b>{backend}</b></p><div className="actions"><button className="btn" onClick={pingAdminFunction}>Check securely</button></div></div>
-      <div className="adminCard"><ShieldCheck/><h3>Security</h3><p>Frontend uses only the Supabase public key. Service-role credentials must stay inside secure Edge Functions.</p><strong className="ok">Protected</strong></div>
-    </div>}
-
-    {tab==="tools"&&<div className="panel" style={{marginTop:16}}>
-      <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}><div><h3 style={{marginBottom:5}}>Tool Management</h3><p style={{color:"#7c879a",marginTop:0}}>Toggle active/featured status and sort order in the Supabase `tools` table. RLS policies must allow the admin update.</p></div><button className="btn primary" onClick={loadDbTools} disabled={loadingTools}><RefreshCw size={15}/> {loadingTools?"Refreshing...":"Refresh"}</button></div>
-      {dbTools.length?<div className="adminToolTable">{dbTools.map(t=><div className="adminToolRow" key={t.id}>
-        <div className="adminToolMain"><b>{t.name}</b><small>{t.slug} · {t.tool_type||"browser"}</small></div>
-        <label className="checkLine"><input type="checkbox" checked={!!t.is_active} onChange={e=>updateTool(t,{is_active:e.target.checked})}/><span>Active</span></label>
-        <label className="checkLine"><input type="checkbox" checked={!!t.is_featured} onChange={e=>updateTool(t,{is_featured:e.target.checked})}/><span>Featured</span></label>
-        <input className="sortInput" type="number" value={t.sort_order??0} onChange={e=>setDbTools(prev=>prev.map(x=>x.id===t.id?{...x,sort_order:e.target.value}:x))} onBlur={e=>updateTool(t,{sort_order:Number(e.target.value)||0})}/>
-        {savingId===t.id?<RefreshCw className="spin" size={15}/>:<CheckCircle2 size={15} color={t.is_active?"#18a974":"#a2a8b5"}/>}
-      </div>)}</div>:<div className="empty" style={{marginTop:16}}>{supabase?"No rows loaded from the tools table, or RLS blocked the query.":"Connect Supabase to enable DB tool management."}</div>}
-    </div>}
-
-    {tab==="plans"&&<div className="panel" style={{marginTop:16}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}><div><h3>Student AI Helper Plans</h3><p style={{color:"#7c879a"}}>Edit credits/pricing shown in the admin UI. These settings are persisted locally until a billing/plans table is connected.</p></div><button className="btn primary" onClick={()=>savePlans(PLANS.map(x=>({...x})))}><RefreshCw size={15}/> Reset defaults</button></div><div className="grid">{plans.map((p,i)=><div className="card" key={p.id}><div className="pill">{p.popular?"Popular":"Plan"}</div><h3>{p.name}</h3><p>{p.description}</p><label style={{display:"grid",gap:5,fontSize:12,color:"#5d6779"}}>Credits<input type="number" value={p.credits} min="0" onChange={e=>savePlans(plans.map((x,j)=>j===i?{...x,credits:Number(e.target.value)||0}:x))}/></label><label style={{display:"grid",gap:5,fontSize:12,color:"#5d6779",marginTop:8}}>Price (USD)<input type="number" value={p.price} min="0" step="0.01" onChange={e=>savePlans(plans.map((x,j)=>j===i?{...x,price:Number(e.target.value)||0}:x))}/></label></div>)}</div></div>}
-
-    {tab==="users"&&<div style={{marginTop:16}}><div className="workspace"><div className="panel"><div style={{display:"flex",justifyContent:"space-between",gap:10,alignItems:"center"}}><h3 style={{margin:0}}>User Directory</h3><button className="btn primary" onClick={loadUsers} disabled={loadingUsers}>{loadingUsers?"Loading...":"Refresh users"}</button></div><p style={{color:"#7c879a"}}>Users are loaded through a server-side admin function; the secret key never reaches the browser.</p>{adminUsers.length?<div className="adminToolTable">{adminUsers.map(u=><div className="adminToolRow" key={u.id}><div className="adminToolMain"><b>{u.email||"No email"}</b><small>{u.id} · {u.role||"user"}</small></div><div style={{fontSize:12,color:"#6f788a"}}>{u.confirmed_at?"Confirmed":"Pending"}</div><div style={{fontSize:12,color:"#6f788a"}}>{u.last_sign_in_at?new Date(u.last_sign_in_at).toLocaleDateString():"Never signed in"}</div></div>)}</div>:<div className="empty" style={{marginTop:15}}>Click “Refresh users” after deploying `admin-control` to view your users.</div>}</div><div className="panel"><h3>Current Admin Session</h3><p><b>Email</b><br/>{user?.email||"—"}</p><p><b>User ID</b><br/><code>{user?.id||"—"}</code></p><p><b>Role</b><br/>{role}</p><div className="notice"><ShieldCheck size={15}/> Admin access is checked before privileged operations. Supabase Auth admin methods are server-only and require a secret key.</div></div></div></div>}
+  const [tab,setTab]=useState("overview");const [msg,setMsg]=useState("");
+  const [backend,setBackend]=useState("checking");const [toolsCount,setToolsCount]=useState(tools.length);const [plans,setPlans]=useState(PLANS);
+  useEffect(()=>{(async()=>{const base=import.meta.env.VITE_API_BASE_URL||import.meta.env.VITE_SUPABASE_FUNCTION_URL;if(!base)return setBackend("not configured");try{const r=await fetch(base,{method:"GET"});setBackend(String(r.status))}catch{setBackend("offline")}})()},[]);
+  return <main className="admin"><div className="adminTop"><div><div className="pill"><LayoutDashboard size={14}/> Admin Control Center</div><h1>ToolMaster Pro</h1><p>Signed in as <b>{profile?.full_name||user?.email}</b>. Admin access is based on the user's Supabase role.</p></div></div>
+    <div className="toolbar" style={{marginTop:24}}>{["overview","tools","plans","users"].map(x=><button key={x} className={tab===x?"cat active":"cat"} onClick={()=>setTab(x)}>{x==="overview"?<LayoutDashboard/>:x==="tools"?<Settings/>:x==="plans"?<CreditCard/>:<User/>}{x[0].toUpperCase()+x.slice(1)}</button>)}</div>
+    {tab==="overview"&&<div className="adminGrid"><div className="adminCard"><Wrench/><h3>Tool Engine</h3><p>{toolsCount} tools loaded in the frontend tool registry.</p><button className="btn primary" onClick={()=>setMsg("Tool registry check complete.")}>Check Tools</button></div><div className="adminCard"><LockKeyhole/><h3>Auth</h3><p>Supabase Auth is {supabase?"configured":"not configured"}.</p><strong className="ok">{supabase?"Connected":"Action required"}</strong></div><div className="adminCard"><Globe2/><h3>Backend</h3><p>AI / server backend status: {backend}.</p><button className="btn" onClick={()=>setMsg(`Backend status: ${backend}`)}>View Status</button></div><div className="adminCard"><CheckCircle2/><h3>System</h3><p>{msg||"Browser tool engine ready."}</p><strong className="ok">Ready</strong></div></div>}
+    {tab==="tools"&&<div className="panel" style={{marginTop:16}}><h3>Tool Management</h3><p style={{color:"#93a6bf"}}>The tool catalog is embedded in this build. Production CRUD can be connected to your `tools` table without exposing service-role keys.</p><div className="grid">{tools.slice(0,12).map(t=><div className="card" key={t[3]}><span>{t[1]}</span><h3>{t[0]}</h3><p>{t[2]}</p></div>)}</div></div>}
+    {tab==="plans"&&<div className="panel" style={{marginTop:16}}><h3>Student AI Helper Plans</h3><div className="grid">{plans.map(p=><div className="card" key={p.id}><div className="pill">{p.popular?"Popular":"Plan"}</div><h3>{p.name}</h3><p>{p.description}</p><b>{p.credits.toLocaleString()} credits · ${p.price}</b></div>)}</div></div>}
+    {tab==="users"&&<div className="panel" style={{marginTop:16}}><h3>Current User</h3><p>Email: {user?.email}</p><p>User ID: {user?.id}</p><p>Role: {profile?.role || user?.app_metadata?.role || user?.user_metadata?.role || "user"}</p></div>}
   </main>;
 }
 
@@ -1365,4 +1281,4 @@ function safeScientific(s){
   const result=Function(`"use strict";return (${x})`)();return Number.isFinite(result)?String(result):"Invalid result";
 }
 
-createRoot(document.getElementById("root")).render(<AppErrorBoundary><App/></AppErrorBoundary>);
+createRoot(document.getElementById("root")).render(<App/>);
