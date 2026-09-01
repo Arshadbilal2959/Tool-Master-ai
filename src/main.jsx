@@ -911,6 +911,54 @@ function PdfEditorTool({t,back}) {
   </Shell>;
 }
 
+async function convertWithSecureBackend(file, target) {
+  if (!file) throw new Error("Please choose a file first.");
+  const configured = import.meta.env.VITE_DOCUMENT_CONVERTER_URL || "";
+  const base = configured || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/document-converter` : "");
+  if (!base) {
+    throw new Error("Document converter backend is not configured. Add VITE_DOCUMENT_CONVERTER_URL or deploy the document-converter Supabase Edge Function.");
+  }
+
+  const form = new FormData();
+  form.append("file", file, file.name);
+  form.append("target", target);
+
+  const headers = {};
+  if (SUPABASE_KEY) headers.apikey = SUPABASE_KEY;
+
+  const response = await fetch(base, { method: "POST", headers, body: form });
+  const contentType = response.headers.get("content-type") || "";
+  if (!response.ok) {
+    const message = contentType.includes("application/json")
+      ? ((await response.json().catch(() => ({}))).error || (await response.json().catch(() => ({}))).message)
+      : await response.text().catch(() => "");
+    throw new Error(message || `Document converter failed (${response.status}).`);
+  }
+
+  // Backend may return the converted file directly.
+  if (contentType.includes("application/pdf") || contentType.includes("application/vnd.openxmlformats-officedocument.wordprocessingml.document") || contentType.includes("application/msword")) {
+    const blob = await response.blob();
+    const ext = target === "pdf" ? "pdf" : "docx";
+    const baseName = file.name.replace(/\.[^.]+$/, "");
+    downloadBlob(blob, `${baseName}.${ext}`);
+    return { message: `${ext.toUpperCase()} converted and downloaded.` };
+  }
+
+  const data = await response.json().catch(() => ({}));
+  const downloadUrl = data.download_url || data.url || data.file_url || data.result?.download_url || data.result?.url;
+  if (!downloadUrl) {
+    throw new Error(data.error || data.message || "Converter returned no downloadable file.");
+  }
+
+  const fileResponse = await fetch(downloadUrl);
+  if (!fileResponse.ok) throw new Error(`Converted file download failed (${fileResponse.status}).`);
+  const blob = await fileResponse.blob();
+  const ext = target === "pdf" ? "pdf" : "docx";
+  const baseName = file.name.replace(/\.[^.]+$/, "");
+  downloadBlob(blob, `${baseName}.${ext}`);
+  return { message: data.message || `${ext.toUpperCase()} converted and downloaded.` };
+}
+
 function PdfTool({t,back}) {
   const id=t[3]; const [files,setFiles]=useState([]); const [busy,setBusy]=useState(false); const [status,setStatus]=useState("");
   const [watermark,setWatermark]=useState("ToolMaster Pro"); const [angle,setAngle]=useState("90");
