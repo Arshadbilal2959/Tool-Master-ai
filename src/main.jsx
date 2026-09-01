@@ -564,6 +564,7 @@ function PdfEditorTool({t,back}) {
   const [italic,setItalic] = useState(false);
   const [underline,setUnderline] = useState(false);
   const [textColor,setTextColor] = useState('#111827');
+  const [hasApplied,setHasApplied] = useState(false);
 
   const getPdf = async f => {
     const pdfjs = await loadLib('pdfjs');
@@ -684,6 +685,7 @@ function PdfEditorTool({t,back}) {
     setEdits(prev=>({...prev,[selected.id]:draft}));
     setEditStyles(prev=>({...prev,[selected.id]:{fontSize:Number(fontSize)||16,bold,italic,underline,textColor}}));
     setEditing(false);
+    setHasApplied(true);
     setStatus(message);
     return true;
   };
@@ -709,6 +711,7 @@ function PdfEditorTool({t,back}) {
     const nextStyles={...editStyles,[selected.id]:{fontSize:Number(fontSize)||16,bold,italic,underline,textColor}};
     setEdits(nextEdits);
     setEditStyles(nextStyles);
+    setHasApplied(true);
     setEditing(false);
     setStatus('Applying the text change and creating your edited PDF…');
     await downloadEdited(nextEdits,nextStyles);
@@ -751,13 +754,14 @@ function PdfEditorTool({t,back}) {
         }
       }
       const bytes=await doc.save();
-      downloadBlob(new Blob([bytes],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
+      const safeBytes = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+      downloadBlob(new Blob([safeBytes],{type:'application/pdf'}),file.name.replace(/\.pdf$/i,'')+'-edited.pdf');
       setStatus('Edited PDF downloaded successfully.');
     } catch(e) { setStatus(`Could not create edited PDF: ${e?.message||String(e)}`); }
     finally { setBusy(false); }
   };
 
-  const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setEdits({});setEditStyles({});setSelected(null);setEditing(false);setDraft('');setFontSize(16);setBold(false);setItalic(false);setUnderline(false);setTextColor('#111827');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
+  const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setEdits({});setEditStyles({});setSelected(null);setEditing(false);setDraft('');setHasApplied(false);setFontSize(16);setBold(false);setItalic(false);setUnderline(false);setTextColor('#111827');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
   const changeScale=v=>setScale(Math.max(.6,Math.min(2,Number(v)||1)));
 
   if(!file) return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Edit existing PDF text by clicking directly on the text. Add text, images, links, annotations and signatures.','']} status={status}>
@@ -774,7 +778,7 @@ function PdfEditorTool({t,back}) {
 
   return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Click any text directly in the document, change it inline, then download your edited PDF.','']} status={status}>
     <div className="pdfEditor">
-      <div className="pdfEditorTop"><div className="pdfTopTitle"><h2>Online PDF editor <span className="beta">BETA</span></h2><p>Edit PDF files. Click text to change it.</p></div><div className="pdfTopActions"><button type="button" className="btn" onClick={()=>uploadRef.current?.click()}><Upload size={16}/> Replace PDF</button><button type="button" className="btn primary" onClick={downloadEdited} disabled={busy || !Object.keys(edits).length}> <Download size={16}/> Download PDF</button><input ref={uploadRef} type="file" accept="application/pdf,.pdf" onChange={onUpload} style={{display:'none'}}/></div></div>
+      <div className="pdfEditorTop"><div className="pdfTopTitle"><h2>Online PDF editor <span className="beta">BETA</span></h2><p>Edit PDF files. Click text to change it.</p></div><div className="pdfTopActions"><button type="button" className="btn" onClick={()=>uploadRef.current?.click()}><Upload size={16}/> Replace PDF</button><button type="button" className="btn primary" onClick={downloadEdited} disabled={busy || !hasApplied || !Object.keys(edits).length}> <Download size={16}/> Download PDF</button><input ref={uploadRef} type="file" accept="application/pdf,.pdf" onChange={onUpload} style={{display:'none'}}/></div></div>
 
       <div className="pdfEditorToolbar">{[
         ['edit','Edit Text',FileText],['add-text','Add Text',FileText],['image','Add Image',ImageIcon],['link','Create Link',ExternalLink],['annotate','Annotate',Eye],['sign','Sign',Printer],['forms','Fill Forms',CheckCircle2]
@@ -806,7 +810,7 @@ function PdfEditorTool({t,back}) {
             <button type="button" className="btn" onClick={applyAndDownload} disabled={busy || !selected}><Download size={16}/> Apply & Download</button>
             <button type="button" className="btn secondary" onClick={cancelDraft} disabled={!selected}>Cancel</button>
           </div>
-          <button type="button" className="btn downloadBtn" onClick={()=>downloadEdited()} disabled={busy || !Object.keys(edits).length}><Download size={16}/> Download PDF</button>
+          <button type="button" className="btn downloadBtn" onClick={()=>downloadEdited()} disabled={busy || !hasApplied || !Object.keys(edits).length}><Download size={16}/> Download PDF</button>
         </> : <>
           <h3>{active==='add-text'?'Add Text':active==='image'?'Add Image':active==='link'?'Create Link':active==='annotate'?'Annotate PDF':active==='sign'?'Sign PDF':'Fill Forms'}</h3>
           <p className="panelHint">Use this mode for adding content. For existing text, switch back to <b>Edit Text</b> and click the exact text.</p>
