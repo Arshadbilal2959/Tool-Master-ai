@@ -181,7 +181,8 @@ async function loadLib(name) {
     "mammoth":"https://esm.sh/mammoth@1.9.0",
     "qrcode":"https://esm.sh/qrcode@1.5.4",
     "jsbarcode":"https://esm.sh/jsbarcode@3.11.6",
-    "tesseract":"https://esm.sh/tesseract.js@5.1.1"
+    "tesseract":"https://esm.sh/tesseract.js@5.1.1",
+    "bg-remove":"https://esm.sh/@imgly/background-removal@1.7.0?bundle"
   };
   if (!urls[name]) throw new Error("Library not configured");
   const mod=await import(/* @vite-ignore */ urls[name]);
