@@ -144,6 +144,43 @@ const PLANS = [
   {id:"demand", name:"Demand", credits:10000, period:"monthly", price:49, description:"For heavy AI usage"},
   {id:"platinum", name:"Platinum", credits:50000, period:"monthly", price:99, description:"Maximum AI access"}
 ];
+\nconst VIDEO_PLANS = [
+  {id:"video-free", name:"Free", credits:50, period:"monthly", price:0, description:"50 video credits for testing", features:["Short test clips","720p landscape/portrait","Basic generation"]},
+  {id:"video-starter", name:"Starter", credits:500, period:"monthly", price:9, description:"For creators getting started", features:["500 video credits","Priority queue","HD downloads"]},
+  {id:"video-pro", name:"Pro", credits:2000, period:"monthly", price:29, popular:true, description:"For regular creators", features:["2,000 video credits","Priority generation","Commercial projects"]},
+  {id:"video-business", name:"Business", credits:10000, period:"monthly", price:79, description:"For teams and heavy usage", features:["10,000 video credits","Higher priority","Commercial projects"]},
+  {id:"video-platinum", name:"Platinum", credits:50000, period:"monthly", price:199, description:"Maximum video access", features:["50,000 video credits","Highest priority","Commercial projects"]}
+];
+
+function PlanCards({title,plans,selected,onSelect,openAuth,user,kind}) {
+  return <div className="panel" style={{marginTop:16,padding:18}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap",marginBottom:12}}>
+      <div>
+        <h3 style={{margin:"0 0 4px"}}>{title}</h3>
+        <small style={{color:"#7d889b"}}>Choose a plan. AI usage remains protected by your signed-in account.</small>
+      </div>
+      {selected && <div className="pill"><CheckCircle2 size={14}/> {plans.find(p=>p.id===selected)?.name||"Selected"}</div>}
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:12}}>
+      {plans.map((p)=>(
+        <div key={p.id} className="card" style={{position:"relative",border:p.id===selected?"2px solid #6d4aff":"1px solid #e5e7ef",boxShadow:p.id===selected?"0 10px 30px rgba(109,74,255,.12)":"none"}}>
+          {p.popular && <div className="pill" style={{position:"absolute",right:10,top:10}}>Popular</div>}
+          <div style={{fontWeight:800,fontSize:18}}>{p.name}</div>
+          <div style={{fontSize:28,fontWeight:900,marginTop:8}}>{p.price===0?"Free":`$${p.price}`}<small style={{fontSize:12,fontWeight:500,color:"#8490a3"}}>{p.price===0?"":" / month"}</small></div>
+          <div style={{color:"#7d889b",fontSize:13,margin:"8px 0 10px"}}>{p.description}</div>
+          <div style={{fontWeight:700,fontSize:13,marginBottom:8}}>{p.credits.toLocaleString()} credits · {p.period}</div>
+          {Array.isArray(p.features)&&<div style={{display:"grid",gap:5,marginBottom:12}}>{p.features.map(f=><small key={f} style={{display:"flex",gap:6,alignItems:"center"}}><Check size={13}/>{f}</small>)}</div>}
+          <button className={p.id===selected?"btn primary":"btn"} style={{width:"100%",justifyContent:"center"}} onClick={()=>{
+            onSelect?.(p.id);
+            if(!user) openAuth?.("signin");
+          }}>
+            {p.id===selected?"Selected":"Choose "+p.name}
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>;
+}
 
 const iconForCategory = (cat) => ({
   "PDF Tools": <FileText size={19}/>,
@@ -471,6 +508,7 @@ function StudentAIHelper({back,user,openAuth}) {
   const [status,setStatus]=useState("");
   const [level,setLevel]=useState("Detailed");
   const [model,setModel]=useState("gpt-5.6-luna");
+  const [selectedPlan,setSelectedPlan]=useState("free");
   const endpoint = import.meta.env.VITE_STUDENT_AI_FUNCTION_URL ||
     (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/student-ai-helper` : "");
 
@@ -482,6 +520,7 @@ function StudentAIHelper({back,user,openAuth}) {
       const token=await getSupabaseAccessToken();
       if(!token){
         setStatus("Please sign in first. Student AI needs your Supabase login to securely call the AI backend.");
+        openAuth?.("signin");
         return;
       }
       const fd=new FormData();
@@ -521,7 +560,7 @@ function StudentAIHelper({back,user,openAuth}) {
           <button className="btn primary" disabled={busy} onClick={solve}><Sparkles size={16}/>{busy?"Processing...":"Get AI Help"}</button>
           {files.length>0&&<button className="btn" disabled={busy} onClick={()=>setFiles([])}><Trash2 size={15}/>Clear files</button>}
         </div>
-        <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Sign in is required for secure AI usage. Images and text files are supported directly.</small>
+        <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Sign in is required for secure AI usage. Choose a plan above; Free can be used for testing.</small>
       </div>
       <div className="aiCard">
         <h3>🤖 AI Answer</h3>
@@ -529,6 +568,7 @@ function StudentAIHelper({back,user,openAuth}) {
         {answer&&<div className="actions"><button className="btn" onClick={()=>navigator.clipboard?.writeText(answer)}><Copy size={15}/>Copy</button><button className="btn" onClick={()=>downloadText(answer,"student-ai-answer.txt")}><Download size={15}/>Download</button></div>}
       </div>
     </div>
+    <PlanCards title="Student AI Helper Plans" plans={PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="student"/>
   </Shell>;
 }
 
@@ -569,6 +609,7 @@ function TextToVideo({back,user,openAuth}) {
   const [busy,setBusy]=useState(false);
   const [result,setResult]=useState(null);
   const [progress,setProgress]=useState(0);
+  const [selectedPlan,setSelectedPlan]=useState("video-free");
 
   const getBackend=()=>import.meta.env.VITE_VIDEO_FUNCTION_URL || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/video-generator` : "");
 
@@ -588,7 +629,11 @@ function TextToVideo({back,user,openAuth}) {
     setBusy(true);setProgress(0);setResult(null);setStatus("Checking your secure session...");
     try{
       const token=await getSupabaseAccessToken();
-      if(!token) throw new Error("Please sign in first. Video generation needs a secure Supabase session.");
+      if(!token){
+        setStatus("Please sign in first. Video generation needs a secure Supabase session.");
+        openAuth?.("signin");
+        return;
+      }
       const size=aspect==="9:16"?"720x1280":"1280x720";
       const r=await fetch(base,{method:"POST",headers:await authHeaders(),body:JSON.stringify({
         action:"create",
@@ -646,12 +691,13 @@ function TextToVideo({back,user,openAuth}) {
           <label>Aspect<select value={aspect} disabled={busy} onChange={e=>setAspect(e.target.value)}><option>16:9</option><option>9:16</option></select></label>
         </div>
         <button className="btn primary" disabled={busy||!prompt.trim()} onClick={createVideo} style={{marginTop:12}}><Sparkles size={17}/>{busy?`Generating... ${progress}%`:"Generate Video"}</button>
-        <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Use a signed-in account. Shorter 4–8 second clips are best for quick testing.</small>
+        <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Choose a video plan above. Shorter 4–8 second clips are best for quick testing. A signed-in account is required.</small>
       </div>
       <div className="aiCard"><h3>🎥 Video Preview</h3>
         {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
       </div>
     </div>
+    <PlanCards title="Text-to-Video Plans" plans={VIDEO_PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="video"/>
   </Shell>;
 }
 
