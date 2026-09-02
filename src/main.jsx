@@ -537,8 +537,13 @@ function StudentAIHelper({back,user,openAuth}) {
       const raw=await r.text();
       let data={}; try{data=raw?JSON.parse(raw):{}}catch{}
       if(!r.ok) throw new Error(data.error||data.message||raw||`Student AI backend error (${r.status})`);
-      const out=String(data.answer||data.output||data.message||"").trim();
-      if(!out) throw new Error("Student AI returned an empty answer.");
+      const fallbackOutput = Array.isArray(data.output)
+        ? data.output.flatMap(item => Array.isArray(item?.content) ? item.content : [])
+            .map(part => part?.text?.value || part?.text || "")
+            .filter(Boolean).join("\n")
+        : "";
+      const out=String(data.answer||data.output_text||fallbackOutput||data.output||data.message||"").trim();
+      if(!out) throw new Error("Student AI returned an empty answer. Please check the OpenAI API key/model in Supabase.");
       setAnswer(out);
       setStatus(data.usage?`AI response received · ${data.usage}`:"AI response received.");
     }catch(e){
@@ -672,10 +677,16 @@ function TextToVideo({back,user,openAuth}) {
         setStatus("MP4 is ready. You can play it or download it below.");
         return;
       }
-      if(d.status==="failed" || d.status==="cancelled") throw new Error(d.error?.message||d.error||"Video generation failed.");
-      await new Promise(resolve=>setTimeout(resolve,10000));
+      if(d.status==="failed" || d.status==="cancelled") {
+        const msg = d.error?.message || d.error || "Video generation failed on the video provider.";
+        setProgress(0);
+        setResult(prev=>({...prev, status:d.status, error:d.error||msg}));
+        throw new Error(msg);
+      }
+      setStatus(d.status === "in_progress" ? `Video is rendering… ${Number.isFinite(p)?p:0}%` : `Video is queued… ${Number.isFinite(p)?p:0}%`);
+      await new Promise(resolve=>setTimeout(resolve,5000));
     }
-    throw new Error("Video is still rendering. Please keep this page open and try again later.");
+    throw new Error("Video is taking longer than expected. The provider may be busy. Please try again in a moment.");
   };
 
   const downloadVideo=()=>{if(!result?.video_url)return;const a=document.createElement("a");a.href=result.video_url;a.download="toolmaster-video.mp4";document.body.appendChild(a);a.click();a.remove();};
@@ -695,7 +706,7 @@ function TextToVideo({back,user,openAuth}) {
         <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Choose a video plan above. Shorter 4–8 second clips are best for quick testing. A signed-in account is required.</small>
       </div>
       <div className="aiCard"><h3>🎥 Video Preview</h3>
-        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
+        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:result?.status==="failed"||result?.status==="cancelled"?<div className="formError" style={{minHeight:220,display:"grid",placeItems:"center",textAlign:"center",padding:24}}><div><b>Video generation failed</b><small style={{display:"block",marginTop:8,color:"#b42318"}}>{result?.error?.message||result?.error||status||"The video provider rejected the generation job."}</small></div></div>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
       </div>
     </div>
     <PlanCards title="Text-to-Video Plans" plans={VIDEO_PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="video"/>
