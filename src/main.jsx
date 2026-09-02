@@ -144,7 +144,8 @@ const PLANS = [
   {id:"demand", name:"Demand", credits:10000, period:"monthly", price:49, description:"For heavy AI usage"},
   {id:"platinum", name:"Platinum", credits:50000, period:"monthly", price:99, description:"Maximum AI access"}
 ];
-\nconst VIDEO_PLANS = [
+
+const VIDEO_PLANS = [
   {id:"video-free", name:"Free", credits:50, period:"monthly", price:0, description:"50 video credits for testing", features:["Short test clips","720p landscape/portrait","Basic generation"]},
   {id:"video-starter", name:"Starter", credits:500, period:"monthly", price:9, description:"For creators getting started", features:["500 video credits","Priority queue","HD downloads"]},
   {id:"video-pro", name:"Pro", credits:2000, period:"monthly", price:29, popular:true, description:"For regular creators", features:["2,000 video credits","Priority generation","Commercial projects"]},
