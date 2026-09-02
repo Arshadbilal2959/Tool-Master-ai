@@ -519,11 +519,6 @@ function StudentAIHelper({back,user,openAuth}) {
     setBusy(true);setStatus("Connecting to Student AI...");setAnswer("");
     try{
       const token=await getSupabaseAccessToken();
-      if(!token){
-        setStatus("Please sign in first. Student AI needs your Supabase login to securely call the AI backend.");
-        openAuth?.("signin");
-        return;
-      }
       const fd=new FormData();
       fd.append("question",question.trim());
       fd.append("model",model);
@@ -531,7 +526,7 @@ function StudentAIHelper({back,user,openAuth}) {
       files.forEach(f=>fd.append("files",f,f.name));
       const headers={
         ...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),
-        Authorization:`Bearer ${token}`
+        ...(token?{Authorization:`Bearer ${token}`}:{})
       };
       const r=await fetch(endpoint,{method:"POST",headers,body:fd});
       const raw=await r.text();
@@ -566,7 +561,7 @@ function StudentAIHelper({back,user,openAuth}) {
           <button className="btn primary" disabled={busy} onClick={solve}><Sparkles size={16}/>{busy?"Processing...":"Get AI Help"}</button>
           {files.length>0&&<button className="btn" disabled={busy} onClick={()=>setFiles([])}><Trash2 size={15}/>Clear files</button>}
         </div>
-        <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Sign in is required for secure AI usage. Choose a plan above; Free can be used for testing.</small>
+        <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Free plan can be tested directly. Sign in can be used for account-based plan tracking.</small>
       </div>
       <div className="aiCard">
         <h3>🤖 AI Answer</h3>
@@ -635,11 +630,6 @@ function TextToVideo({back,user,openAuth}) {
     setBusy(true);setProgress(0);setResult(null);setStatus("Checking your secure session...");
     try{
       const token=await getSupabaseAccessToken();
-      if(!token){
-        setStatus("Please sign in first. Video generation needs a secure Supabase session.");
-        openAuth?.("signin");
-        return;
-      }
       const size=aspect==="9:16"?"720x1280":"1280x720";
       const r=await fetch(base,{method:"POST",headers:await authHeaders(),body:JSON.stringify({
         action:"create",
