@@ -246,9 +246,6 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
 @media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
-.bgRemoveApp{border:1px solid #e2e5ec;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 18px 50px rgba(23,33,54,.08)}
-.bgRemoveHeader{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 20px;border-bottom:1px solid #e7e9ef;flex-wrap:wrap}.bgRemoveHeader h2{margin:0;font-size:25px}.bgRemoveHeader p{margin:5px 0 0;color:#8490a4}.bgHeaderActions{display:flex;gap:8px;flex-wrap:wrap}.bgToolbar{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #e8e9ef;overflow:auto}.bgToolBtn{min-width:86px;border:1px solid #e0e3ea;background:#fff;border-radius:10px;padding:9px 10px;color:#5d687b;display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:800}.bgToolBtn.active{border-color:#8f77f8;background:#f6f3ff;color:#6849ed}.bgEditorBody{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:680px;background:#f5f6f9}.bgSide{background:#fff;border-right:1px solid #e2e5eb;padding:16px;overflow:auto}.uploadCard{border:1px dashed #d9d4fb;background:#faf9ff;border-radius:12px;padding:8px}.uploadCard .uploadBox{margin:0;border:0;background:transparent;padding:10px}.uploadCard small{display:block;color:#9098a8;text-align:center;font-size:10px;padding-bottom:4px}.sideHint,.sideSection p{font-size:12px;color:#8690a2;line-height:1.55}.sideSection{margin-top:18px;padding-top:16px;border-top:1px solid #edf0f4}.sideSection h3{margin:0 0 7px;font-size:16px}.sideSection label{display:grid;gap:5px;margin-top:12px;font-size:12px;font-weight:800;color:#5c6779}.sideSection label input[type=range]{width:100%}.sideSection label>span{font-size:11px;color:#8790a0;font-weight:500}.sideSection select,.sideSection input[type=color]{width:100%;border:1px solid #dfe3ea;border-radius:8px;padding:8px;background:#fff}.checkRow{display:flex!important;grid-template-columns:none!important;align-items:center;gap:7px}.checkRow input{width:16px!important}.full{width:100%;justify-content:center}.successBadge{display:flex;align-items:center;gap:6px;margin-top:10px;padding:8px 9px;border-radius:9px;background:#eafaf3;color:#15976d;font-size:11px;font-weight:800}.bgStage{padding:22px;overflow:auto}.bgPreviewGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.previewCard{background:#fff;border:1px solid #e0e3e9;border-radius:14px;overflow:hidden}.previewTitle{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #eef0f3;font-size:12px;color:#596578}.previewTitle span{font-size:10px;color:#8992a1}.previewCanvas{min-height:470px;display:grid;place-items:center;padding:18px;background:#eef0f3}.originalPreview img{max-width:100%;max-height:430px;object-fit:contain;border-radius:10px;box-shadow:0 8px 24px rgba(20,30,45,.12)}.checker{background-color:#fff;background-image:linear-gradient(45deg,#eef0f4 25%,transparent 25%),linear-gradient(-45deg,#eef0f4 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eef0f4 75%),linear-gradient(-45deg,transparent 75%,#eef0f4 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}.previewStageInner{width:100%;height:100%;min-height:430px;display:grid;place-items:center}.previewStageInner img{max-width:100%;max-height:430px;object-fit:contain;border-radius:10px}.resultPlaceholder{display:flex;flex-direction:column;align-items:center;gap:10px;color:#788397;font-size:13px;text-align:center}.bgBottomBar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-top:18px;padding:14px 16px;background:#fff;border:1px solid #e1e4ea;border-radius:12px;flex-wrap:wrap}.bgBottomBar>div:first-child{display:flex;flex-direction:column;gap:4px}.bgBottomBar span{color:#8b93a2;font-size:11px}.bottomActions{display:flex;gap:8px;flex-wrap:wrap}.bgEmpty{min-height:620px;border:2px dashed #dbd6fb;border-radius:16px;display:grid;place-items:center;text-align:center;color:#7457eb;background:#fbfaff}.bgEmpty h3{margin:0;color:#293347;font-size:23px}.bgEmpty p{margin:0;color:#8791a2}.bgPrivacy{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 15px;border-top:1px solid #eceef3;background:#fbfbfd;color:#80899a;font-size:11px}@media(max-width:900px){.bgEditorBody{grid-template-columns:1fr}.bgSide{border-right:0;border-bottom:1px solid #e2e5eb}.bgPreviewGrid{grid-template-columns:1fr}}@media(max-width:560px){.bgStage{padding:12px}.previewCanvas{min-height:330px}.previewStageInner{min-height:290px}.bgBottomBar{align-items:flex-start}}
-
 `;
 
 function GlobalStyle() { return <style>{css}</style>; }
@@ -340,7 +337,7 @@ function App() {
       </div>
     </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
 
-    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user}/></ToolErrorBoundary> :
+    {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user}/></ToolErrorBoundary> :
       <>
         <section className="hero"><div className="heroInner">
           <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
@@ -409,9 +406,26 @@ function AuthModal({mode,setMode,close,onDone}) {
     }catch(e){setError(e.message)}finally{setBusy(false)}
   };
 
+  const googleSignIn = async () => {
+    setError(""); setMsg(""); setBusy(true);
+    try {
+      if(!supabase) throw new Error("Supabase is not configured.");
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin }
+      });
+      if(error) throw error;
+    } catch(e) {
+      setError(e?.message || "Google sign-in failed.");
+      setBusy(false);
+    }
+  };
+
   return <div className="modalBack" onMouseDown={close}><div className="modal" onMouseDown={e=>e.stopPropagation()}>
     <div className="modalHead"><div><div className="pill"><LockKeyhole size={13}/> Secure Auth</div><h2>{mode==="signup"?"Create your account":"Welcome back"}</h2></div><button className="iconBtn" onClick={close}><X size={17}/></button></div>
-    <div className="authTabs"><button className={mode==="signin"?"active":""} onClick={()=>{setMode("signin");setError("");setMsg("")}}>Sign in</button><button className={mode==="signup"?"active":""} onClick={()=>{setMode("signup");setError("");setMsg("")}}>Sign up</button></div>
+    <div className="authTabs"><button type="button" className={mode==="signin"?"active":""} onClick={()=>{setMode("signin");setError("");setMsg("")}}>Sign in</button><button type="button" className={mode==="signup"?"active":""} onClick={()=>{setMode("signup");setError("");setMsg("")}}>Sign up</button></div>
+    <button type="button" className="btn" disabled={busy} onClick={googleSignIn} style={{width:"100%",justifyContent:"center",marginBottom:12,fontWeight:800}}><span style={{fontWeight:900,fontSize:16}}>G</span> Continue with Google</button>
+    <div style={{display:"flex",alignItems:"center",gap:10,margin:"8px 0 12px",color:"#9299a8",fontSize:11}}><span style={{height:1,flex:1,background:"#e7e9f0"}}></span>OR<span style={{height:1,flex:1,background:"#e7e9f0"}}></span></div>
     <form onSubmit={submit}>
       {mode==="signup"&&<div className="formGrid"><div className="field"><label>Full name</label><input value={fullName} onChange={e=>setFullName(e.target.value)} required/></div><div className="field"><label>Username</label><input value={username} onChange={e=>setUsername(e.target.value)} required/></div></div>}
       <div className="field"><label>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></div>
@@ -498,6 +512,7 @@ function ToolPage({t,back,user}) {
   if(t[3]==="text-to-video") return <TextToVideo back={back} user={user}/>;
   if(t[3]==="edit-pdf") return <PdfEditorTool t={t} back={back}/>;
   if(t[1]==="PDF Tools") return <PdfTool t={t} back={back}/>;
+  if(t[3]==="background-remover") return <BackgroundRemoverTool t={t} back={back}/>;
   if(t[1]==="Image Tools") return <ImageTool t={t} back={back}/>;
   if(t[1]==="SEO & Marketing") return <SeoTool t={t} back={back}/>;
   return <GenericTool t={t} back={back}/>;
@@ -1037,207 +1052,144 @@ function PdfTool({t,back}) {
   </div><div className="panel"><h3>Selected files</h3>{files.map(f=><p key={f.name}>📄 {f.name} — {(f.size/1024).toFixed(1)} KB</p>)}</div></div></Shell>;
 }
 
-function ImageTool({t,back}) {
-  const id=t[3];
-  const [file,setFile]=useState(null);
-  const [originalUrl,setOriginalUrl]=useState("");
-  const [resultBlob,setResultBlob]=useState(null);
-  const [resultUrl,setResultUrl]=useState("");
-  const [busy,setBusy]=useState(false);
-  const [status,setStatus]=useState("");
-  const [activeTab,setActiveTab]=useState("cutout");
-  const [background,setBackground]=useState("transparent");
-  const [customBg,setCustomBg]=useState("#ffffff");
-  const [shadow,setShadow]=useState(true);
-  const [brightness,setBrightness]=useState(100);
-  const [contrast,setContrast]=useState(100);
-  const [saturation,setSaturation]=useState(100);
-  const [grayscale,setGrayscale]=useState(0);
-  const [blur,setBlur]=useState(0);
-  const [design,setDesign]=useState("auto");
-  const [fit,setFit]=useState("contain");
-  const [history,setHistory]=useState([]);
-  const [future,setFuture]=useState([]);
+function BackgroundRemoverTool({t,back}) {
+  const inputRef = useRef(null);
+  const [file,setFile] = useState(null);
+  const [originalUrl,setOriginalUrl] = useState("");
+  const [resultUrl,setResultUrl] = useState("");
+  const [resultBlob,setResultBlob] = useState(null);
+  const [busy,setBusy] = useState(false);
+  const [status,setStatus] = useState("Upload an image to start.");
+  const [tab,setTab] = useState("cutout");
+  const [bg,setBg] = useState("transparent");
+  const [bgColor,setBgColor] = useState("#ffffff");
+  const [effect,setEffect] = useState("none");
+  const [brightness,setBrightness] = useState(100);
+  const [contrast,setContrast] = useState(100);
+  const [saturation,setSaturation] = useState(100);
+  const [shadow,setShadow] = useState(false);
+  const [design,setDesign] = useState("original");
 
-  useEffect(()=>{
-    return ()=>{
-      if(originalUrl) URL.revokeObjectURL(originalUrl);
-      if(resultUrl) URL.revokeObjectURL(resultUrl);
-    };
-  },[originalUrl,resultUrl]);
+  useEffect(()=>()=>{ if(originalUrl) URL.revokeObjectURL(originalUrl); if(resultUrl) URL.revokeObjectURL(resultUrl); },[originalUrl,resultUrl]);
 
-  const chooseFile=(list)=>{
-    const f=list?.[0]||null;
-    if(!f) return;
-    if(!/^image\/(jpeg|png|webp)$/i.test(f.type)) return setStatus("Please upload JPG, PNG or WEBP.");
-    if(f.size>22*1024*1024) return setStatus("Maximum image size is 22 MB.");
-    if(originalUrl) URL.revokeObjectURL(originalUrl);
-    if(resultUrl) URL.revokeObjectURL(resultUrl);
-    setFile(f); setOriginalUrl(URL.createObjectURL(f)); setResultBlob(null); setResultUrl("");
-    setStatus("Image ready. Choose Cutout to remove the background."); setActiveTab("cutout");
-    setBrightness(100);setContrast(100);setSaturation(100);setGrayscale(0);setBlur(0);setBackground("transparent");setShadow(true);setDesign("auto");setFit("contain");
-    setHistory([]);setFuture([]);
-  };
-
-  const loadImg=(blob)=>new Promise((resolve,reject)=>{
-    const u=URL.createObjectURL(blob); const img=new Image();
-    img.onload=()=>{URL.revokeObjectURL(u);resolve(img)}; img.onerror=()=>{URL.revokeObjectURL(u);reject(new Error("Could not read image."))}; img.src=u;
+  const readImage = f => new Promise((resolve,reject)=>{
+    const u=URL.createObjectURL(f); const img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(u);resolve(img)}; img.onerror=reject; img.src=u;
   });
 
-  const snapshot=()=>({brightness,contrast,saturation,grayscale,blur,background,customBg,shadow,design,fit});
-  const restore=(x)=>{if(!x)return;setBrightness(x.brightness);setContrast(x.contrast);setSaturation(x.saturation);setGrayscale(x.grayscale);setBlur(x.blur);setBackground(x.background);setCustomBg(x.customBg);setShadow(x.shadow);setDesign(x.design);setFit(x.fit)};
-  const applySnapshot=()=>{setHistory(h=>[...h.slice(-19),snapshot()]);setFuture([])};
+  const upload = e => {
+    const f=e.target.files?.[0]; e.target.value="";
+    if(!f) return;
+    if(!/^image\/(png|jpe?g|webp)$/i.test(f.type)) {setStatus("Please upload PNG, JPG or WebP.");return;}
+    setFile(f); setOriginalUrl(URL.createObjectURL(f)); setResultUrl(""); setResultBlob(null); setStatus("Image ready. Click Cutout to remove the background."); setTab("cutout");
+  };
 
-  const removeBackground=async()=>{
-    if(!file) return setStatus("Please upload an image first.");
-    setBusy(true);setStatus("AI background removal starting… first run may take a little longer while the model loads.");
+  const doCutout = async () => {
+    if(!file) return setStatus("Upload an image first.");
+    setBusy(true); setStatus("AI cutout is processing… the first run can take longer while the model loads.");
     try{
       const mod=await loadLib("bg-remove");
-      const fn=mod.default||mod.removeBackground;
-      if(typeof fn!=="function") throw new Error("Background-removal engine could not be loaded.");
-      const blob=await fn(file,{model:"isnet_fp16",output:{format:"image/png",quality:.92,type:"foreground"},progress:(key,current,total)=>{
-        if(total) setStatus(`AI cutout: ${key} ${Math.round(current/total*100)}%`);
-      }});
-      if(resultUrl) URL.revokeObjectURL(resultUrl);
-      setResultBlob(blob);setResultUrl(URL.createObjectURL(blob));setActiveTab("background");setStatus("Background removed successfully. Choose Background, Effects, Adjust or Design.");
+      const removeBackground=mod.removeBackground || mod.default?.removeBackground || mod.default;
+      if(typeof removeBackground!=="function") throw new Error("Background-removal engine could not be loaded.");
+      const blob=await removeBackground(file,{model:"isnet_fp16",output:{format:"image/png",type:"foreground"}});
+      const u=URL.createObjectURL(blob); setResultUrl(u); setResultBlob(blob); setStatus("Background removed successfully. Use Background, Effects, Adjust or Design, then Apply.");
     }catch(e){
-      setStatus(`AI cutout failed: ${e?.message||String(e)}. You can still use the local editing tools below.`);
-    }finally{setBusy(false)}
+      setStatus(`AI cutout failed: ${e?.message||String(e)}. Use the local near-white cutout fallback below.`);
+      try{
+        const img=await readImage(file), c=document.createElement("canvas"), ctx=c.getContext("2d"); c.width=img.naturalWidth; c.height=img.naturalHeight; ctx.drawImage(img,0,0);
+        const data=ctx.getImageData(0,0,c.width,c.height); for(let i=0;i<data.data.length;i+=4){const r=data.data[i],g=data.data[i+1],b=data.data[i+2];if(r>238&&g>238&&b>238){data.data[i+3]=0;}}
+        ctx.putImageData(data,0,0); const blob=await new Promise(r=>c.toBlob(r,"image/png")); if(blob){const u=URL.createObjectURL(blob);setResultUrl(u);setResultBlob(blob);setStatus("Local fallback cutout completed. You can continue editing it.");}
+      }catch(fallbackErr){ setStatus(`Cutout failed: ${fallbackErr?.message||String(fallbackErr)}`); }
+    } finally {setBusy(false);}
   };
 
-  const sourceBlob=()=>resultBlob||file;
-
-  const renderOutput=async({hd=false}={})=>{
-    const src=sourceBlob(); if(!src) throw new Error("Upload an image first.");
-    const img=await loadImg(src);
-    const ow=img.naturalWidth, oh=img.naturalHeight;
-    let outW=ow,outH=oh;
-    if(design==="square"){const side=Math.max(600,Math.max(ow,oh));outW=side;outH=side}
-    if(design==="landscape"){outW=1600;outH=1000}
-    if(design==="portrait"){outW=1000;outH=1600}
-    if(!hd){const max=1600;const scale=Math.min(1,max/Math.max(outW,outH));outW=Math.max(1,Math.round(outW*scale));outH=Math.max(1,Math.round(outH*scale));}
-    const c=document.createElement("canvas");c.width=outW;c.height=outH;const ctx=c.getContext("2d");
-    const bg=background==="transparent"?null:background==="white"?"#fff":background==="black"?"#000":customBg;
-    if(bg){ctx.fillStyle=bg;ctx.fillRect(0,0,outW,outH)}
-    ctx.save();
-    ctx.filter=`brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) grayscale(${grayscale}%) blur(${blur}px)`;
-    const pad=design==="auto"?0:Math.round(Math.min(outW,outH)*.04);
-    const aw=outW-pad*2,ah=outH-pad*2;
-    let dw=aw,dh=ah,dx=pad,dy=pad;
-    if(fit==="contain"){
-      const scale=Math.min(aw/ow,ah/oh);dw=ow*scale;dh=oh*scale;dx=(outW-dw)/2;dy=(outH-dh)/2;
-    }else if(fit==="cover"){
-      const scale=Math.max(aw/ow,ah/oh);dw=ow*scale;dh=oh*scale;dx=(outW-dw)/2;dy=(outH-dh)/2;
-    }
-    if(shadow && resultBlob){ctx.shadowColor="rgba(0,0,0,.22)";ctx.shadowBlur=22;ctx.shadowOffsetY=9}
-    ctx.drawImage(img,dx,dy,dw,dh);ctx.restore();
-    const mime=background==="transparent"?"image/png":"image/jpeg";
-    return await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error("Could not create output image.")),mime,.92));
-  };
-
-  const downloadResult=async(hd=false)=>{
-    if(!sourceBlob()) return setStatus("Please upload an image first.");
-    setBusy(true);setStatus(hd?"Preparing HD download…":"Preparing download…");
+  const compose = async () => {
+    if(!file && !resultBlob) return setStatus("Upload an image first.");
+    setBusy(true); setStatus("Applying your image edits…");
     try{
-      const blob=await renderOutput({hd});
-      const ext=blob.type.includes("png")?"png":"jpg";
-      downloadBlob(blob,`${(file?.name||"image").replace(/\.[^.]+$/i,"")}-toolmaster.${ext}`);
-      setResultBlob(blob); if(resultUrl) URL.revokeObjectURL(resultUrl);setResultUrl(URL.createObjectURL(blob));
-      setStatus(hd?"HD image downloaded.":"Image downloaded.");
-    }catch(e){setStatus(e?.message||"Download failed.")}finally{setBusy(false)}
+      const sourceBlob=resultBlob||file;
+      const img=await readImage(sourceBlob);
+      const iw=img.naturalWidth, ih=img.naturalHeight;
+      let cw=iw, ch=ih;
+      if(design==="square"){ const side=Math.max(iw,ih); cw=ch=side; }
+      if(design==="portrait"){ const target=4/5; cw=Math.min(iw,Math.round(ih*target)); ch=Math.round(cw/target); }
+      if(design==="landscape"){ const target=16/9; ch=Math.min(ih,Math.round(iw/target)); cw=Math.round(ch*target); }
+      const c=document.createElement("canvas"); c.width=cw; c.height=ch;
+      const ctx=c.getContext("2d"); if(!ctx) throw new Error("Canvas is not available.");
+      const cropScale=Math.min(cw/iw,ch/ih);
+      const drawW=iw*cropScale, drawH=ih*cropScale;
+      const dx=(cw-drawW)/2, dy=(ch-drawH)/2;
+      if(bg==="white"){ctx.fillStyle="#fff";ctx.fillRect(0,0,cw,ch);} else if(bg==="black"){ctx.fillStyle="#000";ctx.fillRect(0,0,cw,ch);} else if(bg==="color"){ctx.fillStyle=bgColor;ctx.fillRect(0,0,cw,ch);} else if(design!=="original"){ctx.clearRect(0,0,cw,ch);}
+      ctx.save();
+      ctx.filter=`brightness(${Number(brightness)||100}%) contrast(${Number(contrast)||100}%) saturate(${Number(saturation)||100}%) ${effect==="grayscale"?"grayscale(100%)":""} ${effect==="blur"?"blur(1px)":""}`;
+      if(shadow){ctx.shadowColor="rgba(0,0,0,.25)";ctx.shadowBlur=Math.max(12,cw*0.02);ctx.shadowOffsetY=Math.max(5,ch*0.015);}
+      if(design==="original"){ctx.drawImage(img,0,0,iw,ih);} else if(design==="contain"){ctx.drawImage(img,dx,dy,drawW,drawH);} else {ctx.drawImage(img,dx,dy,drawW,drawH);}
+      ctx.restore();
+      const blob=await new Promise(r=>c.toBlob(r,"image/png"));
+      if(!blob) throw new Error("Could not create edited PNG.");
+      if(resultUrl) URL.revokeObjectURL(resultUrl);
+      const u=URL.createObjectURL(blob); setResultUrl(u); setResultBlob(blob); setStatus("Changes applied successfully.");
+    }catch(e){setStatus(e?.message||"Could not apply image changes.");}
+    finally{setBusy(false);}
   };
 
-  const applyEdits=async()=>{
-    if(!sourceBlob()) return setStatus("Please upload an image first.");
-    setBusy(true);setStatus("Applying edits…");
-    try{
-      const blob=await renderOutput({hd:true});
-      if(resultUrl) URL.revokeObjectURL(resultUrl);setResultBlob(blob);setResultUrl(URL.createObjectURL(blob));
-      applySnapshot(); setStatus("Changes applied. Use Download or Download HD.");
-    }catch(e){setStatus(e?.message||"Could not apply edits.")}finally{setBusy(false)}
+  const download = (hd=false) => {
+    if(!resultBlob) return setStatus("Create a cutout or apply changes first.");
+    downloadBlob(resultBlob,hd?"toolmaster-background-remover-hd.png":"toolmaster-background-remover.png");
+    setStatus(hd?"HD PNG downloaded.":"PNG downloaded.");
   };
 
-  const runBasic=async()=>{
-    if(!file) return setStatus("Please upload an image first.");
-    if(id==="background-remover") return removeBackground();
-    setBusy(true);setStatus("Processing image…");
-    try{
-      const img=await loadImg(file); const c=document.createElement("canvas"); const ctx=c.getContext("2d");
-      let ow=img.naturalWidth,oh=img.naturalHeight;
-      if(id==="image-resizer"){c.width=1200;c.height=800;ctx.drawImage(img,0,0,c.width,c.height)}
-      else if(id==="image-cropper"){const target=1;let cw=ow,ch=oh;if(ow/oh>target)cw=oh;else ch=ow;const sx=(ow-cw)/2,sy=(oh-ch)/2;c.width=Math.round(cw);c.height=Math.round(ch);ctx.drawImage(img,sx,sy,cw,ch,0,0,c.width,c.height)}
-      else {c.width=ow;c.height=oh;ctx.drawImage(img,0,0)}
-      const outType=id==="png-jpg"||id==="image-compressor"?"image/jpeg":id==="webp-converter"?"image/webp":"image/png";
-      const ext=outType.split("/")[1].replace("jpeg","jpg");const blob=await new Promise(r=>c.toBlob(r,outType,.8));downloadBlob(blob,`${file.name.replace(/\.[^.]+$/i,"")}.${ext}`);setStatus("Image downloaded.");
-    }catch(e){setStatus(e?.message||"Image processing failed.")}finally{setBusy(false)}
-  };
-
-  const undo=()=>{if(!history.length)return;const current=snapshot();const prev=history[history.length-1];setHistory(h=>h.slice(0,-1));setFuture(f=>[current,...f.slice(0,19)]);restore(prev);setStatus("Undid the last applied change.")};
-  const redo=()=>{if(!future.length)return;const current=snapshot();const next=future[0];setFuture(f=>f.slice(1));setHistory(h=>[...h.slice(-19),current]);restore(next);setStatus("Redid the change.")};
-  const tabs=["cutout","background","effects","adjust","design"];
-
-  if(id!=="background-remover"){
-    return (
-      <Shell back={back} t={t} status={status}>
-        <div className="workspace">
-          <div className="panel">
-            <FilePicker accept="image/*" onChange={chooseFile} files={file ? [file] : []}/>
-            {id==="image-resizer" && <p style={{color:"#8395ae",fontSize:12}}>Resize mode uses a safe 1200×800 export. Use the advanced Background Remover for full editing controls.</p>}
-            <button className="btn primary" disabled={busy || !file} onClick={runBasic}>
-              {busy ? <RefreshCw/> : <Download/>}
-              {busy ? "Processing..." : "Process & Download"}
-            </button>
-          </div>
-          <div className="panel">
-            <h3>{file ? file.name : "No image selected"}</h3>
-            {file && <img src={originalUrl} alt="preview" style={{width:"100%",maxHeight:420,objectFit:"contain",borderRadius:12,background:"#f4f5f7"}}/>}
-          </div>
-        </div>
-      </Shell>
-    );
-  }
+  const Tab = ({id,icon,label}) => <button type="button" className={tab===id?"btn primary":"btn"} onClick={()=>setTab(id)}>{icon} {label}</button>;
 
   return <Shell back={back} t={t} status={status}>
-    <div className="bgRemoveApp">
-      <div className="bgRemoveHeader">
-        <div><h2>Remove Image Background</h2><p>Upload an image and edit the cutout with professional controls.</p></div>
-        <div className="bgHeaderActions">
-          <button className="btn" onClick={undo} disabled={!history.length}><History size={16}/> Undo</button>
-          <button className="btn" onClick={redo} disabled={!future.length}><History size={16}/> Redo</button>
-          <button className="btn" onClick={()=>downloadResult(false)} disabled={busy||!sourceBlob()}><Download size={16}/> Download</button>
-          <button className="btn primary" onClick={()=>downloadResult(true)} disabled={busy||!sourceBlob()}><Download size={16}/> Download HD</button>
-        </div>
+    <div className="bgRemoveShell" style={{border:"1px solid #e4e6ed",borderRadius:18,background:"#fff",boxShadow:"var(--shadow)",overflow:"hidden"}}>
+      <div style={{padding:18,borderBottom:"1px solid #eceef4",display:"flex",justifyContent:"space-between",gap:12,flexWrap:"wrap",alignItems:"center"}}>
+        <div><h2 style={{margin:0}}>AI Background Remover</h2><p style={{margin:"6px 0 0",color:"#8790a2"}}>Remove, replace and refine image backgrounds in one workspace.</p></div>
+        <div className="actions"><button type="button" className="btn" onClick={()=>inputRef.current?.click()}><Upload size={16}/> {file?"Replace image":"Upload image"}</button><input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={upload} style={{display:"none"}}/><button type="button" className="btn primary" disabled={!resultBlob||busy} onClick={()=>download(false)}><Download size={16}/> Download</button><button type="button" className="btn" disabled={!resultBlob||busy} onClick={()=>download(true)}><Download size={16}/> Download HD</button></div>
       </div>
-      <div className="bgToolbar">
-        {tabs.map(tab=><button key={tab} className={`bgToolBtn ${activeTab===tab?"active":""}`} onClick={()=>setActiveTab(tab)}>
-          {tab==="cutout"?<Sparkles size={17}/>:tab==="background"?<ImageIcon size={17}/>:tab==="effects"?<Star size={17}/>:tab==="adjust"?<Settings size={17}/>:<LayoutDashboard size={17}/>}<span>{tab[0].toUpperCase()+tab.slice(1)}</span>
-        </button>)}
-        <div className="spacer"/>
-        <button className="btn primary" onClick={applyEdits} disabled={busy||!sourceBlob()}>{busy?<RefreshCw className="spin"/>:<Check size={16}/>} Apply Changes</button>
-      </div>
-      <div className="bgEditorBody">
-        <aside className="bgSide">
-          <div className="uploadCard"><FilePicker accept="image/jpeg,image/png,image/webp" onChange={chooseFile} files={file?[file]:[]}/><small>JPG, PNG, WEBP · Max 22MB</small></div>
-          {!file&&<div className="sideHint">Upload an image to start.</div>}
-          {activeTab==="cutout"&&<div className="sideSection"><h3>Cutout</h3><p>AI removes the background from people, products and common objects.</p><button className="btn primary full" disabled={!file||busy} onClick={removeBackground}><Sparkles size={16}/> {busy?"Removing…":"Remove Background"}</button>{resultBlob&&<div className="successBadge"><CheckCircle2 size={15}/> Cutout ready</div>}</div>}
-          {activeTab==="background"&&<div className="sideSection"><h3>Background</h3><p>Choose what should appear behind the cutout.</p><label>Background<select value={background} onChange={e=>setBackground(e.target.value)}><option value="transparent">Transparent</option><option value="white">White</option><option value="black">Black</option><option value="custom">Custom color</option></select></label>{background==="custom"&&<label>Custom color<input type="color" value={customBg} onChange={e=>setCustomBg(e.target.value)}/></label>}<label className="checkRow"><input type="checkbox" checked={shadow} onChange={e=>setShadow(e.target.checked)}/> Add soft shadow</label></div>}
-          {activeTab==="effects"&&<div className="sideSection"><h3>Effects</h3><label>Blur<input type="range" min="0" max="8" step="1" value={blur} onChange={e=>setBlur(Number(e.target.value))}/></label><label>Grayscale<input type="range" min="0" max="100" value={grayscale} onChange={e=>setGrayscale(Number(e.target.value))}/></label><label className="checkRow"><input type="checkbox" checked={shadow} onChange={e=>setShadow(e.target.checked)}/> Soft shadow</label></div>}
-          {activeTab==="adjust"&&<div className="sideSection"><h3>Adjust</h3><label>Brightness<input type="range" min="60" max="140" value={brightness} onChange={e=>setBrightness(Number(e.target.value))}/><span>{brightness}%</span></label><label>Contrast<input type="range" min="60" max="140" value={contrast} onChange={e=>setContrast(Number(e.target.value))}/><span>{contrast}%</span></label><label>Saturation<input type="range" min="0" max="160" value={saturation} onChange={e=>setSaturation(Number(e.target.value))}/><span>{saturation}%</span></label></div>}
-          {activeTab==="design"&&<div className="sideSection"><h3>Design</h3><label>Canvas<select value={design} onChange={e=>setDesign(e.target.value)}><option value="auto">Original size</option><option value="square">Square</option><option value="landscape">Landscape</option><option value="portrait">Portrait</option></select></label><label>Fit<select value={fit} onChange={e=>setFit(e.target.value)}><option value="contain">Contain</option><option value="cover">Cover</option></select></label></div>}
-        </aside>
-        <section className="bgStage">
-          {!file?<div className="bgEmpty"><Upload size={44}/><h3>Upload Image</h3><p>Drop an image here or use the upload button.</p></div>:<>
-            <div className="bgPreviewGrid">
-              <div className="previewCard"><div className="previewTitle"><b>Original</b><span>{file.type.split("/")[1].toUpperCase()}</span></div><div className="previewCanvas originalPreview"><img src={originalUrl} alt="Original"/></div></div>
-              <div className="previewCard"><div className="previewTitle"><b>{resultBlob?"Removed Background":"Preview"}</b><span>{resultBlob?"PNG":"Ready"}</span></div><div className="previewCanvas checker"><div className="previewStageInner">{resultUrl?<img src={resultUrl} alt="Result" style={{filter:`brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) grayscale(${grayscale}%) blur(${blur}px)`}}/>:<div className="resultPlaceholder"><Sparkles size={28}/><span>{busy?"Processing…":"Press Remove Background"}</span></div>}</div></div></div>
+      {file ? <>
+        <div style={{display:"flex",gap:8,padding:12,borderBottom:"1px solid #eceef4",overflow:"auto"}}><Tab id="cutout" label="Cutout"/><Tab id="background" label="Background"/><Tab id="effect" label="Effect"/><Tab id="adjust" label="Adjust"/><Tab id="design" label="Design"/><button type="button" className="btn primary" disabled={busy} onClick={compose}>Apply Changes</button></div>
+        <div className="workspace" style={{gridTemplateColumns:"320px 1fr"}}>
+          <div className="panel">
+            {tab==="cutout" && <><h3>Cutout</h3><p>Use AI for complex photos. A local fallback is used if the AI model cannot load.</p><button type="button" className="btn primary" disabled={busy} onClick={doCutout}>{busy?"Processing…":"Remove Background"}</button></>}
+            {tab==="background" && <><h3>Background</h3><label>Mode<select value={bg} onChange={e=>setBg(e.target.value)}><option value="transparent">Transparent</option><option value="white">White</option><option value="black">Black</option><option value="color">Custom Color</option></select></label>{bg==="color"&&<label>Color<input type="color" value={bgColor} onChange={e=>setBgColor(e.target.value)}/></label>}</>}
+            {tab==="effect" && <><h3>Effect</h3><label>Filter<select value={effect} onChange={e=>setEffect(e.target.value)}><option value="none">None</option><option value="grayscale">Grayscale</option><option value="blur">Soft Blur</option></select></label><label style={{display:"flex",alignItems:"center",gap:8,marginTop:12}}><input type="checkbox" checked={shadow} onChange={e=>setShadow(e.target.checked)}/> Soft shadow</label></>}
+            {tab==="adjust" && <><h3>Adjust</h3><label>Brightness<input type="range" min="50" max="150" value={brightness} onChange={e=>setBrightness(e.target.value)}/></label><label>Contrast<input type="range" min="50" max="160" value={contrast} onChange={e=>setContrast(e.target.value)}/></label><label>Saturation<input type="range" min="0" max="180" value={saturation} onChange={e=>setSaturation(e.target.value)}/></label></>}
+            {tab==="design" && <><h3>Design</h3><p>Choose the output canvas. Changes take effect after Apply Changes.</p><label>Canvas<select value={design} onChange={e=>setDesign(e.target.value)}><option value="original">Original</option><option value="square">Square 1:1</option><option value="portrait">Portrait 4:5</option><option value="landscape">Landscape 16:9</option><option value="contain">Contain</option></select></label><button type="button" className="btn" style={{marginTop:10}} onClick={()=>setBg("transparent")}>Transparent canvas</button></>}
+          </div>
+          <div className="panel" style={{background:"linear-gradient(45deg,#f3f4f7 25%,#fff 25%,#fff 50%,#f3f4f7 50%,#f3f4f7 75%,#fff 75%)",backgroundSize:"24px 24px",minHeight:480,display:"grid",placeItems:"center"}}>
+            <div style={{width:"min(620px,100%)",padding:18,background:"rgba(255,255,255,.72)",borderRadius:16}}>
+              {resultUrl ? <img src={resultUrl} alt="Processed result" style={{display:"block",maxWidth:"100%",maxHeight:540,margin:"auto",objectFit:"contain"}}/> : <img src={originalUrl} alt="Original" style={{display:"block",maxWidth:"100%",maxHeight:540,margin:"auto",objectFit:"contain"}}/>}
             </div>
-            <div className="bgBottomBar"><div><b>{resultBlob?"Cutout ready":"Image uploaded"}</b><span>{resultBlob?"Use the tools on the left, then Apply Changes.":"AI removal works locally in your browser after the model loads."}</span></div><div className="bottomActions"><button className="btn" onClick={()=>setActiveTab("cutout")}><Sparkles size={15}/> Cutout</button><button className="btn" onClick={()=>setActiveTab("background")}><ImageIcon size={15}/> Background</button><button className="btn" onClick={()=>downloadResult(false)} disabled={busy||!sourceBlob()}><Download size={15}/> Download</button></div></div>
-          </>}
-        </section>
-      </div>
-      <div className="bgPrivacy"><ShieldCheck size={15}/> Images are processed in your browser when the local AI model is available. The first AI run downloads and caches model assets.</div>
+          </div>
+        </div>
+      </> : <div style={{padding:50,textAlign:"center"}}><div className="pdfUploadIcon" style={{margin:"0 auto 16px"}}><ImageIcon size={32}/></div><h3>Upload an image</h3><p style={{color:"#8590a2"}}>PNG, JPG or WebP · Use Cutout to remove the background.</p><button type="button" className="btn primary" onClick={()=>inputRef.current?.click()}><Upload size={16}/> Choose image</button></div>}
     </div>
   </Shell>;
+}
+
+function ImageTool({t,back}) {
+  const id=t[3];const [files,setFiles]=useState([]);const [busy,setBusy]=useState(false);const [status,setStatus]=useState("");const [w,setW]=useState(1200),[h,setH]=useState(800),[quality,setQuality]=useState(.75),[crop,setCrop]=useState("1:1");
+  const run=async()=>{
+    if(!files.length)return setStatus("Please upload an image.");setBusy(true);setStatus("");
+    try{
+      const file=files[0]; if(id==="image-text"){setStatus("Running browser OCR...");const {createWorker}=await loadLib("tesseract");const worker=await createWorker("eng");const {data}=await worker.recognize(file);await worker.terminate();downloadText(data.text.trim()||"No text found.","ocr-result.txt");setStatus("OCR complete. Text file downloaded.");return}
+      const img=await loadImage(file),c=document.createElement("canvas"),ctx=c.getContext("2d");let ow=img.naturalWidth,oh=img.naturalHeight;
+      if(id==="image-resizer"){c.width=Number(w)||ow;c.height=Number(h)||oh;ctx.drawImage(img,0,0,c.width,c.height)}
+      else if(id==="image-cropper"){const [rw,rh]=crop.split(":").map(Number);const target=rw/rh;let cw=ow,ch=oh;if(ow/oh>target)cw=oh*target;else ch=ow/target;const sx=(ow-cw)/2,sy=(oh-ch)/2;c.width=Math.round(cw);c.height=Math.round(ch);ctx.drawImage(img,sx,sy,cw,ch,0,0,c.width,c.height)}
+      else if(id==="background-remover"){c.width=ow;c.height=oh;const image=ctx.createImageData(ow,oh);const temp=document.createElement("canvas");temp.width=ow;temp.height=oh;temp.getContext("2d").drawImage(img,0,0);const source=temp.getContext("2d").getImageData(0,0,ow,oh);for(let i=0;i<source.data.length;i+=4){const r=source.data[i],g=source.data[i+1],b=source.data[i+2];if(r>235&&g>235&&b>235||Math.max(r,g,b)-Math.min(r,g,b)<9&&r>220)source.data[i+3]=0}image.data.set(source.data);ctx.putImageData(image,0,0)}
+      else {c.width=ow;c.height=oh;ctx.drawImage(img,0,0)}
+      let type="image/png",name=file.name.replace(/\.[^.]+$/,"")+".png";if(id==="png-jpg"||id==="image-compressor"){type="image/jpeg";name=file.name.replace(/\.[^.]+$/,"")+".jpg"}if(id==="webp-converter"){type="image/webp";name=file.name.replace(/\.[^.]+$/,"")+".webp"}if(id==="jpg-png")type="image/png";
+      const blob=await new Promise(r=>c.toBlob(r,type,Number(quality)));downloadBlob(blob,name);setStatus("Image downloaded.");
+    }catch(e){setStatus(e.message||"Image processing failed.")}finally{setBusy(false)}
+  };
+  const loadImage=file=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>{URL.revokeObjectURL(i.src);res(i)};i.onerror=rej;i.src=URL.createObjectURL(file)});
+  return <Shell back={back} t={t} status={status}><div className="workspace"><div className="panel"><FilePicker accept="image/*" onChange={setFiles} files={files}/>
+    {id==="image-resizer"&&<div className="videoOptions"><label>Width<input type="number" value={w} onChange={e=>setW(e.target.value)}/></label><label>Height<input type="number" value={h} onChange={e=>setH(e.target.value)}/></label></div>}
+    {id==="image-cropper"&&<label>Aspect ratio<select value={crop} onChange={e=>setCrop(e.target.value)}><option>1:1</option><option>4:3</option><option>16:9</option><option>3:4</option><option>9:16</option></select></label>}
+    {id==="image-compressor"&&<label>Quality<input type="range" min=".2" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
+    <button className="btn primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw/>:<Download/>}{busy?"Processing...":id==="image-text"?"Extract Text":"Process & Download"}</button>
+  </div><div className="panel">{files.map(f=><p key={f.name}>🖼️ {f.name}</p>)}<p style={{color:"#8395ae",fontSize:12}}>Image Background Remover uses a simple local near-white background algorithm; complex photos need a dedicated AI model.</p></div></div></Shell>;
 }
 
 function SeoTool({t, back}) {
@@ -1258,6 +1210,7 @@ function SeoTool({t, back}) {
   const [out, setOut] = useState("");
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
+  const [qrPreview, setQrPreview] = useState("");
 
   const makeSeoUrl = () => {
     const raw = url.trim();
@@ -1338,15 +1291,18 @@ function SeoTool({t, back}) {
         setOut(u.toString());
       } else if (id === "qr-generator") {
         if (!text.trim()) throw new Error("Enter text or a URL for the QR code.");
-        const QRCode = await loadLib("qrcode");
+        const QRCodeModule = await loadLib("qrcode");
+        const QRCode = QRCodeModule.default || QRCodeModule;
+        if(typeof QRCode.toDataURL !== "function" && typeof QRCode.toCanvas !== "function") throw new Error("QR code library is unavailable.");
         const canvas = document.createElement("canvas");
-        await QRCode.toCanvas(canvas, text.trim(), { width: 640, margin: 3, errorCorrectionLevel: "M" });
-        canvas.toBlob(blob => {
-          if (!blob) { setStatus("QR image could not be created."); return; }
-          downloadBlob(blob, "toolmaster-qr.png");
-          setStatus("QR code generated and downloaded.");
-        }, "image/png");
-        setOut("QR code generated successfully. The PNG download has started.");
+        if(typeof QRCode.toCanvas === "function") await QRCode.toCanvas(canvas, text.trim(), { width: 640, margin: 4, errorCorrectionLevel: "H", color: { dark: "#111827", light: "#ffffff" } });
+        else { const dataUrl=await QRCode.toDataURL(text.trim(), {width:640,margin:4,errorCorrectionLevel:"H"}); const img=new Image(); await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=dataUrl}); canvas.width=img.width;canvas.height=img.height;canvas.getContext("2d").drawImage(img,0,0); }
+        const dataUrl=canvas.toDataURL("image/png");
+        setQrPreview(dataUrl);
+        const blob=await (await fetch(dataUrl)).blob();
+        downloadBlob(blob, "toolmaster-qr.png");
+        setOut("QR code generated successfully. Scan the preview or use the downloaded PNG.");
+        setStatus("QR code generated successfully.");
       } else if (id === "barcode") {
         if (!text.trim()) throw new Error("Enter a value for the barcode.");
         const JsBarcodeModule = await loadLib("jsbarcode");
@@ -1393,7 +1349,7 @@ function SeoTool({t, back}) {
   const clear = () => {
     setText(""); setTitle(""); setDescription(""); setUrl(""); setImageUrl(""); setKeyword("");
     setUtmBase(""); setUtmSource(""); setUtmMedium(""); setUtmCampaign(""); setUtmTerm(""); setUtmContent("");
-    setFile(null); setOut(""); setStatus("");
+    setFile(null); setOut(""); setQrPreview(""); setStatus("");
   };
 
   const commonFields = id === "meta-tags" || id === "open-graph" || id === "schema";
@@ -1439,10 +1395,12 @@ function SeoTool({t, back}) {
       </div>
       <div className="panel">
         <label>Result</label>
+        {id === "qr-generator" && qrPreview && <div style={{display:"grid",placeItems:"center",padding:18,border:"1px solid #e4e6ed",borderRadius:14,background:"#fff",marginBottom:12}}><img src={qrPreview} alt="Generated QR code" style={{width:"min(340px,100%)",height:"auto",imageRendering:"pixelated"}}/><div style={{marginTop:8,color:"#7f8999",fontSize:12}}>Scan the QR code with a phone camera to verify the destination.</div></div>}
         <textarea value={out} readOnly placeholder="Generated SEO result will appear here..." style={{minHeight:320}} />
         <div className="actions">
           <button className="btn" disabled={!out} onClick={() => navigator.clipboard?.writeText(out)}><Copy/> Copy</button>
           <button className="btn" disabled={!out} onClick={download}><Download/> Download</button>
+          {id === "qr-generator" && qrPreview && <button className="btn primary" onClick={async()=>{const blob=await (await fetch(qrPreview)).blob();downloadBlob(blob,"toolmaster-qr.png");setStatus("QR PNG downloaded.")}}><Download/> Download QR</button>}
         </div>
       </div>
     </div>
