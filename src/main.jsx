@@ -1058,112 +1058,270 @@ function BackgroundRemoverTool({t,back}) {
   const [originalUrl,setOriginalUrl] = useState("");
   const [resultUrl,setResultUrl] = useState("");
   const [resultBlob,setResultBlob] = useState(null);
+  const [cutoutBlob,setCutoutBlob] = useState(null);
   const [busy,setBusy] = useState(false);
   const [status,setStatus] = useState("Upload an image to start.");
   const [tab,setTab] = useState("cutout");
-  const [bg,setBg] = useState("transparent");
+  const [bgMode,setBgMode] = useState("transparent");
   const [bgColor,setBgColor] = useState("#ffffff");
+  const [bgImage,setBgImage] = useState("");
+  const [bgCategory,setBgCategory] = useState("photo");
   const [effect,setEffect] = useState("none");
   const [brightness,setBrightness] = useState(100);
   const [contrast,setContrast] = useState(100);
   const [saturation,setSaturation] = useState(100);
   const [shadow,setShadow] = useState(false);
   const [design,setDesign] = useState("original");
+  const [lastCutoutReady,setLastCutoutReady] = useState(false);
 
-  useEffect(()=>()=>{ if(originalUrl) URL.revokeObjectURL(originalUrl); if(resultUrl) URL.revokeObjectURL(resultUrl); },[originalUrl,resultUrl]);
+  const photoBackgrounds = [
+    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1510784722466-f2aa9c52db6c?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1526481280695-3c687fd643ed?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=85"
+  ];
+
+  const colorBackgrounds = ["#ffffff","#f3f4f6","#111827","#000000","#fde68a","#fecdd3","#bfdbfe","#c7d2fe","#bbf7d0","#ddd6fe"];
+
+  useEffect(()=>()=>{
+    if(originalUrl) URL.revokeObjectURL(originalUrl);
+    if(resultUrl) URL.revokeObjectURL(resultUrl);
+  },[originalUrl,resultUrl]);
 
   const readImage = f => new Promise((resolve,reject)=>{
     const u=URL.createObjectURL(f); const img=new Image();
-    img.onload=()=>{URL.revokeObjectURL(u);resolve(img)}; img.onerror=reject; img.src=u;
+    img.onload=()=>{URL.revokeObjectURL(u);resolve(img)};
+    img.onerror=reject; img.src=u;
   });
 
-  const upload = e => {
-    const f=e.target.files?.[0]; e.target.value="";
-    if(!f) return;
-    if(!/^image\/(png|jpe?g|webp)$/i.test(f.type)) {setStatus("Please upload PNG, JPG or WebP.");return;}
-    setFile(f); setOriginalUrl(URL.createObjectURL(f)); setResultUrl(""); setResultBlob(null); setStatus("Image ready. Click Cutout to remove the background."); setTab("cutout");
+  const readSourceImage = src => new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.crossOrigin="anonymous";
+    img.onload=()=>resolve(img);
+    img.onerror=()=>reject(new Error("Background image could not be loaded."));
+    img.src=src;
+  });
+
+  const setNewResult = blob => {
+    if(!blob) return;
+    if(resultUrl) URL.revokeObjectURL(resultUrl);
+    const u=URL.createObjectURL(blob);
+    setResultUrl(u);
+    setResultBlob(blob);
   };
 
-  const doCutout = async () => {
-    if(!file) return setStatus("Upload an image first.");
-    setBusy(true); setStatus("AI cutout is processing… the first run can take longer while the model loads.");
+  const doCutout = async (sourceFile=file) => {
+    if(!sourceFile) return setStatus("Upload an image first.");
+    setBusy(true);
+    setStatus("Removing background automatically…");
     try{
       const mod=await loadLib("bg-remove");
       const removeBackground=mod.removeBackground || mod.default?.removeBackground || mod.default;
       if(typeof removeBackground!=="function") throw new Error("Background-removal engine could not be loaded.");
-      const blob=await removeBackground(file,{model:"isnet_fp16",output:{format:"image/png",type:"foreground"}});
-      const u=URL.createObjectURL(blob); setResultUrl(u); setResultBlob(blob); setStatus("Background removed successfully. Use Background, Effects, Adjust or Design, then Apply.");
+      const blob=await removeBackground(sourceFile,{model:"isnet_fp16",output:{format:"image/png",type:"foreground"}});
+      setCutoutBlob(blob);
+      setNewResult(blob);
+      setLastCutoutReady(true);
+      setStatus("Background removed automatically. Choose a background or download the transparent PNG.");
     }catch(e){
-      setStatus(`AI cutout failed: ${e?.message||String(e)}. Use the local near-white cutout fallback below.`);
       try{
-        const img=await readImage(file), c=document.createElement("canvas"), ctx=c.getContext("2d"); c.width=img.naturalWidth; c.height=img.naturalHeight; ctx.drawImage(img,0,0);
-        const data=ctx.getImageData(0,0,c.width,c.height); for(let i=0;i<data.data.length;i+=4){const r=data.data[i],g=data.data[i+1],b=data.data[i+2];if(r>238&&g>238&&b>238){data.data[i+3]=0;}}
-        ctx.putImageData(data,0,0); const blob=await new Promise(r=>c.toBlob(r,"image/png")); if(blob){const u=URL.createObjectURL(blob);setResultUrl(u);setResultBlob(blob);setStatus("Local fallback cutout completed. You can continue editing it.");}
-      }catch(fallbackErr){ setStatus(`Cutout failed: ${fallbackErr?.message||String(fallbackErr)}`); }
-    } finally {setBusy(false);}
+        const img=await readImage(sourceFile), c=document.createElement("canvas"), ctx=c.getContext("2d");
+        c.width=img.naturalWidth; c.height=img.naturalHeight; ctx.drawImage(img,0,0);
+        const data=ctx.getImageData(0,0,c.width,c.height);
+        for(let i=0;i<data.data.length;i+=4){
+          const r=data.data[i],g=data.data[i+1],b=data.data[i+2];
+          if((r>238&&g>238&&b>238) || (Math.max(r,g,b)-Math.min(r,g,b)<9&&r>220)) data.data[i+3]=0;
+        }
+        ctx.putImageData(data,0,0);
+        const blob=await new Promise(r=>c.toBlob(r,"image/png"));
+        if(!blob) throw new Error("Fallback cutout could not create PNG.");
+        setCutoutBlob(blob);
+        setNewResult(blob);
+        setLastCutoutReady(true);
+        setStatus("AI model was unavailable, so a local light-background fallback was used.");
+      }catch(fallbackErr){
+        setStatus(`Background removal failed: ${fallbackErr?.message||String(e)}`);
+      }
+    }finally{setBusy(false);}
   };
 
-  const compose = async () => {
-    if(!file && !resultBlob) return setStatus("Upload an image first.");
-    setBusy(true); setStatus("Applying your image edits…");
+  const upload = e => {
+    const f=e.target.files?.[0];
+    e.target.value="";
+    if(!f) return;
+    if(!/^image\/(png|jpe?g|webp)$/i.test(f.type)) { setStatus("Please upload PNG, JPG or WebP."); return; }
+    if(originalUrl) URL.revokeObjectURL(originalUrl);
+    if(resultUrl) URL.revokeObjectURL(resultUrl);
+    setFile(f);
+    setOriginalUrl(URL.createObjectURL(f));
+    setResultUrl("");
+    setResultBlob(null);
+    setCutoutBlob(null);
+    setLastCutoutReady(false);
+    setBgMode("transparent");
+    setBgImage("");
+    setBgCategory("photo");
+    setTab("cutout");
+    doCutout(f);
+  };
+
+  const renderComposite = async (overrides={}) => {
+    if(!file && !resultBlob && !cutoutBlob) return setStatus("Upload an image first.");
+    setBusy(true);
+    setStatus("Applying your image edits…");
     try{
-      const sourceBlob=resultBlob||file;
+      const sourceBlob=cutoutBlob||resultBlob||file;
       const img=await readImage(sourceBlob);
       const iw=img.naturalWidth, ih=img.naturalHeight;
-      let cw=iw, ch=ih;
-      if(design==="square"){ const side=Math.max(iw,ih); cw=ch=side; }
-      if(design==="portrait"){ const target=4/5; cw=Math.min(iw,Math.round(ih*target)); ch=Math.round(cw/target); }
-      if(design==="landscape"){ const target=16/9; ch=Math.min(ih,Math.round(iw/target)); cw=Math.round(ch*target); }
-      const c=document.createElement("canvas"); c.width=cw; c.height=ch;
+      const nextBgMode=overrides.bgMode ?? bgMode;
+      const nextBgColor=overrides.bgColor ?? bgColor;
+      const nextBgImage=overrides.bgImage ?? bgImage;
+      const nextDesign=overrides.design ?? design;
+      const nextEffect=overrides.effect ?? effect;
+      const nextBrightness=Number(overrides.brightness ?? brightness) || 100;
+      const nextContrast=Number(overrides.contrast ?? contrast) || 100;
+      const nextSaturation=Number(overrides.saturation ?? saturation) || 100;
+      const nextShadow=overrides.shadow ?? shadow;
+      let cw=iw,ch=ih;
+      if(nextDesign==="square"){const side=Math.max(iw,ih);cw=ch=side;}
+      if(nextDesign==="portrait"){const target=4/5;cw=Math.min(iw,Math.round(ih*target));ch=Math.round(cw/target);}
+      if(nextDesign==="landscape"){const target=16/9;ch=Math.min(ih,Math.round(iw/target));cw=Math.round(ch*target);}
+      const c=document.createElement("canvas"); c.width=Math.max(1,Math.round(cw)); c.height=Math.max(1,Math.round(ch));
       const ctx=c.getContext("2d"); if(!ctx) throw new Error("Canvas is not available.");
-      const cropScale=Math.min(cw/iw,ch/ih);
-      const drawW=iw*cropScale, drawH=ih*cropScale;
-      const dx=(cw-drawW)/2, dy=(ch-drawH)/2;
-      if(bg==="white"){ctx.fillStyle="#fff";ctx.fillRect(0,0,cw,ch);} else if(bg==="black"){ctx.fillStyle="#000";ctx.fillRect(0,0,cw,ch);} else if(bg==="color"){ctx.fillStyle=bgColor;ctx.fillRect(0,0,cw,ch);} else if(design!=="original"){ctx.clearRect(0,0,cw,ch);}
+      const cropScale=Math.min(cw/iw,ch/ih), drawW=iw*cropScale, drawH=ih*cropScale, dx=(cw-drawW)/2, dy=(ch-drawH)/2;
+
+      if(nextBgImage){
+        const bgImg=await readSourceImage(nextBgImage);
+        ctx.drawImage(bgImg,0,0,cw,ch);
+      }else if(nextBgMode==="white"){ctx.fillStyle="#fff";ctx.fillRect(0,0,cw,ch);}
+      else if(nextBgMode==="black"){ctx.fillStyle="#000";ctx.fillRect(0,0,cw,ch);}
+      else if(nextBgMode==="color"){ctx.fillStyle=nextBgColor;ctx.fillRect(0,0,cw,ch);}
+      else {ctx.clearRect(0,0,cw,ch);}
+
       ctx.save();
-      ctx.filter=`brightness(${Number(brightness)||100}%) contrast(${Number(contrast)||100}%) saturate(${Number(saturation)||100}%) ${effect==="grayscale"?"grayscale(100%)":""} ${effect==="blur"?"blur(1px)":""}`;
-      if(shadow){ctx.shadowColor="rgba(0,0,0,.25)";ctx.shadowBlur=Math.max(12,cw*0.02);ctx.shadowOffsetY=Math.max(5,ch*0.015);}
-      if(design==="original"){ctx.drawImage(img,0,0,iw,ih);} else if(design==="contain"){ctx.drawImage(img,dx,dy,drawW,drawH);} else {ctx.drawImage(img,dx,dy,drawW,drawH);}
+      ctx.filter=`brightness(${nextBrightness}%) contrast(${nextContrast}%) saturate(${nextSaturation}%) ${nextEffect==="grayscale"?"grayscale(100%)":""} ${nextEffect==="blur"?"blur(1px)":""}`;
+      if(nextShadow){ctx.shadowColor="rgba(0,0,0,.28)";ctx.shadowBlur=Math.max(12,cw*.02);ctx.shadowOffsetY=Math.max(5,ch*.015);}
+      if(nextDesign==="original") ctx.drawImage(img,0,0,iw,ih);
+      else ctx.drawImage(img,dx,dy,drawW,drawH);
       ctx.restore();
+
       const blob=await new Promise(r=>c.toBlob(r,"image/png"));
       if(!blob) throw new Error("Could not create edited PNG.");
-      if(resultUrl) URL.revokeObjectURL(resultUrl);
-      const u=URL.createObjectURL(blob); setResultUrl(u); setResultBlob(blob); setStatus("Changes applied successfully.");
-    }catch(e){setStatus(e?.message||"Could not apply image changes.");}
-    finally{setBusy(false);}
+      setNewResult(blob);
+      setStatus("Changes applied successfully.");
+    }catch(e){
+      setStatus(e?.message||"Could not apply image changes.");
+    }finally{setBusy(false);}
+  };
+
+  const chooseBackground = async (mode, value="") => {
+    setBgMode(mode);
+    setBgImage(mode==="image"?value:"");
+    if(mode==="image") setStatus("Background selected. Applying it to your cutout…");
+    setTab("background");
+    if(lastCutoutReady || resultBlob || cutoutBlob) await renderComposite({bgMode:mode,bgImage:mode==="image"?value:"" , bgColor: mode==="color" ? (value || bgColor) : bgColor});
   };
 
   const download = (hd=false) => {
-    if(!resultBlob) return setStatus("Create a cutout or apply changes first.");
+    if(!resultBlob) return setStatus("Your image is still processing.");
     downloadBlob(resultBlob,hd?"toolmaster-background-remover-hd.png":"toolmaster-background-remover.png");
     setStatus(hd?"HD PNG downloaded.":"PNG downloaded.");
   };
 
-  const Tab = ({id,icon,label}) => <button type="button" className={tab===id?"btn primary":"btn"} onClick={()=>setTab(id)}>{icon} {label}</button>;
+  const Tab = ({id,label}) => <button type="button" className={tab===id?"btn primary":"btn"} onClick={()=>setTab(id)}>{label}</button>;
+
+  const uploadHero = <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:28,alignItems:"center",padding:"42px 34px",background:"linear-gradient(135deg,#ffffff,#f8fafc)"}}>
+    <div>
+      <div style={{fontSize:14,fontWeight:700,color:"#2563eb",marginBottom:12}}>AI PHOTO EDITOR</div>
+      <h2 style={{fontSize:"clamp(34px,5vw,58px)",lineHeight:1.04,margin:"0 0 14px",fontWeight:800,color:"#20242b"}}>Remove Image Background</h2>
+      <p style={{fontSize:18,lineHeight:1.6,color:"#586174",maxWidth:560,margin:"0 0 22px"}}>100% automatic background removal, then replace it with a photo, color or transparent canvas.</p>
+      <button type="button" className="btn primary" style={{fontSize:18,padding:"14px 26px",borderRadius:999}} onClick={()=>inputRef.current?.click()}><Upload size={20}/> Upload Image</button>
+      <p style={{margin:"14px 0 0",fontSize:13,color:"#8993a6"}}>or drop a file · PNG, JPG or WebP</p>
+    </div>
+    <div style={{borderRadius:24,padding:24,background:"linear-gradient(135deg,#eef4ff,#ffffff)",border:"1px solid #e8edf7",minHeight:360,display:"grid",placeItems:"center"}}>
+      <div style={{width:"min(390px,100%)",aspectRatio:"1/1",borderRadius:20,background:"radial-gradient(circle at 35% 30%,#dbeafe,transparent 40%),linear-gradient(135deg,#fff,#e9eef7)",display:"grid",placeItems:"center",boxShadow:"0 24px 70px rgba(15,23,42,.10)"}}>
+        <div style={{textAlign:"center"}}><ImageIcon size={64} strokeWidth={1.5} color="#64748b"/><div style={{fontWeight:700,marginTop:10,color:"#475569"}}>Upload your photo</div><div style={{fontSize:13,color:"#94a3b8",marginTop:6}}>Background removal starts automatically</div></div>
+      </div>
+    </div>
+    <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={upload} style={{display:"none"}}/>
+  </div>;
+
+  const checkerStyle={backgroundImage:"linear-gradient(45deg,#eceff3 25%,transparent 25%),linear-gradient(-45deg,#eceff3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eceff3 75%),linear-gradient(-45deg,transparent 75%,#eceff3 75%)",backgroundSize:"22px 22px",backgroundPosition:"0 0,0 11px,11px -11px,-11px 0"};
 
   return <Shell back={back} t={t} status={status}>
     <div className="bgRemoveShell" style={{border:"1px solid #e4e6ed",borderRadius:18,background:"#fff",boxShadow:"var(--shadow)",overflow:"hidden"}}>
-      <div style={{padding:18,borderBottom:"1px solid #eceef4",display:"flex",justifyContent:"space-between",gap:12,flexWrap:"wrap",alignItems:"center"}}>
-        <div><h2 style={{margin:0}}>AI Background Remover</h2><p style={{margin:"6px 0 0",color:"#8790a2"}}>Remove, replace and refine image backgrounds in one workspace.</p></div>
-        <div className="actions"><button type="button" className="btn" onClick={()=>inputRef.current?.click()}><Upload size={16}/> {file?"Replace image":"Upload image"}</button><input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={upload} style={{display:"none"}}/><button type="button" className="btn primary" disabled={!resultBlob||busy} onClick={()=>download(false)}><Download size={16}/> Download</button><button type="button" className="btn" disabled={!resultBlob||busy} onClick={()=>download(true)}><Download size={16}/> Download HD</button></div>
-      </div>
-      {file ? <>
-        <div style={{display:"flex",gap:8,padding:12,borderBottom:"1px solid #eceef4",overflow:"auto"}}><Tab id="cutout" label="Cutout"/><Tab id="background" label="Background"/><Tab id="effect" label="Effect"/><Tab id="adjust" label="Adjust"/><Tab id="design" label="Design"/><button type="button" className="btn primary" disabled={busy} onClick={compose}>Apply Changes</button></div>
-        <div className="workspace" style={{gridTemplateColumns:"320px 1fr"}}>
-          <div className="panel">
-            {tab==="cutout" && <><h3>Cutout</h3><p>Use AI for complex photos. A local fallback is used if the AI model cannot load.</p><button type="button" className="btn primary" disabled={busy} onClick={doCutout}>{busy?"Processing…":"Remove Background"}</button></>}
-            {tab==="background" && <><h3>Background</h3><label>Mode<select value={bg} onChange={e=>setBg(e.target.value)}><option value="transparent">Transparent</option><option value="white">White</option><option value="black">Black</option><option value="color">Custom Color</option></select></label>{bg==="color"&&<label>Color<input type="color" value={bgColor} onChange={e=>setBgColor(e.target.value)}/></label>}</>}
-            {tab==="effect" && <><h3>Effect</h3><label>Filter<select value={effect} onChange={e=>setEffect(e.target.value)}><option value="none">None</option><option value="grayscale">Grayscale</option><option value="blur">Soft Blur</option></select></label><label style={{display:"flex",alignItems:"center",gap:8,marginTop:12}}><input type="checkbox" checked={shadow} onChange={e=>setShadow(e.target.checked)}/> Soft shadow</label></>}
-            {tab==="adjust" && <><h3>Adjust</h3><label>Brightness<input type="range" min="50" max="150" value={brightness} onChange={e=>setBrightness(e.target.value)}/></label><label>Contrast<input type="range" min="50" max="160" value={contrast} onChange={e=>setContrast(e.target.value)}/></label><label>Saturation<input type="range" min="0" max="180" value={saturation} onChange={e=>setSaturation(e.target.value)}/></label></>}
-            {tab==="design" && <><h3>Design</h3><p>Choose the output canvas. Changes take effect after Apply Changes.</p><label>Canvas<select value={design} onChange={e=>setDesign(e.target.value)}><option value="original">Original</option><option value="square">Square 1:1</option><option value="portrait">Portrait 4:5</option><option value="landscape">Landscape 16:9</option><option value="contain">Contain</option></select></label><button type="button" className="btn" style={{marginTop:10}} onClick={()=>setBg("transparent")}>Transparent canvas</button></>}
-          </div>
-          <div className="panel" style={{background:"linear-gradient(45deg,#f3f4f7 25%,#fff 25%,#fff 50%,#f3f4f7 50%,#f3f4f7 75%,#fff 75%)",backgroundSize:"24px 24px",minHeight:480,display:"grid",placeItems:"center"}}>
-            <div style={{width:"min(620px,100%)",padding:18,background:"rgba(255,255,255,.72)",borderRadius:16}}>
-              {resultUrl ? <img src={resultUrl} alt="Processed result" style={{display:"block",maxWidth:"100%",maxHeight:540,margin:"auto",objectFit:"contain"}}/> : <img src={originalUrl} alt="Original" style={{display:"block",maxWidth:"100%",maxHeight:540,margin:"auto",objectFit:"contain"}}/>}
-            </div>
+      {!file ? uploadHero : <>
+        <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={upload} style={{display:"none"}}/>
+        <div style={{padding:"12px 16px",borderBottom:"1px solid #eceef4",display:"flex",alignItems:"center",gap:7,flexWrap:"wrap",background:"#fff"}}>
+          <Tab id="cutout" label="✂ Cutout"/>
+          <Tab id="background" label="▣ Background"/>
+          <Tab id="effect" label="◉ Effects"/>
+          <Tab id="adjust" label="◐ Adjust"/>
+          <Tab id="design" label="▧ Design"/>
+          <div style={{marginLeft:"auto",display:"flex",gap:8,alignItems:"center"}}>
+            <button type="button" className="btn" onClick={()=>inputRef.current?.click()}>＋ Replace</button>
+            <button type="button" className="btn primary" disabled={!resultBlob||busy} onClick={()=>download(false)}><Download size={16}/> Download</button>
           </div>
         </div>
-      </> : <div style={{padding:50,textAlign:"center"}}><div className="pdfUploadIcon" style={{margin:"0 auto 16px"}}><ImageIcon size={32}/></div><h3>Upload an image</h3><p style={{color:"#8590a2"}}>PNG, JPG or WebP · Use Cutout to remove the background.</p><button type="button" className="btn primary" onClick={()=>inputRef.current?.click()}><Upload size={16}/> Choose image</button></div>}
+
+        <div style={{display:"grid",gridTemplateColumns:"minmax(0,1fr) 330px",minHeight:560}}>
+          <div style={{...checkerStyle,backgroundColor:"#fff",display:"grid",placeItems:"center",padding:26}}>
+            <div style={{width:"min(760px,100%)",height:"min(590px,72vh)",borderRadius:18,overflow:"hidden",display:"grid",placeItems:"center",position:"relative",border:"1px solid #dfe4eb",boxShadow:"0 12px 40px rgba(15,23,42,.08)",background:bgImage?`url("${bgImage}") center/cover no-repeat`:bgMode==="white"?"#fff":bgMode==="black"?"#000":bgMode==="color"?bgColor:"transparent"}}>
+              {resultUrl && <img src={resultUrl} alt="Background removed result" style={{maxWidth:"94%",maxHeight:"94%",objectFit:"contain",filter:`brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) ${effect==="grayscale"?"grayscale(1)":""}`,filterOrigin:"center",boxShadow:shadow?"0 18px 40px rgba(0,0,0,.24)":"none"}}/>}
+              {!resultUrl && <div style={{padding:20,textAlign:"center",color:"#64748b"}}>{busy?"Removing background…":"Preparing image…"}</div>}
+              {busy && <div style={{position:"absolute",inset:0,display:"grid",placeItems:"center",background:"rgba(255,255,255,.58)",backdropFilter:"blur(2px)"}}><div style={{background:"#fff",padding:"12px 18px",borderRadius:999,fontWeight:700,boxShadow:"0 10px 30px rgba(15,23,42,.12)"}}>AI processing…</div></div>}
+            </div>
+          </div>
+
+          <aside style={{borderLeft:"1px solid #eceef4",background:"#fff",padding:18,overflow:"auto"}}>
+            {tab==="cutout" && <div>
+              <h3 style={{marginTop:0}}>Cutout</h3>
+              <p style={{color:"#667085",lineHeight:1.55}}>Your image is removed automatically as soon as it uploads.</p>
+              <button type="button" className="btn primary" disabled={busy} onClick={()=>doCutout()} style={{width:"100%"}}>{busy?"Processing…":resultBlob?"Remove Again":"Remove Background"}</button>
+              <div style={{marginTop:16,padding:14,borderRadius:14,background:"#f8fafc",fontSize:13,color:"#667085"}}>Transparent PNG is kept as the base, so you can switch backgrounds without uploading the photo again.</div>
+            </div>}
+            {tab==="background" && <div>
+              <div style={{display:"flex",gap:6,marginBottom:14,borderBottom:"1px solid #eceef4",paddingBottom:10}}>
+                <button type="button" className={bgCategory==="photo"?"btn primary":"btn"} onClick={()=>setBgCategory("photo")}>Magic</button>
+                <button type="button" className={bgCategory==="color"?"btn primary":"btn"} onClick={()=>setBgCategory("color")}>Color</button>
+              </div>
+              {bgCategory==="photo" && <>
+                <p style={{fontWeight:700,margin:"0 0 10px"}}>Choose a background</p>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+                  {photoBackgrounds.map((src,i)=><button key={src} type="button" onClick={()=>chooseBackground("image",src)} style={{padding:0,border:bgImage===src?"3px solid #2563eb":"1px solid #e1e5eb",borderRadius:12,overflow:"hidden",background:"#fff",cursor:"pointer"}}><img src={src} alt={`Background ${i+1}`} style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/></button>)}
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:12}}>
+                  <button type="button" className={bgMode==="transparent"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("transparent")}>Transparent</button>
+                  <button type="button" className={bgMode==="white"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("white")}>White</button>
+                </div>
+              </>}
+              {bgCategory==="color" && <>
+                <p style={{fontWeight:700,margin:"0 0 10px"}}>Solid colors</p>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8}}>{colorBackgrounds.map(c=><button key={c} type="button" aria-label={`Set ${c}`} onClick={()=>{setBgColor(c);chooseBackground("color",c);}} style={{width:"100%",aspectRatio:"1/1",border:bgColor===c&&bgMode==="color"?"3px solid #2563eb":"1px solid #d8dde7",borderRadius:10,background:c,cursor:"pointer"}}/>)}</div>
+                <label style={{display:"block",marginTop:14}}>Custom color<input type="color" value={bgColor} onChange={e=>{setBgColor(e.target.value);setBgMode("color");setBgImage("");}} style={{display:"block",marginTop:8,width:"100%",height:42}}/></label>
+                <button type="button" className="btn primary" style={{width:"100%",marginTop:10}} onClick={()=>chooseBackground("color",bgColor)}>Apply Color</button>
+              </>}
+            </div>}
+            {tab==="effect" && <div><h3 style={{marginTop:0}}>Effects</h3><label>Filter<select value={effect} onChange={e=>setEffect(e.target.value)}><option value="none">None</option><option value="grayscale">Grayscale</option><option value="blur">Soft blur</option></select></label><label style={{display:"flex",alignItems:"center",gap:8,marginTop:12}}><input type="checkbox" checked={shadow} onChange={e=>setShadow(e.target.checked)}/> Soft shadow</label><button type="button" className="btn primary" style={{width:"100%",marginTop:14}} disabled={busy} onClick={()=>renderComposite()}>Apply Effects</button></div>}
+            {tab==="adjust" && <div><h3 style={{marginTop:0}}>Adjust</h3><label>Brightness<input type="range" min="50" max="150" value={brightness} onChange={e=>setBrightness(e.target.value)}/></label><label>Contrast<input type="range" min="50" max="160" value={contrast} onChange={e=>setContrast(e.target.value)}/></label><label>Saturation<input type="range" min="0" max="180" value={saturation} onChange={e=>setSaturation(e.target.value)}/></label><button type="button" className="btn primary" style={{width:"100%",marginTop:14}} disabled={busy} onClick={()=>renderComposite()}>Apply Adjust</button></div>}
+            {tab==="design" && <div><h3 style={{marginTop:0}}>Design</h3><label>Canvas<select value={design} onChange={e=>setDesign(e.target.value)}><option value="original">Original</option><option value="square">Square 1:1</option><option value="portrait">Portrait 4:5</option><option value="landscape">Landscape 16:9</option><option value="contain">Contain</option></select></label><button type="button" className="btn primary" style={{width:"100%",marginTop:14}} disabled={busy} onClick={()=>renderComposite()}>Apply Design</button></div>}
+          </aside>
+        </div>
+
+        <div style={{padding:"11px 16px",borderTop:"1px solid #eceef4",display:"flex",alignItems:"center",gap:10,background:"#fff",flexWrap:"wrap"}}>
+          <div style={{width:56,height:56,borderRadius:12,overflow:"hidden",border:"2px solid #2563eb",background:"#f1f5f9",display:"grid",placeItems:"center"}}>{resultUrl?<img src={resultUrl} alt="Result thumbnail" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<img src={originalUrl} alt="Original thumbnail" style={{width:"100%",height:"100%",objectFit:"cover"}}/>}</div>
+          <button type="button" className="btn" onClick={()=>inputRef.current?.click()}>＋</button>
+          <div style={{marginLeft:"auto",display:"flex",gap:8}}><button type="button" className="btn" disabled={!resultBlob||busy} onClick={()=>download(false)}>Download PNG</button><button type="button" className="btn" disabled={!resultBlob||busy} onClick={()=>download(true)}>Download HD</button></div>
+        </div>
+      </>}
     </div>
   </Shell>;
 }
