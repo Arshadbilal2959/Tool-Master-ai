@@ -1,5 +1,5 @@
 /* ToolMaster Pro FINAL ALL-TOOLS BUILD */
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { createClient } from "@supabase/supabase-js";
 import {
@@ -128,7 +128,8 @@ const tools = [
   ["Morse Code Converter","Text Tools","Convert text to Morse code.","morse"],
   ["Binary Converter","Developer Tools","Convert text and numbers to binary.","binary"],
   ["ASCII Converter","Developer Tools","Convert text to ASCII codes.","ascii"],
-  ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"]
+  ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"],
+  ["Stamp Generator","Utility Tools","Create a personalized digital stamp from your name, title, organization and custom details.","stamp-generator"]
 ];
 
 const categories = [
@@ -600,6 +601,83 @@ function FilePicker({multiple=false,accept,onChange,files=[]}) {
   </label>;
 }
 
+
+function StampGeneratorTool({t,back}) {
+  const canvasRef = useRef(null);
+  const [name,setName]=useState("");
+  const [title,setTitle]=useState("");
+  const [organization,setOrganization]=useState("");
+  const [department,setDepartment]=useState("");
+  const [date,setDate]=useState("");
+  const [extra,setExtra]=useState("");
+  const [style,setStyle]=useState("classic");
+  const [shape,setShape]=useState("round");
+  const [color,setColor]=useState("#c62828");
+  const [size,setSize]=useState(900);
+  const [opacity,setOpacity]=useState(92);
+  const [status,setStatus]=useState("Enter your details to create a personalized stamp.");
+
+  const safe=(v,max=60)=>String(v||"").trim().slice(0,max);
+  const drawStamp=useCallback(()=>{
+    const canvas=canvasRef.current; if(!canvas) return;
+    const W=Number(size)||900,H=Number(size)||900; canvas.width=W; canvas.height=H;
+    const ctx=canvas.getContext("2d"); if(!ctx) return;
+    ctx.clearRect(0,0,W,H); ctx.save(); ctx.globalAlpha=(Number(opacity)||92)/100;
+    const c=color||"#c62828", cx=W/2, cy=H/2, pad=W*.09;
+    const nm=safe(name,40)||"YOUR NAME", ttl=safe(title,42), org=safe(organization,46), dep=safe(department,42), dt=safe(date,28), ex=safe(extra,56);
+    const lines=[nm,ttl,org,dep,dt,ex].filter(Boolean);
+    if(shape==="round"){
+      ctx.strokeStyle=c; ctx.fillStyle=c; ctx.lineWidth=Math.max(8,W*.016); ctx.beginPath();ctx.arc(cx,cy,W*.385,0,Math.PI*2);ctx.stroke();
+      if(style!=="minimal"){ctx.lineWidth=Math.max(3,W*.006);ctx.beginPath();ctx.arc(cx,cy,W*.34,0,Math.PI*2);ctx.stroke();}
+    } else {
+      const r=W*.07; ctx.strokeStyle=c; ctx.lineWidth=Math.max(8,W*.016); ctx.beginPath();ctx.roundRect(pad,pad,W-2*pad,H-2*pad,r);ctx.stroke();
+      if(style!=="minimal"){ctx.lineWidth=Math.max(3,W*.006);ctx.beginPath();ctx.roundRect(pad*1.65,pad*1.65,W-3.3*pad,H-3.3*pad,r*.7);ctx.stroke();}
+    }
+    const maxWidth=shape==="round"?W*.52:W*.68;
+    const startY=cy-(lines.length-1)*W*.034;
+    ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=c;ctx.strokeStyle=c;
+    lines.forEach((line,i)=>{
+      let fs=i===0?W*.075:W*.045; if(i===0 && style==="bold") fs=W*.09; if(i===0 && style==="signature") fs=W*.085;
+      ctx.font=`${i===0?"800":"600"} ${fs}px ${style==="signature"&&i===0?"cursive":"Arial, sans-serif"}`;
+      let txt=line; while(ctx.measureText(txt).width>maxWidth && fs>18){fs-=2;ctx.font=`${i===0?"800":"600"} ${fs}px ${style==="signature"&&i===0?"cursive":"Arial, sans-serif"}`;}
+      ctx.fillText(txt,cx,startY+i*W*.075);
+    });
+    if(shape==="round"){
+      ctx.font=`700 ${W*.027}px Arial, sans-serif`;ctx.letterSpacing="1px";const ringText=org?org.toUpperCase():"AUTHORIZED";
+      ctx.fillText(ringText,cx,cy-W*.275);
+      ctx.font=`700 ${W*.027}px Arial, sans-serif`;ctx.fillText((dt||"OFFICIAL").toUpperCase(),cx,cy+W*.275);
+      ctx.beginPath();ctx.arc(cx,cy,W*.055,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff";ctx.font=`800 ${W*.03}px Arial`;ctx.fillText("✓",cx,cy);
+    }
+    ctx.restore();
+    setStatus("Stamp preview updated. Download it as a PNG.");
+  },[name,title,organization,department,date,extra,style,shape,color,size,opacity]);
+
+  useEffect(()=>{drawStamp();},[drawStamp]);
+
+  const download=()=>{const c=canvasRef.current;if(!c)return; c.toBlob(blob=>{if(blob)downloadBlob(blob,`${(safe(name,30)||"personalized")}-stamp.png`);setStatus("Stamp PNG downloaded.");},"image/png");};
+  const randomDemo=()=>{setName("Ahmed Khan");setTitle("Managing Director");setOrganization("Khan Enterprises");setDepartment("Official Office");setDate(new Date().toISOString().slice(0,10));setExtra("Approved");setStatus("Demo details loaded. Customize them and download your stamp.");};
+  const clear=()=>{setName("");setTitle("");setOrganization("");setDepartment("");setDate("");setExtra("");setStatus("Enter your details to create a personalized stamp.");};
+
+  return <Shell back={back} t={t} status={status}>
+    <div style={{display:"grid",gridTemplateColumns:"minmax(300px,420px) minmax(0,1fr)",gap:18,alignItems:"start"}}>
+      <div className="panel">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10,marginBottom:12}}><div><div className="pill">STAMP MAKER</div><h2 style={{margin:"10px 0 4px"}}>Personal Stamp Generator</h2><p style={{margin:0,color:"#7d8798"}}>Type your name and details — your stamp updates instantly.</p></div></div>
+        {[['Name / Full Name',name,setName,'Muhammad Ali'],['Title / Designation',title,setTitle,'Director / Manager / Student'],['Organization / Company',organization,setOrganization,'ABC Company'],['Department',department,setDepartment,'Accounts / HR / Office'],['Date',date,setDate,''],['Extra line',extra,setExtra,'Approved / Verified / Official']].map(([lab,val,set,ph])=><label key={lab} style={{display:"block",marginTop:11,fontSize:12,fontWeight:800,color:"#556075"}}>{lab}<input value={val} onChange={e=>set(e.target.value)} placeholder={ph} /></label>)}
+        <div className="videoOptions" style={{marginTop:12}}><label>Shape<select value={shape} onChange={e=>setShape(e.target.value)}><option value="round">Round Seal</option><option value="square">Rounded Rectangle</option></select></label><label>Style<select value={style} onChange={e=>setStyle(e.target.value)}><option value="classic">Classic</option><option value="bold">Bold</option><option value="minimal">Minimal</option><option value="signature">Signature</option></select></label></div>
+        <div className="videoOptions" style={{marginTop:12}}><label>Stamp color<input type="color" value={color} onChange={e=>setColor(e.target.value)} style={{height:42,padding:4}} /></label><label>Size<select value={size} onChange={e=>setSize(Number(e.target.value))}><option value="700">700 px</option><option value="900">900 px</option><option value="1200">1200 px</option><option value="1600">1600 px</option></select></label></div>
+        <label style={{display:"block",marginTop:12,fontSize:12,fontWeight:800,color:"#556075"}}>Opacity<input type="range" min="40" max="100" value={opacity} onChange={e=>setOpacity(Number(e.target.value))}/></label>
+        <div className="actions"><button type="button" className="btn primary" onClick={download}><Download size={16}/> Download PNG</button><button type="button" className="btn" onClick={randomDemo}>Demo</button><button type="button" className="btn" onClick={clear}>Clear</button></div>
+        <div className="notice"><ShieldCheck size={16}/><span>Everything is generated locally in your browser. No name or personal details are uploaded.</span></div>
+      </div>
+      <div className="panel" style={{position:"sticky",top:86}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}><div><h3 style={{margin:0}}>Live Stamp Preview</h3><small style={{color:"#8791a4"}}>PNG download · transparent background</small></div><span className="pill">LIVE</span></div>
+        <div style={{minHeight:520,display:"grid",placeItems:"center",padding:28,border:"1px solid #e6e8ef",borderRadius:18,background:"radial-gradient(circle,#ffffff,#f6f7fb)"}}><canvas ref={canvasRef} style={{width:"min(520px,100%)",height:"auto",display:"block",filter:"drop-shadow(0 18px 35px rgba(15,23,42,.12))"}}/></div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginTop:12}}>{["#c62828","#111827","#1d4ed8","#15803d","#7c3aed","#b45309"].map(c=><button key={c} type="button" aria-label={`Use ${c}`} onClick={()=>setColor(c)} style={{height:38,borderRadius:10,border:color===c?"3px solid #111827":"1px solid #e1e5eb",background:c}} />)}</div>
+      </div>
+    </div>
+  </Shell>;
+}
+
 function StudentAIHelper({back,user,openAuth}) {
   const [question,setQuestion]=useState("");
   const [files,setFiles]=useState([]);
@@ -688,6 +766,7 @@ class ToolErrorBoundary extends React.Component {
 }
 
 function ToolPage({t,back,user,openAuth}) {
+  if(t[3]==="stamp-generator") return <StampGeneratorTool t={t} back={back}/>;
   if(t[3]==="student-ai-helper") return <StudentAIHelper back={back} user={user} openAuth={openAuth}/>;
   if(t[3]==="text-to-video") return <TextToVideo back={back} user={user} openAuth={openAuth}/>;
   if(t[3]==="edit-pdf") return <PdfEditorTool t={t} back={back}/>;
@@ -1809,109 +1888,49 @@ function SeoTool({t, back}) {
   const utm = id === "utm";
   const sitemap = id === "sitemap";
 
-  const seoMeta = {
-    "meta-tags": ["Meta Tag Generator","Create title, description and canonical tags.","On-page SEO"],
-    "open-graph": ["Open Graph Generator","Create social sharing metadata for your pages.","Social SEO"],
-    "schema": ["Schema Markup Generator","Generate JSON-LD structured data for search engines.","Structured data"],
-    "robots": ["Robots.txt Generator","Build a clean robots.txt file with sitemap reference.","Technical SEO"],
-    "sitemap": ["Sitemap Generator","Generate XML sitemap URLs quickly.","Technical SEO"],
-    "keyword-density": ["Keyword Density Checker","Analyze keyword frequency and density in your content.","Content SEO"],
-    "url-encoder": ["URL Encoder","Encode URLs and text safely.","Technical utility"],
-    "slug": ["URL Slug Generator","Create short, clean, SEO-friendly URL slugs.","On-page SEO"],
-    "utm": ["UTM Builder","Create campaign URLs for marketing attribution.","Marketing"],
-    "qr-generator": ["QR Code Generator","Create a scannable QR code from any text or URL.","Marketing utility"],
-    "barcode": ["Barcode Generator","Generate a Code 128 barcode asset.","Marketing utility"],
-    "favicon": ["Favicon Generator","Create a square PNG favicon from an uploaded image.","Site branding"]
-  };
-  const [toolTitle,toolDesc,toolTag] = seoMeta[id] || [t[0],t[2],"SEO tool"];
-
-  const inputField = (label, child, hint) => <div style={{display:"grid",gap:7}}>
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10}}><label style={{margin:0,fontSize:13,fontWeight:800,color:"#263043"}}>{label}</label>{hint&&<span style={{fontSize:11,color:"#98a1b2"}}>{hint}</span>}</div>
-    {child}
-  </div>;
-  const fieldStyle={width:"100%",border:"1px solid #dfe3ea",background:"#fff",borderRadius:12,padding:"13px 14px",outline:"none",color:"#1c2638"};
-  const sectionTitle = commonFields ? "Page SEO details" : id==="keyword-density" ? "Content analysis" : id==="qr-generator" ? "QR code content" : id==="favicon" ? "Brand asset" : "Tool settings";
-
-  return <Shell back={back} t={t} status={status || "Fast browser-based SEO utilities · Your data stays in this browser for local tools."}>
-    <div style={{maxWidth:1180,margin:"0 auto"}}>
-      <div style={{display:"flex",justifyContent:"space-between",gap:16,alignItems:"end",flexWrap:"wrap",marginBottom:18}}>
-        <div>
-          <div className="pill" style={{marginBottom:10}}><Globe2 size={14}/> {toolTag}</div>
-          <h1 style={{margin:"0 0 7px",fontSize:"clamp(30px,5vw,46px)",letterSpacing:"-.04em"}}>{toolTitle}</h1>
-          <p style={{margin:0,color:"#768195",fontSize:15,lineHeight:1.6,maxWidth:760}}>{toolDesc}</p>
-        </div>
-        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-          <span className="pill"><Zap size={13}/> Fast</span>
-          <span className="pill"><ShieldCheck size={13}/> Browser-first</span>
+  return <Shell back={back} t={t} status={status || "SEO tool runs locally in your browser."}>
+    <div className="workspace">
+      <div className="panel">
+        <h3>{t[0]}</h3>
+        {commonFields && <>
+          <label>Title / Site name<input value={title} onChange={e => setTitle(e.target.value)} placeholder="ToolMaster Pro" /></label>
+          <label>Description<textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="A short SEO-friendly description..." /></label>
+          <label>URL<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com" /></label>
+          {id === "open-graph" && <label>Image URL<input value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://example.com/cover.jpg" /></label>}
+        </>}
+        {utm && <>
+          <label>Base URL<input value={utmBase} onChange={e => setUtmBase(e.target.value)} placeholder="https://example.com/page" /></label>
+          <label>UTM Source<input value={utmSource} onChange={e => setUtmSource(e.target.value)} placeholder="google" /></label>
+          <label>UTM Medium<input value={utmMedium} onChange={e => setUtmMedium(e.target.value)} placeholder="cpc" /></label>
+          <label>UTM Campaign<input value={utmCampaign} onChange={e => setUtmCampaign(e.target.value)} placeholder="summer-sale" /></label>
+          <label>UTM Term (optional)<input value={utmTerm} onChange={e => setUtmTerm(e.target.value)} placeholder="keyword" /></label>
+          <label>UTM Content (optional)<input value={utmContent} onChange={e => setUtmContent(e.target.value)} placeholder="banner-a" /></label>
+        </>}
+        {sitemap && <>
+          <label>Website URL<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com" /></label>
+          <label>Additional URLs (one per line)<textarea value={text} onChange={e => setText(e.target.value)} placeholder="/about\n/contact\n/blog" /></label>
+        </>}
+        {id === "robots" && <label>Sitemap website URL<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com" /></label>}
+        {id === "keyword-density" && <>
+          <label>Target keyword (optional)<input value={keyword} onChange={e => setKeyword(e.target.value)} placeholder="target keyword" /></label>
+          <label>Content<textarea value={text} onChange={e => setText(e.target.value)} placeholder="Paste your article/content here..." /></label>
+        </>}
+        {singleText && <label>{id === "slug" ? "Title / Phrase" : "Text / URL"}<textarea value={text} onChange={e => setText(e.target.value)} placeholder={placeholderFor(id)} /></label>}
+        {(id === "qr-generator" || id === "barcode") && <label>{id === "qr-generator" ? "Text or URL" : "Barcode value"}<textarea value={text} onChange={e => setText(e.target.value)} placeholder={id === "qr-generator" ? "https://example.com" : "123456789012"} /></label>}
+        {fileOnly && <label>Favicon source image<input type="file" accept="image/png,image/jpeg,image/webp" onChange={e => setFile(e.target.files?.[0] || null)} /></label>}
+        <div className="actions">
+          <button className="btn primary" disabled={busy} onClick={run}><Zap size={17}/> {busy ? "Processing..." : "Generate"}</button>
+          <button className="btn" onClick={clear}>Clear</button>
         </div>
       </div>
-
-      <div style={{display:"grid",gridTemplateColumns:"minmax(0,1.08fr) minmax(330px,.92fr)",gap:16,alignItems:"start"}}>
-        <div className="panel" style={{padding:0,overflow:"hidden"}}>
-          <div style={{padding:"18px 20px",borderBottom:"1px solid #edf0f5",background:"linear-gradient(180deg,#fff,#fbfbff)"}}>
-            <div style={{fontSize:11,fontWeight:900,color:"#7660e9",letterSpacing:".08em",textTransform:"uppercase"}}>STEP 1</div>
-            <h3 style={{margin:"5px 0 4px",fontSize:19}}>{sectionTitle}</h3>
-            <p style={{margin:0,color:"#8a93a6",fontSize:12}}>Enter only the information you need. The generator will create the result instantly.</p>
-          </div>
-          <div style={{padding:20,display:"grid",gap:16}}>
-            {commonFields && <>
-              {inputField(id==="schema"?"Site name":"Page title",<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="ToolMaster Pro" style={fieldStyle}/> ,"Recommended: clear and descriptive")}
-              {inputField("Meta description",<textarea value={description} onChange={e=>setDescription(e.target.value)} placeholder="A concise description of your page..." style={{...fieldStyle,minHeight:110,resize:"vertical"}}/>,"Keep it readable and specific")}
-              {inputField("Website URL",<input value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://example.com/page" style={fieldStyle}/>,"Include https://")}
-              {id==="open-graph" && inputField("Social image URL",<input value={imageUrl} onChange={e=>setImageUrl(e.target.value)} placeholder="https://example.com/cover.jpg" style={fieldStyle}/>,"Recommended for sharing")}
-            </>}
-
-            {id==="robots" && <>
-              {inputField("Website URL",<input value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://example.com" style={fieldStyle}/>)}
-              <div style={{padding:14,borderRadius:12,background:"#f7f8fc",border:"1px solid #edf0f5",color:"#667085",fontSize:12,lineHeight:1.6}}>The sitemap URL will be generated automatically from your website URL.</div>
-            </>}
-            {sitemap && <>
-              {inputField("Website URL",<input value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://example.com" style={fieldStyle}/>)}
-              {inputField("Additional URLs",<textarea value={text} onChange={e=>setText(e.target.value)} placeholder={'/\n/about\n/contact\n/blog'} style={{...fieldStyle,minHeight:170,resize:"vertical"}}/>,"One URL path per line")}
-            </>}
-            {id==="keyword-density" && <>
-              {inputField("Target keyword",<input value={keyword} onChange={e=>setKeyword(e.target.value)} placeholder="optional keyword" style={fieldStyle}/>)}
-              {inputField("Content",<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Paste your article or page content here..." style={{...fieldStyle,minHeight:280,resize:"vertical"}}/>,"The more text you analyze, the better the signal")}
-            </>}
-            {singleText && inputField(id==="slug"?"Title / phrase":"Text or URL",<textarea value={text} onChange={e=>setText(e.target.value)} placeholder={placeholderFor(id)} style={{...fieldStyle,minHeight:180,resize:"vertical"}}/>)}
-            {id==="qr-generator" && inputField("Text or URL",<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="https://example.com" style={{...fieldStyle,minHeight:150,resize:"vertical"}}/>,"Use a complete URL for best results")}
-            {id==="barcode" && inputField("Barcode value",<textarea value={text} onChange={e=>setText(e.target.value)} placeholder="123456789012" style={{...fieldStyle,minHeight:120,resize:"vertical"}}/>)}
-            {utm && <div style={{display:"grid",gap:12}}>
-              {inputField("Base URL",<input value={utmBase} onChange={e=>setUtmBase(e.target.value)} placeholder="https://example.com/page" style={fieldStyle}/>)}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-                {inputField("Source",<input value={utmSource} onChange={e=>setUtmSource(e.target.value)} placeholder="google" style={fieldStyle}/>)}
-                {inputField("Medium",<input value={utmMedium} onChange={e=>setUtmMedium(e.target.value)} placeholder="cpc" style={fieldStyle}/>)}
-                {inputField("Campaign",<input value={utmCampaign} onChange={e=>setUtmCampaign(e.target.value)} placeholder="summer-sale" style={fieldStyle}/>)}
-                {inputField("Term",<input value={utmTerm} onChange={e=>setUtmTerm(e.target.value)} placeholder="optional" style={fieldStyle}/>)}
-              </div>
-              {inputField("Content",<input value={utmContent} onChange={e=>setUtmContent(e.target.value)} placeholder="optional" style={fieldStyle}/>)}
-            </div>}
-            {fileOnly && <>
-              {inputField("Source image",<div style={{border:"1.5px dashed #cbc3ff",borderRadius:14,padding:18,background:"#faf9ff",textAlign:"center"}}><input type="file" accept="image/png,image/jpeg,image/webp" onChange={e=>setFile(e.target.files?.[0]||null)} style={{width:"100%"}}/><small style={{display:"block",marginTop:8,color:"#8791a3"}}>{file?file.name:"PNG, JPG or WebP"}</small></div>)}
-            </>}
-
-            <div style={{display:"flex",gap:10,flexWrap:"wrap",paddingTop:2}}>
-              <button className="btn primary" disabled={busy} onClick={run} style={{padding:"12px 18px",borderRadius:12}}>{busy?<RefreshCw className="spin" size={16}/>:<Sparkles size={16}/>} {busy?"Generating…":"Generate Result"}</button>
-              <button className="btn" onClick={clear} style={{padding:"12px 18px",borderRadius:12}}>Clear</button>
-            </div>
-          </div>
-        </div>
-
-        <div className="panel" style={{padding:0,overflow:"hidden",position:"sticky",top:88}}>
-          <div style={{padding:"18px 20px",borderBottom:"1px solid #edf0f5",display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
-            <div><div style={{fontSize:11,fontWeight:900,color:"#7660e9",letterSpacing:".08em",textTransform:"uppercase"}}>STEP 2</div><h3 style={{margin:"5px 0 0",fontSize:19}}>Live result</h3></div>
-            <span className="pill">{out||qrPreview?"Ready":"Waiting"}</span>
-          </div>
-          <div style={{padding:18}}>
-            {id === "qr-generator" && qrPreview && <div style={{display:"grid",placeItems:"center",padding:18,border:"1px solid #e9ebf1",borderRadius:14,background:"linear-gradient(180deg,#fff,#fafbfe)",marginBottom:14}}><img src={qrPreview} alt="Generated QR code" loading="lazy" style={{width:"min(300px,100%)",height:"auto",imageRendering:"pixelated"}}/><div style={{marginTop:10,color:"#7c8798",fontSize:12,textAlign:"center"}}>Scan this QR code with a phone camera to verify it.</div></div>}
-            <textarea value={out} readOnly placeholder={id==="qr-generator"?"Your QR code is shown above…":"Your generated SEO result will appear here…"} style={{width:"100%",minHeight:330,resize:"vertical",border:"1px solid #e1e5ec",background:"#fafbfc",borderRadius:14,padding:14,outline:"none",color:"#253044",fontFamily:"ui-monospace,SFMono-Regular,Menlo,monospace",fontSize:12,lineHeight:1.65}} />
-            <div style={{display:"flex",gap:9,flexWrap:"wrap",marginTop:12}}>
-              <button className="btn" disabled={!out} onClick={()=>navigator.clipboard?.writeText(out)}><Copy size={15}/> Copy</button>
-              <button className="btn" disabled={!out} onClick={download}><Download size={15}/> Download</button>
-              {id==="qr-generator"&&qrPreview&&<button className="btn primary" onClick={async()=>{const blob=await (await fetch(qrPreview)).blob();downloadBlob(blob,"toolmaster-qr.png");setStatus("QR PNG downloaded.")}}><Download size={15}/> Download QR PNG</button>}
-            </div>
-            <div style={{marginTop:14,padding:13,borderRadius:12,background:"#f8f7ff",border:"1px solid #e6e0ff",fontSize:12,color:"#6e6688",lineHeight:1.55}}><ShieldCheck size={14} style={{verticalAlign:"-2px",marginRight:6}}/> Local SEO generators process content in your browser where possible. No data is uploaded by this UI for the listed local tools.</div>
-          </div>
+      <div className="panel">
+        <label>Result</label>
+        {id === "qr-generator" && qrPreview && <div style={{display:"grid",placeItems:"center",padding:18,border:"1px solid #e4e6ed",borderRadius:14,background:"#fff",marginBottom:12}}><img src={qrPreview} alt="Generated QR code" style={{width:"min(340px,100%)",height:"auto",imageRendering:"pixelated"}}/><div style={{marginTop:8,color:"#7f8999",fontSize:12}}>Scan the QR code with a phone camera to verify the destination.</div></div>}
+        <textarea value={out} readOnly placeholder="Generated SEO result will appear here..." style={{minHeight:320}} />
+        <div className="actions">
+          <button className="btn" disabled={!out} onClick={() => navigator.clipboard?.writeText(out)}><Copy/> Copy</button>
+          <button className="btn" disabled={!out} onClick={download}><Download/> Download</button>
+          {id === "qr-generator" && qrPreview && <button className="btn primary" onClick={async()=>{const blob=await (await fetch(qrPreview)).blob();downloadBlob(blob,"toolmaster-qr.png");setStatus("QR PNG downloaded.")}}><Download/> Download QR</button>}
         </div>
       </div>
     </div>
