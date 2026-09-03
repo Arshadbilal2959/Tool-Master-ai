@@ -294,35 +294,70 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
 
-.pdfProPage{margin-top:12px}
-.pdfProHero{background:#f6f6fb;padding:40px 24px 50px;text-align:center;border:1px solid #e3e4eb;border-radius:16px 16px 0 0}
-.pdfProHero h1{font-size:42px;margin:0 0 10px;letter-spacing:-.04em}
-.pdfProHero p{font-size:17px;color:#667085;margin:0 auto 26px;max-width:800px}
-.pdfUploadArea{max-width:520px;margin:auto}
-.pdfUploadArea .uploadBox{justify-content:center;background:#fff;border:0;box-shadow:0 8px 22px rgba(24,32,51,.10);padding:20px;border-radius:14px}
-.pdfDropHint{color:#6f7787;font-size:13px;margin-top:9px}
-.pdfWorkArea{display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:610px;border:1px solid #e2e4eb;border-top:0;background:#eef0f6}
-.pdfCanvasZone{padding:28px;min-width:0}
-.pdfThumbHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;color:#566176;font-size:13px}
-.pdfThumbGrid{min-height:490px;display:flex;justify-content:center;align-items:flex-start;gap:18px;flex-wrap:wrap;padding:20px}
-.pdfThumb{width:180px;background:#fff;border-radius:11px;padding:12px;box-shadow:0 8px 26px rgba(34,39,53,.10);text-align:center}
-.pdfThumb img{width:100%;height:240px;object-fit:contain;border:1px solid #e8eaf0}
-.pdfThumb small{display:block;margin-top:8px;color:#657085;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pdfThumb.file{height:180px;display:grid;place-items:center;align-content:center;gap:10px}
-.pdfCanvasTip{text-align:center;color:#9198a8;font-size:12px;margin-top:6px}
-.pdfSidePanel{background:#fff;border-left:1px solid #dedfe6;padding:28px;display:flex;flex-direction:column}
-.pdfSidePanel h2{font-size:24px;margin:0 0 20px}
-.pdfChoice{padding:17px 16px;border-top:1px solid #e5e7ed;border-bottom:1px solid #e5e7ed;display:grid;gap:5px}
-.pdfChoice b{color:#ef3d34;font-size:14px}.pdfChoice span{color:#5e687c;line-height:1.45}
-.pdfChoice.premium{border-top:0}.pdfChoice.premium b{color:#f59e0b}.pdfChoice.premium b span{background:#fff0c8;border-radius:5px;padding:3px 7px;font-size:11px;color:#7b5c00;margin-left:6px}
-.pdfSidePanel label{display:grid;gap:7px;color:#566176;font-size:12px;font-weight:800;margin:12px 0}
-.pdfSidePanel input,.pdfSidePanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:11px;background:#fff}
-.pdfMainAction{margin-top:auto;border:0;border-radius:11px;padding:17px;background:#ef332b;color:#fff;font-weight:850;font-size:17px;box-shadow:0 10px 25px rgba(239,51,43,.18)}
-.pdfMainAction:disabled{opacity:.65;cursor:not-allowed}
-.pdfSideNote{margin-top:12px;color:#8c95a6;font-size:11px;line-height:1.5}
-.pdfQuickGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:22px;background:#fff;border:1px solid #e3e4eb;border-top:0;border-radius:0 0 16px 16px}
-.pdfQuick{border:1px solid #e2e5ec;background:#fff;border-radius:12px;padding:14px;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:7px 10px;color:#485267}
-.pdfQuick span{font-weight:850}.pdfQuick small{grid-column:2;color:#8992a3;line-height:1.4}.pdfQuick.active{border-color:#8770f8;background:#faf8ff;color:#6848ee}
+.pdfProPage{margin-top:18px}
+.pdfProHero{position:relative;overflow:hidden;background:
+linear-gradient(135deg,#fbfbff 0%,#f4f1ff 48%,#ffffff 100%);
+padding:58px 24px 62px;text-align:center;border:1px solid #e4e6ef;border-radius:24px;
+box-shadow:0 18px 55px rgba(55,43,120,.08)}
+.pdfProHero:before{content:"";position:absolute;inset:auto -60px -120px auto;width:280px;height:280px;border-radius:50%;
+background:radial-gradient(circle,rgba(108,76,245,.16),transparent 68%);pointer-events:none}
+.pdfProHero:after{content:"PDF";position:absolute;right:28px;top:22px;font-weight:1000;font-size:120px;letter-spacing:-.08em;
+color:rgba(108,76,245,.05);pointer-events:none}
+.pdfProHero h1{position:relative;z-index:1;font-size:clamp(34px,5vw,56px);margin:0 0 12px;letter-spacing:-.055em}
+.pdfProHero p{position:relative;z-index:1;font-size:17px;line-height:1.65;color:#667085;margin:0 auto 28px;max-width:760px}
+.pdfUploadArea{position:relative;z-index:2;max-width:620px;margin:auto}
+.pdfUploadArea .uploadBox{justify-content:center;min-height:160px;background:rgba(255,255,255,.92);border:1.5px dashed #c8befd;
+box-shadow:0 15px 35px rgba(35,29,80,.10);padding:26px;border-radius:18px}
+.pdfUploadArea .uploadBox svg{width:28px;height:28px;color:#6c4cf5}
+.pdfUploadArea .uploadBox b{font-size:16px;color:#1e2638}
+.pdfUploadArea .uploadBox strong{font-size:12px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdfDropHint{color:#8992a3;font-size:13px;margin-top:11px}
+.pdfTrustRow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px;color:#6f7789;font-size:12px}
+.pdfTrustRow span{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #e6e7ef;background:rgba(255,255,255,.75);border-radius:999px}
+.pdfWorkArea{display:grid;grid-template-columns:minmax(0,1fr) 380px;min-height:640px;border:1px solid #e2e5ef;border-top:0;
+background:linear-gradient(180deg,#f4f5f9,#eef0f5);overflow:hidden}
+.pdfCanvasZone{padding:22px;min-width:0}
+.pdfCanvasHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.pdfCanvasHeader .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8d95a6;font-weight:850}
+.pdfCanvasHeader .fileCount{font-size:13px;font-weight:800;color:#39445a}
+.pdfThumbGrid{min-height:520px;display:flex;justify-content:center;align-items:flex-start;gap:20px;flex-wrap:wrap;padding:28px;
+border:1px solid #e1e4eb;border-radius:18px;background:radial-gradient(circle at top,#ffffff,#f1f3f7 68%);box-shadow:inset 0 1px 0 rgba(255,255,255,.75)}
+.pdfThumb{position:relative;width:188px;background:#fff;border-radius:14px;padding:12px;box-shadow:0 16px 34px rgba(33,39,54,.12);text-align:center;
+border:1px solid #e7e9ef;transition:transform .18s,box-shadow .18s}
+.pdfThumb:hover{transform:translateY(-3px);box-shadow:0 20px 40px rgba(33,39,54,.16)}
+.pdfThumb img{width:100%;height:248px;object-fit:contain;border-radius:8px;border:1px solid #e8eaf0;background:#fafafa}
+.pdfThumb small{display:block;margin-top:9px;color:#546074;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdfThumb.file{height:200px;display:grid;place-items:center;align-content:center;gap:10px}
+.pdfThumb.file svg{color:#6c4cf5}
+.pdfCanvasTip{text-align:center;color:#8d95a6;font-size:12px;margin-top:12px}
+.pdfSidePanel{background:rgba(255,255,255,.98);border-left:1px solid #dfe2ea;padding:24px;
+display:flex;flex-direction:column;box-shadow:-12px 0 35px rgba(30,35,50,.04)}
+.pdfSideTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px}
+.pdfSidePanel h2{font-size:25px;letter-spacing:-.03em;margin:0}
+.pdfSidePanel .sub{font-size:12px;line-height:1.5;color:#8992a3;margin-top:5px}
+.pdfStatusChip{font-size:11px;font-weight:850;padding:7px 10px;border-radius:999px;background:#f1edff;color:#6548eb;white-space:nowrap}
+.pdfChoice{padding:14px 0;display:grid;gap:6px;border-top:1px solid #edf0f4}
+.pdfChoice b{font-size:13px;color:#263044}.pdfChoice span{color:#657085;line-height:1.5;font-size:13px}
+.pdfChoice.premium b{color:#b06a00}
+.pdfChoice.premium b span{background:#fff1c7;border-radius:6px;padding:3px 7px;font-size:10px;color:#855a00;margin-left:6px}
+.pdfSidePanel label{display:grid;gap:7px;color:#566176;font-size:12px;font-weight:800;margin:13px 0}
+.pdfSidePanel input,.pdfSidePanel select{width:100%;border:1px solid #dfe3ea;border-radius:11px;padding:11px 12px;background:#fff}
+.pdfMainAction{margin-top:auto;border:0;border-radius:13px;padding:16px;background:linear-gradient(135deg,#6c4cf5,#7e60f7);color:#fff;font-weight:900;font-size:16px;
+box-shadow:0 12px 28px rgba(108,76,245,.25);transition:transform .16s,box-shadow .16s}
+.pdfMainAction:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 16px 34px rgba(108,76,245,.30)}
+.pdfMainAction:disabled{opacity:.58;cursor:not-allowed}
+.pdfSideNote{margin-top:12px;color:#8c95a6;font-size:11px;line-height:1.55}
+.pdfQuickWrap{padding:26px;background:#fff;border:1px solid #e3e6ed;border-top:0;border-radius:0 0 20px 20px}
+.pdfQuickHead{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:15px}
+.pdfQuickHead h3{margin:0;font-size:18px;letter-spacing:-.02em}.pdfQuickHead p{margin:4px 0 0;color:#8b94a6;font-size:12px}
+.pdfQuickGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px}
+.pdfQuick{position:relative;border:1px solid #e3e6ed;background:#fff;border-radius:15px;padding:16px;text-align:left;
+display:grid;grid-template-columns:42px 1fr;gap:7px 12px;color:#354055;transition:transform .16s,border-color .16s,box-shadow .16s}
+.pdfQuick:hover{transform:translateY(-2px);border-color:#d4cdfd;box-shadow:0 12px 28px rgba(73,53,160,.08)}
+.pdfQuick .qIcon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#f2efff;color:#6c4cf5}
+.pdfQuick span{align-self:end;font-weight:850}.pdfQuick small{grid-column:2;color:#8992a3;line-height:1.45}.pdfQuick.active{border-color:#8c77f7;background:#faf8ff;color:#5f42e5;box-shadow:0 10px 24px rgba(108,76,245,.09)}
+@media(max-width:900px){.pdfWorkArea{grid-template-columns:1fr}.pdfSidePanel{border-left:0;border-top:1px solid #e0e3ea}.pdfMainAction{margin-top:14px}.pdfQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.pdfProHero{padding:42px 16px 46px;border-radius:18px}.pdfProHero:after{font-size:82px;right:8px}.pdfUploadArea .uploadBox{min-height:140px;padding:20px}.pdfCanvasZone{padding:12px}.pdfThumbGrid{padding:16px;min-height:360px}.pdfThumb{width:145px;padding:9px}.pdfThumb img{height:190px}.pdfSidePanel{padding:18px}.pdfQuickWrap{padding:16px}.pdfQuickGrid{grid-template-columns:1fr}.pdfQuick{grid-template-columns:38px 1fr}.pdfQuick .qIcon{width:38px;height:38px}}
 @media(max-width:900px){.navLinks{display:none}.pdfNavMenu{padding-left:14px;padding-right:14px;gap:2px}.pdfNavMenu>button,.pdfDropdown summary{font-size:11px;padding:9px 8px}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
 .app.dark{--bg:#0b1020;--panel:#111827;--panel2:#0f172a;--text:#f3f4f6;--muted:#a7b0c0;--line:#253047;--sidebar:#111827;--soft:#1d1738}.app.dark .header,.app.dark .footer,.app.dark .pdfNavWrap,.app.dark .pdfNavMenu,.app.dark .panel,.app.dark .aiCard,.app.dark .card,.app.dark .modal,.app.dark .pdfEditorTop,.app.dark .pdfEditorToolbar,.app.dark .pdfToolsPanel,.app.dark .pdfFileBar,.app.dark .pdfPrivacy{background:#111827;color:#f3f4f6}.app.dark input,.app.dark textarea,.app.dark select,.app.dark .btn,.app.dark .iconBtn,.app.dark .cat,.app.dark .pdfAction{background:#0f172a;color:#f3f4f6;border-color:#2b3850}.app.dark .hero{background:#0b1020}.app.dark .hero p,.app.dark .cardBody p,.app.dark .toolHero p,.app.dark .panelHint,.app.dark small{color:#a7b0c0}
 html{min-width:320px;overflow-x:hidden}
@@ -1367,42 +1402,68 @@ function PdfTool({t,back}) {
     setActive(next); setStatus("");
   };
 
+  const actionLabel = busy ? "Processing…" : ({
+    "merge-pdf":"Merge PDFs",
+    "split-pdf":"Split PDF",
+    "compress-pdf":"Compress PDF",
+    "pdf-word":"Convert to Word",
+    "word-pdf":"Convert to PDF",
+    "pdf-jpg":"Convert to JPG",
+    "jpg-pdf":"Create PDF",
+    "rotate-pdf":"Rotate PDF",
+    "pdf-unlock":"Unlock PDF",
+    "pdf-watermark":"Add Watermark",
+    "edit-pdf":"Open PDF Editor"
+  }[active] || current.name);
+
   return <Shell back={back} t={t} status={status}>
     <div className="pdfProPage">
       <section className="pdfProHero">
+        <div className="pill" style={{position:"relative",zIndex:2,marginBottom:14}}><FileText size={14}/> Professional PDF workspace</div>
         <h1>{current.name}</h1>
         <p>{current.desc}</p>
         <div className="pdfUploadArea">
           <FilePicker multiple={multi} accept={accept} onChange={setFiles} files={files}/>
-          <div className="pdfDropHint">or drop {active==="word-pdf"?"Word":active==="jpg-pdf"?"images":"PDF"} here</div>
+          <div className="pdfDropHint">Drag & drop or choose {active==="word-pdf"?"DOC / DOCX":active==="jpg-pdf"?"JPG / PNG":"PDF"} files</div>
+          <div className="pdfTrustRow">
+            <span><ShieldCheck size={13}/> Secure processing</span>
+            <span><Zap size={13}/> Fast browser tools</span>
+            <span><CheckCircle2 size={13}/> Easy download</span>
+          </div>
         </div>
       </section>
 
       {files.length>0 && <section className="pdfWorkArea">
         <div className="pdfCanvasZone">
-          <div className="pdfThumbHeader"><span>{files.length} file{files.length>1?"s":""} selected</span><button type="button" className="btn" onClick={()=>setFiles([])}>Remove</button></div>
-          <div className="pdfThumbGrid">
-            {thumbs.length?thumbs.map(x=><div className="pdfThumb" key={x.page}><img src={x.url} alt={`Page ${x.page}`}/><small>Page {x.page}</small></div>):files.map(f=><div className="pdfThumb file" key={f.name}><FileText size={34}/><small>{f.name}</small></div>)}
+          <div className="pdfCanvasHeader">
+            <div><div className="eyebrow">Workspace</div><div className="fileCount">{files.length} file{files.length>1?"s":""} selected</div></div>
+            <button type="button" className="btn" onClick={()=>setFiles([])}><Trash2 size={15}/> Clear</button>
           </div>
-          <div className="pdfCanvasTip">Your original file stays here until you start the selected operation.</div>
+          <div className="pdfThumbGrid">
+            {thumbs.length?thumbs.map(x=><div className="pdfThumb" key={x.page}><img src={x.url} alt={`PDF page ${x.page}`}/><small>Page {x.page}</small></div>):files.map(f=><div className="pdfThumb file" key={f.name}><FileText size={36}/><small>{f.name}</small></div>)}
+          </div>
+          <div className="pdfCanvasTip">Your original file remains unchanged. The selected operation creates a new downloadable file.</div>
         </div>
         <aside className="pdfSidePanel">
-          <h2>{current.name}</h2>
-          {active==="pdf-word"&&<div className="pdfChoice"><b>NO OCR</b><span>Convert selectable-text PDFs into editable Word files.</span></div>}
-          {active==="pdf-word"&&<div className="pdfChoice premium"><b>OCR <span>Premium</span></b><span>Scanned/image PDFs need OCR for editable Word output.</span></div>}
-          {active==="split-pdf"&&<label>Pages <input value={pages} onChange={e=>setPages(e.target.value)} placeholder="1,3,5"/></label>}
-          {active==="rotate-pdf"&&<label>Rotation <select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
-          {active==="pdf-watermark"&&<label>Watermark text <input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
-          {active==="pdf-jpg"&&<label>JPG quality <input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
-          <button type="button" className="pdfMainAction" disabled={busy} onClick={run}>{busy?"Processing…":current.name==="Merge PDF"?"Merge PDF":current.name==="Split PDF"?"Split PDF":current.name==="Compress PDF"?"Compress PDF":current.name==="PDF to Word"?"Convert to WORD":current.name==="Word to PDF"?"Convert to PDF":current.name==="PDF to JPG"?"Convert to JPG":current.name}</button>
-          <div className="pdfSideNote">Secure browser-first processing where possible. Conversion tools use your configured backend.</div>
+          <div className="pdfSideTop"><div><h2>{current.name}</h2><div className="sub">{current.desc}</div></div><div className="pdfStatusChip">Ready</div></div>
+          {active==="pdf-word"&&<><div className="pdfChoice"><b>Selectable PDF · Standard</b><span>Best for normal PDFs with selectable text.</span></div><div className="pdfChoice premium"><b>Scanned PDF · OCR <span>Premium</span></b><span>Scanned/image PDFs need OCR to create editable Word text.</span></div></>}
+          {active==="split-pdf"&&<label>Pages to extract<input value={pages} onChange={e=>setPages(e.target.value)} placeholder="Example: 1,3,5 or leave blank for all"/></label>}
+          {active==="rotate-pdf"&&<label>Rotation<select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90° clockwise</option><option value="180">180°</option><option value="270">270° clockwise</option></select></label>}
+          {active==="pdf-watermark"&&<label>Watermark text<input value={watermark} onChange={e=>setWatermark(e.target.value)} placeholder="ToolMaster Pro"/></label>}
+          {active==="pdf-jpg"&&<label>JPG quality <input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/><span style={{fontSize:11,color:"#8b94a6",fontWeight:600}}>{Math.round(Number(quality)*100)}% quality</span></label>}
+          <button type="button" className="pdfMainAction" disabled={busy} onClick={run}>{busy?<RefreshCw size={17} className="spin"/>:<Zap size={17}/>} {actionLabel}</button>
+          <div className="pdfSideNote">Browser-first tools run locally where possible. PDF/Word conversion uses your configured secure converter backend.</div>
         </aside>
       </section>}
 
-      <section className="pdfQuickGrid">
-        {pdfTools.map(x=><button key={x.id} type="button" className={active===x.id?"pdfQuick active":"pdfQuick"} onClick={()=>selectOperation(x.id)}>
-          <FileText size={18}/><span>{x.name}</span><small>{x.desc}</small>
-        </button>)}
+      <section className="pdfQuickWrap">
+        <div className="pdfQuickHead"><div><h3>All PDF tools</h3><p>Switch tools instantly without leaving the PDF workspace.</p></div><span className="pill">{pdfTools.length} tools</span></div>
+        <div className="pdfQuickGrid">
+          {pdfTools.map(x=><button key={x.id} type="button" className={active===x.id?"pdfQuick active":"pdfQuick"} onClick={()=>selectOperation(x.id)}>
+            <div className="qIcon">{x.id==="merge-pdf"?<span>＋</span>:x.id==="split-pdf"?<span>✂</span>:x.id==="compress-pdf"?<span>▤</span>:x.id==="edit-pdf"?<FileText size={18}/>:<FileText size={18}/>}</div>
+            <span>{x.name}</span><small>{x.desc}</small>
+          </button>)}
+        </div>
       </section>
     </div>
   </Shell>;
