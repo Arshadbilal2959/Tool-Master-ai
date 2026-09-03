@@ -294,78 +294,47 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
 
-.pdfProPage{margin-top:18px}
-.pdfProHero{position:relative;overflow:hidden;background:
-linear-gradient(135deg,#fbfbff 0%,#f4f1ff 48%,#ffffff 100%);
-padding:58px 24px 62px;text-align:center;border:1px solid #e4e6ef;border-radius:24px;
-box-shadow:0 18px 55px rgba(55,43,120,.08)}
-.pdfProHero:before{content:"";position:absolute;inset:auto -60px -120px auto;width:280px;height:280px;border-radius:50%;
-background:radial-gradient(circle,rgba(108,76,245,.16),transparent 68%);pointer-events:none}
-.pdfProHero:after{content:"PDF";position:absolute;right:28px;top:22px;font-weight:1000;font-size:120px;letter-spacing:-.08em;
-color:rgba(108,76,245,.05);pointer-events:none}
-.pdfProHero h1{position:relative;z-index:1;font-size:clamp(34px,5vw,56px);margin:0 0 12px;letter-spacing:-.055em}
-.pdfProHero p{position:relative;z-index:1;font-size:17px;line-height:1.65;color:#667085;margin:0 auto 28px;max-width:760px}
-.pdfUploadArea{position:relative;z-index:2;max-width:620px;margin:auto}
-.pdfUploadArea .uploadBox{justify-content:center;min-height:160px;background:rgba(255,255,255,.92);border:1.5px dashed #c8befd;
-box-shadow:0 15px 35px rgba(35,29,80,.10);padding:26px;border-radius:18px}
-.pdfUploadArea .uploadBox svg{width:28px;height:28px;color:#6c4cf5}
-.pdfUploadArea .uploadBox b{font-size:16px;color:#1e2638}
-.pdfUploadArea .uploadBox strong{font-size:12px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pdfDropHint{color:#8992a3;font-size:13px;margin-top:11px}
-.pdfTrustRow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px;color:#6f7789;font-size:12px}
-.pdfTrustRow span{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #e6e7ef;background:rgba(255,255,255,.75);border-radius:999px}
-.pdfWorkArea{display:grid;grid-template-columns:minmax(0,1fr) 380px;min-height:640px;border:1px solid #e2e5ef;border-top:0;
-background:linear-gradient(180deg,#f4f5f9,#eef0f5);overflow:hidden}
-.pdfCanvasZone{padding:22px;min-width:0}
-.pdfCanvasHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
-.pdfCanvasHeader .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8d95a6;font-weight:850}
-.pdfCanvasHeader .fileCount{font-size:13px;font-weight:800;color:#39445a}
-.pdfThumbGrid{min-height:520px;display:flex;justify-content:center;align-items:flex-start;gap:20px;flex-wrap:wrap;padding:28px;
-border:1px solid #e1e4eb;border-radius:18px;background:radial-gradient(circle at top,#ffffff,#f1f3f7 68%);box-shadow:inset 0 1px 0 rgba(255,255,255,.75)}
-.pdfThumb{position:relative;width:188px;background:#fff;border-radius:14px;padding:12px;box-shadow:0 16px 34px rgba(33,39,54,.12);text-align:center;
-border:1px solid #e7e9ef;transition:transform .18s,box-shadow .18s}
-.pdfThumb:hover{transform:translateY(-3px);box-shadow:0 20px 40px rgba(33,39,54,.16)}
-.pdfThumb img{width:100%;height:248px;object-fit:contain;border-radius:8px;border:1px solid #e8eaf0;background:#fafafa}
-.pdfThumb small{display:block;margin-top:9px;color:#546074;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pdfThumb.file{height:200px;display:grid;place-items:center;align-content:center;gap:10px}
-.pdfThumb.file svg{color:#6c4cf5}
-.pdfCanvasTip{text-align:center;color:#8d95a6;font-size:12px;margin-top:12px}
-.pdfSidePanel{background:rgba(255,255,255,.98);border-left:1px solid #dfe2ea;padding:24px;
-display:flex;flex-direction:column;box-shadow:-12px 0 35px rgba(30,35,50,.04)}
-.pdfSideTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px}
-.pdfSidePanel h2{font-size:25px;letter-spacing:-.03em;margin:0}
-.pdfSidePanel .sub{font-size:12px;line-height:1.5;color:#8992a3;margin-top:5px}
-.pdfStatusChip{font-size:11px;font-weight:850;padding:7px 10px;border-radius:999px;background:#f1edff;color:#6548eb;white-space:nowrap}
-.pdfChoice{padding:14px 0;display:grid;gap:6px;border-top:1px solid #edf0f4}
-.pdfChoice b{font-size:13px;color:#263044}.pdfChoice span{color:#657085;line-height:1.5;font-size:13px}
-.pdfChoice.premium b{color:#b06a00}
-.pdfChoice.premium b span{background:#fff1c7;border-radius:6px;padding:3px 7px;font-size:10px;color:#855a00;margin-left:6px}
-.pdfSidePanel label{display:grid;gap:7px;color:#566176;font-size:12px;font-weight:800;margin:13px 0}
-.pdfSidePanel input,.pdfSidePanel select{width:100%;border:1px solid #dfe3ea;border-radius:11px;padding:11px 12px;background:#fff}
-.pdfMainAction{margin-top:auto;border:0;border-radius:13px;padding:16px;background:linear-gradient(135deg,#6c4cf5,#7e60f7);color:#fff;font-weight:900;font-size:16px;
-box-shadow:0 12px 28px rgba(108,76,245,.25);transition:transform .16s,box-shadow .16s}
-.pdfMainAction:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 16px 34px rgba(108,76,245,.30)}
-.pdfMainAction:disabled{opacity:.58;cursor:not-allowed}
-.pdfSideNote{margin-top:12px;color:#8c95a6;font-size:11px;line-height:1.55}
-.pdfQuickWrap{padding:26px;background:#fff;border:1px solid #e3e6ed;border-top:0;border-radius:0 0 20px 20px}
-.pdfQuickHead{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:15px}
-.pdfQuickHead h3{margin:0;font-size:18px;letter-spacing:-.02em}.pdfQuickHead p{margin:4px 0 0;color:#8b94a6;font-size:12px}
-.pdfQuickGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px}
-.pdfQuick{position:relative;border:1px solid #e3e6ed;background:#fff;border-radius:15px;padding:16px;text-align:left;
-display:grid;grid-template-columns:42px 1fr;gap:7px 12px;color:#354055;transition:transform .16s,border-color .16s,box-shadow .16s}
-.pdfQuick:hover{transform:translateY(-2px);border-color:#d4cdfd;box-shadow:0 12px 28px rgba(73,53,160,.08)}
-.pdfQuick .qIcon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#f2efff;color:#6c4cf5}
-.pdfQuick span{align-self:end;font-weight:850}.pdfQuick small{grid-column:2;color:#8992a3;line-height:1.45}.pdfQuick.active{border-color:#8c77f7;background:#faf8ff;color:#5f42e5;box-shadow:0 10px 24px rgba(108,76,245,.09)}
-@media(max-width:900px){.pdfWorkArea{grid-template-columns:1fr}.pdfSidePanel{border-left:0;border-top:1px solid #e0e3ea}.pdfMainAction{margin-top:14px}.pdfQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){.pdfProHero{padding:42px 16px 46px;border-radius:18px}.pdfProHero:after{font-size:82px;right:8px}.pdfUploadArea .uploadBox{min-height:140px;padding:20px}.pdfCanvasZone{padding:12px}.pdfThumbGrid{padding:16px;min-height:360px}.pdfThumb{width:145px;padding:9px}.pdfThumb img{height:190px}.pdfSidePanel{padding:18px}.pdfQuickWrap{padding:16px}.pdfQuickGrid{grid-template-columns:1fr}.pdfQuick{grid-template-columns:38px 1fr}.pdfQuick .qIcon{width:38px;height:38px}}
+.pdfProPage{margin-top:12px}
+.pdfProHero{background:#f6f6fb;padding:40px 24px 50px;text-align:center;border:1px solid #e3e4eb;border-radius:16px 16px 0 0}
+.pdfProHero h1{font-size:42px;margin:0 0 10px;letter-spacing:-.04em}
+.pdfProHero p{font-size:17px;color:#667085;margin:0 auto 26px;max-width:800px}
+.pdfUploadArea{max-width:600px;margin:0 auto}
+.pdfSelectRow{display:grid;grid-template-columns:minmax(0,1fr) 62px;gap:12px;align-items:center}
+.pdfSelectButton{height:78px;border:0;border-radius:12px;background:#ef3129;color:#fff;font-size:22px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 8px 18px rgba(239,49,41,.18);transition:transform .15s ease,box-shadow .15s ease,filter .15s ease}
+.pdfSelectButton:hover{transform:translateY(-1px);filter:brightness(.98);box-shadow:0 12px 24px rgba(239,49,41,.22)}
+.pdfSelectButton:active{transform:translateY(0)}
+.pdfCloudButtons{display:flex;flex-direction:column;gap:10px}
+.pdfCloudButton{width:62px;height:62px;border:0;border-radius:50%;background:#ef3129;color:#fff;display:grid;place-items:center;box-shadow:0 7px 16px rgba(239,49,41,.2);transition:transform .15s ease,box-shadow .15s ease}
+.pdfCloudButton:hover{transform:scale(1.04);box-shadow:0 10px 20px rgba(239,49,41,.24)}
+.pdfCloudButton svg{width:28px;height:28px}
+.pdfUploadHidden{display:none}
+.pdfUploadHint{color:#5f6777;font-size:15px;margin-top:14px}
+.pdfUploadHint span{color:#8c94a3;font-size:12px;display:block;margin-top:6px}
+.pdfProviderNote{margin-top:12px;color:#8c95a6;font-size:11px}
+@media(max-width:560px){.pdfSelectRow{grid-template-columns:1fr 50px;gap:8px}.pdfSelectButton{height:66px;font-size:18px}.pdfCloudButtons{gap:8px}.pdfCloudButton{width:50px;height:50px}.pdfCloudButton svg{width:22px;height:22px}}
+.pdfWorkArea{display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:610px;border:1px solid #e2e4eb;border-top:0;background:#eef0f6}
+.pdfCanvasZone{padding:28px;min-width:0}
+.pdfThumbHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;color:#566176;font-size:13px}
+.pdfThumbGrid{min-height:490px;display:flex;justify-content:center;align-items:flex-start;gap:18px;flex-wrap:wrap;padding:20px}
+.pdfThumb{width:180px;background:#fff;border-radius:11px;padding:12px;box-shadow:0 8px 26px rgba(34,39,53,.10);text-align:center}
+.pdfThumb img{width:100%;height:240px;object-fit:contain;border:1px solid #e8eaf0}
+.pdfThumb small{display:block;margin-top:8px;color:#657085;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdfThumb.file{height:180px;display:grid;place-items:center;align-content:center;gap:10px}
+.pdfCanvasTip{text-align:center;color:#9198a8;font-size:12px;margin-top:6px}
+.pdfSidePanel{background:#fff;border-left:1px solid #dedfe6;padding:28px;display:flex;flex-direction:column}
+.pdfSidePanel h2{font-size:24px;margin:0 0 20px}
+.pdfChoice{padding:17px 16px;border-top:1px solid #e5e7ed;border-bottom:1px solid #e5e7ed;display:grid;gap:5px}
+.pdfChoice b{color:#ef3d34;font-size:14px}.pdfChoice span{color:#5e687c;line-height:1.45}
+.pdfChoice.premium{border-top:0}.pdfChoice.premium b{color:#f59e0b}.pdfChoice.premium b span{background:#fff0c8;border-radius:5px;padding:3px 7px;font-size:11px;color:#7b5c00;margin-left:6px}
+.pdfSidePanel label{display:grid;gap:7px;color:#566176;font-size:12px;font-weight:800;margin:12px 0}
+.pdfSidePanel input,.pdfSidePanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:11px;background:#fff}
+.pdfMainAction{margin-top:auto;border:0;border-radius:11px;padding:17px;background:#ef332b;color:#fff;font-weight:850;font-size:17px;box-shadow:0 10px 25px rgba(239,51,43,.18)}
+.pdfMainAction:disabled{opacity:.65;cursor:not-allowed}
+.pdfSideNote{margin-top:12px;color:#8c95a6;font-size:11px;line-height:1.5}
+.pdfQuickGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:22px;background:#fff;border:1px solid #e3e4eb;border-top:0;border-radius:0 0 16px 16px}
+.pdfQuick{border:1px solid #e2e5ec;background:#fff;border-radius:12px;padding:14px;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:7px 10px;color:#485267}
+.pdfQuick span{font-weight:850}.pdfQuick small{grid-column:2;color:#8992a3;line-height:1.4}.pdfQuick.active{border-color:#8770f8;background:#faf8ff;color:#6848ee}
 @media(max-width:900px){.navLinks{display:none}.pdfNavMenu{padding-left:14px;padding-right:14px;gap:2px}.pdfNavMenu>button,.pdfDropdown summary{font-size:11px;padding:9px 8px}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
-.app.dark{--bg:#0b1020;--panel:#111827;--panel2:#0f172a;--text:#f3f4f6;--muted:#a7b0c0;--line:#253047;--sidebar:#111827;--soft:#1d1738}.app.dark .header,.app.dark .footer,.app.dark .pdfNavWrap,.app.dark .pdfNavMenu,.app.dark .panel,.app.dark .aiCard,.app.dark .card,.app.dark .modal,.app.dark .pdfEditorTop,.app.dark .pdfEditorToolbar,.app.dark .pdfToolsPanel,.app.dark .pdfFileBar,.app.dark .pdfPrivacy{background:#111827;color:#f3f4f6}.app.dark input,.app.dark textarea,.app.dark select,.app.dark .btn,.app.dark .iconBtn,.app.dark .cat,.app.dark .pdfAction{background:#0f172a;color:#f3f4f6;border-color:#2b3850}.app.dark .hero{background:#0b1020}.app.dark .hero p,.app.dark .cardBody p,.app.dark .toolHero p,.app.dark .panelHint,.app.dark small{color:#a7b0c0}
-html{min-width:320px;overflow-x:hidden}
-img{max-width:100%}
-button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid rgba(108,76,245,.28);outline-offset:2px}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}.card:hover{transform:none}}
-@media(max-width:900px){.container{padding-left:16px;padding-right:16px}.toolPage{padding-left:16px;padding-right:16px}.pdfNavWrap{overflow-x:auto}.pdfNavMenu{min-width:max-content}.aiHelper{gap:12px}.panel,.aiCard{padding:16px}.hero p{font-size:16px}.stats{flex-wrap:wrap}}
-@media(max-width:560px){.container{padding-left:12px;padding-right:12px}.hero{padding-left:14px;padding-right:14px}.hero h1{font-size:40px}.hero p{font-size:15px}.grid{grid-template-columns:1fr}.workspace{grid-template-columns:1fr}.videoOptions{grid-template-columns:1fr}.toolHero h1{font-size:27px}.toolHero p{font-size:14px}.pdfNavMenu{gap:0}.pdfNavMenu>button,.pdfDropdown summary{font-size:10px;padding:8px 7px}.pdfDropdownPanel{position:fixed;left:10px;right:10px;top:125px;max-height:60vh;overflow:auto}.pdfWorkspace{min-height:auto}.pdfViewer{padding:12px}.pdfToolsPanel{padding:14px}.pdfFileBar{padding:10px 12px}.footer{padding-left:12px;padding-right:12px}.footerInner{gap:10px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
 `;
 
@@ -403,48 +372,6 @@ function PdfNavMenu({openTool}) {
   </div>;
 }
 
-
-const SEO_META = {
-  home: {
-    title: 'ToolMaster Pro — 100+ Free Online Tools for PDF, Image, SEO & More',
-    description: 'Fast, modern and privacy-friendly online tools for PDF, images, SEO, text, developers, calculators, conversion and AI.',
-    keywords: 'free online tools, PDF tools, image tools, SEO tools, text tools, online converters'
-  }
-};
-
-const TOOL_SEO = Object.fromEntries(tools.map(t => [t[3], {
-  title: `${t[0]} — Free Online Tool | ToolMaster Pro`,
-  description: `${t[2]} Fast, simple and browser-friendly with ToolMaster Pro.`
-}]));
-
-function upsertMeta(name, content, attr='name') {
-  let el = document.head.querySelector(`meta[${attr}="${name}"]`);
-  if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
-  el.setAttribute('content', content);
-}
-function setSeo({title,description,keywords='',url=window.location.href,type='website'}={}) {
-  document.title = title || SEO_META.home.title;
-  upsertMeta('description', description || SEO_META.home.description);
-  upsertMeta('keywords', keywords || SEO_META.home.keywords);
-  upsertMeta('og:title', document.title, 'property');
-  upsertMeta('og:description', description || SEO_META.home.description, 'property');
-  upsertMeta('og:type', type, 'property');
-  upsertMeta('og:url', url, 'property');
-  upsertMeta('twitter:card', 'summary');
-  upsertMeta('twitter:title', document.title);
-  upsertMeta('twitter:description', description || SEO_META.home.description);
-  let canonical = document.head.querySelector('link[rel="canonical"]');
-  if (!canonical) { canonical=document.createElement('link'); canonical.rel='canonical'; document.head.appendChild(canonical); }
-  canonical.href = url;
-  let ld = document.head.querySelector('#tm-jsonld');
-  if (!ld) { ld=document.createElement('script'); ld.type='application/ld+json'; ld.id='tm-jsonld'; document.head.appendChild(ld); }
-  ld.textContent = JSON.stringify({
-    '@context':'https://schema.org', '@type':'WebSite', name:'ToolMaster Pro',
-    url: window.location.origin, description: description || SEO_META.home.description,
-    potentialAction:{'@type':'SearchAction',target:`${window.location.origin}/?q={search_term_string}`,'query-input':'required name=search_term_string'}
-  });
-}
-
 function App() {
   const [cat,setCat]=useState("All Tools");
   const [query,setQuery]=useState("");
@@ -459,37 +386,6 @@ function App() {
   const [profileOpen,setProfileOpen]=useState(false);
   const [favorites,setFavorites]=useState([]);
   const [history,setHistory]=useState([]);
-
-  useEffect(() => {
-    const pathMatch = window.location.pathname.match(/^\/tools\/([^/]+)\/?$/i);
-    const hash = window.location.hash.replace(/^#\/?/, "");
-    const slug = pathMatch ? decodeURIComponent(pathMatch[1]) : (hash.startsWith("tool/") ? decodeURIComponent(hash.slice(5)) : "");
-    if (slug) {
-      const found = tools.find(x => x[3] === slug);
-      if (found) setTool(found);
-    }
-  }, []);
-
-  useEffect(() => {
-    const seo = tool ? TOOL_SEO[tool[3]] : SEO_META.home;
-    setSeo({
-      title: seo?.title,
-      description: seo?.description,
-      url: tool ? `${window.location.origin}/tools/${tool[3]}` : `${window.location.origin}/`
-    });
-  }, [tool]);
-
-  useEffect(() => {
-    const onKey = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        if (!tool && !admin) document.querySelector('.searchBox input')?.focus();
-      }
-      if (e.key === 'Escape') { setMobile(false); setProfileOpen(false); setAuthOpen(false); }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [tool,admin]);
 
   const filtered = useMemo(() => tools.filter(t =>
     (cat==="All Tools" || t[1]===cat) &&
@@ -534,18 +430,10 @@ function App() {
   const isAdmin = !!(profile?.role === "admin" || user?.app_metadata?.role === "admin" || user?.user_metadata?.role === "admin");
 
   const openTool = (t) => {
-    if (!t) return;
     setTool(t); setAdmin(false);
-    window.history.replaceState(null, "", `/tools/${encodeURIComponent(t[3])}`);
     const next=[t[3],...history.filter(x=>x!==t[3])].slice(0,10);
     setHistory(next); localStorage.setItem("tm_history",JSON.stringify(next));
     window.scrollTo({top:0,behavior:"smooth"});
-  };
-
-  const clearTool = () => {
-    setTool(null);
-    if (window.location.pathname.startsWith("/tools/")) window.history.replaceState(null, "", "/" + window.location.search);
-    if (window.location.hash.startsWith("#tool/")) window.history.replaceState(null, "", "/" + window.location.search);
   };
 
   const toggleFav = (slug) => {
@@ -558,19 +446,19 @@ function App() {
     setUser(null); setProfile(null); setAdmin(false); setProfileOpen(false);
   };
 
-  return <div className={dark?"app dark":"app"}>
+  return <div className="app">
     <GlobalStyle/>
     <header className="header"><div className="container nav">
       <div className="brand"><div className="brandIcon"><Wrench size={21}/></div><span>ToolMaster<span>Pro</span></span></div>
-      <nav className="navLinks" aria-label="Primary navigation">
-        <a href="#tools" onClick={()=>{clearTool();setAdmin(false)}}>Tools</a>
-        <a href="#categories" onClick={()=>{clearTool();setAdmin(false)}}>Categories</a>
-        <a href="#pricing" onClick={()=>{clearTool();setAdmin(false)}}>Pricing</a>
-        <a href="#about" onClick={()=>{clearTool();setAdmin(false)}}>About</a>
+      <nav className="navLinks">
+        <a href="#tools" onClick={()=>{setTool(null);setAdmin(false)}}>Tools</a>
+        <a href="#categories" onClick={()=>{setTool(null);setAdmin(false)}}>Categories</a>
+        <a href="#pricing" onClick={()=>{setTool(null);setAdmin(false)}}>Pricing</a>
+        <a href="#about" onClick={()=>{setTool(null);setAdmin(false)}}>About</a>
       </nav>
       <div className="navActions">
-        <button aria-label="Open navigation" className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
-        <button aria-label={dark?"Switch to light mode":"Switch to dark mode"} className="iconBtn" onClick={()=>setDark(!dark)} title="Theme">{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
+        <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
+        <button className="iconBtn" onClick={()=>setDark(!dark)} title="Theme">{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
         {isAdmin && <button className="btn" onClick={()=>{setAdmin(!admin);setTool(null)}}><LayoutDashboard size={16}/><span>{admin?"Website":"Admin"}</span></button>}
         {user ? <div className="profileMenu">
           <button className="iconBtn" onClick={()=>setProfileOpen(!profileOpen)}><User size={17}/></button>
@@ -583,19 +471,19 @@ function App() {
     </div>
     <PdfNavMenu openTool={openTool}/>
     {mobile&&<div className="container mobileNav" style={{paddingBottom:12,display:"flex",gap:16,flexWrap:"wrap"}}>
-      <a href="#tools" onClick={()=>{setMobile(false);clearTool();}}>Tools</a>
-      <a href="#categories" onClick={()=>{setMobile(false);clearTool();}}>Categories</a>
-      <a href="#pricing" onClick={()=>{setMobile(false);clearTool();}}>Pricing</a>
-      <a href="#about" onClick={()=>{setMobile(false);clearTool();}}>About</a>
+      <a href="#tools" onClick={()=>{setMobile(false);setTool(null);}}>Tools</a>
+      <a href="#categories" onClick={()=>{setMobile(false);setTool(null);}}>Categories</a>
+      <a href="#pricing" onClick={()=>{setMobile(false);setTool(null);}}>Pricing</a>
+      <a href="#about" onClick={()=>{setMobile(false);setTool(null);}}>About</a>
     </div>}</header>
 
-    {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={clearTool} user={user} openAuth={(mode="signin")=>{setAuthMode(mode);setAuthOpen(true)}}/></ToolErrorBoundary> :
+    {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user} openAuth={(mode="signin")=>{setAuthMode(mode);setAuthOpen(true)}}/></ToolErrorBoundary> :
       <>
         <section className="hero"><div className="heroInner">
           <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
           <h1>One place for <span>every tool</span> you need.</h1>
           <p>Fast, modern and privacy-friendly tools for PDF, images, SEO, text, developers, calculators, conversion and AI.</p>
-          <div className="searchBox" role="search"><Search size={19}/><input aria-label="Search online tools" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search 100+ tools..."/><div className="kbd">Ctrl K</div></div>
+          <div className="searchBox"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search 100+ tools..."/><div className="kbd">Ctrl K</div></div>
           <div className="stats"><div><b>{tools.length}+</b><small>Tools</small></div><div><b>13</b><small>Categories</small></div><div><b>{user?"Signed in":"Open"}</b><small>Access</small></div></div>
         </div></section>
         <main className="main container" id="tools">
@@ -1402,68 +1290,56 @@ function PdfTool({t,back}) {
     setActive(next); setStatus("");
   };
 
-  const actionLabel = busy ? "Processing…" : ({
-    "merge-pdf":"Merge PDFs",
-    "split-pdf":"Split PDF",
-    "compress-pdf":"Compress PDF",
-    "pdf-word":"Convert to Word",
-    "word-pdf":"Convert to PDF",
-    "pdf-jpg":"Convert to JPG",
-    "jpg-pdf":"Create PDF",
-    "rotate-pdf":"Rotate PDF",
-    "pdf-unlock":"Unlock PDF",
-    "pdf-watermark":"Add Watermark",
-    "edit-pdf":"Open PDF Editor"
-  }[active] || current.name);
-
   return <Shell back={back} t={t} status={status}>
     <div className="pdfProPage">
       <section className="pdfProHero">
-        <div className="pill" style={{position:"relative",zIndex:2,marginBottom:14}}><FileText size={14}/> Professional PDF workspace</div>
         <h1>{current.name}</h1>
         <p>{current.desc}</p>
-        <div className="pdfUploadArea">
-          <FilePicker multiple={multi} accept={accept} onChange={setFiles} files={files}/>
-          <div className="pdfDropHint">Drag & drop or choose {active==="word-pdf"?"DOC / DOCX":active==="jpg-pdf"?"JPG / PNG":"PDF"} files</div>
-          <div className="pdfTrustRow">
-            <span><ShieldCheck size={13}/> Secure processing</span>
-            <span><Zap size={13}/> Fast browser tools</span>
-            <span><CheckCircle2 size={13}/> Easy download</span>
+        <div className="pdfUploadArea" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();const dropped=Array.from(e.dataTransfer.files||[]);if(dropped.length)setFiles(multi?dropped:[dropped[0]]);}}>
+          <input id="pdf-main-upload" className="pdfUploadHidden" type="file" multiple={multi} accept={accept} onChange={e=>{setFiles(Array.from(e.target.files||[]));e.target.value="";}} />
+          <div className="pdfSelectRow">
+            <button type="button" className="pdfSelectButton" onClick={()=>document.getElementById("pdf-main-upload")?.click()}>
+              <Upload size={24}/> {active==="word-pdf"?"Select Word file":active==="jpg-pdf"?"Select image files":"Select PDF file"}
+            </button>
+            <div className="pdfCloudButtons">
+              <button type="button" className="pdfCloudButton" title="Google Drive" aria-label="Choose from Google Drive" onClick={()=>setStatus("Google Drive picker is ready for configuration. Add VITE_GOOGLE_PICKER_API_KEY and VITE_GOOGLE_PICKER_CLIENT_ID in Vercel.")}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8.1 3h4.3l7.5 13h-4.3zM6.2 7.2 2 14.5l2.1 3.6 6.3-10.9zM6 20h13.5l2.2-3.7H8.2z"/></svg>
+              </button>
+              <button type="button" className="pdfCloudButton" title="Dropbox" aria-label="Choose from Dropbox" onClick={()=>setStatus("Dropbox chooser is ready for configuration. Add VITE_DROPBOX_APP_KEY in Vercel.")}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m7.2 4.2 4.8 3.3 4.8-3.3 4.2 3-4.2 3.1L12 7l-4.8 3.3L3 7.2zm0 6.8 4.8 3.3 4.8-3.3 4.2 3-4.2 3.1-4.8-3.3L3 14zM8.1 18.2l3.9 2.7 3.9-2.7-3.9-2.7z"/></svg>
+              </button>
+            </div>
           </div>
+          <div className="pdfUploadHint">or drop {active==="word-pdf"?"Word":active==="jpg-pdf"?"images":"PDF"} here<span>Supported: {active==="word-pdf"?"DOC, DOCX":active==="jpg-pdf"?"JPG, PNG":"PDF"} · Fast upload · Secure processing</span></div>
+          <div className="pdfProviderNote">Google Drive and Dropbox cloud import can be enabled with their picker keys in Vercel.</div>
         </div>
       </section>
 
       {files.length>0 && <section className="pdfWorkArea">
         <div className="pdfCanvasZone">
-          <div className="pdfCanvasHeader">
-            <div><div className="eyebrow">Workspace</div><div className="fileCount">{files.length} file{files.length>1?"s":""} selected</div></div>
-            <button type="button" className="btn" onClick={()=>setFiles([])}><Trash2 size={15}/> Clear</button>
-          </div>
+          <div className="pdfThumbHeader"><span>{files.length} file{files.length>1?"s":""} selected</span><button type="button" className="btn" onClick={()=>setFiles([])}>Remove</button></div>
           <div className="pdfThumbGrid">
-            {thumbs.length?thumbs.map(x=><div className="pdfThumb" key={x.page}><img src={x.url} alt={`PDF page ${x.page}`}/><small>Page {x.page}</small></div>):files.map(f=><div className="pdfThumb file" key={f.name}><FileText size={36}/><small>{f.name}</small></div>)}
+            {thumbs.length?thumbs.map(x=><div className="pdfThumb" key={x.page}><img src={x.url} alt={`Page ${x.page}`}/><small>Page {x.page}</small></div>):files.map(f=><div className="pdfThumb file" key={f.name}><FileText size={34}/><small>{f.name}</small></div>)}
           </div>
-          <div className="pdfCanvasTip">Your original file remains unchanged. The selected operation creates a new downloadable file.</div>
+          <div className="pdfCanvasTip">Your original file stays here until you start the selected operation.</div>
         </div>
         <aside className="pdfSidePanel">
-          <div className="pdfSideTop"><div><h2>{current.name}</h2><div className="sub">{current.desc}</div></div><div className="pdfStatusChip">Ready</div></div>
-          {active==="pdf-word"&&<><div className="pdfChoice"><b>Selectable PDF · Standard</b><span>Best for normal PDFs with selectable text.</span></div><div className="pdfChoice premium"><b>Scanned PDF · OCR <span>Premium</span></b><span>Scanned/image PDFs need OCR to create editable Word text.</span></div></>}
-          {active==="split-pdf"&&<label>Pages to extract<input value={pages} onChange={e=>setPages(e.target.value)} placeholder="Example: 1,3,5 or leave blank for all"/></label>}
-          {active==="rotate-pdf"&&<label>Rotation<select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90° clockwise</option><option value="180">180°</option><option value="270">270° clockwise</option></select></label>}
-          {active==="pdf-watermark"&&<label>Watermark text<input value={watermark} onChange={e=>setWatermark(e.target.value)} placeholder="ToolMaster Pro"/></label>}
-          {active==="pdf-jpg"&&<label>JPG quality <input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/><span style={{fontSize:11,color:"#8b94a6",fontWeight:600}}>{Math.round(Number(quality)*100)}% quality</span></label>}
-          <button type="button" className="pdfMainAction" disabled={busy} onClick={run}>{busy?<RefreshCw size={17} className="spin"/>:<Zap size={17}/>} {actionLabel}</button>
-          <div className="pdfSideNote">Browser-first tools run locally where possible. PDF/Word conversion uses your configured secure converter backend.</div>
+          <h2>{current.name}</h2>
+          {active==="pdf-word"&&<div className="pdfChoice"><b>NO OCR</b><span>Convert selectable-text PDFs into editable Word files.</span></div>}
+          {active==="pdf-word"&&<div className="pdfChoice premium"><b>OCR <span>Premium</span></b><span>Scanned/image PDFs need OCR for editable Word output.</span></div>}
+          {active==="split-pdf"&&<label>Pages <input value={pages} onChange={e=>setPages(e.target.value)} placeholder="1,3,5"/></label>}
+          {active==="rotate-pdf"&&<label>Rotation <select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
+          {active==="pdf-watermark"&&<label>Watermark text <input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
+          {active==="pdf-jpg"&&<label>JPG quality <input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
+          <button type="button" className="pdfMainAction" disabled={busy} onClick={run}>{busy?"Processing…":current.name==="Merge PDF"?"Merge PDF":current.name==="Split PDF"?"Split PDF":current.name==="Compress PDF"?"Compress PDF":current.name==="PDF to Word"?"Convert to WORD":current.name==="Word to PDF"?"Convert to PDF":current.name==="PDF to JPG"?"Convert to JPG":current.name}</button>
+          <div className="pdfSideNote">Secure browser-first processing where possible. Conversion tools use your configured backend.</div>
         </aside>
       </section>}
 
-      <section className="pdfQuickWrap">
-        <div className="pdfQuickHead"><div><h3>All PDF tools</h3><p>Switch tools instantly without leaving the PDF workspace.</p></div><span className="pill">{pdfTools.length} tools</span></div>
-        <div className="pdfQuickGrid">
-          {pdfTools.map(x=><button key={x.id} type="button" className={active===x.id?"pdfQuick active":"pdfQuick"} onClick={()=>selectOperation(x.id)}>
-            <div className="qIcon">{x.id==="merge-pdf"?<span>＋</span>:x.id==="split-pdf"?<span>✂</span>:x.id==="compress-pdf"?<span>▤</span>:x.id==="edit-pdf"?<FileText size={18}/>:<FileText size={18}/>}</div>
-            <span>{x.name}</span><small>{x.desc}</small>
-          </button>)}
-        </div>
+      <section className="pdfQuickGrid">
+        {pdfTools.map(x=><button key={x.id} type="button" className={active===x.id?"pdfQuick active":"pdfQuick"} onClick={()=>selectOperation(x.id)}>
+          <FileText size={18}/><span>{x.name}</span><small>{x.desc}</small>
+        </button>)}
       </section>
     </div>
   </Shell>;
@@ -1713,7 +1589,7 @@ function BackgroundRemoverTool({t,back}) {
               {bgCategory==="photo" && <>
                 <p style={{fontWeight:700,margin:"0 0 10px"}}>Choose a background</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
-                  {photoBackgrounds.map((src,i)=><button key={src} type="button" onClick={()=>chooseBackground("image",src)} style={{padding:0,border:bgImage===src?"3px solid #2563eb":"1px solid #e1e5eb",borderRadius:12,overflow:"hidden",background:"#fff",cursor:"pointer"}}><img loading="lazy" decoding="async" src={src} alt={`Background ${i+1}`} style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/></button>)}
+                  {photoBackgrounds.map((src,i)=><button key={src} type="button" onClick={()=>chooseBackground("image",src)} style={{padding:0,border:bgImage===src?"3px solid #2563eb":"1px solid #e1e5eb",borderRadius:12,overflow:"hidden",background:"#fff",cursor:"pointer"}}><img src={src} alt={`Background ${i+1}`} style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/></button>)}
                 </div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:12}}>
                   <button type="button" className={bgMode==="transparent"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("transparent")}>Transparent</button>
