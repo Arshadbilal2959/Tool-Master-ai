@@ -314,6 +314,15 @@ function App() {
   const [favorites,setFavorites]=useState([]);
   const [history,setHistory]=useState([]);
 
+  const scrollToSection = (id) => {
+    setTool(null); setAdmin(false); setMobile(false);
+    requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"}));
+  };
+  const openBySlug = (slug) => {
+    const found = tools.find(x=>x[3]===slug);
+    if(found) openTool(found);
+  };
+
   const filtered = useMemo(() => tools.filter(t =>
     (cat==="All Tools" || t[1]===cat) &&
     (t[0].toLowerCase().includes(query.toLowerCase()) || t[2].toLowerCase().includes(query.toLowerCase()))
@@ -370,7 +379,12 @@ function App() {
     <header className="header"><div className="container nav">
       <div className="brand"><div className="brandIcon"><Wrench size={21}/></div><span>ToolMaster<span>Pro</span></span></div>
       <nav className="navLinks">
-        <a href="#tools">Tools</a><a href="#categories">Categories</a><a href="#about">About</a>
+        <a href="#home" onClick={(e)=>{e.preventDefault();scrollToSection("home")}}>Home</a>
+        <a href="#tools" onClick={(e)=>{e.preventDefault();scrollToSection("tools")}}>Tools</a>
+        <a href="#categories" onClick={(e)=>{e.preventDefault();scrollToSection("categories")}}>Categories</a>
+        <a href="#pricing" onClick={(e)=>{e.preventDefault();scrollToSection("pricing")}}>Pricing</a>
+        <a href="#about" onClick={(e)=>{e.preventDefault();scrollToSection("about")}}>About</a>
+        <a href="#contact" onClick={(e)=>{e.preventDefault();scrollToSection("contact")}}>Contact</a>
       </nav>
       <div className="navActions">
         <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
@@ -384,11 +398,13 @@ function App() {
           </div>}
         </div> : <><button className="btn" onClick={()=>{setAuthMode("signin");setAuthOpen(true)}}><LogIn size={16}/><span>Sign in</span></button><button className="btn primary" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}><UserPlus size={16}/><span>Sign up</span></button></>}
       </div>
-    </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
+    </div>{mobile&&<div className="container" style={{paddingBottom:14,display:"flex",gap:14,flexWrap:"wrap",borderTop:"1px solid var(--line)",paddingTop:12}}>
+      {[['home','Home'],['tools','Tools'],['categories','Categories'],['pricing','Pricing'],['about','About'],['contact','Contact']].map(([id,label])=><button key={id} className="btn" style={{padding:"8px 11px"}} onClick={()=>scrollToSection(id)}>{label}</button>)}
+    </div>}</header>
 
     {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user} openAuth={(mode="signin")=>{setAuthMode(mode);setAuthOpen(true)}}/></ToolErrorBoundary> :
       <>
-        <section className="hero"><div className="heroInner">
+        <section className="hero" id="home"><div className="heroInner">
           <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
           <h1>One place for <span>every tool</span> you need.</h1>
           <p>Fast, modern and privacy-friendly tools for PDF, images, SEO, text, developers, calculators, conversion and AI.</p>
@@ -399,13 +415,38 @@ function App() {
           <section id="categories"><div className="toolbar">
             {categories.map(([name,count])=><button className={cat===name?"cat active":"cat"} onClick={()=>setCat(name)} key={name}>{iconForCategory(name)}<span>{name}</span><em>{count}</em></button>)}
           </div></section>
-          <div className="sectionHead"><div><h2>{cat}</h2><p>{filtered.length} tools available</p></div></div>
+          <div className="sectionHead"><div><h2>{cat}</h2><p>{filtered.length} tools available</p></div><button className="btn" onClick={()=>{setCat("All Tools");setQuery("");scrollToSection("tools")}}>View all tools</button></div>
           <div className="grid">{filtered.map(t=><ToolCard key={t[3]} t={t} open={()=>openTool(t)} favorite={favorites.includes(t[3])} onFav={()=>toggleFav(t[3])}/>)}</div>
           {!filtered.length&&<div className="empty">No tools found. Try another search.</div>}
+
+          <section id="pricing" style={{paddingTop:72}}>
+            <div className="sectionHead"><div><h2>Simple pricing</h2><p>Start free and upgrade AI usage when you need more credits.</p></div></div>
+            <div className="grid" style={{gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))"}}>
+              <div className="panel"><div className="pill"><Sparkles size={13}/> Student AI</div><h3 style={{fontSize:24,marginBottom:6}}>Student AI Helper Plans</h3><p style={{color:"#7d889b",lineHeight:1.6}}>Free, Silver, Gold, Demand and Platinum plans for study assistance.</p><div className="actions"><button className="btn primary" onClick={()=>openBySlug("student-ai-helper")}>Open Student AI</button></div></div>
+              <div className="panel"><div className="pill"><Sparkles size={13}/> AI Video</div><h3 style={{fontSize:24,marginBottom:6}}>Text-to-Video Plans</h3><p style={{color:"#7d889b",lineHeight:1.6}}>Free, Starter, Pro, Business and Platinum plans for AI video creation.</p><div className="actions"><button className="btn primary" onClick={()=>openBySlug("text-to-video")}>Open Text-to-Video</button></div></div>
+            </div>
+          </section>
+
+          <section id="about" style={{paddingTop:72}}>
+            <div className="sectionHead"><div><h2>About ToolMaster Pro</h2><p>One place for everyday PDF, image, SEO, text, developer, calculator and AI tools.</p></div></div>
+            <div className="panel" style={{lineHeight:1.8,color:"#667085"}}>ToolMaster Pro is built to keep common online tasks fast and easy. Browser-first tools process files locally where practical, while server-backed features use secure Edge Functions. Use the navigation above to jump between tools, categories, pricing and support.</div>
+          </section>
+
+          <section id="contact" style={{paddingTop:72}}>
+            <div className="sectionHead"><div><h2>Contact</h2><p>Need help with a tool, account or deployment?</p></div></div>
+            <div className="panel" style={{display:"flex",gap:16,alignItems:"center",justifyContent:"space-between",flexWrap:"wrap"}}>
+              <div><h3 style={{margin:"0 0 6px"}}>ToolMaster Pro Support</h3><p style={{margin:0,color:"#7d889b"}}>Send us a message and include the tool name plus the error you see.</p></div>
+              <a className="btn primary" href="mailto:support@toolmasterpro.com"><Mail size={16}/> Contact Support</a>
+            </div>
+          </section>
         </main>
       </>
     }
-    <footer className="footer" id="about"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
+    <footer className="footer"><div className="footerInner" style={{alignItems:"flex-start"}}>
+      <div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div>
+      <div style={{display:"grid",gap:7,fontSize:13}}><b style={{color:"#394357"}}>Quick links</b><button className="btn ghost" onClick={()=>scrollToSection("tools")} style={{padding:0,justifyContent:"flex-start"}}>Tools</button><button className="btn ghost" onClick={()=>scrollToSection("pricing")} style={{padding:0,justifyContent:"flex-start"}}>Pricing</button><button className="btn ghost" onClick={()=>scrollToSection("contact")} style={{padding:0,justifyContent:"flex-start"}}>Contact</button></div>
+      <small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small>
+    </div></footer>
     {authOpen && <AuthModal mode={authMode} setMode={setAuthMode} close={()=>setAuthOpen(false)} onDone={()=>setAuthOpen(false)}/>}
   </div>;
 }
@@ -507,36 +548,42 @@ function StudentAIHelper({back,user,openAuth}) {
   const [answer,setAnswer]=useState("");
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState("");
-  const [error,setError]=useState("");
   const [level,setLevel]=useState("Detailed");
   const [model,setModel]=useState("gpt-5.6-luna");
   const [selectedPlan,setSelectedPlan]=useState("free");
-  const endpoint = import.meta.env.VITE_STUDENT_AI_FUNCTION_URL || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/student-ai-helper` : "");
+  const endpoint = import.meta.env.VITE_STUDENT_AI_FUNCTION_URL ||
+    (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/student-ai-helper` : "");
 
   const solve=async()=>{
-    if(!question.trim() && !files.length){setError("");setStatus("Enter a question or upload study material.");return;}
-    if(!endpoint){setError("Student AI backend is not configured. Deploy student-ai-helper in Supabase.");setStatus("");return;}
-    setBusy(true);setStatus("Connecting to Student AI backend…");setError("");setAnswer("");
+    if(!question.trim() && !files.length){setStatus("Enter a question or upload study material.");return;}
+    if(!endpoint){setStatus("Student AI backend is not configured. Deploy student-ai-helper in Supabase.");return;}
+    setBusy(true);setStatus("Connecting to Student AI...");setAnswer("");
     try{
+      const token=await getSupabaseAccessToken();
+      if(!token){
+        setStatus("Please sign in first. Student AI needs your Supabase login to securely call the AI backend.");
+        openAuth?.("signin");
+        return;
+      }
       const fd=new FormData();
       fd.append("question",question.trim());
       fd.append("model",model);
       fd.append("level",level);
       files.forEach(f=>fd.append("files",f,f.name));
-      const headers={...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{})};
+      const headers={
+        ...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),
+        Authorization:`Bearer ${token}`
+      };
       const r=await fetch(endpoint,{method:"POST",headers,body:fd});
       const raw=await r.text();
       let data={}; try{data=raw?JSON.parse(raw):{}}catch{}
       if(!r.ok) throw new Error(data.error||data.message||raw||`Student AI backend error (${r.status})`);
-      const fallbackOutput = Array.isArray(data.output)
-        ? data.output.flatMap(item => Array.isArray(item?.content) ? item.content : [])
-            .map(part => part?.text?.value || part?.text || "").filter(Boolean).join("\n") : "";
-      const out=String(data.answer||data.output_text||fallbackOutput||data.output||data.message||"").trim();
-      if(!out) throw new Error("Student AI returned an empty answer. Check the Supabase function and OPENAI_API_KEY.");
-      setAnswer(out);setStatus(data.usage?`AI response received · ${data.usage}`:"AI response received.");
+      const out=String(data.answer||data.output||data.message||"").trim();
+      if(!out) throw new Error("Student AI returned an empty answer.");
+      setAnswer(out);
+      setStatus(data.usage?`AI response received · ${data.usage}`:"AI response received.");
     }catch(e){
-      setError(e?.message||"Student AI request failed.");
-      setStatus("Student AI could not complete the request.");
+      setStatus(e?.message||"Student AI request failed.");
     }finally{setBusy(false);}
   };
 
@@ -544,18 +591,22 @@ function StudentAIHelper({back,user,openAuth}) {
     <div className="aiHelper">
       <div className="aiCard">
         <h3>📚 Student AI Tutor</h3>
-        {!user && <div className="notice"><AlertCircle size={15}/> You can test the Free plan without signing in.</div>}
-        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Example: Explain photosynthesis in simple words and give me 5 MCQs…" disabled={busy}/>
+        {!user && <div className="formError"><AlertCircle size={15}/> Sign in to use Student AI. <button className="btn" style={{marginLeft:8,padding:"5px 9px"}} onClick={()=>openAuth?.("signin")}>Sign in</button></div>}
+        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Example: Explain photosynthesis in simple words and give me 5 MCQs..." disabled={busy}/>
         <div className="videoOptions">
           <label>Answer level<select value={level} disabled={busy} onChange={e=>setLevel(e.target.value)}><option>Simple</option><option>Detailed</option><option>Exam Ready</option><option>Step by Step</option></select></label>
           <label>AI model<select value={model} disabled={busy} onChange={e=>setModel(e.target.value)}><option value="gpt-5.6-luna">Fast</option><option value="gpt-5.6-terra">Balanced</option><option value="gpt-5.6-sol">Advanced</option></select></label>
         </div>
         <FilePicker multiple accept="image/*,.txt,.md,.csv,.json,.js,.ts,.html,.css,.sql,.pdf" onChange={setFiles} files={files}/>
-        <div className="actions"><button className="btn primary" disabled={busy} onClick={solve}><Sparkles size={16}/>{busy?"Processing…":"Get AI Help"}</button>{files.length>0&&<button className="btn" disabled={busy} onClick={()=>setFiles([])}><Trash2 size={15}/>Clear files</button>}</div>
+        <div className="actions">
+          <button className="btn primary" disabled={busy} onClick={solve}><Sparkles size={16}/>{busy?"Processing...":"Get AI Help"}</button>
+          {files.length>0&&<button className="btn" disabled={busy} onClick={()=>setFiles([])}><Trash2 size={15}/>Clear files</button>}
+        </div>
+        <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Sign in is required for secure AI usage. Choose a plan above; Free can be used for testing.</small>
       </div>
       <div className="aiCard">
         <h3>🤖 AI Answer</h3>
-        {error ? <div className="formError" style={{minHeight:220}}><AlertCircle size={17}/><div><b>Student AI error</b><div style={{marginTop:8,whiteSpace:"pre-wrap"}}>{error}</div></div></div> : <div className="answer">{answer||"Your step-by-step answer will appear here."}</div>}
+        <div className="answer" style={{whiteSpace:"pre-wrap"}}>{answer||"Your step-by-step answer will appear here."}</div>
         {answer&&<div className="actions"><button className="btn" onClick={()=>navigator.clipboard?.writeText(answer)}><Copy size={15}/>Copy</button><button className="btn" onClick={()=>downloadText(answer,"student-ai-answer.txt")}><Download size={15}/>Download</button></div>}
       </div>
     </div>
@@ -592,62 +643,100 @@ function Shell({back,t,children,status}) {
 }
 
 function TextToVideo({back,user,openAuth}) {
-  const [prompt,setPrompt]=useState(""); const [style,setStyle]=useState("Cinematic"); const [duration,setDuration]=useState("4 seconds"); const [aspect,setAspect]=useState("16:9");
-  const [status,setStatus]=useState(""); const [busy,setBusy]=useState(false); const [result,setResult]=useState(null); const [progress,setProgress]=useState(0); const [error,setError]=useState(""); const [selectedPlan,setSelectedPlan]=useState("video-free");
+  const [prompt,setPrompt]=useState("");
+  const [style,setStyle]=useState("Cinematic");
+  const [duration,setDuration]=useState("8 seconds");
+  const [aspect,setAspect]=useState("16:9");
+  const [status,setStatus]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [result,setResult]=useState(null);
+  const [progress,setProgress]=useState(0);
+  const [selectedPlan,setSelectedPlan]=useState("video-free");
+
   const getBackend=()=>import.meta.env.VITE_VIDEO_FUNCTION_URL || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/video-generator` : "");
-  const headers=()=>({"Content-Type":"application/json",...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{})});
+
+  const authHeaders=async()=>{
+    const token=await getSupabaseAccessToken();
+    return {
+      "Content-Type":"application/json",
+      ...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),
+      ...(token?{Authorization:`Bearer ${token}`}:{})
+    };
+  };
 
   const createVideo=async()=>{
-    if(!prompt.trim()){setError("Please enter a video prompt first.");return;}
-    const base=getBackend(); if(!base){setError("Video backend is not configured. Deploy video-generator in Supabase.");return;}
-    setBusy(true);setProgress(0);setResult(null);setError("");setStatus("Creating video job…");
+    if(!prompt.trim()){setStatus("Please enter a video prompt first.");return;}
+    const base=getBackend();
+    if(!base){setStatus("Video backend is not configured. Deploy video-generator in Supabase.");return;}
+    setBusy(true);setProgress(0);setResult(null);setStatus("Checking your secure session...");
     try{
+      const token=await getSupabaseAccessToken();
+      if(!token){
+        setStatus("Please sign in first. Video generation needs a secure Supabase session.");
+        openAuth?.("signin");
+        return;
+      }
       const size=aspect==="9:16"?"720x1280":"1280x720";
-      const r=await fetch(base,{method:"POST",headers:headers(),body:JSON.stringify({action:"create",prompt:`${style} video: ${prompt.trim()}`,duration,size})});
+      const r=await fetch(base,{method:"POST",headers:await authHeaders(),body:JSON.stringify({
+        action:"create",
+        prompt:`${style} video, ${aspect} composition: ${prompt.trim()}`,
+        duration,
+        aspect_ratio:aspect,
+        size
+      })});
       const raw=await r.text(); let d={}; try{d=raw?JSON.parse(raw):{}}catch{}
       if(!r.ok) throw new Error(d.error||d.message||raw||`Video backend error (${r.status})`);
       if(!d.video_id) throw new Error("Video job was created without a video ID.");
-      setResult({video_id:d.video_id,status:d.status||"queued",progress:Number(d.progress||0)});setStatus("Video job created. Waiting for render…");
+      setResult({video_id:d.video_id,status:d.status||"queued"});
+      setStatus("Video job created. Rendering started...");
       await pollVideo(d.video_id,base);
-    }catch(e){ const msg=e?.message||"Video generation failed.";setError(msg);setStatus("Video generation stopped."); }
+    }catch(e){setStatus(e?.message||"Video generation failed.");}
     finally{setBusy(false);}
   };
 
   const pollVideo=async(videoId,base)=>{
-    for(let attempt=0;attempt<180;attempt++){
-      const r=await fetch(base,{method:"POST",headers:headers(),body:JSON.stringify({action:"status",video_id:videoId})});
-      const raw=await r.text(); let d={}; try{d=raw?JSON.parse(raw):{}}
-      catch{}
+    const maxAttempts=180;
+    for(let attempt=0;attempt<maxAttempts;attempt++){
+      const r=await fetch(base,{method:"POST",headers:await authHeaders(),body:JSON.stringify({action:"status",video_id:videoId})});
+      const raw=await r.text(); let d={}; try{d=raw?JSON.parse(raw):{}}catch{}
       if(!r.ok) throw new Error(d.error||d.message||raw||`Status check failed (${r.status})`);
-      const p=Math.max(0,Math.min(100,Number(d.progress||0))); setProgress(Number.isFinite(p)?p:0); setResult(prev=>({...prev,...d,video_id:videoId}));
+      const p=Math.max(0,Math.min(100,Number(d.progress||0)));
+      setProgress(Number.isFinite(p)?p:0);
+      setResult(prev=>({...prev,...d,video_id:videoId}));
       if(d.status==="completed"){
-        setProgress(100);setStatus("Video rendered. Downloading MP4…");
-        const content=await fetch(base,{method:"POST",headers:headers(),body:JSON.stringify({action:"content",video_id:videoId})});
-        if(!content.ok){const text=await content.text().catch(()=>"");throw new Error(text||`Video download failed (${content.status})`);}
-        const blob=await content.blob(); const videoUrl=URL.createObjectURL(blob); setResult(prev=>({...prev,video_url:videoUrl})); setStatus("Video is ready."); return;
+        setProgress(100);setStatus("Video rendered successfully. Preparing MP4...");
+        const content=await fetch(base,{method:"POST",headers:await authHeaders(),body:JSON.stringify({action:"content",video_id:videoId})});
+        if(!content.ok){const e=await content.text().catch(()=>"");throw new Error(e||`Video download failed (${content.status})`);}
+        const blob=await content.blob();
+        const videoUrl=URL.createObjectURL(blob);
+        setResult(prev=>({...prev,video_url:videoUrl}));
+        setStatus("MP4 is ready. You can play it or download it below.");
+        return;
       }
-      if(d.status==="failed"||d.status==="cancelled") throw new Error(d.error?.message||d.error||"Video provider marked the job as failed.");
-      setStatus(d.status==="in_progress"?`Video is rendering… ${p}%`:`Video is queued… ${p}%`);
-      await new Promise(resolve=>setTimeout(resolve,5000));
+      if(d.status==="failed" || d.status==="cancelled") throw new Error(d.error?.message||d.error||"Video generation failed.");
+      await new Promise(resolve=>setTimeout(resolve,10000));
     }
-    throw new Error("Video is taking longer than expected. Please try again.");
+    throw new Error("Video is still rendering. Please keep this page open and try again later.");
   };
+
   const downloadVideo=()=>{if(!result?.video_url)return;const a=document.createElement("a");a.href=result.video_url;a.download="toolmaster-video.mp4";document.body.appendChild(a);a.click();a.remove();};
 
   return <Shell back={back} t={["Text to Video","AI & Video","Generate AI video clips from text prompts.",""]} status={status}>
     <div className="aiHelper">
-      <div className="aiCard"><h3>🎬 AI Video Creator</h3>
-        <div className="notice"><ShieldCheck size={15}/> Free testing uses the secure Supabase video backend. Sign-in is only needed later for account-based usage tracking.</div>
-        <textarea value={prompt} onChange={e=>setPrompt(e.target.value)} disabled={busy} placeholder="Example: A cinematic sunrise over mountains, slow drone movement, realistic lighting…"/>
-        <div className="videoOptions"><label>Style<select value={style} disabled={busy} onChange={e=>setStyle(e.target.value)}><option>Cinematic</option><option>Realistic</option><option>Anime</option><option>3D Animation</option><option>Documentary</option><option>Product Ad</option></select></label>
+      <div className="aiCard">
+        <h3>🎬 AI Video Creator</h3>
+        {!user&&<div className="formError"><AlertCircle size={15}/> Sign in before generating a video. <button className="btn" style={{marginLeft:8,padding:"5px 9px"}} onClick={()=>openAuth?.("signin")}>Sign in</button></div>}
+        <textarea value={prompt} onChange={e=>setPrompt(e.target.value)} disabled={busy} placeholder="Example: A cinematic sunrise over the mountains, drone camera, soft mist, realistic lighting..."/>
+        <div className="videoOptions">
+          <label>Style<select value={style} disabled={busy} onChange={e=>setStyle(e.target.value)}><option>Cinematic</option><option>Realistic</option><option>Anime</option><option>3D Animation</option><option>Documentary</option><option>Product Ad</option></select></label>
           <label>Duration<select value={duration} disabled={busy} onChange={e=>setDuration(e.target.value)}><option>4 seconds</option><option>8 seconds</option><option>12 seconds</option></select></label>
-          <label>Aspect<select value={aspect} disabled={busy} onChange={e=>setAspect(e.target.value)}><option>16:9</option><option>9:16</option></select></label></div>
-        <button className="btn primary" disabled={busy||!prompt.trim()} onClick={createVideo} style={{marginTop:12}}><Sparkles size={17}/>{busy?`Generating… ${progress}%`:"Generate Video"}</button>
+          <label>Aspect<select value={aspect} disabled={busy} onChange={e=>setAspect(e.target.value)}><option>16:9</option><option>9:16</option></select></label>
+        </div>
+        <button className="btn primary" disabled={busy||!prompt.trim()} onClick={createVideo} style={{marginTop:12}}><Sparkles size={17}/>{busy?`Generating... ${progress}%`:"Generate Video"}</button>
+        <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Choose a video plan above. Shorter 4–8 second clips are best for quick testing. A signed-in account is required.</small>
       </div>
       <div className="aiCard"><h3>🎥 Video Preview</h3>
-        {error?<div className="formError" style={{minHeight:220,display:"grid",placeItems:"center",padding:24}}><div><b>Video generation error</b><div style={{marginTop:8,whiteSpace:"pre-wrap"}}>{error}</div></div></div>
-        :result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>
-        :<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
+        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
       </div>
     </div>
     <PlanCards title="Text-to-Video Plans" plans={VIDEO_PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="video"/>
