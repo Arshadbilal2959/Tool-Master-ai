@@ -324,6 +324,13 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfQuick{border:1px solid #e2e5ec;background:#fff;border-radius:12px;padding:14px;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:7px 10px;color:#485267}
 .pdfQuick span{font-weight:850}.pdfQuick small{grid-column:2;color:#8992a3;line-height:1.4}.pdfQuick.active{border-color:#8770f8;background:#faf8ff;color:#6848ee}
 @media(max-width:900px){.navLinks{display:none}.pdfNavMenu{padding-left:14px;padding-right:14px;gap:2px}.pdfNavMenu>button,.pdfDropdown summary{font-size:11px;padding:9px 8px}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
+.app.dark{--bg:#0b1020;--panel:#111827;--panel2:#0f172a;--text:#f3f4f6;--muted:#a7b0c0;--line:#253047;--sidebar:#111827;--soft:#1d1738}.app.dark .header,.app.dark .footer,.app.dark .pdfNavWrap,.app.dark .pdfNavMenu,.app.dark .panel,.app.dark .aiCard,.app.dark .card,.app.dark .modal,.app.dark .pdfEditorTop,.app.dark .pdfEditorToolbar,.app.dark .pdfToolsPanel,.app.dark .pdfFileBar,.app.dark .pdfPrivacy{background:#111827;color:#f3f4f6}.app.dark input,.app.dark textarea,.app.dark select,.app.dark .btn,.app.dark .iconBtn,.app.dark .cat,.app.dark .pdfAction{background:#0f172a;color:#f3f4f6;border-color:#2b3850}.app.dark .hero{background:#0b1020}.app.dark .hero p,.app.dark .cardBody p,.app.dark .toolHero p,.app.dark .panelHint,.app.dark small{color:#a7b0c0}
+html{min-width:320px;overflow-x:hidden}
+img{max-width:100%}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid rgba(108,76,245,.28);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}.card:hover{transform:none}}
+@media(max-width:900px){.container{padding-left:16px;padding-right:16px}.toolPage{padding-left:16px;padding-right:16px}.pdfNavWrap{overflow-x:auto}.pdfNavMenu{min-width:max-content}.aiHelper{gap:12px}.panel,.aiCard{padding:16px}.hero p{font-size:16px}.stats{flex-wrap:wrap}}
+@media(max-width:560px){.container{padding-left:12px;padding-right:12px}.hero{padding-left:14px;padding-right:14px}.hero h1{font-size:40px}.hero p{font-size:15px}.grid{grid-template-columns:1fr}.workspace{grid-template-columns:1fr}.videoOptions{grid-template-columns:1fr}.toolHero h1{font-size:27px}.toolHero p{font-size:14px}.pdfNavMenu{gap:0}.pdfNavMenu>button,.pdfDropdown summary{font-size:10px;padding:8px 7px}.pdfDropdownPanel{position:fixed;left:10px;right:10px;top:125px;max-height:60vh;overflow:auto}.pdfWorkspace{min-height:auto}.pdfViewer{padding:12px}.pdfToolsPanel{padding:14px}.pdfFileBar{padding:10px 12px}.footer{padding-left:12px;padding-right:12px}.footerInner{gap:10px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
 `;
 
@@ -361,6 +368,48 @@ function PdfNavMenu({openTool}) {
   </div>;
 }
 
+
+const SEO_META = {
+  home: {
+    title: 'ToolMaster Pro — 100+ Free Online Tools for PDF, Image, SEO & More',
+    description: 'Fast, modern and privacy-friendly online tools for PDF, images, SEO, text, developers, calculators, conversion and AI.',
+    keywords: 'free online tools, PDF tools, image tools, SEO tools, text tools, online converters'
+  }
+};
+
+const TOOL_SEO = Object.fromEntries(tools.map(t => [t[3], {
+  title: `${t[0]} — Free Online Tool | ToolMaster Pro`,
+  description: `${t[2]} Fast, simple and browser-friendly with ToolMaster Pro.`
+}]));
+
+function upsertMeta(name, content, attr='name') {
+  let el = document.head.querySelector(`meta[${attr}="${name}"]`);
+  if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
+  el.setAttribute('content', content);
+}
+function setSeo({title,description,keywords='',url=window.location.href,type='website'}={}) {
+  document.title = title || SEO_META.home.title;
+  upsertMeta('description', description || SEO_META.home.description);
+  upsertMeta('keywords', keywords || SEO_META.home.keywords);
+  upsertMeta('og:title', document.title, 'property');
+  upsertMeta('og:description', description || SEO_META.home.description, 'property');
+  upsertMeta('og:type', type, 'property');
+  upsertMeta('og:url', url, 'property');
+  upsertMeta('twitter:card', 'summary');
+  upsertMeta('twitter:title', document.title);
+  upsertMeta('twitter:description', description || SEO_META.home.description);
+  let canonical = document.head.querySelector('link[rel="canonical"]');
+  if (!canonical) { canonical=document.createElement('link'); canonical.rel='canonical'; document.head.appendChild(canonical); }
+  canonical.href = url;
+  let ld = document.head.querySelector('#tm-jsonld');
+  if (!ld) { ld=document.createElement('script'); ld.type='application/ld+json'; ld.id='tm-jsonld'; document.head.appendChild(ld); }
+  ld.textContent = JSON.stringify({
+    '@context':'https://schema.org', '@type':'WebSite', name:'ToolMaster Pro',
+    url: window.location.origin, description: description || SEO_META.home.description,
+    potentialAction:{'@type':'SearchAction',target:`${window.location.origin}/?q={search_term_string}`,'query-input':'required name=search_term_string'}
+  });
+}
+
 function App() {
   const [cat,setCat]=useState("All Tools");
   const [query,setQuery]=useState("");
@@ -375,6 +424,37 @@ function App() {
   const [profileOpen,setProfileOpen]=useState(false);
   const [favorites,setFavorites]=useState([]);
   const [history,setHistory]=useState([]);
+
+  useEffect(() => {
+    const pathMatch = window.location.pathname.match(/^\/tools\/([^/]+)\/?$/i);
+    const hash = window.location.hash.replace(/^#\/?/, "");
+    const slug = pathMatch ? decodeURIComponent(pathMatch[1]) : (hash.startsWith("tool/") ? decodeURIComponent(hash.slice(5)) : "");
+    if (slug) {
+      const found = tools.find(x => x[3] === slug);
+      if (found) setTool(found);
+    }
+  }, []);
+
+  useEffect(() => {
+    const seo = tool ? TOOL_SEO[tool[3]] : SEO_META.home;
+    setSeo({
+      title: seo?.title,
+      description: seo?.description,
+      url: tool ? `${window.location.origin}/tools/${tool[3]}` : `${window.location.origin}/`
+    });
+  }, [tool]);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        if (!tool && !admin) document.querySelector('.searchBox input')?.focus();
+      }
+      if (e.key === 'Escape') { setMobile(false); setProfileOpen(false); setAuthOpen(false); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [tool,admin]);
 
   const filtered = useMemo(() => tools.filter(t =>
     (cat==="All Tools" || t[1]===cat) &&
@@ -419,10 +499,18 @@ function App() {
   const isAdmin = !!(profile?.role === "admin" || user?.app_metadata?.role === "admin" || user?.user_metadata?.role === "admin");
 
   const openTool = (t) => {
+    if (!t) return;
     setTool(t); setAdmin(false);
+    window.history.replaceState(null, "", `/tools/${encodeURIComponent(t[3])}`);
     const next=[t[3],...history.filter(x=>x!==t[3])].slice(0,10);
     setHistory(next); localStorage.setItem("tm_history",JSON.stringify(next));
     window.scrollTo({top:0,behavior:"smooth"});
+  };
+
+  const clearTool = () => {
+    setTool(null);
+    if (window.location.pathname.startsWith("/tools/")) window.history.replaceState(null, "", "/" + window.location.search);
+    if (window.location.hash.startsWith("#tool/")) window.history.replaceState(null, "", "/" + window.location.search);
   };
 
   const toggleFav = (slug) => {
@@ -435,19 +523,19 @@ function App() {
     setUser(null); setProfile(null); setAdmin(false); setProfileOpen(false);
   };
 
-  return <div className="app">
+  return <div className={dark?"app dark":"app"}>
     <GlobalStyle/>
     <header className="header"><div className="container nav">
       <div className="brand"><div className="brandIcon"><Wrench size={21}/></div><span>ToolMaster<span>Pro</span></span></div>
-      <nav className="navLinks">
-        <a href="#tools" onClick={()=>{setTool(null);setAdmin(false)}}>Tools</a>
-        <a href="#categories" onClick={()=>{setTool(null);setAdmin(false)}}>Categories</a>
-        <a href="#pricing" onClick={()=>{setTool(null);setAdmin(false)}}>Pricing</a>
-        <a href="#about" onClick={()=>{setTool(null);setAdmin(false)}}>About</a>
+      <nav className="navLinks" aria-label="Primary navigation">
+        <a href="#tools" onClick={()=>{clearTool();setAdmin(false)}}>Tools</a>
+        <a href="#categories" onClick={()=>{clearTool();setAdmin(false)}}>Categories</a>
+        <a href="#pricing" onClick={()=>{clearTool();setAdmin(false)}}>Pricing</a>
+        <a href="#about" onClick={()=>{clearTool();setAdmin(false)}}>About</a>
       </nav>
       <div className="navActions">
-        <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
-        <button className="iconBtn" onClick={()=>setDark(!dark)} title="Theme">{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
+        <button aria-label="Open navigation" className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
+        <button aria-label={dark?"Switch to light mode":"Switch to dark mode"} className="iconBtn" onClick={()=>setDark(!dark)} title="Theme">{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
         {isAdmin && <button className="btn" onClick={()=>{setAdmin(!admin);setTool(null)}}><LayoutDashboard size={16}/><span>{admin?"Website":"Admin"}</span></button>}
         {user ? <div className="profileMenu">
           <button className="iconBtn" onClick={()=>setProfileOpen(!profileOpen)}><User size={17}/></button>
@@ -460,19 +548,19 @@ function App() {
     </div>
     <PdfNavMenu openTool={openTool}/>
     {mobile&&<div className="container mobileNav" style={{paddingBottom:12,display:"flex",gap:16,flexWrap:"wrap"}}>
-      <a href="#tools" onClick={()=>{setMobile(false);setTool(null);}}>Tools</a>
-      <a href="#categories" onClick={()=>{setMobile(false);setTool(null);}}>Categories</a>
-      <a href="#pricing" onClick={()=>{setMobile(false);setTool(null);}}>Pricing</a>
-      <a href="#about" onClick={()=>{setMobile(false);setTool(null);}}>About</a>
+      <a href="#tools" onClick={()=>{setMobile(false);clearTool();}}>Tools</a>
+      <a href="#categories" onClick={()=>{setMobile(false);clearTool();}}>Categories</a>
+      <a href="#pricing" onClick={()=>{setMobile(false);clearTool();}}>Pricing</a>
+      <a href="#about" onClick={()=>{setMobile(false);clearTool();}}>About</a>
     </div>}</header>
 
-    {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user} openAuth={(mode="signin")=>{setAuthMode(mode);setAuthOpen(true)}}/></ToolErrorBoundary> :
+    {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={clearTool} user={user} openAuth={(mode="signin")=>{setAuthMode(mode);setAuthOpen(true)}}/></ToolErrorBoundary> :
       <>
         <section className="hero"><div className="heroInner">
           <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
           <h1>One place for <span>every tool</span> you need.</h1>
           <p>Fast, modern and privacy-friendly tools for PDF, images, SEO, text, developers, calculators, conversion and AI.</p>
-          <div className="searchBox"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search 100+ tools..."/><div className="kbd">Ctrl K</div></div>
+          <div className="searchBox" role="search"><Search size={19}/><input aria-label="Search online tools" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search 100+ tools..."/><div className="kbd">Ctrl K</div></div>
           <div className="stats"><div><b>{tools.length}+</b><small>Tools</small></div><div><b>13</b><small>Categories</small></div><div><b>{user?"Signed in":"Open"}</b><small>Access</small></div></div>
         </div></section>
         <main className="main container" id="tools">
@@ -1564,7 +1652,7 @@ function BackgroundRemoverTool({t,back}) {
               {bgCategory==="photo" && <>
                 <p style={{fontWeight:700,margin:"0 0 10px"}}>Choose a background</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
-                  {photoBackgrounds.map((src,i)=><button key={src} type="button" onClick={()=>chooseBackground("image",src)} style={{padding:0,border:bgImage===src?"3px solid #2563eb":"1px solid #e1e5eb",borderRadius:12,overflow:"hidden",background:"#fff",cursor:"pointer"}}><img src={src} alt={`Background ${i+1}`} style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/></button>)}
+                  {photoBackgrounds.map((src,i)=><button key={src} type="button" onClick={()=>chooseBackground("image",src)} style={{padding:0,border:bgImage===src?"3px solid #2563eb":"1px solid #e1e5eb",borderRadius:12,overflow:"hidden",background:"#fff",cursor:"pointer"}}><img loading="lazy" decoding="async" src={src} alt={`Background ${i+1}`} style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/></button>)}
                 </div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:12}}>
                   <button type="button" className={bgMode==="transparent"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("transparent")}>Transparent</button>
