@@ -293,11 +293,73 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfEditorHeader{padding:16px 18px;border-bottom:1px solid #e6e8ef;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
 .pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
-@media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
+
+.pdfProPage{margin-top:12px}
+.pdfProHero{background:#f6f6fb;padding:40px 24px 50px;text-align:center;border:1px solid #e3e4eb;border-radius:16px 16px 0 0}
+.pdfProHero h1{font-size:42px;margin:0 0 10px;letter-spacing:-.04em}
+.pdfProHero p{font-size:17px;color:#667085;margin:0 auto 26px;max-width:800px}
+.pdfUploadArea{max-width:520px;margin:auto}
+.pdfUploadArea .uploadBox{justify-content:center;background:#fff;border:0;box-shadow:0 8px 22px rgba(24,32,51,.10);padding:20px;border-radius:14px}
+.pdfDropHint{color:#6f7787;font-size:13px;margin-top:9px}
+.pdfWorkArea{display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:610px;border:1px solid #e2e4eb;border-top:0;background:#eef0f6}
+.pdfCanvasZone{padding:28px;min-width:0}
+.pdfThumbHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;color:#566176;font-size:13px}
+.pdfThumbGrid{min-height:490px;display:flex;justify-content:center;align-items:flex-start;gap:18px;flex-wrap:wrap;padding:20px}
+.pdfThumb{width:180px;background:#fff;border-radius:11px;padding:12px;box-shadow:0 8px 26px rgba(34,39,53,.10);text-align:center}
+.pdfThumb img{width:100%;height:240px;object-fit:contain;border:1px solid #e8eaf0}
+.pdfThumb small{display:block;margin-top:8px;color:#657085;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdfThumb.file{height:180px;display:grid;place-items:center;align-content:center;gap:10px}
+.pdfCanvasTip{text-align:center;color:#9198a8;font-size:12px;margin-top:6px}
+.pdfSidePanel{background:#fff;border-left:1px solid #dedfe6;padding:28px;display:flex;flex-direction:column}
+.pdfSidePanel h2{font-size:24px;margin:0 0 20px}
+.pdfChoice{padding:17px 16px;border-top:1px solid #e5e7ed;border-bottom:1px solid #e5e7ed;display:grid;gap:5px}
+.pdfChoice b{color:#ef3d34;font-size:14px}.pdfChoice span{color:#5e687c;line-height:1.45}
+.pdfChoice.premium{border-top:0}.pdfChoice.premium b{color:#f59e0b}.pdfChoice.premium b span{background:#fff0c8;border-radius:5px;padding:3px 7px;font-size:11px;color:#7b5c00;margin-left:6px}
+.pdfSidePanel label{display:grid;gap:7px;color:#566176;font-size:12px;font-weight:800;margin:12px 0}
+.pdfSidePanel input,.pdfSidePanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:11px;background:#fff}
+.pdfMainAction{margin-top:auto;border:0;border-radius:11px;padding:17px;background:#ef332b;color:#fff;font-weight:850;font-size:17px;box-shadow:0 10px 25px rgba(239,51,43,.18)}
+.pdfMainAction:disabled{opacity:.65;cursor:not-allowed}
+.pdfSideNote{margin-top:12px;color:#8c95a6;font-size:11px;line-height:1.5}
+.pdfQuickGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:22px;background:#fff;border:1px solid #e3e4eb;border-top:0;border-radius:0 0 16px 16px}
+.pdfQuick{border:1px solid #e2e5ec;background:#fff;border-radius:12px;padding:14px;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:7px 10px;color:#485267}
+.pdfQuick span{font-weight:850}.pdfQuick small{grid-column:2;color:#8992a3;line-height:1.4}.pdfQuick.active{border-color:#8770f8;background:#faf8ff;color:#6848ee}
+@media(max-width:900px){.navLinks{display:none}.pdfNavMenu{padding-left:14px;padding-right:14px;gap:2px}.pdfNavMenu>button,.pdfDropdown summary{font-size:11px;padding:9px 8px}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
 `;
 
 function GlobalStyle() { return <style>{css}</style>; }
+
+
+function PdfNavMenu({openTool}) {
+  const convert = [
+    tools.find(t=>t[3]==="pdf-word"),
+    tools.find(t=>t[3]==="word-pdf"),
+    tools.find(t=>t[3]==="pdf-jpg"),
+    tools.find(t=>t[3]==="jpg-pdf"),
+  ].filter(Boolean);
+  const allPdf = tools.filter(t=>t[1]==="PDF Tools");
+  return <div className="pdfNavWrap">
+    <div className="pdfNavMenu">
+      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="merge-pdf"))}>MERGE PDF</button>
+      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="split-pdf"))}>SPLIT PDF</button>
+      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="compress-pdf"))}>COMPRESS PDF</button>
+
+      <details className="pdfDropdown">
+        <summary>CONVERT PDF <ChevronRight size={15}/></summary>
+        <div className="pdfDropdownPanel">
+          {convert.map(t=><button key={t[3]} type="button" onClick={()=>openTool(t)}>{t[0]}</button>)}
+        </div>
+      </details>
+
+      <details className="pdfDropdown">
+        <summary>ALL PDF TOOLS <ChevronRight size={15}/></summary>
+        <div className="pdfDropdownPanel wide">
+          {allPdf.map(t=><button key={t[3]} type="button" onClick={()=>openTool(t)}>{t[0]}</button>)}
+        </div>
+      </details>
+    </div>
+  </div>;
+}
 
 function App() {
   const [cat,setCat]=useState("All Tools");
@@ -314,15 +376,6 @@ function App() {
   const [favorites,setFavorites]=useState([]);
   const [history,setHistory]=useState([]);
 
-  const scrollToSection = (id) => {
-    setTool(null); setAdmin(false); setMobile(false);
-    requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"}));
-  };
-  const openBySlug = (slug) => {
-    const found = tools.find(x=>x[3]===slug);
-    if(found) openTool(found);
-  };
-
   const filtered = useMemo(() => tools.filter(t =>
     (cat==="All Tools" || t[1]===cat) &&
     (t[0].toLowerCase().includes(query.toLowerCase()) || t[2].toLowerCase().includes(query.toLowerCase()))
@@ -333,6 +386,14 @@ function App() {
     const savedHist = JSON.parse(localStorage.getItem("tm_history") || "[]");
     setFavorites(savedFav); setHistory(savedHist);
   }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.detail) openTool(e.detail);
+    };
+    window.addEventListener("tm-open-tool", handler);
+    return () => window.removeEventListener("tm-open-tool", handler);
+  }, [history]);
 
   useEffect(() => {
     if (!supabase) return;
@@ -379,12 +440,10 @@ function App() {
     <header className="header"><div className="container nav">
       <div className="brand"><div className="brandIcon"><Wrench size={21}/></div><span>ToolMaster<span>Pro</span></span></div>
       <nav className="navLinks">
-        <a href="#home" onClick={(e)=>{e.preventDefault();scrollToSection("home")}}>Home</a>
-        <a href="#tools" onClick={(e)=>{e.preventDefault();scrollToSection("tools")}}>Tools</a>
-        <a href="#categories" onClick={(e)=>{e.preventDefault();scrollToSection("categories")}}>Categories</a>
-        <a href="#pricing" onClick={(e)=>{e.preventDefault();scrollToSection("pricing")}}>Pricing</a>
-        <a href="#about" onClick={(e)=>{e.preventDefault();scrollToSection("about")}}>About</a>
-        <a href="#contact" onClick={(e)=>{e.preventDefault();scrollToSection("contact")}}>Contact</a>
+        <a href="#tools" onClick={()=>{setTool(null);setAdmin(false)}}>Tools</a>
+        <a href="#categories" onClick={()=>{setTool(null);setAdmin(false)}}>Categories</a>
+        <a href="#pricing" onClick={()=>{setTool(null);setAdmin(false)}}>Pricing</a>
+        <a href="#about" onClick={()=>{setTool(null);setAdmin(false)}}>About</a>
       </nav>
       <div className="navActions">
         <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
@@ -398,13 +457,18 @@ function App() {
           </div>}
         </div> : <><button className="btn" onClick={()=>{setAuthMode("signin");setAuthOpen(true)}}><LogIn size={16}/><span>Sign in</span></button><button className="btn primary" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}><UserPlus size={16}/><span>Sign up</span></button></>}
       </div>
-    </div>{mobile&&<div className="container" style={{paddingBottom:14,display:"flex",gap:14,flexWrap:"wrap",borderTop:"1px solid var(--line)",paddingTop:12}}>
-      {[['home','Home'],['tools','Tools'],['categories','Categories'],['pricing','Pricing'],['about','About'],['contact','Contact']].map(([id,label])=><button key={id} className="btn" style={{padding:"8px 11px"}} onClick={()=>scrollToSection(id)}>{label}</button>)}
+    </div>
+    <PdfNavMenu openTool={openTool}/>
+    {mobile&&<div className="container mobileNav" style={{paddingBottom:12,display:"flex",gap:16,flexWrap:"wrap"}}>
+      <a href="#tools" onClick={()=>{setMobile(false);setTool(null);}}>Tools</a>
+      <a href="#categories" onClick={()=>{setMobile(false);setTool(null);}}>Categories</a>
+      <a href="#pricing" onClick={()=>{setMobile(false);setTool(null);}}>Pricing</a>
+      <a href="#about" onClick={()=>{setMobile(false);setTool(null);}}>About</a>
     </div>}</header>
 
     {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user} openAuth={(mode="signin")=>{setAuthMode(mode);setAuthOpen(true)}}/></ToolErrorBoundary> :
       <>
-        <section className="hero" id="home"><div className="heroInner">
+        <section className="hero"><div className="heroInner">
           <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
           <h1>One place for <span>every tool</span> you need.</h1>
           <p>Fast, modern and privacy-friendly tools for PDF, images, SEO, text, developers, calculators, conversion and AI.</p>
@@ -415,38 +479,21 @@ function App() {
           <section id="categories"><div className="toolbar">
             {categories.map(([name,count])=><button className={cat===name?"cat active":"cat"} onClick={()=>setCat(name)} key={name}>{iconForCategory(name)}<span>{name}</span><em>{count}</em></button>)}
           </div></section>
-          <div className="sectionHead"><div><h2>{cat}</h2><p>{filtered.length} tools available</p></div><button className="btn" onClick={()=>{setCat("All Tools");setQuery("");scrollToSection("tools")}}>View all tools</button></div>
+          <div className="sectionHead"><div><h2>{cat}</h2><p>{filtered.length} tools available</p></div></div>
           <div className="grid">{filtered.map(t=><ToolCard key={t[3]} t={t} open={()=>openTool(t)} favorite={favorites.includes(t[3])} onFav={()=>toggleFav(t[3])}/>)}</div>
           {!filtered.length&&<div className="empty">No tools found. Try another search.</div>}
-
-          <section id="pricing" style={{paddingTop:72}}>
-            <div className="sectionHead"><div><h2>Simple pricing</h2><p>Start free and upgrade AI usage when you need more credits.</p></div></div>
-            <div className="grid" style={{gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))"}}>
-              <div className="panel"><div className="pill"><Sparkles size={13}/> Student AI</div><h3 style={{fontSize:24,marginBottom:6}}>Student AI Helper Plans</h3><p style={{color:"#7d889b",lineHeight:1.6}}>Free, Silver, Gold, Demand and Platinum plans for study assistance.</p><div className="actions"><button className="btn primary" onClick={()=>openBySlug("student-ai-helper")}>Open Student AI</button></div></div>
-              <div className="panel"><div className="pill"><Sparkles size={13}/> AI Video</div><h3 style={{fontSize:24,marginBottom:6}}>Text-to-Video Plans</h3><p style={{color:"#7d889b",lineHeight:1.6}}>Free, Starter, Pro, Business and Platinum plans for AI video creation.</p><div className="actions"><button className="btn primary" onClick={()=>openBySlug("text-to-video")}>Open Text-to-Video</button></div></div>
-            </div>
-          </section>
-
-          <section id="about" style={{paddingTop:72}}>
-            <div className="sectionHead"><div><h2>About ToolMaster Pro</h2><p>One place for everyday PDF, image, SEO, text, developer, calculator and AI tools.</p></div></div>
-            <div className="panel" style={{lineHeight:1.8,color:"#667085"}}>ToolMaster Pro is built to keep common online tasks fast and easy. Browser-first tools process files locally where practical, while server-backed features use secure Edge Functions. Use the navigation above to jump between tools, categories, pricing and support.</div>
-          </section>
-
-          <section id="contact" style={{paddingTop:72}}>
-            <div className="sectionHead"><div><h2>Contact</h2><p>Need help with a tool, account or deployment?</p></div></div>
-            <div className="panel" style={{display:"flex",gap:16,alignItems:"center",justifyContent:"space-between",flexWrap:"wrap"}}>
-              <div><h3 style={{margin:"0 0 6px"}}>ToolMaster Pro Support</h3><p style={{margin:0,color:"#7d889b"}}>Send us a message and include the tool name plus the error you see.</p></div>
-              <a className="btn primary" href="mailto:support@toolmasterpro.com"><Mail size={16}/> Contact Support</a>
-            </div>
-          </section>
         </main>
       </>
     }
-    <footer className="footer"><div className="footerInner" style={{alignItems:"flex-start"}}>
-      <div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div>
-      <div style={{display:"grid",gap:7,fontSize:13}}><b style={{color:"#394357"}}>Quick links</b><button className="btn ghost" onClick={()=>scrollToSection("tools")} style={{padding:0,justifyContent:"flex-start"}}>Tools</button><button className="btn ghost" onClick={()=>scrollToSection("pricing")} style={{padding:0,justifyContent:"flex-start"}}>Pricing</button><button className="btn ghost" onClick={()=>scrollToSection("contact")} style={{padding:0,justifyContent:"flex-start"}}>Contact</button></div>
-      <small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small>
-    </div></footer>
+
+    <section id="pricing" className="container" style={{padding:"20px 24px 60px"}}>
+      <div className="sectionHead"><div><h2>AI Pricing</h2><p>Student AI and Text-to-Video plans are ready for future billing integration.</p></div></div>
+      <div className="grid">
+        <div className="panel"><h3>Student AI Helper</h3><p style={{color:"#7c879a"}}>Free, Silver, Gold, Demand and Platinum plans.</p></div>
+        <div className="panel"><h3>Text-to-Video</h3><p style={{color:"#7c879a"}}>Free, Starter, Pro, Business and Platinum plans.</p></div>
+      </div>
+    </section>
+    <footer className="footer" id="about"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
     {authOpen && <AuthModal mode={authMode} setMode={setAuthMode} close={()=>setAuthOpen(false)} onDone={()=>setAuthOpen(false)}/>}
   </div>;
 }
@@ -578,8 +625,13 @@ function StudentAIHelper({back,user,openAuth}) {
       const raw=await r.text();
       let data={}; try{data=raw?JSON.parse(raw):{}}catch{}
       if(!r.ok) throw new Error(data.error||data.message||raw||`Student AI backend error (${r.status})`);
-      const out=String(data.answer||data.output||data.message||"").trim();
-      if(!out) throw new Error("Student AI returned an empty answer.");
+      const fallbackOutput = Array.isArray(data.output)
+        ? data.output.flatMap(item => Array.isArray(item?.content) ? item.content : [])
+            .map(part => part?.text?.value || part?.text || "")
+            .filter(Boolean).join("\n")
+        : "";
+      const out=String(data.answer||data.output_text||fallbackOutput||data.output||data.message||"").trim();
+      if(!out) throw new Error("Student AI returned an empty answer. Please check the OpenAI API key/model in Supabase.");
       setAnswer(out);
       setStatus(data.usage?`AI response received · ${data.usage}`:"AI response received.");
     }catch(e){
@@ -713,10 +765,16 @@ function TextToVideo({back,user,openAuth}) {
         setStatus("MP4 is ready. You can play it or download it below.");
         return;
       }
-      if(d.status==="failed" || d.status==="cancelled") throw new Error(d.error?.message||d.error||"Video generation failed.");
-      await new Promise(resolve=>setTimeout(resolve,10000));
+      if(d.status==="failed" || d.status==="cancelled") {
+        const msg = d.error?.message || d.error || "Video generation failed on the video provider.";
+        setProgress(0);
+        setResult(prev=>({...prev, status:d.status, error:d.error||msg}));
+        throw new Error(msg);
+      }
+      setStatus(d.status === "in_progress" ? `Video is rendering… ${Number.isFinite(p)?p:0}%` : `Video is queued… ${Number.isFinite(p)?p:0}%`);
+      await new Promise(resolve=>setTimeout(resolve,5000));
     }
-    throw new Error("Video is still rendering. Please keep this page open and try again later.");
+    throw new Error("Video is taking longer than expected. The provider may be busy. Please try again in a moment.");
   };
 
   const downloadVideo=()=>{if(!result?.video_url)return;const a=document.createElement("a");a.href=result.video_url;a.download="toolmaster-video.mp4";document.body.appendChild(a);a.click();a.remove();};
@@ -736,7 +794,7 @@ function TextToVideo({back,user,openAuth}) {
         <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Choose a video plan above. Shorter 4–8 second clips are best for quick testing. A signed-in account is required.</small>
       </div>
       <div className="aiCard"><h3>🎥 Video Preview</h3>
-        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
+        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:result?.status==="failed"||result?.status==="cancelled"?<div className="formError" style={{minHeight:220,display:"grid",placeItems:"center",textAlign:"center",padding:24}}><div><b>Video generation failed</b><small style={{display:"block",marginTop:8,color:"#b42318"}}>{result?.error?.message||result?.error||status||"The video provider rejected the generation job."}</small></div></div>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
       </div>
     </div>
     <PlanCards title="Text-to-Video Plans" plans={VIDEO_PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="video"/>
@@ -1097,74 +1155,169 @@ async function convertWithSecureBackend(file, target) {
   return { message: data.message || `${ext.toUpperCase()} converted and downloaded.` };
 }
 
-function PdfTool({t,back}) {
-  const id=t[3]; const [files,setFiles]=useState([]); const [busy,setBusy]=useState(false); const [status,setStatus]=useState("");
-  const [watermark,setWatermark]=useState("ToolMaster Pro"); const [angle,setAngle]=useState("90");
-  const [quality,setQuality]=useState(.65); const [pages,setPages]=useState("1");
 
-  const run=async()=>{
-    if(!files.length) return setStatus("Please upload the required file first.");
-    setBusy(true);setStatus("");
-    try{
-      const {PDFDocument,degrees,rgb}=await loadLib("pdf-lib");
-      if(id==="pdf-word"){await pdfToWord(files[0]);return}
-      if(id==="word-pdf"){await wordToPdf(files[0]);return}
-      if(id==="pdf-jpg"){await pdfToJpg(files[0]);return}
-      const src=await PDFDocument.load(await files[0].arrayBuffer(),{ignoreEncryption:id==="pdf-unlock"});
-      if(id==="merge-pdf"){
-        const out=await PDFDocument.create(); for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(d,d.getPageIndices())).forEach(p=>out.addPage(p))}
-        downloadBlob(new Blob([await out.save()],{type:"application/pdf"}),"merged.pdf");setStatus("Merged PDF downloaded.");return;
-      }
-      if(id==="split-pdf"){
-        const nums=pages.split(",").map(x=>parseInt(x.trim(),10)-1).filter(Number.isInteger);const list=nums.length?nums:src.getPageIndices();
-        for(const n of list){if(n<0||n>=src.getPageCount())continue;const one=await PDFDocument.create();const [p]=await one.copyPages(src,[n]);one.addPage(p);downloadBlob(new Blob([await one.save()],{type:"application/pdf"}),`page-${n+1}.pdf`)}
-        setStatus("Selected pages downloaded.");return;
-      }
-      if(id==="compress-pdf"){
-        const bytes=await src.save({useObjectStreams:true,addDefaultPage:false});downloadBlob(new Blob([bytes],{type:"application/pdf"}),"compressed.pdf");setStatus("Optimized PDF downloaded.");return;
-      }
-      if(id==="rotate-pdf"){
-        src.getPages().forEach(p=>p.setRotation(degrees(Number(angle)||90)));downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"rotated.pdf");setStatus("Rotated PDF downloaded.");return;
-      }
-      if(id==="pdf-unlock"){
-        downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"unlocked.pdf");setStatus("Unlocked copy downloaded when the source encryption is supported.");return;
-      }
-      if(id==="pdf-watermark"){
-        src.getPages().forEach(p=>{const {width,height}=p.getSize();p.drawText(watermark||"ToolMaster Pro",{x:width/2-60,y:height/2,size:28,color:rgb(.65,.65,.65),opacity:.35,rotate:degrees(35)})});
-        downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"watermarked.pdf");setStatus("Watermarked PDF downloaded.");return;
-      }
-    }catch(e){setStatus("Error: "+(e?.message||String(e)))}finally{setBusy(false)}
+function PdfTool({t,back}) {
+  const id=t[3];
+  const [files,setFiles]=useState([]);
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const [watermark,setWatermark]=useState("ToolMaster Pro");
+  const [angle,setAngle]=useState("90");
+  const [quality,setQuality]=useState(.65);
+  const [pages,setPages]=useState("1");
+  const [active,setActive]=useState(id);
+  const [thumbs,setThumbs]=useState([]);
+
+  const pdfTools = [
+    {id:"merge-pdf", name:"Merge PDF", desc:"Combine multiple PDFs into one file."},
+    {id:"split-pdf", name:"Split PDF", desc:"Extract selected pages into separate PDFs."},
+    {id:"compress-pdf", name:"Compress PDF", desc:"Reduce PDF size where possible."},
+    {id:"pdf-word", name:"PDF to Word", desc:"Convert selectable-text PDFs to editable DOCX."},
+    {id:"word-pdf", name:"Word to PDF", desc:"Convert DOC/DOCX files to PDF."},
+    {id:"pdf-jpg", name:"PDF to JPG", desc:"Convert each PDF page to a JPG image."},
+    {id:"jpg-pdf", name:"JPG to PDF", desc:"Create a PDF from JPG/PNG images."},
+    {id:"rotate-pdf", name:"Rotate PDF", desc:"Rotate every page."},
+    {id:"pdf-unlock", name:"PDF Unlock", desc:"Create an unrestricted copy when supported."},
+    {id:"pdf-watermark", name:"PDF Watermark", desc:"Add a watermark to all pages."},
+    {id:"edit-pdf", name:"Edit & Sign PDF", desc:"Open the advanced PDF editor."}
+  ];
+  const current = pdfTools.find(x=>x.id===active) || pdfTools.find(x=>x.id===id) || pdfTools[0];
+
+  useEffect(()=>{
+    let dead=false;
+    (async()=>{
+      if(!files.length || !(files[0].type==="application/pdf" || /\.pdf$/i.test(files[0].name))) { setThumbs([]); return; }
+      try {
+        const pdfjs=await loadLib("pdfjs");
+        const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
+        const out=[];
+        for(let i=1;i<=Math.min(pdf.numPages,6);i++){
+          const pg=await pdf.getPage(i); const vp=pg.getViewport({scale:.32});
+          const c=document.createElement("canvas"); c.width=Math.ceil(vp.width); c.height=Math.ceil(vp.height);
+          await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
+          out.push({page:i,url:c.toDataURL("image/jpeg",.82)});
+        }
+        if(!dead) setThumbs(out);
+      } catch { if(!dead) setThumbs([]); }
+    })();
+    return ()=>{dead=true};
+  },[files]);
+
+  const convertAndDownload = async (file,target)=>{
+    const configured=import.meta.env.VITE_DOCUMENT_CONVERTER_URL||"";
+    const base=configured||(SUPABASE_URL?`${SUPABASE_URL}/functions/v1/document-converter`:"");
+    if(!base) throw new Error("Document converter backend is not configured.");
+    const fd=new FormData(); fd.append("file",file,file.name); fd.append("output_format",target);
+    const r=await fetch(base,{method:"POST",headers:SUPABASE_KEY?{apikey:SUPABASE_KEY}:{},body:fd});
+    const ct=r.headers.get("content-type")||"";
+    if(!r.ok){
+      const msg=ct.includes("application/json") ? ((await r.json().catch(()=>({}))).error||"Converter failed.") : await r.text().catch(()=>"Converter failed.");
+      throw new Error(msg||`Converter failed (${r.status})`);
+    }
+    if(ct.includes("application/pdf")||ct.includes("application/vnd.openxmlformats-officedocument.wordprocessingml.document")){
+      downloadBlob(await r.blob(),`${file.name.replace(/\.[^.]+$/,"")}.${target}`);
+      return;
+    }
+    const d=await r.json().catch(()=>({})); const u=d.download_url||d.url||d.file_url||d.result?.download_url;
+    if(!u) throw new Error(d.error||"Converter returned no download URL.");
+    const fr=await fetch(u); if(!fr.ok) throw new Error(`Converted file download failed (${fr.status}).`);
+    downloadBlob(await fr.blob(),`${file.name.replace(/\.[^.]+$/,"")}.${target}`);
   };
 
-  async function pdfToJpg(file){
-    const pdfjs=await loadLib("pdfjs");const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;
-    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const viewport=page.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=viewport.width;c.height=viewport.height;await page.render({canvasContext:c.getContext("2d"),viewport}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${file.name.replace(/\.pdf$/i,"")}-page-${i}.jpg`)}
-    setStatus(`${pdf.numPages} JPG page(s) downloaded.`);
-  }
-  async function pdfToWord(file){
-    setStatus("Uploading PDF to the secure document converter…");
-    const data = await convertWithSecureBackend(file, "docx");
-    setStatus(data.message || "PDF converted to Word and downloaded.");
-  }
-  async function wordToPdf(file){
-    setStatus("Uploading Word document to the secure document converter…");
-    const data = await convertWithSecureBackend(file, "pdf");
-    setStatus(data.message || "Word document converted to PDF and downloaded.");
-  }
-  async function jpgToPdf(){
-    const {PDFDocument}=await loadLib("pdf-lib");const doc=await PDFDocument.create();
-    for(const f of files){const bytes=await f.arrayBuffer();let img;try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)}const page=doc.addPage([img.width,img.height]);page.drawImage(img,{x:0,y:0,width:img.width,height:img.height})}
-    downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images.pdf");setStatus("PDF downloaded.");
-  }
-  if(id==="jpg-pdf") return <Shell back={back} t={t} status={status}><div className="workspace"><div className="panel"><FilePicker multiple accept="image/jpeg,image/png" onChange={setFiles} files={files}/><button className="btn primary" disabled={busy||!files.length} onClick={jpgToPdf}><Download/> Create PDF</button></div><div className="panel"><h3>{files.length} image(s) selected</h3>{files.map(f=><p key={f.name}>✓ {f.name}</p>)}</div></div></Shell>;
-  const accepted = id === "word-pdf" ? ".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" : ".pdf,application/pdf";
-  return <Shell back={back} t={t} status={status||"Files are processed in your browser when supported."}><div className="workspace"><div className="panel"><FilePicker multiple={id==="merge-pdf"} accept={accepted} onChange={setFiles} files={files}/>
-    {id==="split-pdf"&&<label>Pages (e.g. 1,3,5)<input value={pages} onChange={e=>setPages(e.target.value)}/></label>}
-    {id==="rotate-pdf"&&<label>Rotation<select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
-    {id==="pdf-watermark"&&<label>Watermark text<input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
-    {id==="pdf-jpg"&&<label>JPG quality<input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
-    <button className="btn primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw/>:<Download/>}{busy?"Processing...":"Process & Download"}</button>
-  </div><div className="panel"><h3>Selected files</h3>{files.map(f=><p key={f.name}>📄 {f.name} — {(f.size/1024).toFixed(1)} KB</p>)}</div></div></Shell>;
+  const run=async()=>{
+    if(active==="pdf-word"||active==="word-pdf"){
+      if(!files.length) return setStatus(`Upload a ${active==="pdf-word"?"PDF":"Word"} file first.`);
+    } else if(active==="jpg-pdf"){
+      if(!files.length) return setStatus("Upload JPG/PNG images first.");
+    } else if(!files.length) return setStatus("Upload a PDF file first.");
+    setBusy(true);setStatus("");
+    try{
+      if(active==="pdf-word"){setStatus("Converting PDF to Word…");await convertAndDownload(files[0],"docx");setStatus("PDF converted to Word successfully.");return;}
+      if(active==="word-pdf"){setStatus("Converting Word to PDF…");await convertAndDownload(files[0],"pdf");setStatus("Word converted to PDF successfully.");return;}
+      if(active==="jpg-pdf"){
+        const {PDFDocument}=await loadLib("pdf-lib"); const doc=await PDFDocument.create();
+        for(const f of files){const bytes=await f.arrayBuffer();let img;try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)}const p=doc.addPage([img.width,img.height]);p.drawImage(img,{x:0,y:0,width:img.width,height:img.height});}
+        downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images-to-pdf.pdf");setStatus(`${files.length} image(s) converted to PDF.`);return;
+      }
+      if(active==="pdf-jpg"){
+        const pdfjs=await loadLib("pdfjs"); const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
+        for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const vp=pg.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${files[0].name.replace(/\.pdf$/i,"")}-page-${i}.jpg`);}
+        setStatus(`${pdf.numPages} JPG page(s) downloaded.`);return;
+      }
+      const {PDFDocument,degrees,rgb}=await loadLib("pdf-lib");
+      const src=await PDFDocument.load(await files[0].arrayBuffer(),{ignoreEncryption:active==="pdf-unlock"});
+      if(active==="merge-pdf"){
+        const out=await PDFDocument.create();
+        for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(d,d.getPageIndices())).forEach(p=>out.addPage(p));}
+        downloadBlob(new Blob([await out.save()],{type:"application/pdf"}),"merged.pdf");setStatus(`${files.length} PDF files merged successfully.`);return;
+      }
+      if(active==="split-pdf"){
+        const nums=pages.split(",").map(x=>parseInt(x.trim(),10)-1).filter(Number.isInteger);const list=nums.length?nums:src.getPageIndices();
+        for(const n of list){if(n<0||n>=src.getPageCount())continue;const one=await PDFDocument.create();const [p]=await one.copyPages(src,[n]);one.addPage(p);downloadBlob(new Blob([await one.save()],{type:"application/pdf"}),`page-${n+1}.pdf`);}
+        setStatus("Selected pages downloaded.");return;
+      }
+      if(active==="compress-pdf"){downloadBlob(new Blob([await src.save({useObjectStreams:true,addDefaultPage:false})],{type:"application/pdf"}),"compressed.pdf");setStatus("Optimized PDF downloaded.");return;}
+      if(active==="rotate-pdf"){src.getPages().forEach(p=>p.setRotation(degrees(Number(angle)||90)));downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"rotated.pdf");setStatus("Rotated PDF downloaded.");return;}
+      if(active==="pdf-unlock"){downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"unlocked.pdf");setStatus("Unlocked copy downloaded when supported.");return;}
+      if(active==="pdf-watermark"){src.getPages().forEach(p=>{const {width,height}=p.getSize();p.drawText(watermark||"ToolMaster Pro",{x:width/2-60,y:height/2,size:28,color:rgb(.65,.65,.65),opacity:.35,rotate:degrees(35)})});downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"watermarked.pdf");setStatus("Watermarked PDF downloaded.");return;}
+      if(active==="edit-pdf"){setStatus("Choose Edit & Sign PDF from All PDF Tools to open the advanced editor.");return;}
+    }catch(e){setStatus(`Error: ${e?.message||String(e)}`)}finally{setBusy(false);}
+  };
+
+  const accept=active==="word-pdf"?".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    active==="jpg-pdf"?"image/jpeg,image/png":".pdf,application/pdf";
+  const multi=active==="merge-pdf"||active==="jpg-pdf";
+
+  const selectOperation=(next)=>{
+    if(next==="edit-pdf"){
+      // Open full editor through the parent page routing by reusing the browser history hash.
+      setActive(next);
+      const target=tools.find(x=>x[3]===next);
+      if(target){ setTimeout(()=>window.dispatchEvent(new CustomEvent("tm-open-tool",{detail:target})),0); }
+      return;
+    }
+    setActive(next); setStatus("");
+  };
+
+  return <Shell back={back} t={t} status={status}>
+    <div className="pdfProPage">
+      <section className="pdfProHero">
+        <h1>{current.name}</h1>
+        <p>{current.desc}</p>
+        <div className="pdfUploadArea">
+          <FilePicker multiple={multi} accept={accept} onChange={setFiles} files={files}/>
+          <div className="pdfDropHint">or drop {active==="word-pdf"?"Word":active==="jpg-pdf"?"images":"PDF"} here</div>
+        </div>
+      </section>
+
+      {files.length>0 && <section className="pdfWorkArea">
+        <div className="pdfCanvasZone">
+          <div className="pdfThumbHeader"><span>{files.length} file{files.length>1?"s":""} selected</span><button type="button" className="btn" onClick={()=>setFiles([])}>Remove</button></div>
+          <div className="pdfThumbGrid">
+            {thumbs.length?thumbs.map(x=><div className="pdfThumb" key={x.page}><img src={x.url} alt={`Page ${x.page}`}/><small>Page {x.page}</small></div>):files.map(f=><div className="pdfThumb file" key={f.name}><FileText size={34}/><small>{f.name}</small></div>)}
+          </div>
+          <div className="pdfCanvasTip">Your original file stays here until you start the selected operation.</div>
+        </div>
+        <aside className="pdfSidePanel">
+          <h2>{current.name}</h2>
+          {active==="pdf-word"&&<div className="pdfChoice"><b>NO OCR</b><span>Convert selectable-text PDFs into editable Word files.</span></div>}
+          {active==="pdf-word"&&<div className="pdfChoice premium"><b>OCR <span>Premium</span></b><span>Scanned/image PDFs need OCR for editable Word output.</span></div>}
+          {active==="split-pdf"&&<label>Pages <input value={pages} onChange={e=>setPages(e.target.value)} placeholder="1,3,5"/></label>}
+          {active==="rotate-pdf"&&<label>Rotation <select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
+          {active==="pdf-watermark"&&<label>Watermark text <input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
+          {active==="pdf-jpg"&&<label>JPG quality <input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
+          <button type="button" className="pdfMainAction" disabled={busy} onClick={run}>{busy?"Processing…":current.name==="Merge PDF"?"Merge PDF":current.name==="Split PDF"?"Split PDF":current.name==="Compress PDF"?"Compress PDF":current.name==="PDF to Word"?"Convert to WORD":current.name==="Word to PDF"?"Convert to PDF":current.name==="PDF to JPG"?"Convert to JPG":current.name}</button>
+          <div className="pdfSideNote">Secure browser-first processing where possible. Conversion tools use your configured backend.</div>
+        </aside>
+      </section>}
+
+      <section className="pdfQuickGrid">
+        {pdfTools.map(x=><button key={x.id} type="button" className={active===x.id?"pdfQuick active":"pdfQuick"} onClick={()=>selectOperation(x.id)}>
+          <FileText size={18}/><span>{x.name}</span><small>{x.desc}</small>
+        </button>)}
+      </section>
+    </div>
+  </Shell>;
 }
 
 function BackgroundRemoverTool({t,back}) {
