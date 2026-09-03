@@ -516,7 +516,7 @@ function StudentAIHelper({back,user,openAuth}) {
   const solve=async()=>{
     if(!question.trim() && !files.length){setStatus("Enter a question or upload study material.");return;}
     if(!endpoint){setStatus("Student AI backend is not configured. Deploy student-ai-helper in Supabase.");return;}
-    setBusy(true);setStatus("Connecting to Student AI...");setAnswer("");
+    setBusy(true);setStatus("Connecting to Student AI backend...");setAnswer("");
     try{
       const token=await getSupabaseAccessToken();
       const fd=new FormData();
@@ -627,7 +627,7 @@ function TextToVideo({back,user,openAuth}) {
     if(!prompt.trim()){setStatus("Please enter a video prompt first.");return;}
     const base=getBackend();
     if(!base){setStatus("Video backend is not configured. Deploy video-generator in Supabase.");return;}
-    setBusy(true);setProgress(0);setResult(null);setStatus("Checking your secure session...");
+    setBusy(true);setProgress(0);setResult(null);setStatus("Connecting to Text-to-Video backend...");
     try{
       const token=await getSupabaseAccessToken();
       const size=aspect==="9:16"?"720x1280":"1280x720";
