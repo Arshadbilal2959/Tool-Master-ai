@@ -1,5 +1,5 @@
 /* ToolMaster Pro FINAL ALL-TOOLS BUILD */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { createClient } from "@supabase/supabase-js";
 import {
@@ -7,7 +7,7 @@ import {
   ArrowRight, ShieldCheck, Zap, Sparkles, Upload, Copy, Download, CheckCircle2,
   LockKeyhole, Settings, LayoutDashboard, Trash2, RefreshCw, Eye, Printer,
   LogIn, UserPlus, LogOut, Menu, X, Heart, History, User, Mail, KeyRound,
-  ChevronRight, Star, Moon, Sun, ExternalLink, AlertCircle, Check, CreditCard
+  ChevronRight, Star, Moon, Sun, ExternalLink, AlertCircle, Check, CreditCard, Palette, Type, Shapes, Building2, Stethoscope, Camera, Car, Utensils, GraduationCap, HeartPulse, Shield, Briefcase, Music, Gamepad2, Leaf, Globe, ShoppingBag, PawPrint, Plane, Home, Crown
 } from "lucide-react";
 
 /* ============================================================
@@ -49,6 +49,8 @@ const tools = [
   ["Image Background Remover","Image Tools","Remove simple near-uniform backgrounds locally.","background-remover"],
   ["Image to Text","Image Tools","Extract text from an image with browser OCR.","image-text"],
   ["QR Code Generator","SEO & Marketing","Create custom QR codes from text or links.","qr-generator"],
+  ["Stamp Generator","Design Tools","Create personalized digital stamps and seals with your name, title, company and custom styling.","stamp-generator"],
+  ["Logo Maker","Design Tools","Create professional logos with icons, text, fonts, colors and layouts.","logo-maker"],
   ["Meta Tag Generator","SEO & Marketing","Generate SEO-ready meta tags.","meta-tags"],
   ["Sitemap Generator","SEO & Marketing","Create a basic XML sitemap.","sitemap"],
   ["Robots.txt Generator","SEO & Marketing","Generate a robots.txt file.","robots"],
@@ -128,8 +130,7 @@ const tools = [
   ["Morse Code Converter","Text Tools","Convert text to Morse code.","morse"],
   ["Binary Converter","Developer Tools","Convert text and numbers to binary.","binary"],
   ["ASCII Converter","Developer Tools","Convert text to ASCII codes.","ascii"],
-  ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"],
-  ["Stamp Generator","Utility Tools","Create a personalized digital stamp from your name, title, organization and custom details.","stamp-generator"]
+  ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"]
 ];
 
 const categories = [
@@ -145,44 +146,6 @@ const PLANS = [
   {id:"demand", name:"Demand", credits:10000, period:"monthly", price:49, description:"For heavy AI usage"},
   {id:"platinum", name:"Platinum", credits:50000, period:"monthly", price:99, description:"Maximum AI access"}
 ];
-
-const VIDEO_PLANS = [
-  {id:"video-free", name:"Free", credits:50, period:"monthly", price:0, description:"50 video credits for testing", features:["Short test clips","720p landscape/portrait","Basic generation"]},
-  {id:"video-starter", name:"Starter", credits:500, period:"monthly", price:9, description:"For creators getting started", features:["500 video credits","Priority queue","HD downloads"]},
-  {id:"video-pro", name:"Pro", credits:2000, period:"monthly", price:29, popular:true, description:"For regular creators", features:["2,000 video credits","Priority generation","Commercial projects"]},
-  {id:"video-business", name:"Business", credits:10000, period:"monthly", price:79, description:"For teams and heavy usage", features:["10,000 video credits","Higher priority","Commercial projects"]},
-  {id:"video-platinum", name:"Platinum", credits:50000, period:"monthly", price:199, description:"Maximum video access", features:["50,000 video credits","Highest priority","Commercial projects"]}
-];
-
-function PlanCards({title,plans,selected,onSelect,openAuth,user,kind}) {
-  return <div className="panel" style={{marginTop:16,padding:18}}>
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap",marginBottom:12}}>
-      <div>
-        <h3 style={{margin:"0 0 4px"}}>{title}</h3>
-        <small style={{color:"#7d889b"}}>Choose a plan. AI usage remains protected by your signed-in account.</small>
-      </div>
-      {selected && <div className="pill"><CheckCircle2 size={14}/> {plans.find(p=>p.id===selected)?.name||"Selected"}</div>}
-    </div>
-    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:12}}>
-      {plans.map((p)=>(
-        <div key={p.id} className="card" style={{position:"relative",border:p.id===selected?"2px solid #6d4aff":"1px solid #e5e7ef",boxShadow:p.id===selected?"0 10px 30px rgba(109,74,255,.12)":"none"}}>
-          {p.popular && <div className="pill" style={{position:"absolute",right:10,top:10}}>Popular</div>}
-          <div style={{fontWeight:800,fontSize:18}}>{p.name}</div>
-          <div style={{fontSize:28,fontWeight:900,marginTop:8}}>{p.price===0?"Free":`$${p.price}`}<small style={{fontSize:12,fontWeight:500,color:"#8490a3"}}>{p.price===0?"":" / month"}</small></div>
-          <div style={{color:"#7d889b",fontSize:13,margin:"8px 0 10px"}}>{p.description}</div>
-          <div style={{fontWeight:700,fontSize:13,marginBottom:8}}>{p.credits.toLocaleString()} credits · {p.period}</div>
-          {Array.isArray(p.features)&&<div style={{display:"grid",gap:5,marginBottom:12}}>{p.features.map(f=><small key={f} style={{display:"flex",gap:6,alignItems:"center"}}><Check size={13}/>{f}</small>)}</div>}
-          <button className={p.id===selected?"btn primary":"btn"} style={{width:"100%",justifyContent:"center"}} onClick={()=>{
-            onSelect?.(p.id);
-            if(!user) openAuth?.("signin");
-          }}>
-            {p.id===selected?"Selected":"Choose "+p.name}
-          </button>
-        </div>
-      ))}
-    </div>
-  </div>;
-}
 
 const iconForCategory = (cat) => ({
   "PDF Tools": <FileText size={19}/>,
@@ -211,17 +174,6 @@ const downloadBlob = (blob, name) => {
 };
 const downloadText = (text, name, type="text/plain;charset=utf-8") =>
   downloadBlob(new Blob([text], {type}), name);
-
-async function getSupabaseAccessToken() {
-  try {
-    if (!supabase) return "";
-    const { data, error } = await supabase.auth.getSession();
-    if (error) return "";
-    return data?.session?.access_token || "";
-  } catch {
-    return "";
-  }
-}
 
 async function loadLib(name) {
   const urls = {
@@ -294,84 +246,19 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfEditorHeader{padding:16px 18px;border-bottom:1px solid #e6e8ef;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
 .pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
-
-.pdfProPage{margin-top:12px}
-.pdfProHero{background:#f6f6fb;padding:40px 24px 50px;text-align:center;border:1px solid #e3e4eb;border-radius:16px 16px 0 0}
-.pdfProHero h1{font-size:42px;margin:0 0 10px;letter-spacing:-.04em}
-.pdfProHero p{font-size:17px;color:#667085;margin:0 auto 26px;max-width:800px}
-.pdfUploadArea{max-width:600px;margin:0 auto}
-.pdfSelectRow{display:grid;grid-template-columns:minmax(0,1fr) 62px;gap:12px;align-items:center}
-.pdfSelectButton{height:78px;border:0;border-radius:12px;background:#ef3129;color:#fff;font-size:22px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 8px 18px rgba(239,49,41,.18);transition:transform .15s ease,box-shadow .15s ease,filter .15s ease}
-.pdfSelectButton:hover{transform:translateY(-1px);filter:brightness(.98);box-shadow:0 12px 24px rgba(239,49,41,.22)}
-.pdfSelectButton:active{transform:translateY(0)}
-.pdfCloudButtons{display:flex;flex-direction:column;gap:10px}
-.pdfCloudButton{width:62px;height:62px;border:0;border-radius:50%;background:#ef3129;color:#fff;display:grid;place-items:center;box-shadow:0 7px 16px rgba(239,49,41,.2);transition:transform .15s ease,box-shadow .15s ease}
-.pdfCloudButton:hover{transform:scale(1.04);box-shadow:0 10px 20px rgba(239,49,41,.24)}
-.pdfCloudButton svg{width:28px;height:28px}
-.pdfUploadHidden{display:none}
-.pdfUploadHint{color:#5f6777;font-size:15px;margin-top:14px}
-.pdfUploadHint span{color:#8c94a3;font-size:12px;display:block;margin-top:6px}
-.pdfProviderNote{margin-top:12px;color:#8c95a6;font-size:11px}
-@media(max-width:560px){.pdfSelectRow{grid-template-columns:1fr 50px;gap:8px}.pdfSelectButton{height:66px;font-size:18px}.pdfCloudButtons{gap:8px}.pdfCloudButton{width:50px;height:50px}.pdfCloudButton svg{width:22px;height:22px}}
-.pdfWorkArea{display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:610px;border:1px solid #e2e4eb;border-top:0;background:#eef0f6}
-.pdfCanvasZone{padding:28px;min-width:0}
-.pdfThumbHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;color:#566176;font-size:13px}
-.pdfThumbGrid{min-height:490px;display:flex;justify-content:center;align-items:flex-start;gap:18px;flex-wrap:wrap;padding:20px}
-.pdfThumb{width:180px;background:#fff;border-radius:11px;padding:12px;box-shadow:0 8px 26px rgba(34,39,53,.10);text-align:center}
-.pdfThumb img{width:100%;height:240px;object-fit:contain;border:1px solid #e8eaf0}
-.pdfThumb small{display:block;margin-top:8px;color:#657085;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pdfThumb.file{height:180px;display:grid;place-items:center;align-content:center;gap:10px}
-.pdfCanvasTip{text-align:center;color:#9198a8;font-size:12px;margin-top:6px}
-.pdfSidePanel{background:#fff;border-left:1px solid #dedfe6;padding:28px;display:flex;flex-direction:column}
-.pdfSidePanel h2{font-size:24px;margin:0 0 20px}
-.pdfChoice{padding:17px 16px;border-top:1px solid #e5e7ed;border-bottom:1px solid #e5e7ed;display:grid;gap:5px}
-.pdfChoice b{color:#ef3d34;font-size:14px}.pdfChoice span{color:#5e687c;line-height:1.45}
-.pdfChoice.premium{border-top:0}.pdfChoice.premium b{color:#f59e0b}.pdfChoice.premium b span{background:#fff0c8;border-radius:5px;padding:3px 7px;font-size:11px;color:#7b5c00;margin-left:6px}
-.pdfSidePanel label{display:grid;gap:7px;color:#566176;font-size:12px;font-weight:800;margin:12px 0}
-.pdfSidePanel input,.pdfSidePanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:11px;background:#fff}
-.pdfMainAction{margin-top:auto;border:0;border-radius:11px;padding:17px;background:#ef332b;color:#fff;font-weight:850;font-size:17px;box-shadow:0 10px 25px rgba(239,51,43,.18)}
-.pdfMainAction:disabled{opacity:.65;cursor:not-allowed}
-.pdfSideNote{margin-top:12px;color:#8c95a6;font-size:11px;line-height:1.5}
-.pdfQuickGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:22px;background:#fff;border:1px solid #e3e4eb;border-top:0;border-radius:0 0 16px 16px}
-.pdfQuick{border:1px solid #e2e5ec;background:#fff;border-radius:12px;padding:14px;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:7px 10px;color:#485267}
-.pdfQuick span{font-weight:850}.pdfQuick small{grid-column:2;color:#8992a3;line-height:1.4}.pdfQuick.active{border-color:#8770f8;background:#faf8ff;color:#6848ee}
-@media(max-width:900px){.navLinks{display:none}.pdfNavMenu{padding-left:14px;padding-right:14px;gap:2px}.pdfNavMenu>button,.pdfDropdown summary{font-size:11px;padding:9px 8px}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
+@media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
-`;
+.bgRemoveApp{border:1px solid #e2e5ec;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 18px 50px rgba(23,33,54,.08)}
+.bgRemoveHeader{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 20px;border-bottom:1px solid #e7e9ef;flex-wrap:wrap}.bgRemoveHeader h2{margin:0;font-size:25px}.bgRemoveHeader p{margin:5px 0 0;color:#8490a4}.bgHeaderActions{display:flex;gap:8px;flex-wrap:wrap}.bgToolbar{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #e8e9ef;overflow:auto}.bgToolBtn{min-width:86px;border:1px solid #e0e3ea;background:#fff;border-radius:10px;padding:9px 10px;color:#5d687b;display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:800}.bgToolBtn.active{border-color:#8f77f8;background:#f6f3ff;color:#6849ed}.bgEditorBody{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:680px;background:#f5f6f9}.bgSide{background:#fff;border-right:1px solid #e2e5eb;padding:16px;overflow:auto}.uploadCard{border:1px dashed #d9d4fb;background:#faf9ff;border-radius:12px;padding:8px}.uploadCard .uploadBox{margin:0;border:0;background:transparent;padding:10px}.uploadCard small{display:block;color:#9098a8;text-align:center;font-size:10px;padding-bottom:4px}.sideHint,.sideSection p{font-size:12px;color:#8690a2;line-height:1.55}.sideSection{margin-top:18px;padding-top:16px;border-top:1px solid #edf0f4}.sideSection h3{margin:0 0 7px;font-size:16px}.sideSection label{display:grid;gap:5px;margin-top:12px;font-size:12px;font-weight:800;color:#5c6779}.sideSection label input[type=range]{width:100%}.sideSection label>span{font-size:11px;color:#8790a0;font-weight:500}.sideSection select,.sideSection input[type=color]{width:100%;border:1px solid #dfe3ea;border-radius:8px;padding:8px;background:#fff}.checkRow{display:flex!important;grid-template-columns:none!important;align-items:center;gap:7px}.checkRow input{width:16px!important}.full{width:100%;justify-content:center}.successBadge{display:flex;align-items:center;gap:6px;margin-top:10px;padding:8px 9px;border-radius:9px;background:#eafaf3;color:#15976d;font-size:11px;font-weight:800}.bgStage{padding:22px;overflow:auto}.bgPreviewGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.previewCard{background:#fff;border:1px solid #e0e3e9;border-radius:14px;overflow:hidden}.previewTitle{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #eef0f3;font-size:12px;color:#596578}.previewTitle span{font-size:10px;color:#8992a1}.previewCanvas{min-height:470px;display:grid;place-items:center;padding:18px;background:#eef0f3}.originalPreview img{max-width:100%;max-height:430px;object-fit:contain;border-radius:10px;box-shadow:0 8px 24px rgba(20,30,45,.12)}.checker{background-color:#fff;background-image:linear-gradient(45deg,#eef0f4 25%,transparent 25%),linear-gradient(-45deg,#eef0f4 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eef0f4 75%),linear-gradient(-45deg,transparent 75%,#eef0f4 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}.previewStageInner{width:100%;height:100%;min-height:430px;display:grid;place-items:center}.previewStageInner img{max-width:100%;max-height:430px;object-fit:contain;border-radius:10px}.resultPlaceholder{display:flex;flex-direction:column;align-items:center;gap:10px;color:#788397;font-size:13px;text-align:center}.bgBottomBar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-top:18px;padding:14px 16px;background:#fff;border:1px solid #e1e4ea;border-radius:12px;flex-wrap:wrap}.bgBottomBar>div:first-child{display:flex;flex-direction:column;gap:4px}.bgBottomBar span{color:#8b93a2;font-size:11px}.bottomActions{display:flex;gap:8px;flex-wrap:wrap}.bgEmpty{min-height:620px;border:2px dashed #dbd6fb;border-radius:16px;display:grid;place-items:center;text-align:center;color:#7457eb;background:#fbfaff}.bgEmpty h3{margin:0;color:#293347;font-size:23px}.bgEmpty p{margin:0;color:#8791a2}.bgPrivacy{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 15px;border-top:1px solid #eceef3;background:#fbfbfd;color:#80899a;font-size:11px}@media(max-width:900px){.bgEditorBody{grid-template-columns:1fr}.bgSide{border-right:0;border-bottom:1px solid #e2e5eb}.bgPreviewGrid{grid-template-columns:1fr}}@media(max-width:560px){.bgStage{padding:12px}.previewCanvas{min-height:330px}.previewStageInner{min-height:290px}.bgBottomBar{align-items:flex-start}}
+
+
+.designApp,.logoApp{border:1px solid #e2e5ec;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 18px 55px rgba(25,32,55,.09)}
+.designTop{height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 18px;border-bottom:1px solid #e5e7ec;background:#fff}.designBtn{border:0;background:#ff4b19;color:#fff;border-radius:9px;padding:12px 18px;font-weight:800;cursor:pointer}.designBtn.primary{background:#ff4b19}.designModes{display:flex;align-items:center;justify-content:center;gap:30px;color:#596476;font-size:12px;font-weight:700}.designModes span{display:flex;align-items:center;gap:7px;white-space:nowrap}.designTabs{height:48px;display:flex;align-items:center;gap:24px;padding:0 18px;border-bottom:1px solid #e7e9ee}.designTabs b{color:#ff4b19}.designTabs span{color:#8a93a3;font-size:12px}.designBody{display:grid;grid-template-columns:285px minmax(0,1fr) 320px;min-height:690px;background:#f2f3f5}.designLeft,.designRight{background:#fff;padding:16px;border-right:1px solid #e1e4e9;overflow:auto}.designRight{border-right:0;border-left:1px solid #e1e4e9}.designTabRow{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid #e3e5e9;margin:-16px -16px 14px}.designTabRow>*{padding:13px;text-align:center;font-size:12px}.designTabRow b{border-bottom:2px solid #ff4b19;color:#ff4b19}.layerList{display:grid;gap:5px}.layer{padding:12px;border-bottom:1px solid #f0f1f3;color:#596477;font-size:12px}.layer span{display:inline-block;width:30px;color:#a0a6b1}.layer.active{color:#ff4b19;background:#fff8f5}.designSection{margin-top:22px;border-top:1px solid #eceef2;padding-top:16px}.designSection h4{margin:0 0 10px}.styleChip{width:100%;border:1px solid #e2e5eb;background:#fff;border-radius:9px;padding:11px;text-align:left;margin:5px 0;display:flex;gap:10px;align-items:center;color:#596477;font-weight:700;cursor:pointer}.styleChip.active{border-color:#ff4b19;background:#fff5f1;color:#e94817}.designCanvas{padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}.canvasGrid{width:min(100%,620px);aspect-ratio:1.285;background-color:#fff;background-image:linear-gradient(45deg,#f0f1f3 25%,transparent 25%),linear-gradient(-45deg,#f0f1f3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#f0f1f3 75%),linear-gradient(-45deg,transparent 75%,#f0f1f3 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0;border:1px solid #dfe2e8;border-radius:10px;display:grid;place-items:center;overflow:hidden}.canvasGrid canvas{width:100%;height:100%;object-fit:contain}.canvasActions{display:flex;gap:9px;margin-top:12px}.designRight h3{margin:0 0 5px}.designRight p{font-size:12px;color:#8992a1;line-height:1.5}.designRight label,.logoControls label{display:grid;gap:6px;margin-top:14px;font-size:12px;font-weight:800;color:#596477}.designRight input,.designRight select,.logoControls input,.logoControls select{width:100%;box-sizing:border-box;border:1px solid #dfe3e9;border-radius:8px;padding:10px;background:#fff;color:#202a3a}.designRight input[type=color],.logoControls input[type=color]{padding:2px;height:40px}.controlGrid,.colorRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.designFooter,.logoFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 17px;border-top:1px solid #e5e7ec;background:#fff;color:#8790a0;font-size:11px}.logoTop{padding:18px 20px;border-bottom:1px solid #e5e7ec;display:flex;justify-content:space-between;align-items:center;gap:15px}.logoTop h2{margin:0;font-size:25px}.logoTop p{margin:5px 0 0;color:#8992a1}.logoBody{display:grid;grid-template-columns:285px minmax(0,1fr) 300px;min-height:720px;background:#f4f5f7}.logoSide,.logoControls{background:#fff;padding:17px;overflow:auto}.logoSide{border-right:1px solid #e1e4e9}.logoControls{border-left:1px solid #e1e4e9}.logoSide h3,.logoControls h3{margin:0 0 12px}.categoryGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.logoCat{border:1px solid #e2e5ea;background:#fff;border-radius:9px;padding:10px 7px;display:flex;align-items:center;gap:7px;color:#657083;font-size:11px;font-weight:700;cursor:pointer}.logoCat.active{border-color:#6d4aff;background:#f5f2ff;color:#6040ea}.logoSection{border-top:1px solid #eceef2;margin-top:17px;padding-top:15px}.shapeGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.shapeBtn{border:1px solid #e1e4ea;background:#fff;border-radius:8px;padding:10px;color:#647083;font-weight:700}.shapeBtn.active{border-color:#6d4aff;background:#f5f2ff;color:#6040ea}.logoPreview{padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center}.previewBadge{align-self:flex-start;border:1px solid #e2ddff;background:#f7f5ff;color:#6645e9;border-radius:999px;padding:7px 11px;font-size:11px;font-weight:800;display:flex;gap:6px;align-items:center}.logoCanvasWrap{width:min(100%,650px);aspect-ratio:1;background-color:#fff;background-image:linear-gradient(45deg,#f0f1f3 25%,transparent 25%),linear-gradient(-45deg,#f0f1f3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#f0f1f3 75%),linear-gradient(-45deg,transparent 75%,#f0f1f3 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0;border:1px solid #dfe2e8;border-radius:16px;display:grid;place-items:center;margin-top:12px}.logoCanvasWrap canvas{width:100%;height:100%;object-fit:contain}.full{width:100%;justify-content:center}
+@media(max-width:1100px){.designBody,.logoBody{grid-template-columns:230px minmax(0,1fr)}.designRight,.logoControls{grid-column:1/-1;border-left:0;border-right:0;border-top:1px solid #e1e4e9}.designModes{gap:14px}.categoryGrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.designTop{height:auto;padding:12px;flex-wrap:wrap}.designModes{order:3;width:100%;overflow:auto;justify-content:flex-start}.designBody,.logoBody{grid-template-columns:1fr}.designLeft,.logoSide{border-right:0;border-bottom:1px solid #e1e4e9}.designRight,.logoControls{grid-column:auto;border-left:0}.designCanvas,.logoPreview{min-height:420px;padding:12px}.designFooter,.logoFooter{align-items:flex-start;flex-direction:column}.categoryGrid{grid-template-columns:1fr 1fr}}
+;
 
 function GlobalStyle() { return <style>{css}</style>; }
-
-
-function PdfNavMenu({openTool}) {
-  const convert = [
-    tools.find(t=>t[3]==="pdf-word"),
-    tools.find(t=>t[3]==="word-pdf"),
-    tools.find(t=>t[3]==="pdf-jpg"),
-    tools.find(t=>t[3]==="jpg-pdf"),
-  ].filter(Boolean);
-  const allPdf = tools.filter(t=>t[1]==="PDF Tools");
-  return <div className="pdfNavWrap">
-    <div className="pdfNavMenu">
-      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="merge-pdf"))}>MERGE PDF</button>
-      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="split-pdf"))}>SPLIT PDF</button>
-      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="compress-pdf"))}>COMPRESS PDF</button>
-
-      <details className="pdfDropdown">
-        <summary>CONVERT PDF <ChevronRight size={15}/></summary>
-        <div className="pdfDropdownPanel">
-          {convert.map(t=><button key={t[3]} type="button" onClick={()=>openTool(t)}>{t[0]}</button>)}
-        </div>
-      </details>
-
-      <details className="pdfDropdown">
-        <summary>ALL PDF TOOLS <ChevronRight size={15}/></summary>
-        <div className="pdfDropdownPanel wide">
-          {allPdf.map(t=><button key={t[3]} type="button" onClick={()=>openTool(t)}>{t[0]}</button>)}
-        </div>
-      </details>
-    </div>
-  </div>;
-}
 
 function App() {
   const [cat,setCat]=useState("All Tools");
@@ -398,14 +285,6 @@ function App() {
     const savedHist = JSON.parse(localStorage.getItem("tm_history") || "[]");
     setFavorites(savedFav); setHistory(savedHist);
   }, []);
-
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.detail) openTool(e.detail);
-    };
-    window.addEventListener("tm-open-tool", handler);
-    return () => window.removeEventListener("tm-open-tool", handler);
-  }, [history]);
 
   useEffect(() => {
     if (!supabase) return;
@@ -452,10 +331,7 @@ function App() {
     <header className="header"><div className="container nav">
       <div className="brand"><div className="brandIcon"><Wrench size={21}/></div><span>ToolMaster<span>Pro</span></span></div>
       <nav className="navLinks">
-        <a href="#tools" onClick={()=>{setTool(null);setAdmin(false)}}>Tools</a>
-        <a href="#categories" onClick={()=>{setTool(null);setAdmin(false)}}>Categories</a>
-        <a href="#pricing" onClick={()=>{setTool(null);setAdmin(false)}}>Pricing</a>
-        <a href="#about" onClick={()=>{setTool(null);setAdmin(false)}}>About</a>
+        <a href="#tools">Tools</a><a href="#categories">Categories</a><a href="#about">About</a>
       </nav>
       <div className="navActions">
         <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
@@ -469,16 +345,9 @@ function App() {
           </div>}
         </div> : <><button className="btn" onClick={()=>{setAuthMode("signin");setAuthOpen(true)}}><LogIn size={16}/><span>Sign in</span></button><button className="btn primary" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}><UserPlus size={16}/><span>Sign up</span></button></>}
       </div>
-    </div>
-    <PdfNavMenu openTool={openTool}/>
-    {mobile&&<div className="container mobileNav" style={{paddingBottom:12,display:"flex",gap:16,flexWrap:"wrap"}}>
-      <a href="#tools" onClick={()=>{setMobile(false);setTool(null);}}>Tools</a>
-      <a href="#categories" onClick={()=>{setMobile(false);setTool(null);}}>Categories</a>
-      <a href="#pricing" onClick={()=>{setMobile(false);setTool(null);}}>Pricing</a>
-      <a href="#about" onClick={()=>{setMobile(false);setTool(null);}}>About</a>
-    </div>}</header>
+    </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
 
-    {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user} openAuth={(mode="signin")=>{setAuthMode(mode);setAuthOpen(true)}}/></ToolErrorBoundary> :
+    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user}/></ToolErrorBoundary> :
       <>
         <section className="hero"><div className="heroInner">
           <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
@@ -497,14 +366,6 @@ function App() {
         </main>
       </>
     }
-
-    <section id="pricing" className="container" style={{padding:"20px 24px 60px"}}>
-      <div className="sectionHead"><div><h2>AI Pricing</h2><p>Student AI and Text-to-Video plans are ready for future billing integration.</p></div></div>
-      <div className="grid">
-        <div className="panel"><h3>Student AI Helper</h3><p style={{color:"#7c879a"}}>Free, Silver, Gold, Demand and Platinum plans.</p></div>
-        <div className="panel"><h3>Text-to-Video</h3><p style={{color:"#7c879a"}}>Free, Starter, Pro, Business and Platinum plans.</p></div>
-      </div>
-    </section>
     <footer className="footer" id="about"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
     {authOpen && <AuthModal mode={authMode} setMode={setAuthMode} close={()=>setAuthOpen(false)} onDone={()=>setAuthOpen(false)}/>}
   </div>;
@@ -555,26 +416,9 @@ function AuthModal({mode,setMode,close,onDone}) {
     }catch(e){setError(e.message)}finally{setBusy(false)}
   };
 
-  const googleSignIn = async () => {
-    setError(""); setMsg(""); setBusy(true);
-    try {
-      if(!supabase) throw new Error("Supabase is not configured.");
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: window.location.origin }
-      });
-      if(error) throw error;
-    } catch(e) {
-      setError(e?.message || "Google sign-in failed.");
-      setBusy(false);
-    }
-  };
-
   return <div className="modalBack" onMouseDown={close}><div className="modal" onMouseDown={e=>e.stopPropagation()}>
     <div className="modalHead"><div><div className="pill"><LockKeyhole size={13}/> Secure Auth</div><h2>{mode==="signup"?"Create your account":"Welcome back"}</h2></div><button className="iconBtn" onClick={close}><X size={17}/></button></div>
-    <div className="authTabs"><button type="button" className={mode==="signin"?"active":""} onClick={()=>{setMode("signin");setError("");setMsg("")}}>Sign in</button><button type="button" className={mode==="signup"?"active":""} onClick={()=>{setMode("signup");setError("");setMsg("")}}>Sign up</button></div>
-    <button type="button" className="btn" disabled={busy} onClick={googleSignIn} style={{width:"100%",justifyContent:"center",marginBottom:12,fontWeight:800}}><span style={{fontWeight:900,fontSize:16}}>G</span> Continue with Google</button>
-    <div style={{display:"flex",alignItems:"center",gap:10,margin:"8px 0 12px",color:"#9299a8",fontSize:11}}><span style={{height:1,flex:1,background:"#e7e9f0"}}></span>OR<span style={{height:1,flex:1,background:"#e7e9f0"}}></span></div>
+    <div className="authTabs"><button className={mode==="signin"?"active":""} onClick={()=>{setMode("signin");setError("");setMsg("")}}>Sign in</button><button className={mode==="signup"?"active":""} onClick={()=>{setMode("signup");setError("");setMsg("")}}>Sign up</button></div>
     <form onSubmit={submit}>
       {mode==="signup"&&<div className="formGrid"><div className="field"><label>Full name</label><input value={fullName} onChange={e=>setFullName(e.target.value)} required/></div><div className="field"><label>Username</label><input value={username} onChange={e=>setUsername(e.target.value)} required/></div></div>}
       <div className="field"><label>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></div>
@@ -601,158 +445,99 @@ function FilePicker({multiple=false,accept,onChange,files=[]}) {
   </label>;
 }
 
-
-function StampGeneratorTool({t,back}) {
-  const canvasRef = useRef(null);
-  const [name,setName]=useState("");
-  const [title,setTitle]=useState("");
-  const [organization,setOrganization]=useState("");
-  const [department,setDepartment]=useState("");
-  const [date,setDate]=useState("");
-  const [extra,setExtra]=useState("");
-  const [style,setStyle]=useState("classic");
-  const [shape,setShape]=useState("round");
-  const [color,setColor]=useState("#c62828");
-  const [size,setSize]=useState(900);
-  const [opacity,setOpacity]=useState(92);
-  const [status,setStatus]=useState("Enter your details to create a personalized stamp.");
-
-  const safe=(v,max=60)=>String(v||"").trim().slice(0,max);
-  const drawStamp=useCallback(()=>{
-    const canvas=canvasRef.current; if(!canvas) return;
-    const W=Number(size)||900,H=Number(size)||900; canvas.width=W; canvas.height=H;
-    const ctx=canvas.getContext("2d"); if(!ctx) return;
-    ctx.clearRect(0,0,W,H); ctx.save(); ctx.globalAlpha=(Number(opacity)||92)/100;
-    const c=color||"#c62828", cx=W/2, cy=H/2, pad=W*.09;
-    const nm=safe(name,40)||"YOUR NAME", ttl=safe(title,42), org=safe(organization,46), dep=safe(department,42), dt=safe(date,28), ex=safe(extra,56);
-    const lines=[nm,ttl,org,dep,dt,ex].filter(Boolean);
-    if(shape==="round"){
-      ctx.strokeStyle=c; ctx.fillStyle=c; ctx.lineWidth=Math.max(8,W*.016); ctx.beginPath();ctx.arc(cx,cy,W*.385,0,Math.PI*2);ctx.stroke();
-      if(style!=="minimal"){ctx.lineWidth=Math.max(3,W*.006);ctx.beginPath();ctx.arc(cx,cy,W*.34,0,Math.PI*2);ctx.stroke();}
-    } else {
-      const r=W*.07; ctx.strokeStyle=c; ctx.lineWidth=Math.max(8,W*.016); ctx.beginPath();ctx.roundRect(pad,pad,W-2*pad,H-2*pad,r);ctx.stroke();
-      if(style!=="minimal"){ctx.lineWidth=Math.max(3,W*.006);ctx.beginPath();ctx.roundRect(pad*1.65,pad*1.65,W-3.3*pad,H-3.3*pad,r*.7);ctx.stroke();}
-    }
-    const maxWidth=shape==="round"?W*.52:W*.68;
-    const startY=cy-(lines.length-1)*W*.034;
-    ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=c;ctx.strokeStyle=c;
-    lines.forEach((line,i)=>{
-      let fs=i===0?W*.075:W*.045; if(i===0 && style==="bold") fs=W*.09; if(i===0 && style==="signature") fs=W*.085;
-      ctx.font=`${i===0?"800":"600"} ${fs}px ${style==="signature"&&i===0?"cursive":"Arial, sans-serif"}`;
-      let txt=line; while(ctx.measureText(txt).width>maxWidth && fs>18){fs-=2;ctx.font=`${i===0?"800":"600"} ${fs}px ${style==="signature"&&i===0?"cursive":"Arial, sans-serif"}`;}
-      ctx.fillText(txt,cx,startY+i*W*.075);
-    });
-    if(shape==="round"){
-      ctx.font=`700 ${W*.027}px Arial, sans-serif`;ctx.letterSpacing="1px";const ringText=org?org.toUpperCase():"AUTHORIZED";
-      ctx.fillText(ringText,cx,cy-W*.275);
-      ctx.font=`700 ${W*.027}px Arial, sans-serif`;ctx.fillText((dt||"OFFICIAL").toUpperCase(),cx,cy+W*.275);
-      ctx.beginPath();ctx.arc(cx,cy,W*.055,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff";ctx.font=`800 ${W*.03}px Arial`;ctx.fillText("✓",cx,cy);
-    }
-    ctx.restore();
-    setStatus("Stamp preview updated. Download it as a PNG.");
-  },[name,title,organization,department,date,extra,style,shape,color,size,opacity]);
-
-  useEffect(()=>{drawStamp();},[drawStamp]);
-
-  const download=()=>{const c=canvasRef.current;if(!c)return; c.toBlob(blob=>{if(blob)downloadBlob(blob,`${(safe(name,30)||"personalized")}-stamp.png`);setStatus("Stamp PNG downloaded.");},"image/png");};
-  const randomDemo=()=>{setName("Ahmed Khan");setTitle("Managing Director");setOrganization("Khan Enterprises");setDepartment("Official Office");setDate(new Date().toISOString().slice(0,10));setExtra("Approved");setStatus("Demo details loaded. Customize them and download your stamp.");};
-  const clear=()=>{setName("");setTitle("");setOrganization("");setDepartment("");setDate("");setExtra("");setStatus("Enter your details to create a personalized stamp.");};
-
-  return <Shell back={back} t={t} status={status}>
-    <div style={{display:"grid",gridTemplateColumns:"minmax(300px,420px) minmax(0,1fr)",gap:18,alignItems:"start"}}>
-      <div className="panel">
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10,marginBottom:12}}><div><div className="pill">STAMP MAKER</div><h2 style={{margin:"10px 0 4px"}}>Personal Stamp Generator</h2><p style={{margin:0,color:"#7d8798"}}>Type your name and details — your stamp updates instantly.</p></div></div>
-        {[['Name / Full Name',name,setName,'Muhammad Ali'],['Title / Designation',title,setTitle,'Director / Manager / Student'],['Organization / Company',organization,setOrganization,'ABC Company'],['Department',department,setDepartment,'Accounts / HR / Office'],['Date',date,setDate,''],['Extra line',extra,setExtra,'Approved / Verified / Official']].map(([lab,val,set,ph])=><label key={lab} style={{display:"block",marginTop:11,fontSize:12,fontWeight:800,color:"#556075"}}>{lab}<input value={val} onChange={e=>set(e.target.value)} placeholder={ph} /></label>)}
-        <div className="videoOptions" style={{marginTop:12}}><label>Shape<select value={shape} onChange={e=>setShape(e.target.value)}><option value="round">Round Seal</option><option value="square">Rounded Rectangle</option></select></label><label>Style<select value={style} onChange={e=>setStyle(e.target.value)}><option value="classic">Classic</option><option value="bold">Bold</option><option value="minimal">Minimal</option><option value="signature">Signature</option></select></label></div>
-        <div className="videoOptions" style={{marginTop:12}}><label>Stamp color<input type="color" value={color} onChange={e=>setColor(e.target.value)} style={{height:42,padding:4}} /></label><label>Size<select value={size} onChange={e=>setSize(Number(e.target.value))}><option value="700">700 px</option><option value="900">900 px</option><option value="1200">1200 px</option><option value="1600">1600 px</option></select></label></div>
-        <label style={{display:"block",marginTop:12,fontSize:12,fontWeight:800,color:"#556075"}}>Opacity<input type="range" min="40" max="100" value={opacity} onChange={e=>setOpacity(Number(e.target.value))}/></label>
-        <div className="actions"><button type="button" className="btn primary" onClick={download}><Download size={16}/> Download PNG</button><button type="button" className="btn" onClick={randomDemo}>Demo</button><button type="button" className="btn" onClick={clear}>Clear</button></div>
-        <div className="notice"><ShieldCheck size={16}/><span>Everything is generated locally in your browser. No name or personal details are uploaded.</span></div>
-      </div>
-      <div className="panel" style={{position:"sticky",top:86}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}><div><h3 style={{margin:0}}>Live Stamp Preview</h3><small style={{color:"#8791a4"}}>PNG download · transparent background</small></div><span className="pill">LIVE</span></div>
-        <div style={{minHeight:520,display:"grid",placeItems:"center",padding:28,border:"1px solid #e6e8ef",borderRadius:18,background:"radial-gradient(circle,#ffffff,#f6f7fb)"}}><canvas ref={canvasRef} style={{width:"min(520px,100%)",height:"auto",display:"block",filter:"drop-shadow(0 18px 35px rgba(15,23,42,.12))"}}/></div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginTop:12}}>{["#c62828","#111827","#1d4ed8","#15803d","#7c3aed","#b45309"].map(c=><button key={c} type="button" aria-label={`Use ${c}`} onClick={()=>setColor(c)} style={{height:38,borderRadius:10,border:color===c?"3px solid #111827":"1px solid #e1e5eb",background:c}} />)}</div>
-      </div>
-    </div>
-  </Shell>;
-}
-
-function StudentAIHelper({back,user,openAuth}) {
+function StudentAIHelper({back,user}) {
   const [question,setQuestion]=useState("");
   const [files,setFiles]=useState([]);
   const [answer,setAnswer]=useState("");
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState("");
-  const [level,setLevel]=useState("Detailed");
-  const [model,setModel]=useState("gpt-5.6-luna");
-  const [selectedPlan,setSelectedPlan]=useState("free");
-  const endpoint = import.meta.env.VITE_STUDENT_AI_FUNCTION_URL ||
-    (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/student-ai-helper` : "");
-
+  const endpoint = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/student-ai-helper` : "");
   const solve=async()=>{
-    if(!question.trim() && !files.length){setStatus("Enter a question or upload study material.");return;}
-    if(!endpoint){setStatus("Student AI backend is not configured. Deploy student-ai-helper in Supabase.");return;}
-    setBusy(true);setStatus("Connecting to Student AI...");setAnswer("");
+    if(!question.trim() && !files.length){setStatus("Enter a question or upload a study file.");return;}
+    if(!endpoint){setStatus("AI backend is not configured. Your question is ready, but no secure AI function is connected.");return;}
+    setBusy(true);setStatus("Processing...");setAnswer("");
     try{
-      const token=await getSupabaseAccessToken();
-      if(!token){
-        setStatus("Please sign in first. Student AI needs your Supabase login to securely call the AI backend.");
-        openAuth?.("signin");
-        return;
-      }
       const fd=new FormData();
       fd.append("question",question.trim());
-      fd.append("model",model);
-      fd.append("level",level);
-      files.forEach(f=>fd.append("files",f,f.name));
-      const headers={
-        ...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),
-        Authorization:`Bearer ${token}`
-      };
+      files.forEach(f=>fd.append("files",f));
+      const headers={...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),...(user?.access_token?{Authorization:`Bearer ${user.access_token}`}:{})};
       const r=await fetch(endpoint,{method:"POST",headers,body:fd});
-      const raw=await r.text();
-      let data={}; try{data=raw?JSON.parse(raw):{}}catch{}
-      if(!r.ok) throw new Error(data.error||data.message||raw||`Student AI backend error (${r.status})`);
-      const fallbackOutput = Array.isArray(data.output)
-        ? data.output.flatMap(item => Array.isArray(item?.content) ? item.content : [])
-            .map(part => part?.text?.value || part?.text || "")
-            .filter(Boolean).join("\n")
-        : "";
-      const out=String(data.answer||data.output_text||fallbackOutput||data.output||data.message||"").trim();
-      if(!out) throw new Error("Student AI returned an empty answer. Please check the OpenAI API key/model in Supabase.");
-      setAnswer(out);
-      setStatus(data.usage?`AI response received · ${data.usage}`:"AI response received.");
-    }catch(e){
-      setStatus(e?.message||"Student AI request failed.");
-    }finally{setBusy(false);}
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(data.error||data.message||`AI backend error (${r.status})`);
+      setAnswer(data.answer||data.message||"No answer returned.");
+      setStatus("AI response received.");
+    }catch(e){setStatus(e?.message||"AI request failed.");}
+    finally{setBusy(false);}
   };
-
   return <Shell back={back} t={["Student AI Helper","AI & Education","Ask questions or upload study material for step-by-step help.",""]} status={status}>
     <div className="aiHelper">
       <div className="aiCard">
-        <h3>📚 Student AI Tutor</h3>
-        {!user && <div className="formError"><AlertCircle size={15}/> Sign in to use Student AI. <button className="btn" style={{marginLeft:8,padding:"5px 9px"}} onClick={()=>openAuth?.("signin")}>Sign in</button></div>}
-        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Example: Explain photosynthesis in simple words and give me 5 MCQs..." disabled={busy}/>
-        <div className="videoOptions">
-          <label>Answer level<select value={level} disabled={busy} onChange={e=>setLevel(e.target.value)}><option>Simple</option><option>Detailed</option><option>Exam Ready</option><option>Step by Step</option></select></label>
-          <label>AI model<select value={model} disabled={busy} onChange={e=>setModel(e.target.value)}><option value="gpt-5.6-luna">Fast</option><option value="gpt-5.6-terra">Balanced</option><option value="gpt-5.6-sol">Advanced</option></select></label>
-        </div>
-        <FilePicker multiple accept="image/*,.txt,.md,.csv,.json,.js,.ts,.html,.css,.sql,.pdf" onChange={setFiles} files={files}/>
+        <h3>📚 Ask your question</h3>
+        {!user && <div className="formError"><AlertCircle size={15}/> Sign in for your account-backed AI usage.</div>}
+        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question or explain what you need help with..."/>
+        <FilePicker multiple accept=".pdf,image/*,.txt,.doc,.docx" onChange={setFiles} files={files}/>
         <div className="actions">
           <button className="btn primary" disabled={busy} onClick={solve}><Sparkles size={16}/>{busy?"Processing...":"Get AI Help"}</button>
-          {files.length>0&&<button className="btn" disabled={busy} onClick={()=>setFiles([])}><Trash2 size={15}/>Clear files</button>}
+          {files.length>0&&<button className="btn" onClick={()=>setFiles([])}><Trash2 size={15}/>Clear files</button>}
         </div>
-        <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Sign in is required for secure AI usage. Choose a plan above; Free can be used for testing.</small>
       </div>
       <div className="aiCard">
         <h3>🤖 AI Answer</h3>
-        <div className="answer" style={{whiteSpace:"pre-wrap"}}>{answer||"Your step-by-step answer will appear here."}</div>
+        <div className="answer">{answer||"Your step-by-step answer will appear here."}</div>
         {answer&&<div className="actions"><button className="btn" onClick={()=>navigator.clipboard?.writeText(answer)}><Copy size={15}/>Copy</button><button className="btn" onClick={()=>downloadText(answer,"student-ai-answer.txt")}><Download size={15}/>Download</button></div>}
       </div>
     </div>
-    <PlanCards title="Student AI Helper Plans" plans={PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="student"/>
   </Shell>;
+}
+
+
+function downloadCanvas(canvas,name){const a=document.createElement("a");a.href=canvas.toDataURL("image/png");a.download=name;a.click()}
+function drawRoundedRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+
+const stampStyles=[
+  {id:"round",name:"Round Seal",icon:"◉"},{id:"square",name:"Classic",icon:"▣"},{id:"badge",name:"Badge",icon:"⬢"},{id:"minimal",name:"Minimal",icon:"□"}
+];
+
+function StampGenerator({back,t}){
+  const [name,setName]=useState(""); const [title,setTitle]=useState(""); const [org,setOrg]=useState(""); const [extra,setExtra]=useState("");
+  const [style,setStyle]=useState("round"); const [color,setColor]=useState("#e53935"); const [size,setSize]=useState(900); const [opacity,setOpacity]=useState(100); const [logo,setLogo]=useState(""); const canvasRef=useRef(null);
+  const draw=()=>{const c=canvasRef.current;if(!c)return;const dpr=2,w=900,h=700;c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);ctx.globalAlpha=opacity/100;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=9;ctx.textAlign="center";ctx.textBaseline="middle";const n=name||"YOUR NAME", tl=title||"DESIGNATION", og=org||"YOUR ORGANIZATION", ex=extra||"APPROVED";
+    if(style==="round"){ctx.beginPath();ctx.arc(450,350,260,0,Math.PI*2);ctx.stroke();ctx.lineWidth=3;ctx.beginPath();ctx.arc(450,350,232,0,Math.PI*2);ctx.stroke();ctx.font="700 27px Arial";ctx.fillText(og.toUpperCase(),450,150);ctx.font="800 52px Arial";ctx.fillText(n.toUpperCase(),450,310);ctx.font="700 28px Arial";ctx.fillText(tl.toUpperCase(),450,375);ctx.font="600 22px Arial";ctx.fillText(ex.toUpperCase(),450,445);ctx.font="700 18px Arial";ctx.fillText("✦  TOOLMASTER PRO  ✦",450,520);}
+    else if(style==="square"){drawRoundedRect(ctx,125,105,650,490,30);ctx.stroke();ctx.lineWidth=3;drawRoundedRect(ctx,145,125,610,450,20);ctx.stroke();ctx.font="800 34px Arial";ctx.fillText(n.toUpperCase(),450,255);ctx.font="700 24px Arial";ctx.fillText(tl.toUpperCase(),450,315);ctx.font="700 28px Arial";ctx.fillText(og.toUpperCase(),450,395);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,465);}
+    else if(style==="badge"){ctx.beginPath();ctx.moveTo(450,80);ctx.lineTo(700,165);ctx.lineTo(700,455);ctx.lineTo(450,620);ctx.lineTo(200,455);ctx.lineTo(200,165);ctx.closePath();ctx.stroke();ctx.font="800 34px Arial";ctx.fillText(og.toUpperCase(),450,225);ctx.font="800 47px Arial";ctx.fillText(n.toUpperCase(),450,320);ctx.font="700 25px Arial";ctx.fillText(tl.toUpperCase(),450,385);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,450);}
+    else {ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(170,180);ctx.lineTo(730,180);ctx.moveTo(170,520);ctx.lineTo(730,520);ctx.stroke();ctx.font="800 48px Arial";ctx.fillText(n,450,280);ctx.font="700 26px Arial";ctx.fillText(tl,450,350);ctx.font="600 22px Arial";ctx.fillText(og,450,410);ctx.font="600 20px Arial";ctx.fillText(ex,450,465);}
+    ctx.globalAlpha=1;
+  };
+  useEffect(()=>{draw()},[name,title,org,extra,style,color,size,opacity]);
+  return <Shell back={back} t={t}>
+    <div className="designApp">
+      <div className="designTop"><button className="designBtn" onClick={()=>{setName("");setTitle("");setOrg("");setExtra("")}}>← Templates</button><div className="designModes"><span><Type size={17}/> Text around</span><span><Type size={17}/> Text in centre</span><span><Shapes size={17}/> Circle</span><span><ImageIcon size={17}/> Images</span></div><button className="designBtn primary" onClick={()=>setStyle("round")}>New stamp +</button></div>
+      <div className="designTabs"><b>Stamp Designer</b><span>Live preview & customization</span></div>
+      <div className="designBody">
+        <aside className="designLeft"><div className="designTabRow"><b>All</b><span>Text</span><span>Figure</span></div><div className="layerList"><div className="layer active"><span>0#</span> Frame</div><div className="layer"><span>1#</span> Main text</div><div className="layer"><span>2#</span> Details</div><div className="layer"><span>3#</span> Extra line</div></div><div className="designSection"><h4>Stamp style</h4>{stampStyles.map(x=><button key={x.id} className={style===x.id?"styleChip active":"styleChip"} onClick={()=>setStyle(x.id)}><b>{x.icon}</b>{x.name}</button>)}</div></aside>
+        <section className="designCanvas"><div className="canvasGrid"><canvas ref={canvasRef}/></div><div className="canvasActions"><button className="iconBtn"><Eye size={17}/></button><button className="iconBtn"><RefreshCw size={17}/></button><button className="iconBtn" onClick={()=>draw()}><Check size={17}/></button></div></section>
+        <aside className="designRight"><h3>Stamp details</h3><p>Write anything about yourself and the stamp updates instantly.</p><label>Name<input value={name} onChange={e=>setName(e.target.value)} placeholder="Muhammad Arshad"/></label><label>Designation<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Managing Director"/></label><label>Company / Organization<input value={org} onChange={e=>setOrg(e.target.value)} placeholder="ABC Enterprises"/></label><label>Extra text<input value={extra} onChange={e=>setExtra(e.target.value)} placeholder="Approved / Verified / Official"/></label><div className="controlGrid"><label>Color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label><label>Opacity <span>{opacity}%</span><input type="range" min="20" max="100" value={opacity} onChange={e=>setOpacity(+e.target.value)}/></label></div><label>Output size<select value={size} onChange={e=>setSize(+e.target.value)}><option value="700">700 px</option><option value="900">900 px</option><option value="1200">1200 px</option><option value="1600">1600 px</option></select></label><button className="btn primary full" onClick={()=>downloadCanvas(canvasRef.current,`toolmaster-stamp-${(name||"stamp").replace(/\s+/g,"-").toLowerCase()}.png`)}><Download size={16}/> Download Stamp PNG</button></aside>
+      </div><div className="designFooter"><span>Transparent PNG • Browser-based • Instant preview</span><button className="btn" onClick={()=>{setName("");setTitle("");setOrg("");setExtra("");setStyle("round")}}>Reset</button></div>
+    </div>
+  </Shell>
+}
+
+const logoCategories=[
+  ["Business",Building2],["Medical",Stethoscope],["Photography",Camera],["Automotive",Car],["Food",Utensils],["Education",GraduationCap],["Health",HeartPulse],["Security",Shield],["Corporate",Briefcase],["Music",Music],["Gaming",Gamepad2],["Nature",Leaf],["Travel",Plane],["Real Estate",Home],["Fashion",ShoppingBag],["Pets",PawPrint],["Technology",Globe],["Luxury",Crown]
+];
+const logoPresets=[
+  {id:"circle",name:"Circle",shape:"circle"},{id:"square",name:"Square",shape:"square"},{id:"badge",name:"Badge",shape:"badge"},{id:"minimal",name:"Minimal",shape:"minimal"}
+];
+
+function LogoMaker({back,t}){
+  const [brand,setBrand]=useState("");const [tag,setTag]=useState("");const [category,setCategory]=useState("Business");const [Icon,setIcon]=useState(Building2);const [shape,setShape]=useState("circle");const [font,setFont]=useState("Arial");const [weight,setWeight]=useState("700");const [color,setColor]=useState("#6d4aff");const [textColor,setTextColor]=useState("#172033");const [size,setSize]=useState(900);const canvasRef=useRef(null);
+  useEffect(()=>{const hit=logoCategories.find(x=>x[0]===category);if(hit)setIcon(()=>hit[1])},[category]);
+  const draw=()=>{const c=canvasRef.current;if(!c)return;const d=900;c.width=d*2;c.height=d*2;const ctx=c.getContext("2d");ctx.scale(2,2);ctx.clearRect(0,0,d,d);ctx.textAlign="center";ctx.textBaseline="middle";const cx=450,cy=390;ctx.fillStyle=color;ctx.strokeStyle=color;ctx.lineWidth=18;
+    if(shape==="circle"){ctx.beginPath();ctx.arc(cx,cy-20,185,0,Math.PI*2);ctx.stroke();} else if(shape==="square"){drawRoundedRect(ctx,265,190,370,370,38);ctx.stroke();} else if(shape==="badge"){ctx.beginPath();ctx.moveTo(450,160);ctx.lineTo(610,215);ctx.lineTo(610,415);ctx.lineTo(450,520);ctx.lineTo(290,415);ctx.lineTo(290,215);ctx.closePath();ctx.stroke();} else {ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(300,180);ctx.lineTo(600,180);ctx.stroke();}
+    ctx.fillStyle=color;ctx.font="700 112px Arial";ctx.fillText(category.slice(0,1),450,370);ctx.fillStyle=textColor;ctx.font=`${weight} 70px ${font}`;ctx.fillText(brand||"YOUR BRAND",450,650);ctx.font=`500 28px ${font}`;ctx.fillText(tag||"YOUR TAGLINE",450,710);ctx.globalAlpha=.7;ctx.font=`600 18px ${font}`;ctx.fillText(category.toUpperCase()+" • TOOLMASTER PRO",450,760);ctx.globalAlpha=1;
+  };
+  useEffect(()=>draw(),[brand,tag,category,shape,font,weight,color,textColor,size]);
+  return <Shell back={back} t={t}><div className="logoApp"><div className="logoTop"><div><h2>Logo Maker Studio</h2><p>Create a logo from your name, text, category and style.</p></div><button className="btn primary" onClick={()=>downloadCanvas(canvasRef.current,`logo-${(brand||"brand").replace(/\s+/g,"-").toLowerCase()}.png`)}><Download size={16}/> Download PNG</button></div><div className="logoBody"><aside className="logoSide"><h3>Logo categories</h3><div className="categoryGrid">{logoCategories.map(([n,I])=><button key={n} className={category===n?"logoCat active":"logoCat"} onClick={()=>{setCategory(n);setIcon(()=>I)}}><I size={21}/><span>{n}</span></button>)}</div><div className="logoSection"><h3>Shape</h3><div className="shapeGrid">{logoPresets.map(x=><button key={x.id} className={shape===x.id?"shapeBtn active":"shapeBtn"} onClick={()=>setShape(x.id)}>{x.name}</button>)}</div></div></aside><section className="logoPreview"><div className="previewBadge"><Sparkles size={15}/> Live logo preview</div><div className="logoCanvasWrap"><canvas ref={canvasRef}/></div></section><aside className="logoControls"><h3>Customize</h3><label>Brand / Name<input value={brand} onChange={e=>setBrand(e.target.value)} placeholder="Arshad Medical Lab"/></label><label>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} placeholder="Quality • Trust • Care"/></label><label>Font<select value={font} onChange={e=>setFont(e.target.value)}><option>Arial</option><option>Georgia</option><option>Verdana</option><option>Trebuchet MS</option><option>Courier New</option><option>Times New Roman</option></select></label><label>Font style<select value={weight} onChange={e=>setWeight(e.target.value)}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label><div className="colorRow"><label>Logo color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label><label>Text color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)}/></label></div><button className="btn full" onClick={()=>{setBrand("");setTag("");setCategory("Business");setShape("circle")}}>Reset</button></aside></div><div className="logoFooter"><span>PNG export • Transparent background • Fully browser-based</span><button className="btn primary" onClick={()=>downloadCanvas(canvasRef.current,`logo-${Date.now()}.png`)}><Download size={16}/> Export Logo</button></div></div></Shell>
 }
 
 class ToolErrorBoundary extends React.Component {
@@ -765,13 +550,13 @@ class ToolErrorBoundary extends React.Component {
   }
 }
 
-function ToolPage({t,back,user,openAuth}) {
-  if(t[3]==="stamp-generator") return <StampGeneratorTool t={t} back={back}/>;
-  if(t[3]==="student-ai-helper") return <StudentAIHelper back={back} user={user} openAuth={openAuth}/>;
-  if(t[3]==="text-to-video") return <TextToVideo back={back} user={user} openAuth={openAuth}/>;
+function ToolPage({t,back,user}) {
+  if(t[3]==="student-ai-helper") return <StudentAIHelper back={back} user={user}/>;
+  if(t[3]==="text-to-video") return <TextToVideo back={back} user={user}/>;
+  if(t[3]==="stamp-generator") return <StampGenerator back={back} t={t}/>;
+  if(t[3]==="logo-maker") return <LogoMaker back={back} t={t}/>;
   if(t[3]==="edit-pdf") return <PdfEditorTool t={t} back={back}/>;
   if(t[1]==="PDF Tools") return <PdfTool t={t} back={back}/>;
-  if(t[3]==="background-remover") return <BackgroundRemoverTool t={t} back={back}/>;
   if(t[1]==="Image Tools") return <ImageTool t={t} back={back}/>;
   if(t[1]==="SEO & Marketing") return <SeoTool t={t} back={back}/>;
   return <GenericTool t={t} back={back}/>;
@@ -784,110 +569,106 @@ function Shell({back,t,children,status}) {
   </main>;
 }
 
-function TextToVideo({back,user,openAuth}) {
+function TextToVideo({back,user}) {
   const [prompt,setPrompt]=useState("");
   const [style,setStyle]=useState("Cinematic");
   const [duration,setDuration]=useState("8 seconds");
-  const [aspect,setAspect]=useState("16:9");
   const [status,setStatus]=useState("");
   const [busy,setBusy]=useState(false);
   const [result,setResult]=useState(null);
   const [progress,setProgress]=useState(0);
-  const [selectedPlan,setSelectedPlan]=useState("video-free");
 
-  const getBackend=()=>import.meta.env.VITE_VIDEO_FUNCTION_URL || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/video-generator` : "");
-
-  const authHeaders=async()=>{
-    const token=await getSupabaseAccessToken();
-    return {
-      "Content-Type":"application/json",
-      ...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),
-      ...(token?{Authorization:`Bearer ${token}`}:{})
-    };
+  const getBackend=()=>{
+    const configured=import.meta.env.VITE_VIDEO_FUNCTION_URL || "";
+    if(configured) return configured;
+    if(SUPABASE_URL) return `${SUPABASE_URL}/functions/v1/video-generator`;
+    return "";
   };
 
+  const authHeaders=()=>({
+    "Content-Type":"application/json",
+    ...(SUPABASE_KEY ? {apikey:SUPABASE_KEY} : {}),
+    ...(user?.access_token ? {Authorization:`Bearer ${user.access_token}`} : {})
+  });
+
   const createVideo=async()=>{
-    if(!prompt.trim()){setStatus("Please enter a video prompt first.");return;}
+    if(!prompt.trim()) return setStatus("Please enter a video prompt first.");
+    if(!user?.access_token) return setStatus("Please sign in first. Video generation requires an authenticated account.");
     const base=getBackend();
-    if(!base){setStatus("Video backend is not configured. Deploy video-generator in Supabase.");return;}
-    setBusy(true);setProgress(0);setResult(null);setStatus("Checking your secure session...");
+    if(!base) return setStatus("Video backend is not configured. Add the Supabase video-generator Edge Function first.");
+
+    setBusy(true); setProgress(0); setResult(null); setStatus("Submitting video generation job...");
     try{
-      const token=await getSupabaseAccessToken();
-      if(!token){
-        setStatus("Please sign in first. Video generation needs a secure Supabase session.");
-        openAuth?.("signin");
-        return;
-      }
-      const size=aspect==="9:16"?"720x1280":"1280x720";
-      const r=await fetch(base,{method:"POST",headers:await authHeaders(),body:JSON.stringify({
+      const r=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({
         action:"create",
-        prompt:`${style} video, ${aspect} composition: ${prompt.trim()}`,
-        duration,
-        aspect_ratio:aspect,
-        size
+        prompt:`${style} video: ${prompt.trim()}`,
+        duration
       })});
-      const raw=await r.text(); let d={}; try{d=raw?JSON.parse(raw):{}}catch{}
-      if(!r.ok) throw new Error(d.error||d.message||raw||`Video backend error (${r.status})`);
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(d.error||d.message||`Video backend error (${r.status})`);
       if(!d.video_id) throw new Error("Video job was created without a video ID.");
       setResult({video_id:d.video_id,status:d.status||"queued"});
       setStatus("Video job created. Rendering started...");
       await pollVideo(d.video_id,base);
-    }catch(e){setStatus(e?.message||"Video generation failed.");}
-    finally{setBusy(false);}
+    }catch(e){
+      setStatus(e?.message||"Video generation failed.");
+    }finally{
+      setBusy(false);
+    }
   };
 
   const pollVideo=async(videoId,base)=>{
-    const maxAttempts=180;
+    const maxAttempts=120;
     for(let attempt=0;attempt<maxAttempts;attempt++){
-      const r=await fetch(base,{method:"POST",headers:await authHeaders(),body:JSON.stringify({action:"status",video_id:videoId})});
-      const raw=await r.text(); let d={}; try{d=raw?JSON.parse(raw):{}}catch{}
-      if(!r.ok) throw new Error(d.error||d.message||raw||`Status check failed (${r.status})`);
-      const p=Math.max(0,Math.min(100,Number(d.progress||0)));
+      const r=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({action:"status",video_id:videoId})});
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(d.error||d.message||`Status check failed (${r.status})`);
+      const p=Number(d.progress||0);
       setProgress(Number.isFinite(p)?p:0);
-      setResult(prev=>({...prev,...d,video_id:videoId}));
+      setResult(prev=>({...prev, ...d, video_id:videoId}));
+
       if(d.status==="completed"){
-        setProgress(100);setStatus("Video rendered successfully. Preparing MP4...");
-        const content=await fetch(base,{method:"POST",headers:await authHeaders(),body:JSON.stringify({action:"content",video_id:videoId})});
-        if(!content.ok){const e=await content.text().catch(()=>"");throw new Error(e||`Video download failed (${content.status})`);}
+        setProgress(100);
+        setStatus("Video rendered successfully. Preparing MP4...");
+        const content=await fetch(base,{method:"POST",headers:authHeaders(),body:JSON.stringify({action:"content",video_id:videoId})});
+        if(!content.ok){
+          const e=await content.text().catch(()=>"");
+          throw new Error(e||`Video download failed (${content.status})`);
+        }
         const blob=await content.blob();
         const videoUrl=URL.createObjectURL(blob);
         setResult(prev=>({...prev,video_url:videoUrl}));
         setStatus("MP4 is ready. You can play it or download it below.");
         return;
       }
-      if(d.status==="failed" || d.status==="cancelled") {
-        const msg = d.error?.message || d.error || "Video generation failed on the video provider.";
-        setProgress(0);
-        setResult(prev=>({...prev, status:d.status, error:d.error||msg}));
-        throw new Error(msg);
+      if(d.status==="failed" || d.status==="cancelled"){
+        throw new Error(d.error?.message || d.error || "Video generation failed.");
       }
-      setStatus(d.status === "in_progress" ? `Video is rendering… ${Number.isFinite(p)?p:0}%` : `Video is queued… ${Number.isFinite(p)?p:0}%`);
       await new Promise(resolve=>setTimeout(resolve,5000));
     }
-    throw new Error("Video is taking longer than expected. The provider may be busy. Please try again in a moment.");
+    throw new Error("Video generation is taking longer than expected. Open the tool again later to check the job status.");
   };
 
-  const downloadVideo=()=>{if(!result?.video_url)return;const a=document.createElement("a");a.href=result.video_url;a.download="toolmaster-video.mp4";document.body.appendChild(a);a.click();a.remove();};
+  const downloadVideo=()=>{
+    if(!result?.video_url) return;
+    const a=document.createElement("a");
+    a.href=result.video_url; a.download="toolmaster-video.mp4";
+    document.body.appendChild(a); a.click(); a.remove();
+  };
 
   return <Shell back={back} t={["Text to Video","AI & Video","Generate AI video clips from text prompts.",""]} status={status}>
-    <div className="aiHelper">
-      <div className="aiCard">
-        <h3>🎬 AI Video Creator</h3>
-        {!user&&<div className="formError"><AlertCircle size={15}/> Sign in before generating a video. <button className="btn" style={{marginLeft:8,padding:"5px 9px"}} onClick={()=>openAuth?.("signin")}>Sign in</button></div>}
-        <textarea value={prompt} onChange={e=>setPrompt(e.target.value)} disabled={busy} placeholder="Example: A cinematic sunrise over the mountains, drone camera, soft mist, realistic lighting..."/>
-        <div className="videoOptions">
-          <label>Style<select value={style} disabled={busy} onChange={e=>setStyle(e.target.value)}><option>Cinematic</option><option>Realistic</option><option>Anime</option><option>3D Animation</option><option>Documentary</option><option>Product Ad</option></select></label>
-          <label>Duration<select value={duration} disabled={busy} onChange={e=>setDuration(e.target.value)}><option>4 seconds</option><option>8 seconds</option><option>12 seconds</option></select></label>
-          <label>Aspect<select value={aspect} disabled={busy} onChange={e=>setAspect(e.target.value)}><option>16:9</option><option>9:16</option></select></label>
-        </div>
-        <button className="btn primary" disabled={busy||!prompt.trim()} onClick={createVideo} style={{marginTop:12}}><Sparkles size={17}/>{busy?`Generating... ${progress}%`:"Generate Video"}</button>
-        <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Choose a video plan above. Shorter 4–8 second clips are best for quick testing. A signed-in account is required.</small>
-      </div>
-      <div className="aiCard"><h3>🎥 Video Preview</h3>
-        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:result?.status==="failed"||result?.status==="cancelled"?<div className="formError" style={{minHeight:220,display:"grid",placeItems:"center",textAlign:"center",padding:24}}><div><b>Video generation failed</b><small style={{display:"block",marginTop:8,color:"#b42318"}}>{result?.error?.message||result?.error||status||"The video provider rejected the generation job."}</small></div></div>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
-      </div>
-    </div>
-    <PlanCards title="Text-to-Video Plans" plans={VIDEO_PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="video"/>
+    <div className="aiHelper"><div className="aiCard"><h3>🎬 Video Prompt</h3>
+      {!user?.access_token&&<div className="formError"><AlertCircle size={15}/> Sign in is required before starting a paid video generation job.</div>}
+      <textarea value={prompt} onChange={e=>setPrompt(e.target.value)} disabled={busy} placeholder="Example: A cinematic sunrise over the mountains, drone camera, soft mist..."/>
+      <div className="videoOptions"><label>Style<select value={style} disabled={busy} onChange={e=>setStyle(e.target.value)}><option>Cinematic</option><option>Realistic</option><option>Anime</option><option>3D Animation</option><option>Documentary</option><option>Product Ad</option></select></label>
+      <label>Duration<select value={duration} disabled={busy} onChange={e=>setDuration(e.target.value)}><option>4 seconds</option><option>8 seconds</option><option>12 seconds</option></select></label></div>
+      <button className="btn primary" disabled={busy||!user?.access_token} onClick={createVideo} style={{marginTop:12}}><Sparkles size={17}/>{busy?`Generating... ${progress}%`:"Generate Video"}</button>
+    </div><div className="aiCard"><h3>🎥 Video Preview</h3>
+      {result?.video_url?<>
+        <video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/>
+        <button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button>
+      </>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration}`:"Sign in and connect the video-generator Edge Function"}</small></div></div>}
+    </div></div>
   </Shell>;
 }
 
@@ -1245,481 +1026,277 @@ async function convertWithSecureBackend(file, target) {
   return { message: data.message || `${ext.toUpperCase()} converted and downloaded.` };
 }
 
-
 function PdfTool({t,back}) {
-  const id=t[3];
-  const [files,setFiles]=useState([]);
-  const [busy,setBusy]=useState(false);
-  const [status,setStatus]=useState("");
-  const [watermark,setWatermark]=useState("ToolMaster Pro");
-  const [angle,setAngle]=useState("90");
-  const [quality,setQuality]=useState(.65);
-  const [pages,setPages]=useState("1");
-  const [active,setActive]=useState(id);
-  const [thumbs,setThumbs]=useState([]);
-
-  const pdfTools = [
-    {id:"merge-pdf", name:"Merge PDF", desc:"Combine multiple PDFs into one file."},
-    {id:"split-pdf", name:"Split PDF", desc:"Extract selected pages into separate PDFs."},
-    {id:"compress-pdf", name:"Compress PDF", desc:"Reduce PDF size where possible."},
-    {id:"pdf-word", name:"PDF to Word", desc:"Convert selectable-text PDFs to editable DOCX."},
-    {id:"word-pdf", name:"Word to PDF", desc:"Convert DOC/DOCX files to PDF."},
-    {id:"pdf-jpg", name:"PDF to JPG", desc:"Convert each PDF page to a JPG image."},
-    {id:"jpg-pdf", name:"JPG to PDF", desc:"Create a PDF from JPG/PNG images."},
-    {id:"rotate-pdf", name:"Rotate PDF", desc:"Rotate every page."},
-    {id:"pdf-unlock", name:"PDF Unlock", desc:"Create an unrestricted copy when supported."},
-    {id:"pdf-watermark", name:"PDF Watermark", desc:"Add a watermark to all pages."},
-    {id:"edit-pdf", name:"Edit & Sign PDF", desc:"Open the advanced PDF editor."}
-  ];
-  const current = pdfTools.find(x=>x.id===active) || pdfTools.find(x=>x.id===id) || pdfTools[0];
-
-  useEffect(()=>{
-    let dead=false;
-    (async()=>{
-      if(!files.length || !(files[0].type==="application/pdf" || /\.pdf$/i.test(files[0].name))) { setThumbs([]); return; }
-      try {
-        const pdfjs=await loadLib("pdfjs");
-        const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
-        const out=[];
-        for(let i=1;i<=Math.min(pdf.numPages,6);i++){
-          const pg=await pdf.getPage(i); const vp=pg.getViewport({scale:.32});
-          const c=document.createElement("canvas"); c.width=Math.ceil(vp.width); c.height=Math.ceil(vp.height);
-          await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
-          out.push({page:i,url:c.toDataURL("image/jpeg",.82)});
-        }
-        if(!dead) setThumbs(out);
-      } catch { if(!dead) setThumbs([]); }
-    })();
-    return ()=>{dead=true};
-  },[files]);
-
-  const convertAndDownload = async (file,target)=>{
-    const configured=import.meta.env.VITE_DOCUMENT_CONVERTER_URL||"";
-    const base=configured||(SUPABASE_URL?`${SUPABASE_URL}/functions/v1/document-converter`:"");
-    if(!base) throw new Error("Document converter backend is not configured.");
-    const fd=new FormData(); fd.append("file",file,file.name); fd.append("output_format",target);
-    const r=await fetch(base,{method:"POST",headers:SUPABASE_KEY?{apikey:SUPABASE_KEY}:{},body:fd});
-    const ct=r.headers.get("content-type")||"";
-    if(!r.ok){
-      const msg=ct.includes("application/json") ? ((await r.json().catch(()=>({}))).error||"Converter failed.") : await r.text().catch(()=>"Converter failed.");
-      throw new Error(msg||`Converter failed (${r.status})`);
-    }
-    if(ct.includes("application/pdf")||ct.includes("application/vnd.openxmlformats-officedocument.wordprocessingml.document")){
-      downloadBlob(await r.blob(),`${file.name.replace(/\.[^.]+$/,"")}.${target}`);
-      return;
-    }
-    const d=await r.json().catch(()=>({})); const u=d.download_url||d.url||d.file_url||d.result?.download_url;
-    if(!u) throw new Error(d.error||"Converter returned no download URL.");
-    const fr=await fetch(u); if(!fr.ok) throw new Error(`Converted file download failed (${fr.status}).`);
-    downloadBlob(await fr.blob(),`${file.name.replace(/\.[^.]+$/,"")}.${target}`);
-  };
+  const id=t[3]; const [files,setFiles]=useState([]); const [busy,setBusy]=useState(false); const [status,setStatus]=useState("");
+  const [watermark,setWatermark]=useState("ToolMaster Pro"); const [angle,setAngle]=useState("90");
+  const [quality,setQuality]=useState(.65); const [pages,setPages]=useState("1");
 
   const run=async()=>{
-    if(active==="pdf-word"||active==="word-pdf"){
-      if(!files.length) return setStatus(`Upload a ${active==="pdf-word"?"PDF":"Word"} file first.`);
-    } else if(active==="jpg-pdf"){
-      if(!files.length) return setStatus("Upload JPG/PNG images first.");
-    } else if(!files.length) return setStatus("Upload a PDF file first.");
+    if(!files.length) return setStatus("Please upload the required file first.");
     setBusy(true);setStatus("");
     try{
-      if(active==="pdf-word"){setStatus("Converting PDF to Word…");await convertAndDownload(files[0],"docx");setStatus("PDF converted to Word successfully.");return;}
-      if(active==="word-pdf"){setStatus("Converting Word to PDF…");await convertAndDownload(files[0],"pdf");setStatus("Word converted to PDF successfully.");return;}
-      if(active==="jpg-pdf"){
-        const {PDFDocument}=await loadLib("pdf-lib"); const doc=await PDFDocument.create();
-        for(const f of files){const bytes=await f.arrayBuffer();let img;try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)}const p=doc.addPage([img.width,img.height]);p.drawImage(img,{x:0,y:0,width:img.width,height:img.height});}
-        downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images-to-pdf.pdf");setStatus(`${files.length} image(s) converted to PDF.`);return;
-      }
-      if(active==="pdf-jpg"){
-        const pdfjs=await loadLib("pdfjs"); const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
-        for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const vp=pg.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${files[0].name.replace(/\.pdf$/i,"")}-page-${i}.jpg`);}
-        setStatus(`${pdf.numPages} JPG page(s) downloaded.`);return;
-      }
       const {PDFDocument,degrees,rgb}=await loadLib("pdf-lib");
-      const src=await PDFDocument.load(await files[0].arrayBuffer(),{ignoreEncryption:active==="pdf-unlock"});
-      if(active==="merge-pdf"){
-        const out=await PDFDocument.create();
-        for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(d,d.getPageIndices())).forEach(p=>out.addPage(p));}
-        downloadBlob(new Blob([await out.save()],{type:"application/pdf"}),"merged.pdf");setStatus(`${files.length} PDF files merged successfully.`);return;
+      if(id==="pdf-word"){await pdfToWord(files[0]);return}
+      if(id==="word-pdf"){await wordToPdf(files[0]);return}
+      if(id==="pdf-jpg"){await pdfToJpg(files[0]);return}
+      const src=await PDFDocument.load(await files[0].arrayBuffer(),{ignoreEncryption:id==="pdf-unlock"});
+      if(id==="merge-pdf"){
+        const out=await PDFDocument.create(); for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(d,d.getPageIndices())).forEach(p=>out.addPage(p))}
+        downloadBlob(new Blob([await out.save()],{type:"application/pdf"}),"merged.pdf");setStatus("Merged PDF downloaded.");return;
       }
-      if(active==="split-pdf"){
+      if(id==="split-pdf"){
         const nums=pages.split(",").map(x=>parseInt(x.trim(),10)-1).filter(Number.isInteger);const list=nums.length?nums:src.getPageIndices();
-        for(const n of list){if(n<0||n>=src.getPageCount())continue;const one=await PDFDocument.create();const [p]=await one.copyPages(src,[n]);one.addPage(p);downloadBlob(new Blob([await one.save()],{type:"application/pdf"}),`page-${n+1}.pdf`);}
+        for(const n of list){if(n<0||n>=src.getPageCount())continue;const one=await PDFDocument.create();const [p]=await one.copyPages(src,[n]);one.addPage(p);downloadBlob(new Blob([await one.save()],{type:"application/pdf"}),`page-${n+1}.pdf`)}
         setStatus("Selected pages downloaded.");return;
       }
-      if(active==="compress-pdf"){downloadBlob(new Blob([await src.save({useObjectStreams:true,addDefaultPage:false})],{type:"application/pdf"}),"compressed.pdf");setStatus("Optimized PDF downloaded.");return;}
-      if(active==="rotate-pdf"){src.getPages().forEach(p=>p.setRotation(degrees(Number(angle)||90)));downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"rotated.pdf");setStatus("Rotated PDF downloaded.");return;}
-      if(active==="pdf-unlock"){downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"unlocked.pdf");setStatus("Unlocked copy downloaded when supported.");return;}
-      if(active==="pdf-watermark"){src.getPages().forEach(p=>{const {width,height}=p.getSize();p.drawText(watermark||"ToolMaster Pro",{x:width/2-60,y:height/2,size:28,color:rgb(.65,.65,.65),opacity:.35,rotate:degrees(35)})});downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"watermarked.pdf");setStatus("Watermarked PDF downloaded.");return;}
-      if(active==="edit-pdf"){setStatus("Choose Edit & Sign PDF from All PDF Tools to open the advanced editor.");return;}
-    }catch(e){setStatus(`Error: ${e?.message||String(e)}`)}finally{setBusy(false);}
-  };
-
-  const accept=active==="word-pdf"?".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-    active==="jpg-pdf"?"image/jpeg,image/png":".pdf,application/pdf";
-  const multi=active==="merge-pdf"||active==="jpg-pdf";
-
-  const selectOperation=(next)=>{
-    if(next==="edit-pdf"){
-      // Open full editor through the parent page routing by reusing the browser history hash.
-      setActive(next);
-      const target=tools.find(x=>x[3]===next);
-      if(target){ setTimeout(()=>window.dispatchEvent(new CustomEvent("tm-open-tool",{detail:target})),0); }
-      return;
-    }
-    setActive(next); setStatus("");
-  };
-
-  return <Shell back={back} t={t} status={status}>
-    <div className="pdfProPage">
-      <section className="pdfProHero">
-        <h1>{current.name}</h1>
-        <p>{current.desc}</p>
-        <div className="pdfUploadArea" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();const dropped=Array.from(e.dataTransfer.files||[]);if(dropped.length)setFiles(multi?dropped:[dropped[0]]);}}>
-          <input id="pdf-main-upload" className="pdfUploadHidden" type="file" multiple={multi} accept={accept} onChange={e=>{setFiles(Array.from(e.target.files||[]));e.target.value="";}} />
-          <div className="pdfSelectRow">
-            <button type="button" className="pdfSelectButton" onClick={()=>document.getElementById("pdf-main-upload")?.click()}>
-              <Upload size={24}/> {active==="word-pdf"?"Select Word file":active==="jpg-pdf"?"Select image files":"Select PDF file"}
-            </button>
-            <div className="pdfCloudButtons">
-              <button type="button" className="pdfCloudButton" title="Google Drive" aria-label="Choose from Google Drive" onClick={()=>setStatus("Google Drive picker is ready for configuration. Add VITE_GOOGLE_PICKER_API_KEY and VITE_GOOGLE_PICKER_CLIENT_ID in Vercel.")}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8.1 3h4.3l7.5 13h-4.3zM6.2 7.2 2 14.5l2.1 3.6 6.3-10.9zM6 20h13.5l2.2-3.7H8.2z"/></svg>
-              </button>
-              <button type="button" className="pdfCloudButton" title="Dropbox" aria-label="Choose from Dropbox" onClick={()=>setStatus("Dropbox chooser is ready for configuration. Add VITE_DROPBOX_APP_KEY in Vercel.")}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m7.2 4.2 4.8 3.3 4.8-3.3 4.2 3-4.2 3.1L12 7l-4.8 3.3L3 7.2zm0 6.8 4.8 3.3 4.8-3.3 4.2 3-4.2 3.1-4.8-3.3L3 14zM8.1 18.2l3.9 2.7 3.9-2.7-3.9-2.7z"/></svg>
-              </button>
-            </div>
-          </div>
-          <div className="pdfUploadHint">or drop {active==="word-pdf"?"Word":active==="jpg-pdf"?"images":"PDF"} here<span>Supported: {active==="word-pdf"?"DOC, DOCX":active==="jpg-pdf"?"JPG, PNG":"PDF"} · Fast upload · Secure processing</span></div>
-          <div className="pdfProviderNote">Google Drive and Dropbox cloud import can be enabled with their picker keys in Vercel.</div>
-        </div>
-      </section>
-
-      {files.length>0 && <section className="pdfWorkArea">
-        <div className="pdfCanvasZone">
-          <div className="pdfThumbHeader"><span>{files.length} file{files.length>1?"s":""} selected</span><button type="button" className="btn" onClick={()=>setFiles([])}>Remove</button></div>
-          <div className="pdfThumbGrid">
-            {thumbs.length?thumbs.map(x=><div className="pdfThumb" key={x.page}><img src={x.url} alt={`Page ${x.page}`}/><small>Page {x.page}</small></div>):files.map(f=><div className="pdfThumb file" key={f.name}><FileText size={34}/><small>{f.name}</small></div>)}
-          </div>
-          <div className="pdfCanvasTip">Your original file stays here until you start the selected operation.</div>
-        </div>
-        <aside className="pdfSidePanel">
-          <h2>{current.name}</h2>
-          {active==="pdf-word"&&<div className="pdfChoice"><b>NO OCR</b><span>Convert selectable-text PDFs into editable Word files.</span></div>}
-          {active==="pdf-word"&&<div className="pdfChoice premium"><b>OCR <span>Premium</span></b><span>Scanned/image PDFs need OCR for editable Word output.</span></div>}
-          {active==="split-pdf"&&<label>Pages <input value={pages} onChange={e=>setPages(e.target.value)} placeholder="1,3,5"/></label>}
-          {active==="rotate-pdf"&&<label>Rotation <select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
-          {active==="pdf-watermark"&&<label>Watermark text <input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
-          {active==="pdf-jpg"&&<label>JPG quality <input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
-          <button type="button" className="pdfMainAction" disabled={busy} onClick={run}>{busy?"Processing…":current.name==="Merge PDF"?"Merge PDF":current.name==="Split PDF"?"Split PDF":current.name==="Compress PDF"?"Compress PDF":current.name==="PDF to Word"?"Convert to WORD":current.name==="Word to PDF"?"Convert to PDF":current.name==="PDF to JPG"?"Convert to JPG":current.name}</button>
-          <div className="pdfSideNote">Secure browser-first processing where possible. Conversion tools use your configured backend.</div>
-        </aside>
-      </section>}
-
-      <section className="pdfQuickGrid">
-        {pdfTools.map(x=><button key={x.id} type="button" className={active===x.id?"pdfQuick active":"pdfQuick"} onClick={()=>selectOperation(x.id)}>
-          <FileText size={18}/><span>{x.name}</span><small>{x.desc}</small>
-        </button>)}
-      </section>
-    </div>
-  </Shell>;
-}
-
-function BackgroundRemoverTool({t,back}) {
-  const inputRef = useRef(null);
-  const [file,setFile] = useState(null);
-  const [originalUrl,setOriginalUrl] = useState("");
-  const [resultUrl,setResultUrl] = useState("");
-  const [resultBlob,setResultBlob] = useState(null);
-  const [cutoutBlob,setCutoutBlob] = useState(null);
-  const [busy,setBusy] = useState(false);
-  const [status,setStatus] = useState("Upload an image to start.");
-  const [tab,setTab] = useState("cutout");
-  const [bgMode,setBgMode] = useState("transparent");
-  const [bgColor,setBgColor] = useState("#ffffff");
-  const [bgImage,setBgImage] = useState("");
-  const [bgCategory,setBgCategory] = useState("photo");
-  const [effect,setEffect] = useState("none");
-  const [brightness,setBrightness] = useState(100);
-  const [contrast,setContrast] = useState(100);
-  const [saturation,setSaturation] = useState(100);
-  const [shadow,setShadow] = useState(false);
-  const [design,setDesign] = useState("original");
-  const [lastCutoutReady,setLastCutoutReady] = useState(false);
-
-  const photoBackgrounds = [
-    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1510784722466-f2aa9c52db6c?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1526481280695-3c687fd643ed?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=85"
-  ];
-
-  const colorBackgrounds = ["#ffffff","#f3f4f6","#111827","#000000","#fde68a","#fecdd3","#bfdbfe","#c7d2fe","#bbf7d0","#ddd6fe"];
-
-  useEffect(()=>()=>{
-    if(originalUrl) URL.revokeObjectURL(originalUrl);
-    if(resultUrl) URL.revokeObjectURL(resultUrl);
-  },[originalUrl,resultUrl]);
-
-  const readImage = f => new Promise((resolve,reject)=>{
-    const u=URL.createObjectURL(f); const img=new Image();
-    img.onload=()=>{URL.revokeObjectURL(u);resolve(img)};
-    img.onerror=reject; img.src=u;
-  });
-
-  const readSourceImage = src => new Promise((resolve,reject)=>{
-    const img=new Image();
-    img.crossOrigin="anonymous";
-    img.onload=()=>resolve(img);
-    img.onerror=()=>reject(new Error("Background image could not be loaded."));
-    img.src=src;
-  });
-
-  const setNewResult = blob => {
-    if(!blob) return;
-    if(resultUrl) URL.revokeObjectURL(resultUrl);
-    const u=URL.createObjectURL(blob);
-    setResultUrl(u);
-    setResultBlob(blob);
-  };
-
-  const doCutout = async (sourceFile=file) => {
-    if(!sourceFile) return setStatus("Upload an image first.");
-    setBusy(true);
-    setStatus("Removing background automatically…");
-    try{
-      const mod=await loadLib("bg-remove");
-      const removeBackground=mod.removeBackground || mod.default?.removeBackground || mod.default;
-      if(typeof removeBackground!=="function") throw new Error("Background-removal engine could not be loaded.");
-      const blob=await removeBackground(sourceFile,{model:"isnet_fp16",output:{format:"image/png",type:"foreground"}});
-      setCutoutBlob(blob);
-      setNewResult(blob);
-      setLastCutoutReady(true);
-      setStatus("Background removed automatically. Choose a background or download the transparent PNG.");
-    }catch(e){
-      try{
-        const img=await readImage(sourceFile), c=document.createElement("canvas"), ctx=c.getContext("2d");
-        c.width=img.naturalWidth; c.height=img.naturalHeight; ctx.drawImage(img,0,0);
-        const data=ctx.getImageData(0,0,c.width,c.height);
-        for(let i=0;i<data.data.length;i+=4){
-          const r=data.data[i],g=data.data[i+1],b=data.data[i+2];
-          if((r>238&&g>238&&b>238) || (Math.max(r,g,b)-Math.min(r,g,b)<9&&r>220)) data.data[i+3]=0;
-        }
-        ctx.putImageData(data,0,0);
-        const blob=await new Promise(r=>c.toBlob(r,"image/png"));
-        if(!blob) throw new Error("Fallback cutout could not create PNG.");
-        setCutoutBlob(blob);
-        setNewResult(blob);
-        setLastCutoutReady(true);
-        setStatus("AI model was unavailable, so a local light-background fallback was used.");
-      }catch(fallbackErr){
-        setStatus(`Background removal failed: ${fallbackErr?.message||String(e)}`);
+      if(id==="compress-pdf"){
+        const bytes=await src.save({useObjectStreams:true,addDefaultPage:false});downloadBlob(new Blob([bytes],{type:"application/pdf"}),"compressed.pdf");setStatus("Optimized PDF downloaded.");return;
       }
-    }finally{setBusy(false);}
+      if(id==="rotate-pdf"){
+        src.getPages().forEach(p=>p.setRotation(degrees(Number(angle)||90)));downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"rotated.pdf");setStatus("Rotated PDF downloaded.");return;
+      }
+      if(id==="pdf-unlock"){
+        downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"unlocked.pdf");setStatus("Unlocked copy downloaded when the source encryption is supported.");return;
+      }
+      if(id==="pdf-watermark"){
+        src.getPages().forEach(p=>{const {width,height}=p.getSize();p.drawText(watermark||"ToolMaster Pro",{x:width/2-60,y:height/2,size:28,color:rgb(.65,.65,.65),opacity:.35,rotate:degrees(35)})});
+        downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"watermarked.pdf");setStatus("Watermarked PDF downloaded.");return;
+      }
+    }catch(e){setStatus("Error: "+(e?.message||String(e)))}finally{setBusy(false)}
   };
 
-  const upload = e => {
-    const f=e.target.files?.[0];
-    e.target.value="";
-    if(!f) return;
-    if(!/^image\/(png|jpe?g|webp)$/i.test(f.type)) { setStatus("Please upload PNG, JPG or WebP."); return; }
-    if(originalUrl) URL.revokeObjectURL(originalUrl);
-    if(resultUrl) URL.revokeObjectURL(resultUrl);
-    setFile(f);
-    setOriginalUrl(URL.createObjectURL(f));
-    setResultUrl("");
-    setResultBlob(null);
-    setCutoutBlob(null);
-    setLastCutoutReady(false);
-    setBgMode("transparent");
-    setBgImage("");
-    setBgCategory("photo");
-    setTab("cutout");
-    doCutout(f);
-  };
-
-  const renderComposite = async (overrides={}) => {
-    if(!file && !resultBlob && !cutoutBlob) return setStatus("Upload an image first.");
-    setBusy(true);
-    setStatus("Applying your image edits…");
-    try{
-      const sourceBlob=cutoutBlob||resultBlob||file;
-      const img=await readImage(sourceBlob);
-      const iw=img.naturalWidth, ih=img.naturalHeight;
-      const nextBgMode=overrides.bgMode ?? bgMode;
-      const nextBgColor=overrides.bgColor ?? bgColor;
-      const nextBgImage=overrides.bgImage ?? bgImage;
-      const nextDesign=overrides.design ?? design;
-      const nextEffect=overrides.effect ?? effect;
-      const nextBrightness=Number(overrides.brightness ?? brightness) || 100;
-      const nextContrast=Number(overrides.contrast ?? contrast) || 100;
-      const nextSaturation=Number(overrides.saturation ?? saturation) || 100;
-      const nextShadow=overrides.shadow ?? shadow;
-      let cw=iw,ch=ih;
-      if(nextDesign==="square"){const side=Math.max(iw,ih);cw=ch=side;}
-      if(nextDesign==="portrait"){const target=4/5;cw=Math.min(iw,Math.round(ih*target));ch=Math.round(cw/target);}
-      if(nextDesign==="landscape"){const target=16/9;ch=Math.min(ih,Math.round(iw/target));cw=Math.round(ch*target);}
-      const c=document.createElement("canvas"); c.width=Math.max(1,Math.round(cw)); c.height=Math.max(1,Math.round(ch));
-      const ctx=c.getContext("2d"); if(!ctx) throw new Error("Canvas is not available.");
-      const cropScale=Math.min(cw/iw,ch/ih), drawW=iw*cropScale, drawH=ih*cropScale, dx=(cw-drawW)/2, dy=(ch-drawH)/2;
-
-      if(nextBgImage){
-        const bgImg=await readSourceImage(nextBgImage);
-        ctx.drawImage(bgImg,0,0,cw,ch);
-      }else if(nextBgMode==="white"){ctx.fillStyle="#fff";ctx.fillRect(0,0,cw,ch);}
-      else if(nextBgMode==="black"){ctx.fillStyle="#000";ctx.fillRect(0,0,cw,ch);}
-      else if(nextBgMode==="color"){ctx.fillStyle=nextBgColor;ctx.fillRect(0,0,cw,ch);}
-      else {ctx.clearRect(0,0,cw,ch);}
-
-      ctx.save();
-      ctx.filter=`brightness(${nextBrightness}%) contrast(${nextContrast}%) saturate(${nextSaturation}%) ${nextEffect==="grayscale"?"grayscale(100%)":""} ${nextEffect==="blur"?"blur(1px)":""}`;
-      if(nextShadow){ctx.shadowColor="rgba(0,0,0,.28)";ctx.shadowBlur=Math.max(12,cw*.02);ctx.shadowOffsetY=Math.max(5,ch*.015);}
-      if(nextDesign==="original") ctx.drawImage(img,0,0,iw,ih);
-      else ctx.drawImage(img,dx,dy,drawW,drawH);
-      ctx.restore();
-
-      const blob=await new Promise(r=>c.toBlob(r,"image/png"));
-      if(!blob) throw new Error("Could not create edited PNG.");
-      setNewResult(blob);
-      setStatus("Changes applied successfully.");
-    }catch(e){
-      setStatus(e?.message||"Could not apply image changes.");
-    }finally{setBusy(false);}
-  };
-
-  const chooseBackground = async (mode, value="") => {
-    setBgMode(mode);
-    setBgImage(mode==="image"?value:"");
-    if(mode==="image") setStatus("Background selected. Applying it to your cutout…");
-    setTab("background");
-    if(lastCutoutReady || resultBlob || cutoutBlob) await renderComposite({bgMode:mode,bgImage:mode==="image"?value:"" , bgColor: mode==="color" ? (value || bgColor) : bgColor});
-  };
-
-  const download = (hd=false) => {
-    if(!resultBlob) return setStatus("Your image is still processing.");
-    downloadBlob(resultBlob,hd?"toolmaster-background-remover-hd.png":"toolmaster-background-remover.png");
-    setStatus(hd?"HD PNG downloaded.":"PNG downloaded.");
-  };
-
-  const Tab = ({id,label}) => <button type="button" className={tab===id?"btn primary":"btn"} onClick={()=>setTab(id)}>{label}</button>;
-
-  const uploadHero = <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:28,alignItems:"center",padding:"42px 34px",background:"linear-gradient(135deg,#ffffff,#f8fafc)"}}>
-    <div>
-      <div style={{fontSize:14,fontWeight:700,color:"#2563eb",marginBottom:12}}>AI PHOTO EDITOR</div>
-      <h2 style={{fontSize:"clamp(34px,5vw,58px)",lineHeight:1.04,margin:"0 0 14px",fontWeight:800,color:"#20242b"}}>Remove Image Background</h2>
-      <p style={{fontSize:18,lineHeight:1.6,color:"#586174",maxWidth:560,margin:"0 0 22px"}}>100% automatic background removal, then replace it with a photo, color or transparent canvas.</p>
-      <button type="button" className="btn primary" style={{fontSize:18,padding:"14px 26px",borderRadius:999}} onClick={()=>inputRef.current?.click()}><Upload size={20}/> Upload Image</button>
-      <p style={{margin:"14px 0 0",fontSize:13,color:"#8993a6"}}>or drop a file · PNG, JPG or WebP</p>
-    </div>
-    <div style={{borderRadius:24,padding:24,background:"linear-gradient(135deg,#eef4ff,#ffffff)",border:"1px solid #e8edf7",minHeight:360,display:"grid",placeItems:"center"}}>
-      <div style={{width:"min(390px,100%)",aspectRatio:"1/1",borderRadius:20,background:"radial-gradient(circle at 35% 30%,#dbeafe,transparent 40%),linear-gradient(135deg,#fff,#e9eef7)",display:"grid",placeItems:"center",boxShadow:"0 24px 70px rgba(15,23,42,.10)"}}>
-        <div style={{textAlign:"center"}}><ImageIcon size={64} strokeWidth={1.5} color="#64748b"/><div style={{fontWeight:700,marginTop:10,color:"#475569"}}>Upload your photo</div><div style={{fontSize:13,color:"#94a3b8",marginTop:6}}>Background removal starts automatically</div></div>
-      </div>
-    </div>
-    <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={upload} style={{display:"none"}}/>
-  </div>;
-
-  const checkerStyle={backgroundImage:"linear-gradient(45deg,#eceff3 25%,transparent 25%),linear-gradient(-45deg,#eceff3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eceff3 75%),linear-gradient(-45deg,transparent 75%,#eceff3 75%)",backgroundSize:"22px 22px",backgroundPosition:"0 0,0 11px,11px -11px,-11px 0"};
-
-  return <Shell back={back} t={t} status={status}>
-    <div className="bgRemoveShell" style={{border:"1px solid #e4e6ed",borderRadius:18,background:"#fff",boxShadow:"var(--shadow)",overflow:"hidden"}}>
-      {!file ? uploadHero : <>
-        <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={upload} style={{display:"none"}}/>
-        <div style={{padding:"12px 16px",borderBottom:"1px solid #eceef4",display:"flex",alignItems:"center",gap:7,flexWrap:"wrap",background:"#fff"}}>
-          <Tab id="cutout" label="✂ Cutout"/>
-          <Tab id="background" label="▣ Background"/>
-          <Tab id="effect" label="◉ Effects"/>
-          <Tab id="adjust" label="◐ Adjust"/>
-          <Tab id="design" label="▧ Design"/>
-          <div style={{marginLeft:"auto",display:"flex",gap:8,alignItems:"center"}}>
-            <button type="button" className="btn" onClick={()=>inputRef.current?.click()}>＋ Replace</button>
-            <button type="button" className="btn primary" disabled={!resultBlob||busy} onClick={()=>download(false)}><Download size={16}/> Download</button>
-          </div>
-        </div>
-
-        <div style={{display:"grid",gridTemplateColumns:"minmax(0,1fr) 330px",minHeight:560}}>
-          <div style={{...checkerStyle,backgroundColor:"#fff",display:"grid",placeItems:"center",padding:26}}>
-            <div style={{width:"min(760px,100%)",height:"min(590px,72vh)",borderRadius:18,overflow:"hidden",display:"grid",placeItems:"center",position:"relative",border:"1px solid #dfe4eb",boxShadow:"0 12px 40px rgba(15,23,42,.08)",background:bgImage?`url("${bgImage}") center/cover no-repeat`:bgMode==="white"?"#fff":bgMode==="black"?"#000":bgMode==="color"?bgColor:"transparent"}}>
-              {resultUrl && <img src={resultUrl} alt="Background removed result" style={{maxWidth:"94%",maxHeight:"94%",objectFit:"contain",filter:`brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) ${effect==="grayscale"?"grayscale(1)":""}`,filterOrigin:"center",boxShadow:shadow?"0 18px 40px rgba(0,0,0,.24)":"none"}}/>}
-              {!resultUrl && <div style={{padding:20,textAlign:"center",color:"#64748b"}}>{busy?"Removing background…":"Preparing image…"}</div>}
-              {busy && <div style={{position:"absolute",inset:0,display:"grid",placeItems:"center",background:"rgba(255,255,255,.58)",backdropFilter:"blur(2px)"}}><div style={{background:"#fff",padding:"12px 18px",borderRadius:999,fontWeight:700,boxShadow:"0 10px 30px rgba(15,23,42,.12)"}}>AI processing…</div></div>}
-            </div>
-          </div>
-
-          <aside style={{borderLeft:"1px solid #eceef4",background:"#fff",padding:18,overflow:"auto"}}>
-            {tab==="cutout" && <div>
-              <h3 style={{marginTop:0}}>Cutout</h3>
-              <p style={{color:"#667085",lineHeight:1.55}}>Your image is removed automatically as soon as it uploads.</p>
-              <button type="button" className="btn primary" disabled={busy} onClick={()=>doCutout()} style={{width:"100%"}}>{busy?"Processing…":resultBlob?"Remove Again":"Remove Background"}</button>
-              <div style={{marginTop:16,padding:14,borderRadius:14,background:"#f8fafc",fontSize:13,color:"#667085"}}>Transparent PNG is kept as the base, so you can switch backgrounds without uploading the photo again.</div>
-            </div>}
-            {tab==="background" && <div>
-              <div style={{display:"flex",gap:6,marginBottom:14,borderBottom:"1px solid #eceef4",paddingBottom:10}}>
-                <button type="button" className={bgCategory==="photo"?"btn primary":"btn"} onClick={()=>setBgCategory("photo")}>Magic</button>
-                <button type="button" className={bgCategory==="color"?"btn primary":"btn"} onClick={()=>setBgCategory("color")}>Color</button>
-              </div>
-              {bgCategory==="photo" && <>
-                <p style={{fontWeight:700,margin:"0 0 10px"}}>Choose a background</p>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
-                  {photoBackgrounds.map((src,i)=><button key={src} type="button" onClick={()=>chooseBackground("image",src)} style={{padding:0,border:bgImage===src?"3px solid #2563eb":"1px solid #e1e5eb",borderRadius:12,overflow:"hidden",background:"#fff",cursor:"pointer"}}><img src={src} alt={`Background ${i+1}`} style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/></button>)}
-                </div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:12}}>
-                  <button type="button" className={bgMode==="transparent"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("transparent")}>Transparent</button>
-                  <button type="button" className={bgMode==="white"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("white")}>White</button>
-                </div>
-              </>}
-              {bgCategory==="color" && <>
-                <p style={{fontWeight:700,margin:"0 0 10px"}}>Solid colors</p>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8}}>{colorBackgrounds.map(c=><button key={c} type="button" aria-label={`Set ${c}`} onClick={()=>{setBgColor(c);chooseBackground("color",c);}} style={{width:"100%",aspectRatio:"1/1",border:bgColor===c&&bgMode==="color"?"3px solid #2563eb":"1px solid #d8dde7",borderRadius:10,background:c,cursor:"pointer"}}/>)}</div>
-                <label style={{display:"block",marginTop:14}}>Custom color<input type="color" value={bgColor} onChange={e=>{setBgColor(e.target.value);setBgMode("color");setBgImage("");}} style={{display:"block",marginTop:8,width:"100%",height:42}}/></label>
-                <button type="button" className="btn primary" style={{width:"100%",marginTop:10}} onClick={()=>chooseBackground("color",bgColor)}>Apply Color</button>
-              </>}
-            </div>}
-            {tab==="effect" && <div><h3 style={{marginTop:0}}>Effects</h3><label>Filter<select value={effect} onChange={e=>setEffect(e.target.value)}><option value="none">None</option><option value="grayscale">Grayscale</option><option value="blur">Soft blur</option></select></label><label style={{display:"flex",alignItems:"center",gap:8,marginTop:12}}><input type="checkbox" checked={shadow} onChange={e=>setShadow(e.target.checked)}/> Soft shadow</label><button type="button" className="btn primary" style={{width:"100%",marginTop:14}} disabled={busy} onClick={()=>renderComposite()}>Apply Effects</button></div>}
-            {tab==="adjust" && <div><h3 style={{marginTop:0}}>Adjust</h3><label>Brightness<input type="range" min="50" max="150" value={brightness} onChange={e=>setBrightness(e.target.value)}/></label><label>Contrast<input type="range" min="50" max="160" value={contrast} onChange={e=>setContrast(e.target.value)}/></label><label>Saturation<input type="range" min="0" max="180" value={saturation} onChange={e=>setSaturation(e.target.value)}/></label><button type="button" className="btn primary" style={{width:"100%",marginTop:14}} disabled={busy} onClick={()=>renderComposite()}>Apply Adjust</button></div>}
-            {tab==="design" && <div><h3 style={{marginTop:0}}>Design</h3><label>Canvas<select value={design} onChange={e=>setDesign(e.target.value)}><option value="original">Original</option><option value="square">Square 1:1</option><option value="portrait">Portrait 4:5</option><option value="landscape">Landscape 16:9</option><option value="contain">Contain</option></select></label><button type="button" className="btn primary" style={{width:"100%",marginTop:14}} disabled={busy} onClick={()=>renderComposite()}>Apply Design</button></div>}
-          </aside>
-        </div>
-
-        <div style={{padding:"11px 16px",borderTop:"1px solid #eceef4",display:"flex",alignItems:"center",gap:10,background:"#fff",flexWrap:"wrap"}}>
-          <div style={{width:56,height:56,borderRadius:12,overflow:"hidden",border:"2px solid #2563eb",background:"#f1f5f9",display:"grid",placeItems:"center"}}>{resultUrl?<img src={resultUrl} alt="Result thumbnail" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<img src={originalUrl} alt="Original thumbnail" style={{width:"100%",height:"100%",objectFit:"cover"}}/>}</div>
-          <button type="button" className="btn" onClick={()=>inputRef.current?.click()}>＋</button>
-          <div style={{marginLeft:"auto",display:"flex",gap:8}}><button type="button" className="btn" disabled={!resultBlob||busy} onClick={()=>download(false)}>Download PNG</button><button type="button" className="btn" disabled={!resultBlob||busy} onClick={()=>download(true)}>Download HD</button></div>
-        </div>
-      </>}
-    </div>
-  </Shell>;
+  async function pdfToJpg(file){
+    const pdfjs=await loadLib("pdfjs");const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;
+    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const viewport=page.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=viewport.width;c.height=viewport.height;await page.render({canvasContext:c.getContext("2d"),viewport}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${file.name.replace(/\.pdf$/i,"")}-page-${i}.jpg`)}
+    setStatus(`${pdf.numPages} JPG page(s) downloaded.`);
+  }
+  async function pdfToWord(file){
+    setStatus("Uploading PDF to the secure document converter…");
+    const data = await convertWithSecureBackend(file, "docx");
+    setStatus(data.message || "PDF converted to Word and downloaded.");
+  }
+  async function wordToPdf(file){
+    setStatus("Uploading Word document to the secure document converter…");
+    const data = await convertWithSecureBackend(file, "pdf");
+    setStatus(data.message || "Word document converted to PDF and downloaded.");
+  }
+  async function jpgToPdf(){
+    const {PDFDocument}=await loadLib("pdf-lib");const doc=await PDFDocument.create();
+    for(const f of files){const bytes=await f.arrayBuffer();let img;try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)}const page=doc.addPage([img.width,img.height]);page.drawImage(img,{x:0,y:0,width:img.width,height:img.height})}
+    downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images.pdf");setStatus("PDF downloaded.");
+  }
+  if(id==="jpg-pdf") return <Shell back={back} t={t} status={status}><div className="workspace"><div className="panel"><FilePicker multiple accept="image/jpeg,image/png" onChange={setFiles} files={files}/><button className="btn primary" disabled={busy||!files.length} onClick={jpgToPdf}><Download/> Create PDF</button></div><div className="panel"><h3>{files.length} image(s) selected</h3>{files.map(f=><p key={f.name}>✓ {f.name}</p>)}</div></div></Shell>;
+  const accepted = id === "word-pdf" ? ".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" : ".pdf,application/pdf";
+  return <Shell back={back} t={t} status={status||"Files are processed in your browser when supported."}><div className="workspace"><div className="panel"><FilePicker multiple={id==="merge-pdf"} accept={accepted} onChange={setFiles} files={files}/>
+    {id==="split-pdf"&&<label>Pages (e.g. 1,3,5)<input value={pages} onChange={e=>setPages(e.target.value)}/></label>}
+    {id==="rotate-pdf"&&<label>Rotation<select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
+    {id==="pdf-watermark"&&<label>Watermark text<input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
+    {id==="pdf-jpg"&&<label>JPG quality<input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
+    <button className="btn primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw/>:<Download/>}{busy?"Processing...":"Process & Download"}</button>
+  </div><div className="panel"><h3>Selected files</h3>{files.map(f=><p key={f.name}>📄 {f.name} — {(f.size/1024).toFixed(1)} KB</p>)}</div></div></Shell>;
 }
 
 function ImageTool({t,back}) {
-  const id=t[3];const [files,setFiles]=useState([]);const [busy,setBusy]=useState(false);const [status,setStatus]=useState("");const [w,setW]=useState(1200),[h,setH]=useState(800),[quality,setQuality]=useState(.75),[crop,setCrop]=useState("1:1");
-  const run=async()=>{
-    if(!files.length)return setStatus("Please upload an image.");setBusy(true);setStatus("");
-    try{
-      const file=files[0]; if(id==="image-text"){setStatus("Running browser OCR...");const {createWorker}=await loadLib("tesseract");const worker=await createWorker("eng");const {data}=await worker.recognize(file);await worker.terminate();downloadText(data.text.trim()||"No text found.","ocr-result.txt");setStatus("OCR complete. Text file downloaded.");return}
-      const img=await loadImage(file),c=document.createElement("canvas"),ctx=c.getContext("2d");let ow=img.naturalWidth,oh=img.naturalHeight;
-      if(id==="image-resizer"){c.width=Number(w)||ow;c.height=Number(h)||oh;ctx.drawImage(img,0,0,c.width,c.height)}
-      else if(id==="image-cropper"){const [rw,rh]=crop.split(":").map(Number);const target=rw/rh;let cw=ow,ch=oh;if(ow/oh>target)cw=oh*target;else ch=ow/target;const sx=(ow-cw)/2,sy=(oh-ch)/2;c.width=Math.round(cw);c.height=Math.round(ch);ctx.drawImage(img,sx,sy,cw,ch,0,0,c.width,c.height)}
-      else if(id==="background-remover"){c.width=ow;c.height=oh;const image=ctx.createImageData(ow,oh);const temp=document.createElement("canvas");temp.width=ow;temp.height=oh;temp.getContext("2d").drawImage(img,0,0);const source=temp.getContext("2d").getImageData(0,0,ow,oh);for(let i=0;i<source.data.length;i+=4){const r=source.data[i],g=source.data[i+1],b=source.data[i+2];if(r>235&&g>235&&b>235||Math.max(r,g,b)-Math.min(r,g,b)<9&&r>220)source.data[i+3]=0}image.data.set(source.data);ctx.putImageData(image,0,0)}
-      else {c.width=ow;c.height=oh;ctx.drawImage(img,0,0)}
-      let type="image/png",name=file.name.replace(/\.[^.]+$/,"")+".png";if(id==="png-jpg"||id==="image-compressor"){type="image/jpeg";name=file.name.replace(/\.[^.]+$/,"")+".jpg"}if(id==="webp-converter"){type="image/webp";name=file.name.replace(/\.[^.]+$/,"")+".webp"}if(id==="jpg-png")type="image/png";
-      const blob=await new Promise(r=>c.toBlob(r,type,Number(quality)));downloadBlob(blob,name);setStatus("Image downloaded.");
-    }catch(e){setStatus(e.message||"Image processing failed.")}finally{setBusy(false)}
+  const id=t[3];
+  const [file,setFile]=useState(null);
+  const [originalUrl,setOriginalUrl]=useState("");
+  const [resultBlob,setResultBlob]=useState(null);
+  const [resultUrl,setResultUrl]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const [activeTab,setActiveTab]=useState("cutout");
+  const [background,setBackground]=useState("transparent");
+  const [customBg,setCustomBg]=useState("#ffffff");
+  const [shadow,setShadow]=useState(true);
+  const [brightness,setBrightness]=useState(100);
+  const [contrast,setContrast]=useState(100);
+  const [saturation,setSaturation]=useState(100);
+  const [grayscale,setGrayscale]=useState(0);
+  const [blur,setBlur]=useState(0);
+  const [design,setDesign]=useState("auto");
+  const [fit,setFit]=useState("contain");
+  const [history,setHistory]=useState([]);
+  const [future,setFuture]=useState([]);
+
+  useEffect(()=>{
+    return ()=>{
+      if(originalUrl) URL.revokeObjectURL(originalUrl);
+      if(resultUrl) URL.revokeObjectURL(resultUrl);
+    };
+  },[originalUrl,resultUrl]);
+
+  const chooseFile=(list)=>{
+    const f=list?.[0]||null;
+    if(!f) return;
+    if(!/^image\/(jpeg|png|webp)$/i.test(f.type)) return setStatus("Please upload JPG, PNG or WEBP.");
+    if(f.size>22*1024*1024) return setStatus("Maximum image size is 22 MB.");
+    if(originalUrl) URL.revokeObjectURL(originalUrl);
+    if(resultUrl) URL.revokeObjectURL(resultUrl);
+    setFile(f); setOriginalUrl(URL.createObjectURL(f)); setResultBlob(null); setResultUrl("");
+    setStatus("Image ready. Choose Cutout to remove the background."); setActiveTab("cutout");
+    setBrightness(100);setContrast(100);setSaturation(100);setGrayscale(0);setBlur(0);setBackground("transparent");setShadow(true);setDesign("auto");setFit("contain");
+    setHistory([]);setFuture([]);
   };
-  const loadImage=file=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>{URL.revokeObjectURL(i.src);res(i)};i.onerror=rej;i.src=URL.createObjectURL(file)});
-  return <Shell back={back} t={t} status={status}><div className="workspace"><div className="panel"><FilePicker accept="image/*" onChange={setFiles} files={files}/>
-    {id==="image-resizer"&&<div className="videoOptions"><label>Width<input type="number" value={w} onChange={e=>setW(e.target.value)}/></label><label>Height<input type="number" value={h} onChange={e=>setH(e.target.value)}/></label></div>}
-    {id==="image-cropper"&&<label>Aspect ratio<select value={crop} onChange={e=>setCrop(e.target.value)}><option>1:1</option><option>4:3</option><option>16:9</option><option>3:4</option><option>9:16</option></select></label>}
-    {id==="image-compressor"&&<label>Quality<input type="range" min=".2" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
-    <button className="btn primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw/>:<Download/>}{busy?"Processing...":id==="image-text"?"Extract Text":"Process & Download"}</button>
-  </div><div className="panel">{files.map(f=><p key={f.name}>🖼️ {f.name}</p>)}<p style={{color:"#8395ae",fontSize:12}}>Image Background Remover uses a simple local near-white background algorithm; complex photos need a dedicated AI model.</p></div></div></Shell>;
+
+  const loadImg=(blob)=>new Promise((resolve,reject)=>{
+    const u=URL.createObjectURL(blob); const img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(u);resolve(img)}; img.onerror=()=>{URL.revokeObjectURL(u);reject(new Error("Could not read image."))}; img.src=u;
+  });
+
+  const snapshot=()=>({brightness,contrast,saturation,grayscale,blur,background,customBg,shadow,design,fit});
+  const restore=(x)=>{if(!x)return;setBrightness(x.brightness);setContrast(x.contrast);setSaturation(x.saturation);setGrayscale(x.grayscale);setBlur(x.blur);setBackground(x.background);setCustomBg(x.customBg);setShadow(x.shadow);setDesign(x.design);setFit(x.fit)};
+  const applySnapshot=()=>{setHistory(h=>[...h.slice(-19),snapshot()]);setFuture([])};
+
+  const removeBackground=async()=>{
+    if(!file) return setStatus("Please upload an image first.");
+    setBusy(true);setStatus("AI background removal starting… first run may take a little longer while the model loads.");
+    try{
+      const mod=await loadLib("bg-remove");
+      const fn=mod.default||mod.removeBackground;
+      if(typeof fn!=="function") throw new Error("Background-removal engine could not be loaded.");
+      const blob=await fn(file,{model:"isnet_fp16",output:{format:"image/png",quality:.92,type:"foreground"},progress:(key,current,total)=>{
+        if(total) setStatus(`AI cutout: ${key} ${Math.round(current/total*100)}%`);
+      }});
+      if(resultUrl) URL.revokeObjectURL(resultUrl);
+      setResultBlob(blob);setResultUrl(URL.createObjectURL(blob));setActiveTab("background");setStatus("Background removed successfully. Choose Background, Effects, Adjust or Design.");
+    }catch(e){
+      setStatus(`AI cutout failed: ${e?.message||String(e)}. You can still use the local editing tools below.`);
+    }finally{setBusy(false)}
+  };
+
+  const sourceBlob=()=>resultBlob||file;
+
+  const renderOutput=async({hd=false}={})=>{
+    const src=sourceBlob(); if(!src) throw new Error("Upload an image first.");
+    const img=await loadImg(src);
+    const ow=img.naturalWidth, oh=img.naturalHeight;
+    let outW=ow,outH=oh;
+    if(design==="square"){const side=Math.max(600,Math.max(ow,oh));outW=side;outH=side}
+    if(design==="landscape"){outW=1600;outH=1000}
+    if(design==="portrait"){outW=1000;outH=1600}
+    if(!hd){const max=1600;const scale=Math.min(1,max/Math.max(outW,outH));outW=Math.max(1,Math.round(outW*scale));outH=Math.max(1,Math.round(outH*scale));}
+    const c=document.createElement("canvas");c.width=outW;c.height=outH;const ctx=c.getContext("2d");
+    const bg=background==="transparent"?null:background==="white"?"#fff":background==="black"?"#000":customBg;
+    if(bg){ctx.fillStyle=bg;ctx.fillRect(0,0,outW,outH)}
+    ctx.save();
+    ctx.filter=`brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) grayscale(${grayscale}%) blur(${blur}px)`;
+    const pad=design==="auto"?0:Math.round(Math.min(outW,outH)*.04);
+    const aw=outW-pad*2,ah=outH-pad*2;
+    let dw=aw,dh=ah,dx=pad,dy=pad;
+    if(fit==="contain"){
+      const scale=Math.min(aw/ow,ah/oh);dw=ow*scale;dh=oh*scale;dx=(outW-dw)/2;dy=(outH-dh)/2;
+    }else if(fit==="cover"){
+      const scale=Math.max(aw/ow,ah/oh);dw=ow*scale;dh=oh*scale;dx=(outW-dw)/2;dy=(outH-dh)/2;
+    }
+    if(shadow && resultBlob){ctx.shadowColor="rgba(0,0,0,.22)";ctx.shadowBlur=22;ctx.shadowOffsetY=9}
+    ctx.drawImage(img,dx,dy,dw,dh);ctx.restore();
+    const mime=background==="transparent"?"image/png":"image/jpeg";
+    return await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error("Could not create output image.")),mime,.92));
+  };
+
+  const downloadResult=async(hd=false)=>{
+    if(!sourceBlob()) return setStatus("Please upload an image first.");
+    setBusy(true);setStatus(hd?"Preparing HD download…":"Preparing download…");
+    try{
+      const blob=await renderOutput({hd});
+      const ext=blob.type.includes("png")?"png":"jpg";
+      downloadBlob(blob,`${(file?.name||"image").replace(/\.[^.]+$/i,"")}-toolmaster.${ext}`);
+      setResultBlob(blob); if(resultUrl) URL.revokeObjectURL(resultUrl);setResultUrl(URL.createObjectURL(blob));
+      setStatus(hd?"HD image downloaded.":"Image downloaded.");
+    }catch(e){setStatus(e?.message||"Download failed.")}finally{setBusy(false)}
+  };
+
+  const applyEdits=async()=>{
+    if(!sourceBlob()) return setStatus("Please upload an image first.");
+    setBusy(true);setStatus("Applying edits…");
+    try{
+      const blob=await renderOutput({hd:true});
+      if(resultUrl) URL.revokeObjectURL(resultUrl);setResultBlob(blob);setResultUrl(URL.createObjectURL(blob));
+      applySnapshot(); setStatus("Changes applied. Use Download or Download HD.");
+    }catch(e){setStatus(e?.message||"Could not apply edits.")}finally{setBusy(false)}
+  };
+
+  const runBasic=async()=>{
+    if(!file) return setStatus("Please upload an image first.");
+    if(id==="background-remover") return removeBackground();
+    setBusy(true);setStatus("Processing image…");
+    try{
+      const img=await loadImg(file); const c=document.createElement("canvas"); const ctx=c.getContext("2d");
+      let ow=img.naturalWidth,oh=img.naturalHeight;
+      if(id==="image-resizer"){c.width=1200;c.height=800;ctx.drawImage(img,0,0,c.width,c.height)}
+      else if(id==="image-cropper"){const target=1;let cw=ow,ch=oh;if(ow/oh>target)cw=oh;else ch=ow;const sx=(ow-cw)/2,sy=(oh-ch)/2;c.width=Math.round(cw);c.height=Math.round(ch);ctx.drawImage(img,sx,sy,cw,ch,0,0,c.width,c.height)}
+      else {c.width=ow;c.height=oh;ctx.drawImage(img,0,0)}
+      const outType=id==="png-jpg"||id==="image-compressor"?"image/jpeg":id==="webp-converter"?"image/webp":"image/png";
+      const ext=outType.split("/")[1].replace("jpeg","jpg");const blob=await new Promise(r=>c.toBlob(r,outType,.8));downloadBlob(blob,`${file.name.replace(/\.[^.]+$/i,"")}.${ext}`);setStatus("Image downloaded.");
+    }catch(e){setStatus(e?.message||"Image processing failed.")}finally{setBusy(false)}
+  };
+
+  const undo=()=>{if(!history.length)return;const current=snapshot();const prev=history[history.length-1];setHistory(h=>h.slice(0,-1));setFuture(f=>[current,...f.slice(0,19)]);restore(prev);setStatus("Undid the last applied change.")};
+  const redo=()=>{if(!future.length)return;const current=snapshot();const next=future[0];setFuture(f=>f.slice(1));setHistory(h=>[...h.slice(-19),current]);restore(next);setStatus("Redid the change.")};
+  const tabs=["cutout","background","effects","adjust","design"];
+
+  if(id!=="background-remover"){
+    return (
+      <Shell back={back} t={t} status={status}>
+        <div className="workspace">
+          <div className="panel">
+            <FilePicker accept="image/*" onChange={chooseFile} files={file ? [file] : []}/>
+            {id==="image-resizer" && <p style={{color:"#8395ae",fontSize:12}}>Resize mode uses a safe 1200×800 export. Use the advanced Background Remover for full editing controls.</p>}
+            <button className="btn primary" disabled={busy || !file} onClick={runBasic}>
+              {busy ? <RefreshCw/> : <Download/>}
+              {busy ? "Processing..." : "Process & Download"}
+            </button>
+          </div>
+          <div className="panel">
+            <h3>{file ? file.name : "No image selected"}</h3>
+            {file && <img src={originalUrl} alt="preview" style={{width:"100%",maxHeight:420,objectFit:"contain",borderRadius:12,background:"#f4f5f7"}}/>}
+          </div>
+        </div>
+      </Shell>
+    );
+  }
+
+  return <Shell back={back} t={t} status={status}>
+    <div className="bgRemoveApp">
+      <div className="bgRemoveHeader">
+        <div><h2>Remove Image Background</h2><p>Upload an image and edit the cutout with professional controls.</p></div>
+        <div className="bgHeaderActions">
+          <button className="btn" onClick={undo} disabled={!history.length}><History size={16}/> Undo</button>
+          <button className="btn" onClick={redo} disabled={!future.length}><History size={16}/> Redo</button>
+          <button className="btn" onClick={()=>downloadResult(false)} disabled={busy||!sourceBlob()}><Download size={16}/> Download</button>
+          <button className="btn primary" onClick={()=>downloadResult(true)} disabled={busy||!sourceBlob()}><Download size={16}/> Download HD</button>
+        </div>
+      </div>
+      <div className="bgToolbar">
+        {tabs.map(tab=><button key={tab} className={`bgToolBtn ${activeTab===tab?"active":""}`} onClick={()=>setActiveTab(tab)}>
+          {tab==="cutout"?<Sparkles size={17}/>:tab==="background"?<ImageIcon size={17}/>:tab==="effects"?<Star size={17}/>:tab==="adjust"?<Settings size={17}/>:<LayoutDashboard size={17}/>}<span>{tab[0].toUpperCase()+tab.slice(1)}</span>
+        </button>)}
+        <div className="spacer"/>
+        <button className="btn primary" onClick={applyEdits} disabled={busy||!sourceBlob()}>{busy?<RefreshCw className="spin"/>:<Check size={16}/>} Apply Changes</button>
+      </div>
+      <div className="bgEditorBody">
+        <aside className="bgSide">
+          <div className="uploadCard"><FilePicker accept="image/jpeg,image/png,image/webp" onChange={chooseFile} files={file?[file]:[]}/><small>JPG, PNG, WEBP · Max 22MB</small></div>
+          {!file&&<div className="sideHint">Upload an image to start.</div>}
+          {activeTab==="cutout"&&<div className="sideSection"><h3>Cutout</h3><p>AI removes the background from people, products and common objects.</p><button className="btn primary full" disabled={!file||busy} onClick={removeBackground}><Sparkles size={16}/> {busy?"Removing…":"Remove Background"}</button>{resultBlob&&<div className="successBadge"><CheckCircle2 size={15}/> Cutout ready</div>}</div>}
+          {activeTab==="background"&&<div className="sideSection"><h3>Background</h3><p>Choose what should appear behind the cutout.</p><label>Background<select value={background} onChange={e=>setBackground(e.target.value)}><option value="transparent">Transparent</option><option value="white">White</option><option value="black">Black</option><option value="custom">Custom color</option></select></label>{background==="custom"&&<label>Custom color<input type="color" value={customBg} onChange={e=>setCustomBg(e.target.value)}/></label>}<label className="checkRow"><input type="checkbox" checked={shadow} onChange={e=>setShadow(e.target.checked)}/> Add soft shadow</label></div>}
+          {activeTab==="effects"&&<div className="sideSection"><h3>Effects</h3><label>Blur<input type="range" min="0" max="8" step="1" value={blur} onChange={e=>setBlur(Number(e.target.value))}/></label><label>Grayscale<input type="range" min="0" max="100" value={grayscale} onChange={e=>setGrayscale(Number(e.target.value))}/></label><label className="checkRow"><input type="checkbox" checked={shadow} onChange={e=>setShadow(e.target.checked)}/> Soft shadow</label></div>}
+          {activeTab==="adjust"&&<div className="sideSection"><h3>Adjust</h3><label>Brightness<input type="range" min="60" max="140" value={brightness} onChange={e=>setBrightness(Number(e.target.value))}/><span>{brightness}%</span></label><label>Contrast<input type="range" min="60" max="140" value={contrast} onChange={e=>setContrast(Number(e.target.value))}/><span>{contrast}%</span></label><label>Saturation<input type="range" min="0" max="160" value={saturation} onChange={e=>setSaturation(Number(e.target.value))}/><span>{saturation}%</span></label></div>}
+          {activeTab==="design"&&<div className="sideSection"><h3>Design</h3><label>Canvas<select value={design} onChange={e=>setDesign(e.target.value)}><option value="auto">Original size</option><option value="square">Square</option><option value="landscape">Landscape</option><option value="portrait">Portrait</option></select></label><label>Fit<select value={fit} onChange={e=>setFit(e.target.value)}><option value="contain">Contain</option><option value="cover">Cover</option></select></label></div>}
+        </aside>
+        <section className="bgStage">
+          {!file?<div className="bgEmpty"><Upload size={44}/><h3>Upload Image</h3><p>Drop an image here or use the upload button.</p></div>:<>
+            <div className="bgPreviewGrid">
+              <div className="previewCard"><div className="previewTitle"><b>Original</b><span>{file.type.split("/")[1].toUpperCase()}</span></div><div className="previewCanvas originalPreview"><img src={originalUrl} alt="Original"/></div></div>
+              <div className="previewCard"><div className="previewTitle"><b>{resultBlob?"Removed Background":"Preview"}</b><span>{resultBlob?"PNG":"Ready"}</span></div><div className="previewCanvas checker"><div className="previewStageInner">{resultUrl?<img src={resultUrl} alt="Result" style={{filter:`brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) grayscale(${grayscale}%) blur(${blur}px)`}}/>:<div className="resultPlaceholder"><Sparkles size={28}/><span>{busy?"Processing…":"Press Remove Background"}</span></div>}</div></div></div>
+            </div>
+            <div className="bgBottomBar"><div><b>{resultBlob?"Cutout ready":"Image uploaded"}</b><span>{resultBlob?"Use the tools on the left, then Apply Changes.":"AI removal works locally in your browser after the model loads."}</span></div><div className="bottomActions"><button className="btn" onClick={()=>setActiveTab("cutout")}><Sparkles size={15}/> Cutout</button><button className="btn" onClick={()=>setActiveTab("background")}><ImageIcon size={15}/> Background</button><button className="btn" onClick={()=>downloadResult(false)} disabled={busy||!sourceBlob()}><Download size={15}/> Download</button></div></div>
+          </>}
+        </section>
+      </div>
+      <div className="bgPrivacy"><ShieldCheck size={15}/> Images are processed in your browser when the local AI model is available. The first AI run downloads and caches model assets.</div>
+    </div>
+  </Shell>;
 }
 
 function SeoTool({t, back}) {
@@ -1740,7 +1317,6 @@ function SeoTool({t, back}) {
   const [out, setOut] = useState("");
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
-  const [qrPreview, setQrPreview] = useState("");
 
   const makeSeoUrl = () => {
     const raw = url.trim();
@@ -1821,18 +1397,15 @@ function SeoTool({t, back}) {
         setOut(u.toString());
       } else if (id === "qr-generator") {
         if (!text.trim()) throw new Error("Enter text or a URL for the QR code.");
-        const QRCodeModule = await loadLib("qrcode");
-        const QRCode = QRCodeModule.default || QRCodeModule;
-        if(typeof QRCode.toDataURL !== "function" && typeof QRCode.toCanvas !== "function") throw new Error("QR code library is unavailable.");
+        const QRCode = await loadLib("qrcode");
         const canvas = document.createElement("canvas");
-        if(typeof QRCode.toCanvas === "function") await QRCode.toCanvas(canvas, text.trim(), { width: 640, margin: 4, errorCorrectionLevel: "H", color: { dark: "#111827", light: "#ffffff" } });
-        else { const dataUrl=await QRCode.toDataURL(text.trim(), {width:640,margin:4,errorCorrectionLevel:"H"}); const img=new Image(); await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=dataUrl}); canvas.width=img.width;canvas.height=img.height;canvas.getContext("2d").drawImage(img,0,0); }
-        const dataUrl=canvas.toDataURL("image/png");
-        setQrPreview(dataUrl);
-        const blob=await (await fetch(dataUrl)).blob();
-        downloadBlob(blob, "toolmaster-qr.png");
-        setOut("QR code generated successfully. Scan the preview or use the downloaded PNG.");
-        setStatus("QR code generated successfully.");
+        await QRCode.toCanvas(canvas, text.trim(), { width: 640, margin: 3, errorCorrectionLevel: "M" });
+        canvas.toBlob(blob => {
+          if (!blob) { setStatus("QR image could not be created."); return; }
+          downloadBlob(blob, "toolmaster-qr.png");
+          setStatus("QR code generated and downloaded.");
+        }, "image/png");
+        setOut("QR code generated successfully. The PNG download has started.");
       } else if (id === "barcode") {
         if (!text.trim()) throw new Error("Enter a value for the barcode.");
         const JsBarcodeModule = await loadLib("jsbarcode");
@@ -1879,7 +1452,7 @@ function SeoTool({t, back}) {
   const clear = () => {
     setText(""); setTitle(""); setDescription(""); setUrl(""); setImageUrl(""); setKeyword("");
     setUtmBase(""); setUtmSource(""); setUtmMedium(""); setUtmCampaign(""); setUtmTerm(""); setUtmContent("");
-    setFile(null); setOut(""); setQrPreview(""); setStatus("");
+    setFile(null); setOut(""); setStatus("");
   };
 
   const commonFields = id === "meta-tags" || id === "open-graph" || id === "schema";
@@ -1925,12 +1498,10 @@ function SeoTool({t, back}) {
       </div>
       <div className="panel">
         <label>Result</label>
-        {id === "qr-generator" && qrPreview && <div style={{display:"grid",placeItems:"center",padding:18,border:"1px solid #e4e6ed",borderRadius:14,background:"#fff",marginBottom:12}}><img src={qrPreview} alt="Generated QR code" style={{width:"min(340px,100%)",height:"auto",imageRendering:"pixelated"}}/><div style={{marginTop:8,color:"#7f8999",fontSize:12}}>Scan the QR code with a phone camera to verify the destination.</div></div>}
         <textarea value={out} readOnly placeholder="Generated SEO result will appear here..." style={{minHeight:320}} />
         <div className="actions">
           <button className="btn" disabled={!out} onClick={() => navigator.clipboard?.writeText(out)}><Copy/> Copy</button>
           <button className="btn" disabled={!out} onClick={download}><Download/> Download</button>
-          {id === "qr-generator" && qrPreview && <button className="btn primary" onClick={async()=>{const blob=await (await fetch(qrPreview)).blob();downloadBlob(blob,"toolmaster-qr.png");setStatus("QR PNG downloaded.")}}><Download/> Download QR</button>}
         </div>
       </div>
     </div>
