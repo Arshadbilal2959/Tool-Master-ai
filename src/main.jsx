@@ -657,56 +657,412 @@ function StampGenerator({back,t}){
   </Shell>;
 }
 
-const logoPresets=["circle","square","badge","minimal"];
-const logoCategories=["Business","Medical","Photography","Automotive","Food","Education","Health","Security","Corporate","Music","Gaming","Nature","Travel","Real Estate","Fashion","Pets","Technology","Luxury"];
+const logoTemplateData = [
+  {id:"royal",name:"Royal Crest",category:"Business",icon:"♛",bg:"#070b16",primary:"#d4af37",secondary:"#f4e7bd",accent:"#ffffff"},
+  {id:"tech",name:"Tech Nova",category:"Technology",icon:"⬢",bg:"#071522",primary:"#22d3ee",secondary:"#8b5cf6",accent:"#e0f2fe"},
+  {id:"medical",name:"Medical Care",category:"Medical",icon:"⚕",bg:"#071b1b",primary:"#22c55e",secondary:"#38bdf8",accent:"#ecfeff"},
+  {id:"camera",name:"Studio Lens",category:"Photography",icon:"◉",bg:"#11131b",primary:"#f59e0b",secondary:"#f97316",accent:"#ffffff"},
+  {id:"coffee",name:"Coffee House",category:"Food",icon:"☕",bg:"#1a110c",primary:"#d6a15d",secondary:"#f5e0b8",accent:"#fff7ed"},
+  {id:"fitness",name:"Fitness Pro",category:"Health",icon:"✚",bg:"#0b1710",primary:"#84cc16",secondary:"#22c55e",accent:"#f7fee7"},
+  {id:"digital",name:"Digital Agency",category:"Corporate",icon:"D",bg:"#111329",primary:"#8b5cf6",secondary:"#22d3ee",accent:"#f5f3ff"},
+  {id:"nature",name:"Nature Leaf",category:"Nature",icon:"✿",bg:"#08170f",primary:"#65a30d",secondary:"#bbf7d0",accent:"#f0fdf4"},
+  {id:"security",name:"Cyber Shield",category:"Security",icon:"⬢",bg:"#08111d",primary:"#38bdf8",secondary:"#6366f1",accent:"#eff6ff"},
+  {id:"luxury",name:"Luxury Gold",category:"Luxury",icon:"L",bg:"#120d08",primary:"#fbbf24",secondary:"#fef3c7",accent:"#ffffff"},
+  {id:"education",name:"Academy",category:"Education",icon:"◆",bg:"#101426",primary:"#60a5fa",secondary:"#a78bfa",accent:"#eff6ff"},
+  {id:"travel",name:"Travel",category:"Travel",icon:"✈",bg:"#07151a",primary:"#06b6d4",secondary:"#14b8a6",accent:"#ecfeff"}
+];
+
+const logoIconLibrary = [
+  "♛","★","✦","✚","☕","◈","✿","⬢","◆","⚕","⌂","♫","⚡","✈","♥","◉",
+  "C","D","B","M","A","S","P","T","G","N","R","K"
+];
 
 function LogoMaker({back,t}){
-  const canvasRef=useRef(null), uploadRef=useRef(null);
-  const [brand,setBrand]=useState('BRAND NAME'),[tag,setTag]=useState('TAGLINE HERE');
-  const [category,setCategory]=useState('Business'),[template,setTemplate]=useState('Royal');
-  const [font,setFont]=useState('Arial'),[weight,setWeight]=useState('700');
-  const [primary,setPrimary]=useState('#D4AF37'),[secondary,setSecondary]=useState('#E5E7EB');
-  const [textColor,setTextColor]=useState('#FFFFFF'),[background,setBackground]=useState('#101522');
-  const [icon,setIcon]=useState('♛'),[uploaded,setUploaded]=useState(null),[zoom,setZoom]=useState(100);
-  const [leftTab,setLeftTab]=useState('Templates'),[rightTab,setRightTab]=useState('Design'),[status,setStatus]=useState('');
-  const templates=[
-    {id:'Royal',name:'Royal',icon:'♛',bg:'#101522',p:'#D4AF37',s:'#E5E7EB'},
-    {id:'TechNova',name:'Tech Nova',icon:'⬡',bg:'#0b1324',p:'#22d3ee',s:'#60a5fa'},
-    {id:'Elegance',name:'Elegance',icon:'✦',bg:'#f4efe5',p:'#8b6b45',s:'#b8a07a'},
-    {id:'Fitness',name:'Fitness',icon:'✚',bg:'#101a14',p:'#84cc16',s:'#facc15'},
-    {id:'Coffee',name:'Coffee House',icon:'☕',bg:'#17120f',p:'#d6a15d',s:'#f5e0b8'},
-    {id:'Digital',name:'Digital',icon:'◈',bg:'#111529',p:'#8b5cf6',s:'#22d3ee'},
-    {id:'Nature',name:'Nature',icon:'✿',bg:'#101913',p:'#65a30d',s:'#bbf7d0'},
-    {id:'Cyber',name:'Cyber',icon:'⬢',bg:'#091522',p:'#38bdf8',s:'#a78bfa'},
-    {id:'Luxury',name:'Luxury',icon:'L',bg:'#15110b',p:'#d4af37',s:'#fff7d6'}
-  ];
-  const icons=['♛','★','✦','✚','☕','◈','✿','⬢','◆','⚕','⌂','♫','⚡','✈','♥','◉','C','D','B','M'];
-  const categories=['Business','Technology','Medical','Photography','Food','Education','Health','Security','Corporate','Music','Gaming','Nature','Travel','Real Estate','Fashion','Pets','Luxury'];
-  const fonts=['Arial','Georgia','Verdana','Trebuchet MS','Times New Roman','Impact'];
-  const loadTemplate=x=>{setTemplate(x.id);setIcon(x.icon);setBackground(x.bg);setPrimary(x.p);setSecondary(x.s);};
-  const uploadLogo=file=>{if(!file)return;if(!/^image\//i.test(file.type)){setStatus('Please upload an image file.');return;}const r=new FileReader();r.onload=()=>{setUploaded(String(r.result||''));setStatus('Image/logo uploaded successfully.');};r.readAsDataURL(file);};
-  const draw=()=>{
-    const c=canvasRef.current;if(!c)return;const w=900,h=900,dpr=2;c.width=w*dpr;c.height=h*dpr;
-    const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);ctx.fillStyle=background;ctx.fillRect(0,0,w,h);
-    const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,primary);bg.addColorStop(1,secondary);ctx.globalAlpha=.1;ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);ctx.globalAlpha=1;
-    ctx.textAlign='center';ctx.textBaseline='middle';ctx.strokeStyle=primary;ctx.lineWidth=7;ctx.beginPath();ctx.arc(450,350,190,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=.3;ctx.beginPath();ctx.arc(450,350,170,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
-    const drawText=()=>{ctx.fillStyle=textColor;ctx.font=weight+' 66px '+font;ctx.fillText(String(brand||'BRAND NAME').slice(0,22),450,610);ctx.fillStyle=secondary;ctx.font='400 28px '+font;ctx.fillText(String(tag||'TAGLINE HERE').slice(0,38),450,675);ctx.strokeStyle=primary;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(250,735);ctx.lineTo(650,735);ctx.stroke();ctx.fillStyle=secondary;ctx.font='600 18px '+font;ctx.fillText(String(category||'BUSINESS').toUpperCase(),450,775);};
-    if(uploaded){const im=new Image();im.onload=()=>{ctx.drawImage(im,360,205,180,180);drawText();};im.src=uploaded;}else{const g=ctx.createLinearGradient(370,220,530,410);g.addColorStop(0,primary);g.addColorStop(1,secondary);ctx.fillStyle=g;ctx.font='bold 150px '+font;ctx.fillText(icon,450,315);drawText();}
+  const canvasRef=useRef(null);
+  const uploadRef=useRef(null);
+  const [brand,setBrand]=useState("BRAND NAME");
+  const [tag,setTag]=useState("TAGLINE HERE");
+  const [category,setCategory]=useState("Business");
+  const [template,setTemplate]=useState("royal");
+  const [font,setFont]=useState("Poppins");
+  const [weight,setWeight]=useState("700");
+  const [fontSize,setFontSize]=useState(64);
+  const [primary,setPrimary]=useState("#d4af37");
+  const [secondary,setSecondary]=useState("#f4e7bd");
+  const [textColor,setTextColor]=useState("#ffffff");
+  const [background,setBackground]=useState("#070b16");
+  const [bgMode,setBgMode]=useState("gradient");
+  const [icon,setIcon]=useState("♛");
+  const [uploaded,setUploaded]=useState(null);
+  const [leftTab,setLeftTab]=useState("Templates");
+  const [rightTab,setRightTab]=useState("Design");
+  const [zoom,setZoom]=useState(100);
+  const [ratio,setRatio]=useState("1:1");
+  const [search,setSearch]=useState("");
+  const [effect,setEffect]=useState("none");
+  const [shadow,setShadow]=useState(true);
+  const [mockup,setMockup]=useState(false);
+  const [aiEnhanced,setAiEnhanced]=useState(false);
+  const [aiBackground,setAiBackground]=useState(false);
+  const [status,setStatus]=useState("");
+
+  const fonts=["Poppins","Inter","Arial","Georgia","Montserrat","Verdana","Trebuchet MS","Times New Roman","Impact"];
+  const categories=["All","Business","Technology","Medical","Photography","Food","Education","Health","Security","Corporate","Music","Gaming","Nature","Travel","Real Estate","Fashion","Pets","Luxury"];
+
+  const selectedTemplate=logoTemplateData.find(x=>x.id===template) || logoTemplateData[0];
+
+  const applyTemplate=(x)=>{
+    setTemplate(x.id);
+    setCategory(x.category);
+    setIcon(x.icon);
+    setBackground(x.bg);
+    setPrimary(x.primary);
+    setSecondary(x.secondary);
+    setTextColor(x.accent);
+    setBgMode("gradient");
+    setEffect("none");
+    setStatus(x.name+" template applied.");
   };
-  useEffect(()=>{draw();},[brand,tag,category,template,font,weight,primary,secondary,textColor,background,icon,uploaded]);
-  const download=()=>{const c=canvasRef.current;if(!c)return;const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='toolmaster-pro-logo.png';a.click();setStatus('High quality PNG downloaded.');};
+
+  const uploadLogo=(file)=>{
+    if(!file)return;
+    if(!file.type || !/^image\//i.test(file.type)){
+      setStatus("Please upload PNG, JPG, WEBP or SVG.");
+      return;
+    }
+    if(file.size>10*1024*1024){
+      setStatus("Maximum upload size is 10MB.");
+      return;
+    }
+    const reader=new FileReader();
+    reader.onload=()=>{setUploaded(String(reader.result||""));setStatus("Your logo/image was uploaded.");};
+    reader.readAsDataURL(file);
+  };
+
+  const drawRoundRect=(ctx,x,y,w,h,r)=>{
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  };
+
+  const drawLogo=()=>{
+    const canvas=canvasRef.current;
+    if(!canvas)return;
+    const w=1000,h=1000,dpr=2;
+    canvas.width=w*dpr;
+    canvas.height=h*dpr;
+    const ctx=canvas.getContext("2d");
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+
+    if(bgMode==="transparent"){
+      ctx.clearRect(0,0,w,h);
+    }else if(bgMode==="solid"){
+      ctx.fillStyle=background;
+      ctx.fillRect(0,0,w,h);
+    }else{
+      const bg=ctx.createLinearGradient(0,0,w,h);
+      bg.addColorStop(0,background);
+      bg.addColorStop(.5,primary);
+      bg.addColorStop(1,secondary);
+      ctx.fillStyle=bg;
+      ctx.fillRect(0,0,w,h);
+      ctx.globalAlpha=.15;
+      ctx.fillStyle="#ffffff";
+      ctx.beginPath();
+      ctx.arc(820,150,280,0,Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha=1;
+    }
+
+    if(mockup){
+      ctx.fillStyle="rgba(0,0,0,.45)";
+      drawRoundRect(ctx,100,75,800,850,34);
+      ctx.fill();
+      ctx.strokeStyle="rgba(255,255,255,.12)";
+      ctx.lineWidth=2;
+      drawRoundRect(ctx,100,75,800,850,34);
+      ctx.stroke();
+    }
+
+    const cx=500,cy=370;
+    ctx.save();
+    if(shadow || effect==="shadow" || aiEnhanced){
+      ctx.shadowColor="rgba(0,0,0,.55)";
+      ctx.shadowBlur=28;
+      ctx.shadowOffsetY=12;
+    }
+
+    const ringColor=primary;
+    ctx.strokeStyle=ringColor;
+    ctx.lineWidth=10;
+    ctx.beginPath();
+    ctx.arc(cx,cy,205,0,Math.PI*2);
+    ctx.stroke();
+    ctx.lineWidth=3;
+    ctx.globalAlpha=.55;
+    ctx.beginPath();
+    ctx.arc(cx,cy,180,0,Math.PI*2);
+    ctx.stroke();
+    ctx.globalAlpha=1;
+
+    if(uploaded){
+      const img=new Image();
+      img.onload=()=>{
+        ctx.drawImage(img,390,255,220,220);
+        drawLogoText(ctx,cx);
+      };
+      img.src=uploaded;
+    }else{
+      let iconSize=155;
+      if(effect==="glow" || aiEnhanced){
+        ctx.shadowColor=primary;
+        ctx.shadowBlur=32;
+      }
+      const iconGradient=ctx.createLinearGradient(410,250,590,430);
+      iconGradient.addColorStop(0,primary);
+      iconGradient.addColorStop(1,secondary);
+      ctx.fillStyle=iconGradient;
+      ctx.font="800 "+iconSize+"px "+font;
+      ctx.textAlign="center";
+      ctx.textBaseline="middle";
+      ctx.fillText(icon,cx,cy);
+      drawLogoText(ctx,cx);
+    }
+    ctx.restore();
+
+    function drawLogoText(ctx2,x){
+      ctx2.textAlign="center";
+      ctx2.textBaseline="middle";
+      ctx2.fillStyle=textColor;
+      ctx2.font=weight+" "+fontSize+"px "+font;
+      ctx2.fillText(String(brand||"BRAND NAME").slice(0,24),x,625);
+
+      ctx2.fillStyle=secondary;
+      ctx2.font="500 27px "+font;
+      ctx2.fillText(String(tag||"TAGLINE HERE").slice(0,40),x,690);
+
+      ctx2.strokeStyle=primary;
+      ctx2.lineWidth=4;
+      ctx2.beginPath();
+      ctx2.moveTo(250,745);
+      ctx2.lineTo(750,745);
+      ctx2.stroke();
+
+      ctx2.fillStyle=secondary;
+      ctx2.font="700 17px "+font;
+      ctx2.fillText(String(category||"BUSINESS").toUpperCase(),x,790);
+
+      if(aiEnhanced){
+        ctx2.fillStyle=primary;
+        ctx2.font="600 14px "+font;
+        ctx2.fillText("ENHANCED",x,830);
+      }
+    }
+  };
+
+  useEffect(()=>{drawLogo();},[brand,tag,category,template,font,weight,fontSize,primary,secondary,textColor,background,bgMode,icon,uploaded,effect,shadow,mockup,aiEnhanced]);
+
+  const download=()=>{
+    const canvas=canvasRef.current;
+    if(!canvas)return;
+    const a=document.createElement("a");
+    a.href=canvas.toDataURL("image/png");
+    a.download="toolmaster-pro-logo.png";
+    a.click();
+    setStatus("High-quality PNG exported.");
+  };
+
+  const aiEnhance=()=>{
+    setAiEnhanced(v=>!v);
+    setEffect("glow");
+    setShadow(true);
+    setStatus(aiEnhanced ? "AI Enhance disabled." : "AI Enhance applied: clarity, glow and depth preset.");
+  };
+
+  const aiBg=()=>{
+    setAiBackground(v=>!v);
+    setBgMode("gradient");
+    if(!aiBackground){
+      setBackground("#050816");
+      setPrimary("#7c3aed");
+      setSecondary("#06b6d4");
+      setStatus("AI Background applied: premium studio gradient.");
+    }else{
+      setStatus("AI Background reset.");
+    }
+  };
+
+  const applyMockup=()=>{
+    setMockup(v=>!v);
+    setStatus(mockup ? "Mockup disabled." : "Premium mockup preview applied.");
+  };
+
+  const filteredTemplates=logoTemplateData.filter(x=>{
+    const q=search.trim().toLowerCase();
+    const matchesSearch=!q || x.name.toLowerCase().includes(q) || x.category.toLowerCase().includes(q);
+    const matchesCategory=category==="All" || x.category===category;
+    return matchesSearch && matchesCategory;
+  });
+
   return <Shell back={back} t={t} status={status}>
-    <div style={{background:'#070b16',borderRadius:22,padding:18,color:'#eef2ff'}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,marginBottom:16,flexWrap:'wrap'}}><div><div style={{fontSize:12,color:'#9b8cff',fontWeight:800}}>TOOLMASTER PRO</div><h2 style={{margin:'4px 0',fontSize:30}}>Advanced Logo Maker ✨</h2><div style={{color:'#8d99ad'}}>Templates, icons, uploads, typography, colors, effects and high quality export.</div></div><div style={{display:'flex',gap:8}}><button className="btn" onClick={()=>{setBrand('BRAND NAME');setTag('TAGLINE HERE');setUploaded(null);setStatus('Editor reset.')}}>↶ Reset</button><button className="btn primary" onClick={download}><Download size={15}/> Download</button></div></div>
-      <div style={{display:'grid',gridTemplateColumns:'300px minmax(360px,1fr) 330px',gap:14}}>
-        <aside style={{background:'#0d1322',border:'1px solid #202944',borderRadius:18,padding:14}}>
-          <div style={{display:'flex',gap:6,marginBottom:12}}>{['Templates','Icons','Uploads'].map(x=><button key={x} onClick={()=>setLeftTab(x)} style={{flex:1,padding:'9px 5px',borderRadius:9,border:'1px solid #29324c',background:leftTab===x?'#6d4aff':'#11182a',color:'#fff',fontWeight:800,fontSize:11}}>{x}</button>)}</div>
-          {leftTab==='Templates'&&<><input placeholder="Search templates..." style={{width:'100%',boxSizing:'border-box',padding:11,borderRadius:10,border:'1px solid #29324c',background:'#080d18',color:'#fff',marginBottom:10}}/><div style={{display:'flex',gap:5,flexWrap:'wrap',marginBottom:12}}>{categories.slice(0,8).map(x=><button key={x} onClick={()=>setCategory(x)} style={{border:'1px solid #29324c',borderRadius:20,padding:'6px 8px',background:'#11182a',color:'#cbd5e1',fontSize:10}}>{x}</button>)}</div><div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>{templates.map(x=><button key={x.id} onClick={()=>loadTemplate(x)} style={{height:90,border:template===x.id?'2px solid #7c5cff':'1px solid #29324c',borderRadius:11,background:x.bg,color:'#fff',display:'grid',placeItems:'center',padding:5}}><span style={{fontSize:28,color:x.p}}>{x.icon}</span><small>{x.name}</small></button>)}</div></>}
-          {leftTab==='Icons'&&<div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>{icons.map(x=><button key={x} onClick={()=>{setIcon(x);setUploaded(null)}} style={{height:58,border:'1px solid #29324c',borderRadius:10,background:'#11182a',color:primary,fontSize:25}}>{x}</button>)}</div>}
-          {leftTab==='Uploads'&&<><div onClick={()=>uploadRef.current?.click()} style={{border:'1px dashed #705cff',borderRadius:13,padding:22,textAlign:'center',cursor:'pointer',background:'#10152b'}}><div style={{fontSize:30}}>☁</div><b>Upload Image / Logo</b><div style={{fontSize:11,color:'#8d99ad',marginTop:5}}>Click to upload or drag & drop<br/>PNG, JPG, WEBP, SVG • Max 10MB</div><input ref={uploadRef} type="file" accept="image/*" style={{display:'none'}} onChange={e=>uploadLogo(e.target.files?.[0])}/></div>{uploaded&&<div style={{marginTop:12}}><img src={uploaded} alt="Uploaded logo" style={{width:'100%',height:110,objectFit:'contain',background:'#070b16',borderRadius:8}}/><button className="btn" style={{width:'100%',marginTop:8}} onClick={()=>setUploaded(null)}>Remove Upload</button></div>}</>}
+    <div style={{background:"#060a14",border:"1px solid #202945",borderRadius:24,padding:16,color:"#f8fafc",boxShadow:"0 25px 80px rgba(0,0,0,.16)"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:16,marginBottom:16,flexWrap:"wrap"}}>
+        <div>
+          <div style={{fontSize:11,letterSpacing:1.8,color:"#a78bfa",fontWeight:900}}>TOOLMASTER PRO • DESIGN STUDIO</div>
+          <h2 style={{margin:"5px 0",fontSize:32}}>Advanced Logo Maker <span style={{color:"#a78bfa"}}>PRO</span></h2>
+          <div style={{color:"#8d99ad"}}>Create polished brand identities with templates, uploads, icons, typography, effects and export.</div>
+        </div>
+        <div style={{display:"flex",gap:8}}>
+          <button className="btn" onClick={()=>{setBrand("BRAND NAME");setTag("TAGLINE HERE");setUploaded(null);setAiEnhanced(false);setAiBackground(false);setMockup(false);setStatus("New design started.");}}>＋ New</button>
+          <button className="btn" onClick={download}><Download size={15}/> Export PNG</button>
+          <button className="btn primary" onClick={download}><Download size={15}/> Download</button>
+        </div>
+      </div>
+
+      <div style={{display:"grid",gridTemplateColumns:"320px minmax(390px,1fr) 350px",gap:14}}>
+        <aside style={{background:"#0b1120",border:"1px solid #202945",borderRadius:18,overflow:"hidden"}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",borderBottom:"1px solid #202945"}}>
+            {["Templates","Icons","Uploads"].map(x=><button key={x} onClick={()=>setLeftTab(x)} style={{padding:"13px 6px",border:0,borderBottom:leftTab===x?"2px solid #8b5cf6":"2px solid transparent",background:leftTab===x?"#111a31":"transparent",color:leftTab===x?"#fff":"#8995aa",fontWeight:900}}>{x}</button>)}
+          </div>
+
+          {leftTab==="Templates"&&<div style={{padding:14}}>
+            <div style={{display:"flex",gap:8,marginBottom:10}}>
+              <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search professional templates..." style={{flex:1,minWidth:0,padding:11,borderRadius:10,border:"1px solid #29324c",background:"#070c17",color:"#fff"}}/>
+              <button className="btn" style={{padding:"8px 10px"}}>☷</button>
+            </div>
+            <div style={{display:"flex",gap:6,overflowX:"auto",paddingBottom:8,marginBottom:10}}>
+              {categories.slice(0,9).map(x=><button key={x} onClick={()=>setCategory(x)} style={{whiteSpace:"nowrap",border:"1px solid #29324c",borderRadius:20,padding:"6px 9px",background:category===x?"#6d4aff":"#11182a",color:"#fff",fontSize:10,fontWeight:800}}>{x}</button>)}
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:9}}>
+              {filteredTemplates.map(x=><button key={x.id} onClick={()=>applyTemplate(x)} style={{minHeight:108,border:template===x.id?"2px solid #8b5cf6":"1px solid #29324c",borderRadius:12,background:x.bg,color:"#fff",padding:8,cursor:"pointer",boxShadow:template===x.id?"0 0 0 3px rgba(139,92,246,.12)":"none"}}>
+                <div style={{fontSize:34,fontWeight:900,color:x.primary,textShadow:"0 5px 15px rgba(0,0,0,.35)"}}>{x.icon}</div>
+                <b style={{fontSize:10,display:"block"}}>{x.name}</b>
+                <small style={{fontSize:8,color:"#94a3b8"}}>{x.category}</small>
+              </button>)}
+            </div>
+            <div style={{marginTop:12,padding:10,borderRadius:11,background:"#11182a",color:"#93a4bb",fontSize:11}}>Click any template to instantly apply its icon, colors, category and visual style.</div>
+          </div>}
+
+          {leftTab==="Icons"&&<div style={{padding:14}}>
+            <div style={{fontWeight:900,marginBottom:10}}>Icon Library</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:7}}>
+              {logoIconLibrary.map((x,i)=><button key={x+"-"+i} onClick={()=>{setIcon(x);setUploaded(null);setStatus("Icon selected.");}} style={{height:58,border:icon===x&&!uploaded?"2px solid #8b5cf6":"1px solid #29324c",borderRadius:10,background:"#11182a",color:primary,fontSize:25,cursor:"pointer"}}>{x}</button>)}
+            </div>
+            <div style={{marginTop:14,color:"#8d99ad",fontSize:11}}>Choose an icon or upload your own logo from the Uploads tab.</div>
+          </div>}
+
+          {leftTab==="Uploads"&&<div style={{padding:14}}>
+            <div onClick={()=>uploadRef.current?.click()} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();uploadLogo(e.dataTransfer.files?.[0]);}} style={{border:"1px dashed #8b5cf6",borderRadius:16,padding:"28px 16px",textAlign:"center",cursor:"pointer",background:"linear-gradient(145deg,#10152c,#0b1020)"}}>
+              <div style={{fontSize:38,color:"#a78bfa"}}>⇧</div>
+              <b>Upload your logo / image</b>
+              <div style={{fontSize:11,color:"#8d99ad",marginTop:7}}>Click or drag & drop<br/>PNG, JPG, WEBP, SVG • Max 10MB</div>
+              <input ref={uploadRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" style={{display:"none"}} onChange={e=>uploadLogo(e.target.files?.[0])}/>
+            </div>
+            {uploaded&&<div style={{marginTop:12,padding:10,borderRadius:12,background:"#11182a"}}>
+              <img src={uploaded} alt="Uploaded logo" style={{width:"100%",height:130,objectFit:"contain",background:"#070b14",borderRadius:10}}/>
+              <div style={{display:"flex",gap:7,marginTop:8}}>
+                <button className="btn" style={{flex:1}} onClick={()=>setUploaded(null)}>Remove</button>
+                <button className="btn primary" style={{flex:1}} onClick={()=>setStatus("Uploaded logo is active on canvas.")}>Use Logo</button>
+              </div>
+            </div>}
+            {!uploaded&&<div style={{marginTop:14,color:"#8d99ad",fontSize:11}}>Your uploaded image will replace the template icon while keeping the brand text and styling.</div>}
+          </div>}
         </aside>
-        <section style={{background:'#0d1322',border:'1px solid #202944',borderRadius:18,padding:14}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12,flexWrap:'wrap',gap:8}}><b>Canvas</b><div style={{display:'flex',gap:5}}>{['1:1','16:9','4:3','3:4','Custom'].map(x=><button key={x} className="btn" style={{padding:'7px 10px',fontSize:11}}>{x}</button>)}</div></div><div style={{display:'grid',placeItems:'center',background:'#060a12',borderRadius:14,minHeight:620,padding:18,overflow:'auto'}}><canvas ref={canvasRef} style={{width:Math.round(520*zoom/100),height:Math.round(520*zoom/100),maxWidth:'100%',objectFit:'contain',borderRadius:10}}/></div><div style={{display:'flex',justifyContent:'center',gap:10,marginTop:12,alignItems:'center'}}><button className="btn" onClick={()=>setZoom(Math.max(60,zoom-10))}>−</button><span>{zoom}%</span><button className="btn" onClick={()=>setZoom(Math.min(140,zoom+10))}>+</button><button className="btn" onClick={()=>setZoom(100)}>Fit</button></div><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginTop:12}}>{[['◌','AI Enhance'],['✣','AI Background'],['▣','Mockup'],['◒','Shadows']].map(x=><button key={x[1]} className="btn" onClick={()=>setStatus(x[1]+' is available in the advanced editor.')}>{x[0]} {x[1]}</button>)}</div></section>
-        <aside style={{background:'#0d1322',border:'1px solid #202944',borderRadius:18,padding:14}}><div style={{display:'flex',gap:4,borderBottom:'1px solid #202944',paddingBottom:8,marginBottom:12}}>{['Design','Text','Effects','Layers'].map(x=><button key={x} onClick={()=>setRightTab(x)} style={{border:0,background:'transparent',color:rightTab===x?'#a996ff':'#aab4c8',fontWeight:800,padding:8}}>{x}</button>)}</div>{rightTab==='Layers'&&<div>{['Icon / Logo','Brand Name','Tagline','Frame'].map((x,i)=><div key={x} style={{padding:11,border:'1px solid #202944',borderRadius:10,background:'#11182a',marginBottom:7}}>{i===0?'♛': 'T'} &nbsp; {x} <span style={{float:'right'}}>◉ ⋮</span></div>)}</div>}{rightTab!=='Layers'&&<><h3 style={{margin:'5px 0 12px'}}>{rightTab==='Text'?'Typography & Text':rightTab==='Effects'?'Effects & Appearance':'Logo Design'}</h3><label style={{display:'block',marginTop:8}}>Brand Name<input value={brand} onChange={e=>setBrand(e.target.value)} style={{width:'100%',boxSizing:'border-box',padding:10,marginTop:5,borderRadius:9,border:'1px solid #29324c',background:'#080d18',color:'#fff'}}/></label><label style={{display:'block',marginTop:8}}>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} style={{width:'100%',boxSizing:'border-box',padding:10,marginTop:5,borderRadius:9,border:'1px solid #29324c',background:'#080d18',color:'#fff'}}/></label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:10}}><label>Primary<input type="color" value={primary} onChange={e=>setPrimary(e.target.value)} style={{width:'100%',height:38}}/></label><label>Secondary<input type="color" value={secondary} onChange={e=>setSecondary(e.target.value)} style={{width:'100%',height:38}}/></label></div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:10}}><label>Font<select value={font} onChange={e=>setFont(e.target.value)} style={{width:'100%',padding:9}}>{fonts.map(x=><option key={x}>{x}</option>)}</select></label><label>Weight<select value={weight} onChange={e=>setWeight(e.target.value)} style={{width:'100%',padding:9}}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label></div><label style={{display:'block',marginTop:10}}>Background<input type="color" value={background} onChange={e=>setBackground(e.target.value)} style={{width:'100%',height:38}}/></label><div style={{marginTop:12}}><b>Logo Category</b><select value={category} onChange={e=>setCategory(e.target.value)} style={{width:'100%',padding:9,marginTop:5}}>{categories.map(x=><option key={x}>{x}</option>)}</select></div></>}</aside>
+
+        <section style={{background:"#0b1120",border:"1px solid #202945",borderRadius:18,padding:14,minWidth:0}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginBottom:12,flexWrap:"wrap"}}>
+            <div><b>Canvas</b><span style={{marginLeft:8,color:"#66758e",fontSize:11}}>{ratio} • {zoom}%</span></div>
+            <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
+              {["1:1","16:9","4:3","3:4","Custom"].map(x=><button key={x} onClick={()=>{setRatio(x);setStatus(x+" canvas selected.");}} className="btn" style={{padding:"7px 10px",fontSize:10,background:ratio===x?"#6d4aff":"#11182a"}}>{x}</button>)}
+            </div>
+          </div>
+          <div style={{display:"grid",placeItems:"center",background:"radial-gradient(circle at 50% 20%,#18233b,#050811 70%)",borderRadius:15,minHeight:590,padding:18,overflow:"auto",border:"1px solid #1d2840"}}>
+            <canvas ref={canvasRef} style={{width:Math.round(520*zoom/100),height:Math.round(520*zoom/100),maxWidth:"100%",objectFit:"contain",borderRadius:12,boxShadow:"0 30px 80px rgba(0,0,0,.45)"}}/>
+          </div>
+          <div style={{display:"flex",justifyContent:"center",gap:8,marginTop:12,alignItems:"center"}}>
+            <button className="btn" onClick={()=>setZoom(Math.max(60,zoom-10))}>−</button><span style={{minWidth:55,textAlign:"center",color:"#cbd5e1"}}>{zoom}%</span><button className="btn" onClick={()=>setZoom(Math.min(150,zoom+10))}>+</button><button className="btn" onClick={()=>setZoom(100)}>Fit</button>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:7,marginTop:12}}>
+            {[
+              ["✦","AI Enhance",aiEnhance,aiEnhanced],
+              ["✣","AI Background",aiBg,aiBackground],
+              ["▣","Mockup",applyMockup,mockup],
+              ["◒","Shadows",()=>setShadow(v=>!v),shadow],
+              ["◌","Glow",()=>setEffect(effect==="glow"?"none":"glow"),effect==="glow"],
+              ["◈","Clear",()=>{setEffect("none");setShadow(false);setMockup(false);setAiEnhanced(false);setAiBackground(false);},false]
+            ].map(([ic,label,fn,on])=><button key={label} onClick={fn} style={{border:"1px solid "+(on?"#7656ff":"#29324c"),borderRadius:11,padding:"10px 5px",background:on?"#171237":"#11182a",color:on?"#c4b5fd":"#aab6c8",cursor:"pointer"}}><div style={{fontSize:18}}>{ic}</div><small style={{fontSize:9,fontWeight:800}}>{label}</small></button>)}
+          </div>
+        </section>
+
+        <aside style={{background:"#0b1120",border:"1px solid #202945",borderRadius:18,overflow:"hidden"}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",borderBottom:"1px solid #202945"}}>
+            {["Design","Text","Effects","Layers"].map(x=><button key={x} onClick={()=>setRightTab(x)} style={{padding:"13px 4px",border:0,borderBottom:rightTab===x?"2px solid #8b5cf6":"2px solid transparent",background:rightTab===x?"#111a31":"transparent",color:rightTab===x?"#fff":"#8995aa",fontWeight:900,fontSize:11}}>{x}</button>)}
+          </div>
+          <div style={{padding:14,maxHeight:690,overflowY:"auto"}}>
+            {rightTab==="Text"&&<>
+              <h3 style={{margin:"4px 0 14px"}}>Typography</h3>
+              <label style={{display:"block",fontSize:11,fontWeight:800,color:"#aab6c8"}}>Brand Name<input value={brand} onChange={e=>setBrand(e.target.value)} style={{width:"100%",boxSizing:"border-box",padding:11,marginTop:5,borderRadius:9,border:"1px solid #29324c",background:"#070c17",color:"#fff"}}/></label>
+              <label style={{display:"block",marginTop:11,fontSize:11,fontWeight:800,color:"#aab6c8"}}>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} style={{width:"100%",boxSizing:"border-box",padding:11,marginTop:5,borderRadius:9,border:"1px solid #29324c",background:"#070c17",color:"#fff"}}/></label>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:11}}>
+                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Font<select value={font} onChange={e=>setFont(e.target.value)}><option>{fonts[0]}</option>{fonts.slice(1).map(x=><option key={x}>{x}</option>)}</select></label>
+                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Weight<select value={weight} onChange={e=>setWeight(e.target.value)}><option value="400">Regular</option><option value="500">Medium</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label>
+              </div>
+              <label style={{display:"block",marginTop:11,fontSize:11,fontWeight:800,color:"#aab6c8"}}>Brand size <span style={{float:"right"}}>{fontSize}px</span><input type="range" min="34" max="92" value={fontSize} onChange={e=>setFontSize(Number(e.target.value))} style={{width:"100%"}}/></label>
+            </>}
+
+            {rightTab==="Design"&&<>
+              <h3 style={{margin:"4px 0 14px"}}>Logo Design</h3>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Primary<input type="color" value={primary} onChange={e=>setPrimary(e.target.value)}/></label>
+                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Secondary<input type="color" value={secondary} onChange={e=>setSecondary(e.target.value)}/></label>
+                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Text color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)}/></label>
+                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Background<input type="color" value={background} onChange={e=>setBackground(e.target.value)}/></label>
+              </div>
+              <div style={{marginTop:14,fontSize:11,fontWeight:900,color:"#aab6c8"}}>Background</div>
+              <div style={{display:"flex",gap:6,marginTop:7}}>
+                {["solid","gradient","transparent"].map(x=><button key={x} onClick={()=>setBgMode(x)} style={{flex:1,padding:9,border:"1px solid "+(bgMode===x?"#8b5cf6":"#29324c"),borderRadius:9,background:bgMode===x?"#171237":"#11182a",color:"#fff",fontSize:10}}>{x}</button>)}
+              </div>
+              <div style={{marginTop:14,padding:11,borderRadius:11,background:"#11182a"}}>
+                <b style={{fontSize:12}}>Active template</b>
+                <div style={{display:"flex",alignItems:"center",gap:9,marginTop:8}}><span style={{fontSize:27,color:primary}}>{selectedTemplate.icon}</span><div><div style={{fontWeight:800}}>{selectedTemplate.name}</div><small style={{color:"#8d99ad"}}>{selectedTemplate.category}</small></div></div>
+              </div>
+            </>}
+
+            {rightTab==="Effects"&&<>
+              <h3 style={{margin:"4px 0 14px"}}>Effects & Appearance</h3>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:7}}>
+                {["none","shadow","glow"].map(x=><button key={x} onClick={()=>setEffect(x)} style={{padding:"12px 5px",border:"1px solid "+(effect===x?"#8b5cf6":"#29324c"),borderRadius:10,background:effect===x?"#171237":"#11182a",color:"#fff",fontSize:10}}>{x}</button>)}
+              </div>
+              <div style={{marginTop:14,padding:12,border:"1px solid #29324c",borderRadius:12}}>
+                <b>Premium finishing</b>
+                <p style={{color:"#8d99ad",fontSize:11,lineHeight:1.5}}>Use AI Enhance, Glow and Shadows together for a polished presentation preview.</p>
+                <button className="btn primary" style={{width:"100%"}} onClick={aiEnhance}>✦ Apply AI Enhance</button>
+              </div>
+              <div style={{marginTop:9,padding:12,border:"1px solid #29324c",borderRadius:12}}>
+                <b>Presentation</b>
+                <button className="btn" style={{width:"100%",marginTop:9}} onClick={applyMockup}>{mockup?"Remove Mockup":"Apply Premium Mockup"}</button>
+              </div>
+            </>}
+
+            {rightTab==="Layers"&&<>
+              <h3 style={{margin:"4px 0 14px"}}>Logo Layers</h3>
+              {[
+                ["◈","Icon / Uploaded Logo",!!uploaded||!!icon],
+                ["T","Brand Name",true],
+                ["T","Tagline",!!tag],
+                ["◒","Background",bgMode!=="transparent"],
+                ["✦","AI Enhancement",aiEnhanced]
+              ].map(([ic,name,on])=><div key={name} style={{display:"flex",alignItems:"center",gap:9,padding:11,border:"1px solid #202945",borderRadius:10,background:"#11182a",marginBottom:7}}>
+                <span style={{fontSize:18,color:on?"#a78bfa":"#4b5563"}}>{ic}</span><span style={{flex:1,fontSize:11,fontWeight:800}}>{name}</span><span style={{fontSize:10,color:on?"#4ade80":"#64748b"}}>{on?"Visible":"Hidden"}</span>
+              </div>)}
+            </>}
+          </div>
+        </aside>
       </div>
     </div>
   </Shell>;
