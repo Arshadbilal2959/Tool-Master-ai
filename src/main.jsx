@@ -499,7 +499,7 @@ function StudentAIHelper({back,user}) {
   const [answer,setAnswer]=useState("");
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState("");
-  const endpoint = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/student-ai-helper` : "");
+  
   const solve=async()=>{
     if(!question.trim() && !files.length){setStatus("Enter a question or upload a study file.");return;}
     if(!endpoint){setStatus("AI backend is not configured. Your question is ready, but no secure AI function is connected.");return;}
