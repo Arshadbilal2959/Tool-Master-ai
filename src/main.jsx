@@ -129,6 +129,7 @@ const tools = [
   ["Binary Converter","Developer Tools","Convert text and numbers to binary.","binary"],
   ["ASCII Converter","Developer Tools","Convert text to ASCII codes.","ascii"],
   ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"],
+  ["SEO Genius AI","SEO & Marketing","AI-powered website SEO and AI Search Visibility auditor with real crawl-based checks and reports.","seo-genius"],
   ["Stamp Generator","Design Tools","Create professional stamps and seals with instant PNG export.","stamp-generator"],
   ["Logo Maker","Design Tools","Create professional logos with templates, shapes, icons, uploads and advanced customization.","logo-maker"]
 ];
@@ -856,12 +857,152 @@ function LogoMaker({back,t}){
   </Shell>;
 }
 
+
+function SeoGeniusAI({back,user,openAuth}) {
+  const [url,setUrl]=useState("");
+  const [report,setReport]=useState(null);
+  const [ai,setAi]=useState(null);
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const [active,setActive]=useState("overview");
+  const [history,setHistory]=useState([]);
+  const [websites,setWebsites]=useState([]);
+  const [plan,setPlan]=useState({name:"FREE",limit:3,used:0,remaining:3});
+  const [saved,setSaved]=useState(false);
+
+  const fn=(name)=>SUPABASE_URL?`${SUPABASE_URL}/functions/v1/${name}`:"";
+  const authHeaders=async()=>{
+    const token=await getSupabaseAccessToken();
+    return {"Content-Type":"application/json",...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),...(token?{Authorization:`Bearer ${token}`}:{})};
+  };
+  const loadData=async()=>{
+    if(!supabase||!user)return;
+    const [{data:scans},{data:sites}]=await Promise.all([
+      supabase.from("seo_scans").select("id,url,overall_score,created_at,status").order("created_at",{ascending:false}).limit(12),
+      supabase.from("websites").select("id,url,title,created_at").order("created_at",{ascending:false}).limit(20)
+    ]);
+    setHistory(scans||[]);setWebsites(sites||[]);
+  };
+  useEffect(()=>{loadData();},[user]);
+
+  const analyze=async()=>{
+    if(!user){openAuth?.("signin");return;}
+    let parsed;
+    try{parsed=new URL(url.trim());}catch{setStatus("Please enter a valid website URL, for example https://example.com");return;}
+    if(!/^https?:$/.test(parsed.protocol)){setStatus("Only http:// and https:// website URLs are allowed.");return;}
+    if(parsed.username||parsed.password){setStatus("URLs containing usernames or passwords are not allowed.");return;}
+    setBusy(true);setStatus("Securely validating URL and starting crawl…");setReport(null);setAi(null);
+    try{
+      const r=await fetch(fn("seo-audit"),{method:"POST",headers:await authHeaders(),body:JSON.stringify({url:parsed.href})});
+      const raw=await r.text();let d={};try{d=raw?JSON.parse(raw):{};}catch{}
+      if(!r.ok)throw new Error(d.error||d.message||`SEO audit failed (${r.status})`);
+      setReport(d);setPlan(d.usage||plan);setStatus("Audit completed from live website checks.");
+      if(d.scan_id){
+        setStatus("Audit complete. Generating AI recommendations…");
+        const ar=await fetch(fn("seo-ai-recommendations"),{method:"POST",headers:await authHeaders(),body:JSON.stringify({scan_id:d.scan_id})});
+        const araw=await ar.text();let ad={};try{ad=araw?JSON.parse(araw):{};}catch{}
+        if(ar.ok)setAi(ad);else setAi({available:false,error:ad.error||ad.message||`AI recommendations unavailable (${ar.status})`});
+      }
+      await loadData();setActive("overview");
+    }catch(e){setStatus(e?.message||"Website analysis failed.");}
+    finally{setBusy(false);}
+  };
+
+  const saveWebsite=async()=>{
+    if(!supabase||!user||!report?.url)return;
+    const {error}=await supabase.from("websites").upsert({user_id:user.id,url:report.url,title:report.meta?.title||report.url,updated_at:new Date().toISOString()},{onConflict:"user_id,url"});
+    setSaved(!error);if(!error){setStatus("Website saved to your account.");await loadData();}else setStatus(error.message||"Could not save website.");
+  };
+
+  const openScan=async(id)=>{
+    if(!supabase)return;
+    setStatus("Loading saved scan…");
+    const {data,error}=await supabase.from("seo_scans").select("*").eq("id",id).maybeSingle();
+    if(error||!data){setStatus(error?.message||"Scan not found.");return;}
+    setReport(data.result_json||data);setAi(data.ai_json||null);setActive("overview");setStatus("Saved scan loaded.");
+  };
+
+  const downloadPdf=async()=>{
+    if(!report)return;
+    try{
+      setStatus("Preparing PDF report…");
+      const {PDFDocument,StandardFonts,rgb}=await loadLib("pdf-lib");
+      const doc=await PDFDocument.create();const font=await doc.embedFont(StandardFonts.Helvetica);const bold=await doc.embedFont(StandardFonts.HelveticaBold);
+      const margin=42;let page=doc.addPage([595,842]);let y=800;
+      const add=(text,size=10,b=false)=>{const lines=String(text??"").split("\n");for(const line of lines){if(y<55){page=doc.addPage([595,842]);y=800;}page.drawText(line.slice(0,105),{x:margin,y,size,font:b?bold:font,color:rgb(.08,.12,.18)});y-=size+6;}};
+      add("SEO Genius AI — Website SEO & AI Visibility Report",18,true);y-=4;add(`Website: ${report.url}`,10);add(`Scan date: ${new Date(report.scan_date||Date.now()).toLocaleString()}`,10);y-=8;
+      add(`Overall SEO Score: ${report.scores?.overall??"Not available"}/100`,15,true);
+      for(const [k,v] of Object.entries(report.scores||{})){if(k!=="overall")add(`${labelScore(k)}: ${v==null?"Not available":v}/100`,11,true);}
+      y-=6;add("Critical / High Priority Issues",13,true);for(const x of (ai?.critical||report.issues?.filter(i=>i.severity==="critical")||[]).slice(0,12))add(`• ${typeof x==="string"?x:(x.title||x.what||x.message||"Issue")}`,10);
+      add("Passed Checks",13,true);for(const c of (report.checks||[]).filter(x=>x.status==="pass").slice(0,30))add(`• ${c.name}: ${c.detail||"Passed"}`,9);
+      add("Warnings / Failed Checks",13,true);for(const c of (report.checks||[]).filter(x=>x.status!=="pass").slice(0,30))add(`• ${c.name}: ${c.status} — ${c.detail||""}`,9);
+      add("Technical Findings",13,true);for(const c of (report.checks||[]).filter(x=>x.category==="technical").slice(0,35))add(`• ${c.name}: ${c.status}${c.detail?` — ${c.detail}`:""}`,9);
+      add("AI Search Visibility",13,true);add(`AI Visibility Score: ${report.scores?.ai_visibility??"Not available"}/100`,10,true);for(const x of (ai?.aiVisibility?.contentGaps||report.ai_visibility?.content_gaps||[]).slice(0,10))add(`• ${x}`,9);
+      add("Action Plan",13,true);for(const x of (ai?.actionPlan||[]).slice(0,15))add(`• ${x}`,9);
+      const bytes=await doc.save();const reportName=`seo-genius-${new URL(report.url).hostname}.pdf`;downloadBlob(new Blob([bytes],{type:"application/pdf"}),reportName);if(supabase&&user&&report.scan_id){await supabase.from("seo_reports").insert({user_id:user.id,scan_id:report.scan_id,report_name:reportName,report_json:{url:report.url,scan_date:report.scan_date,scores:report.scores,generated_at:new Date().toISOString()}});}setStatus("PDF report downloaded and report metadata saved.");
+    }catch(e){setStatus(e?.message||"PDF generation failed.");}
+  };
+
+  const score=report?.scores?.overall;const checks=report?.checks||[];
+  const count=(s)=>checks.filter(x=>x.status===s).length;
+  const nav=["overview","issues","recommendations","ai-visibility","keywords","performance","technical","reports","settings"];
+  const card=(title,value,sub)=> <div style={sg.card}><div style={sg.muted}>{title}</div><div style={sg.big}>{value}</div><div style={sg.muted}>{sub}</div></div>;
+  const progress=(label,value)=> <div style={{marginBottom:14}}><div style={sg.row}><b>{label}</b><span>{value==null?"Not available":`${value}/100`}</span></div><div style={sg.track}><div style={{...sg.fill,width:`${Math.max(0,Math.min(100,Number(value)||0))}%`}}/></div></div>;
+  const severity=(s)=> <span style={{...sg.badge,background:s==="critical"?"#3b1115":s==="high"?"#3a2509":s==="medium"?"#2d2808":"#0d2b20",color:s==="critical"?"#ff9a9a":s==="high"?"#ffc46b":s==="medium"?"#ffe37d":"#78e6b0"}}>{s}</span>;
+
+  return <main className="toolPage">
+    <style>{`
+      .seoGeniusResponsiveInput{flex-wrap:wrap}.seoGeniusResponsiveInput input{flex:1;min-width:180px;background:transparent;border:0;outline:0;color:#fff;font-size:16px}.seoGeniusResponsiveInput .btn{white-space:nowrap}
+      @media (max-width:700px){.seoGeniusResponsiveInput{padding:8px}.seoGeniusResponsiveInput input{width:100%;min-width:0;flex-basis:100%}.seoGeniusResponsiveInput .btn{width:100%;justify-content:center}.seoGeniusIssue{grid-template-columns:1fr!important}.seoGeniusTableRow{grid-template-columns:1fr!important}.seoGeniusHistory{grid-template-columns:1fr!important}}
+    `}</style>
+    <div style={sg.shell}>
+      <div style={sg.top}>
+        <button className="back" onClick={back}>← Back to tools</button>
+        <div style={sg.brandRow}><div style={sg.logo}><Sparkles size={18}/></div><div><b>SEO Genius AI</b><small>Website SEO & AI Visibility Auditor</small></div></div>
+      </div>
+      {!report ? <>
+        <section style={sg.hero}>
+          <span style={sg.pill}><ShieldCheck size={14}/> Real crawl-based checks · No guaranteed rankings</span>
+          <h1>Audit your website for <span style={sg.grad}>SEO + AI Search</span></h1>
+          <p>Analyze technical SEO, on-page signals, performance basics, crawlability, structured data and AI-readable content from the live page.</p>
+          <div className="seoGeniusResponsiveInput" style={sg.inputWrap}><Globe2 size={20}/><input value={url} onChange={e=>setUrl(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!busy&&analyze()} placeholder="https://example.com"/><button className="btn primary" disabled={busy||!url.trim()} onClick={analyze}>{busy?<RefreshCw size={16} className="spin"/>:<Sparkles size={16}/>} {busy?"Analyzing…":"Analyze My Website"}</button></div>
+          <div style={sg.note}>{status||`Plan: ${plan.name||"FREE"} · ${plan.remaining??3} scan${(plan.remaining??3)===1?"":"s"} remaining this month`}</div>
+        </section>
+        <div style={sg.featureGrid}>{[["Technical SEO","Meta, headings, canonical, robots, sitemap, schema, indexability"],["AI Search Visibility","Entity coverage, answer opportunities, expertise and content gaps"],["Real checks","Scores are calculated from performed checks; unavailable checks stay unavailable"],["Actionable report","WHAT is wrong · WHY it matters · HOW to fix it"],["Scan history","Keep your previous scans and saved websites in your account"],["PDF reports","Download a shareable audit report after each completed scan"]].map(([a,b])=><div style={sg.feature} key={a}><div style={sg.featureIcon}><CheckCircle2 size={17}/></div><div><b>{a}</b><p>{b}</p></div></div>)}</div>
+        <section style={sg.infoGrid}><div style={sg.info}><h3>How it works</h3><ol><li>Enter a public HTTP/HTTPS URL.</li><li>Our server validates the target and fetches it securely.</li><li>SEO Genius evaluates actual page signals and selected links.</li><li>AI turns the findings into prioritized recommendations.</li></ol></div><div style={sg.info}><h3>What we do not promise</h3><p>SEO Genius AI does not guarantee Google rankings, traffic, or AI citations. Search visibility depends on many external factors.</p></div></section>
+        <section style={{marginTop:18}}><h2 style={{textAlign:"center"}}>Simple SEO Genius pricing</h2><p style={{textAlign:"center",color:"#91a2bb"}}>Limits are enforced server-side. Actual billing activation should update the subscription only after a verified payment event.</p><div style={sg.priceGrid}>{[["FREE","$0/mo","3 scans/month","Basic audit"],["BASIC","$9.99/mo","30 scans/month","Full audit · AI recommendations · PDF reports"],["POPULAR","$19.99/mo","100 scans/month","Full audit · AI Visibility · competitor analysis · content recommendations"],["PREMIUM","$39.99/mo","High / 100,000 scans/month","Scheduled audits · monitoring · white-label · agency features"]].map(([a,b,c,d])=><div style={sg.price} key={a}><span style={sg.pill}>{a}</span><h3>{b}</h3><b>{c}</b><p>{d}</p></div>)}</div></section>
+        <section style={{marginTop:18}}><h2 style={{textAlign:"center"}}>FAQ</h2><div style={sg.faq}>{[["Does SEO Genius guarantee Google rankings?","No. It reports observed SEO signals and recommendations; it cannot guarantee rankings or AI citations."],["Are scores invented?","No. Scores are calculated from performed checks. Unsupported measurements such as real-browser Core Web Vitals are shown as Not available."],["Can I audit private or local URLs?","No. The server blocks localhost, private/internal IP ranges and credential-bearing URLs to reduce SSRF risk."],["Where is my AI key stored?","AI calls run in the Supabase Edge Function. The provider key is never shipped to the browser."]].map(([q,a])=><details style={sg.faqItem} key={q}><summary>{q}</summary><p>{a}</p></details>)}</div></section>
+      </> : <>
+        <div style={sg.dashboardTop}><div><span style={sg.pill}>Live audit</span><h1>{report.meta?.title||report.url}</h1><p>{report.url}</p></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button className="btn" onClick={saveWebsite}><Heart size={15}/> {saved?"Saved":"Save website"}</button><button className="btn primary" onClick={downloadPdf}><Download size={15}/> PDF Report</button><button className="btn" onClick={()=>{setReport(null);setAi(null);setStatus("")}}>New scan</button></div></div>
+          <div style={sg.nav}>{nav.map(x=><button key={x} onClick={()=>setActive(x)} style={active===x?sg.navActive:sg.navBtn}>{x.replace("ai-visibility","AI Visibility").replace("-"," ").replace(/\b\w/g,m=>m.toUpperCase())}</button>)}</div>
+          {active==="overview"&&<div>
+            <div style={sg.scoreGrid}>{card("Overall SEO Score",score==null?"Not available":`${score}/100`,`${count("pass")} passed · ${count("warn")} warnings · ${count("fail")} failed`)}{card("Technical SEO",report.scores?.technical==null?"Not available":`${report.scores.technical}/100`,"Based on performed technical checks")}{card("On-Page SEO",report.scores?.onpage==null?"Not available":`${report.scores.onpage}/100`,"Titles, headings, content and media")}{card("Performance",report.scores?.performance==null?"Not available":`${report.scores.performance}/100`,report.performance?.ttfb_ms!=null?`${report.performance.ttfb_ms} ms server response`:"Browser CWV not measured")}{card("Mobile SEO",report.scores?.mobile==null?"Not available":`${report.scores.mobile}/100`,"Viewport and mobile-readiness signals")}{card("AI Visibility",report.scores?.ai_visibility==null?"Not available":`${report.scores.ai_visibility}/100`,"AI Search readiness signals")}</div>
+            <div style={sg.two}><div style={sg.panel}><h3>Category scores</h3>{progress("Technical SEO",report.scores?.technical)}{progress("On-Page SEO",report.scores?.onpage)}{progress("Content SEO",report.scores?.content)}{progress("Performance",report.scores?.performance)}{progress("Mobile SEO",report.scores?.mobile)}{progress("AI Visibility",report.scores?.ai_visibility)}</div><div style={sg.panel}><h3>Audit status</h3><div style={sg.checkStats}><div><b>{count("pass")}</b><span>Passed</span></div><div><b>{count("warn")}</b><span>Warnings</span></div><div><b>{count("fail")}</b><span>Failed</span></div><div><b>{count("not_available")}</b><span>Not available</span></div></div><p style={sg.muted}>A score is only calculated from checks that were actually performed.</p></div></div>
+          </div>}
+          {active==="issues"&&<div style={sg.panel}><h2>Issues</h2><p style={sg.muted}>Every finding comes from a crawl check. Unavailable checks are not scored as failures.</p><div>{checks.filter(x=>x.status!=="pass").map((x,i)=><div style={sg.issue} key={i}><div>{severity(x.severity||"medium")}</div><div><b>{x.name}</b><p>{x.detail||"No additional detail available."}</p><small><b>WHAT:</b> {x.what||x.detail||"See finding"} · <b>WHY:</b> {x.why||"This can affect search usability or discoverability."} · <b>HOW:</b> {x.how||"Review and correct the finding."}</small></div></div>)}</div></div>}
+          {active==="recommendations"&&<div style={sg.panel}><h2>AI Recommendations</h2>{!ai?.available&&<div style={sg.notice}><AlertCircle size={16}/>{ai?.error||"AI recommendations are not available. Configure the server-side AI provider and credits."}</div>}<div style={sg.recGrid}>{["critical","high","medium","low"].map(level=><div key={level} style={sg.recCol}><h3>{severity(level)} {level}</h3>{(ai?.[level]||[]).map((x,i)=><div style={sg.rec} key={i}><b>{x.title||x.what||x.issue||"Recommendation"}</b><p><b>WHAT:</b> {x.what||x.issue||""}</p><p><b>WHY:</b> {x.why||""}</p><p><b>HOW:</b> {x.how||x.fix||""}</p></div>)}{!(ai?.[level]?.length)&&<div style={sg.empty}>No items in this priority.</div>}</div>)}</div>{ai?.suggestions&&<div style={sg.panelInner}><h3>Suggested metadata & content</h3><pre style={sg.pre}>{JSON.stringify(ai.suggestions,null,2)}</pre></div>}</div>}
+          {active==="ai-visibility"&&<div style={sg.two}><div style={sg.panel}><h2>AI Search Visibility</h2>{progress("AI visibility score",report.scores?.ai_visibility)}{progress("Content clarity",report.ai_visibility?.content_clarity)}{progress("Entity / topic coverage",report.ai_visibility?.entity_coverage)}{progress("Expertise signals",report.ai_visibility?.expertise)}<h3>Question-answer opportunities</h3><ul>{(report.ai_visibility?.question_opportunities||[]).map((x,i)=><li key={i}>{x}</li>)}</ul></div><div style={sg.panel}><h3>Content gaps</h3><ul>{(report.ai_visibility?.content_gaps||[]).map((x,i)=><li key={i}>{x}</li>)}</ul><h3>Recommended FAQ topics</h3><ul>{(ai?.aiVisibility?.faqTopics||report.ai_visibility?.faq_topics||[]).map((x,i)=><li key={i}>{x}</li>)}</ul><h3>Supporting pages</h3><ul>{(ai?.aiVisibility?.supportingPages||report.ai_visibility?.supporting_pages||[]).map((x,i)=><li key={i}>{x}</li>)}</ul></div></div>}
+          {active==="keywords"&&<div style={sg.panel}><h2>Keywords & Content</h2><p style={sg.muted}>Keyword extraction is heuristic and based on visible page text; it is not a search-volume database.</p><div style={sg.keywordGrid}>{(report.keywords||[]).map((x,i)=><div style={sg.keyword} key={i}><b>{x.term}</b><span>{x.count} uses · {x.density}%</span></div>)}</div><h3>Content quality signals</h3><pre style={sg.pre}>{JSON.stringify(report.content||{},null,2)}</pre></div>}
+          {active==="performance"&&<div style={sg.panel}><h2>Performance</h2>{progress("Performance score",report.scores?.performance)}<div style={sg.scoreGrid}>{card("Server response",report.performance?.ttfb_ms!=null?`${report.performance.ttfb_ms} ms`:"Not available","Measured by the audit server")}{card("Page size",report.performance?.bytes!=null?`${Math.round(report.performance.bytes/1024)} KB`:"Not available","HTML response bytes")}{card("Core Web Vitals","Not available","Requires a real browser/user session or a PageSpeed-style provider")}</div></div>}
+          {active==="technical"&&<div style={sg.panel}><h2>Technical SEO</h2><div style={sg.table}>{checks.map((x,i)=><div className="seoGeniusTableRow" style={sg.tr} key={i}><b>{x.name}</b><span style={x.status==="pass"?sg.pass:x.status==="fail"?sg.fail:x.status==="not_available"?sg.na:sg.warn}>{x.status}</span><small>{x.detail||"Not available"}</small></div>)}</div></div>}
+          {active==="reports"&&<div style={sg.panel}><h2>Reports & Scan History</h2><button className="btn primary" onClick={downloadPdf}><Download size={15}/> Download current PDF</button><div style={{marginTop:16}}>{history.map(x=><button className="seoGeniusHistory" key={x.id} onClick={()=>openScan(x.id)} style={sg.historyBtn}><span>{new URL(x.url).hostname}</span><b>{x.overall_score==null?"—":`${x.overall_score}/100`}</b><small>{new Date(x.created_at).toLocaleString()}</small></button>)}</div></div>}
+          {active==="settings"&&<div><div style={sg.two}><div style={sg.panel}><h2>Account</h2><p>{user?.email}</p><p>Plan: <b>{plan.name||"FREE"}</b></p><p>Monthly usage: <b>{plan.used??0}/{plan.limit??3}</b></p><p style={sg.muted}>Upgrades should be applied only by a verified billing webhook or administrator.</p></div><div style={sg.panel}><h2>Saved websites</h2>{websites.map(w=><div style={sg.site} key={w.id}><b>{w.title||w.url}</b><span>{w.url}</span></div>)}{!websites.length&&<p style={sg.muted}>No saved websites yet.</p>}</div></div><div style={{...sg.priceGrid,marginTop:14}}>{[["FREE","$0/mo","3 scans/month"],["BASIC","$9.99/mo","30 scans/month"],["POPULAR","$19.99/mo","100 scans/month"],["PREMIUM","$39.99/mo","High allowance"]].map(([a,b,c])=><div style={sg.price} key={a}><span style={sg.pill}>{a}</span><h3>{b}</h3><p>{c}</p></div>)}</div></div>}
+          <div style={sg.disclaimer}><ShieldCheck size={15}/> SEO Genius AI reports observed signals. It does not guarantee Google rankings, traffic, or AI citations.</div>
+        </>}
+    </div>
+  </main>;
+}
+
+const labelScore=(k)=>({technical:"Technical SEO",onpage:"On-Page SEO",content:"Content SEO",performance:"Performance",mobile:"Mobile SEO",ai_visibility:"AI Visibility",overall:"Overall Score"}[k]||k);
+const sg={shell:{maxWidth:1240,margin:"0 auto",padding:"22px 18px 70px"},top:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,flexWrap:"wrap"},brandRow:{display:"flex",alignItems:"center",gap:10},logo:{width:38,height:38,borderRadius:12,display:"grid",placeItems:"center",background:"linear-gradient(135deg,#7c3aed,#06b6d4)",color:"white"},hero:{marginTop:28,padding:"46px 28px",borderRadius:28,border:"1px solid #26324b",background:"radial-gradient(circle at 80% 10%,rgba(124,58,237,.25),transparent 38%),linear-gradient(135deg,#0b1220,#101a2d)",textAlign:"center"},grad:{background:"linear-gradient(90deg,#a78bfa,#22d3ee)",WebkitBackgroundClip:"text",color:"transparent"},pill:{display:"inline-flex",alignItems:"center",gap:7,padding:"7px 10px",borderRadius:999,border:"1px solid #33415e",background:"#101a2b",color:"#b7c5dc",fontSize:12},inputWrap:{maxWidth:820,margin:"26px auto 0",display:"flex",alignItems:"center",gap:10,padding:9,borderRadius:16,background:"#07101e",border:"1px solid #31415f"},featureGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))",gap:12,marginTop:18},feature:{display:"flex",gap:11,padding:18,borderRadius:16,background:"#0d1625",border:"1px solid #22314b"},featureIcon:{width:32,height:32,borderRadius:10,display:"grid",placeItems:"center",background:"#102c25",color:"#6ee7b7",flex:"0 0 auto"},infoGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:14,marginTop:16},info:{padding:22,borderRadius:18,border:"1px solid #24334d",background:"#0c1422",color:"#c8d3e5"},dashboardTop:{display:"flex",justifyContent:"space-between",alignItems:"end",gap:16,flexWrap:"wrap",marginTop:20},nav:{display:"flex",gap:7,overflowX:"auto",padding:"16px 0",position:"sticky",top:0,zIndex:4,background:"rgba(7,12,21,.92)",backdropFilter:"blur(12px)"},navBtn:{border:"1px solid #25344d",background:"#0d1625",color:"#9fb0c8",padding:"9px 12px",borderRadius:10,whiteSpace:"nowrap",cursor:"pointer"},navActive:{border:"1px solid #7c3aed",background:"#28154f",color:"#fff",padding:"9px 12px",borderRadius:10,whiteSpace:"nowrap",cursor:"pointer"},scoreGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(175px,1fr))",gap:12,marginBottom:14},card:{padding:18,borderRadius:16,border:"1px solid #25344d",background:"#0d1625"},big:{fontSize:28,fontWeight:800,margin:"7px 0"},muted:{color:"#91a2bb",fontSize:13},two:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:14},panel:{padding:20,borderRadius:18,border:"1px solid #25344d",background:"#0c1422",color:"#d6e0ef",marginBottom:14},panelInner:{marginTop:14,padding:16,borderRadius:14,background:"#0a1120",border:"1px solid #22304a"},row:{display:"flex",justifyContent:"space-between",gap:10,fontSize:13},track:{height:8,borderRadius:99,background:"#1a2639",overflow:"hidden",marginTop:6},fill:{height:"100%",borderRadius:99,background:"linear-gradient(90deg,#7c3aed,#22d3ee)"},checkStats:{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:10},checkStatsItem:{},issue:{display:"grid",gridTemplateColumns:"90px 1fr",gap:14,padding:"16px 0",borderBottom:"1px solid #203047"},badge:{display:"inline-block",padding:"5px 8px",borderRadius:8,fontSize:11,textTransform:"uppercase",fontWeight:700},recGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:12},recCol:{padding:14,borderRadius:15,background:"#0a1120",border:"1px solid #22304a"},rec:{padding:13,borderRadius:12,background:"#0e192a",border:"1px solid #263650",marginTop:9},empty:{color:"#70829d",padding:16},notice:{display:"flex",gap:8,alignItems:"center",padding:12,borderRadius:12,background:"#2b2110",color:"#ffd68a",marginBottom:12},pre:{whiteSpace:"pre-wrap",overflowX:"auto",padding:14,borderRadius:12,background:"#07101c",color:"#b9c8dc",fontSize:12},keywordGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:9},keyword:{display:"flex",flexDirection:"column",gap:4,padding:13,borderRadius:12,border:"1px solid #24334c",background:"#0d1625"},table:{border:"1px solid #22304a",borderRadius:14,overflow:"hidden"},tr:{display:"grid",gridTemplateColumns:"1.2fr 110px 2fr",gap:10,padding:"12px 14px",borderBottom:"1px solid #203047",alignItems:"center"},pass:{color:"#6ee7b7"},fail:{color:"#ff8e8e"},warn:{color:"#ffd27a"},na:{color:"#8191a9"},historyBtn:{width:"100%",display:"grid",gridTemplateColumns:"1fr 90px 180px",gap:10,textAlign:"left",padding:13,marginTop:8,borderRadius:12,border:"1px solid #25344d",background:"#0d1625",color:"#d7e1ef",cursor:"pointer"},site:{display:"flex",flexDirection:"column",gap:3,padding:12,borderBottom:"1px solid #22304a"},disclaimer:{display:"flex",gap:8,alignItems:"center",marginTop:10,padding:12,borderRadius:12,background:"#0b1320",color:"#8191a9",fontSize:12}}
+
 function ToolPage({t,back,user,openAuth}) {
   if(t[3]==="student-ai-helper") return <StudentAIHelper back={back} user={user} openAuth={openAuth}/>;
   if(t[3]==="text-to-video") return <TextToVideo back={back} user={user} openAuth={openAuth}/>;
   if(t[3]==="edit-pdf") return <PdfEditorTool t={t} back={back}/>;
   if(t[3]==="stamp-generator") return <StampGenerator t={t} back={back}/>;
   if(t[3]==="logo-maker") return <LogoMaker t={t} back={back}/>;
+  if(t[3]==="seo-genius") return <SeoGeniusAI back={back} user={user} openAuth={openAuth}/>;
   if(t[1]==="PDF Tools") return <PdfTool t={t} back={back}/>;
   if(t[3]==="background-remover") return <BackgroundRemoverTool t={t} back={back}/>;
   if(t[1]==="Image Tools") return <ImageTool t={t} back={back}/>;
@@ -2127,13 +2268,20 @@ function placeholderFor(id){
 function Admin({user,profile}){
   const [tab,setTab]=useState("overview");const [msg,setMsg]=useState("");
   const [backend,setBackend]=useState("checking");const [toolsCount,setToolsCount]=useState(tools.length);const [plans,setPlans]=useState(PLANS);
+  const [seoStats,setSeoStats]=useState({scans:0,users:0,websites:0,issues:0,subscriptions:0});
+  const [seoEnabled,setSeoEnabled]=useState(true);const [seoLimits,setSeoLimits]=useState({free:3,basic:30,popular:100,premium:100000});
   useEffect(()=>{(async()=>{const base=import.meta.env.VITE_API_BASE_URL||import.meta.env.VITE_SUPABASE_FUNCTION_URL;if(!base)return setBackend("not configured");try{const r=await fetch(base,{method:"GET"});setBackend(String(r.status))}catch{setBackend("offline")}})()},[]);
+  useEffect(()=>{if(!supabase)return;(async()=>{const [{count:scans},{count:users},{count:websites},{count:issues},{count:subscriptions},{data:settings}]=await Promise.all([
+    supabase.from("seo_scans").select("id",{count:"exact",head:true}),supabase.from("profiles").select("id",{count:"exact",head:true}),supabase.from("websites").select("id",{count:"exact",head:true}),supabase.from("seo_issues").select("id",{count:"exact",head:true}),supabase.from("subscriptions").select("id",{count:"exact",head:true}),supabase.from("seo_settings").select("key,value").in("key",["enabled","limits"])
+  ]);setSeoStats({scans:scans||0,users:users||0,websites:websites||0,issues:issues||0,subscriptions:subscriptions||0});for(const s of settings||[]){if(s.key==="enabled")setSeoEnabled(s.value!==false);if(s.key==="limits"&&s.value)setSeoLimits(s.value);}})()},[tab]);
+  const saveSeo=async()=>{if(!supabase)return;await supabase.from("seo_settings").upsert([{key:"enabled",value:seoEnabled,updated_by:user?.id},{key:"limits",value:seoLimits,updated_by:user?.id}],{onConflict:"key"});setMsg("SEO Genius settings saved.");};
   return <main className="admin"><div className="adminTop"><div><div className="pill"><LayoutDashboard size={14}/> Admin Control Center</div><h1>ToolMaster Pro</h1><p>Signed in as <b>{profile?.full_name||user?.email}</b>. Admin access is based on the user's Supabase role.</p></div></div>
-    <div className="toolbar" style={{marginTop:24}}>{["overview","tools","plans","users"].map(x=><button key={x} className={tab===x?"cat active":"cat"} onClick={()=>setTab(x)}>{x==="overview"?<LayoutDashboard/>:x==="tools"?<Settings/>:x==="plans"?<CreditCard/>:<User/>}{x[0].toUpperCase()+x.slice(1)}</button>)}</div>
+    <div className="toolbar" style={{marginTop:24}}>{["overview","tools","plans","users","seo-genius"].map(x=><button key={x} className={tab===x?"cat active":"cat"} onClick={()=>setTab(x)}>{x==="overview"?<LayoutDashboard/>:x==="tools"?<Settings/>:x==="plans"?<CreditCard/>:x==="users"?<User/>:<Sparkles/>}{x==="seo-genius"?"SEO Genius":x[0].toUpperCase()+x.slice(1)}</button>)}</div>
     {tab==="overview"&&<div className="adminGrid"><div className="adminCard"><Wrench/><h3>Tool Engine</h3><p>{toolsCount} tools loaded in the frontend tool registry.</p><button className="btn primary" onClick={()=>setMsg("Tool registry check complete.")}>Check Tools</button></div><div className="adminCard"><LockKeyhole/><h3>Auth</h3><p>Supabase Auth is {supabase?"configured":"not configured"}.</p><strong className="ok">{supabase?"Connected":"Action required"}</strong></div><div className="adminCard"><Globe2/><h3>Backend</h3><p>AI / server backend status: {backend}.</p><button className="btn" onClick={()=>setMsg(`Backend status: ${backend}`)}>View Status</button></div><div className="adminCard"><CheckCircle2/><h3>System</h3><p>{msg||"Browser tool engine ready."}</p><strong className="ok">Ready</strong></div></div>}
-    {tab==="tools"&&<div className="panel" style={{marginTop:16}}><h3>Tool Management</h3><p style={{color:"#93a6bf"}}>The tool catalog is embedded in this build. Production CRUD can be connected to your `tools` table without exposing service-role keys.</p><div className="grid">{tools.slice(0,12).map(t=><div className="card" key={t[3]}><span>{t[1]}</span><h3>{t[0]}</h3><p>{t[2]}</p></div>)}</div></div>}
+    {tab==="tools"&&<div className="panel" style={{marginTop:16}}><h3>Tool Management</h3><p style={{color:"#93a6bf"}}>The tool catalog is embedded in this build. Production CRUD can be connected to your <code>tools</code> table without exposing service-role keys.</p><div className="grid">{tools.slice(0,12).map(t=><div className="card" key={t[3]}><span>{t[1]}</span><h3>{t[0]}</h3><p>{t[2]}</p></div>)}</div></div>}
     {tab==="plans"&&<div className="panel" style={{marginTop:16}}><h3>Student AI Helper Plans</h3><div className="grid">{plans.map(p=><div className="card" key={p.id}><div className="pill">{p.popular?"Popular":"Plan"}</div><h3>{p.name}</h3><p>{p.description}</p><b>{p.credits.toLocaleString()} credits · ${p.price}</b></div>)}</div></div>}
     {tab==="users"&&<div className="panel" style={{marginTop:16}}><h3>Current User</h3><p>Email: {user?.email}</p><p>User ID: {user?.id}</p><p>Role: {profile?.role || user?.app_metadata?.role || user?.user_metadata?.role || "user"}</p></div>}
+    {tab==="seo-genius"&&<div className="panel" style={{marginTop:16}}><h2>SEO Genius AI Administration</h2><div className="grid"><div className="adminCard"><Sparkles/><h3>System</h3><p>Enable or disable new SEO Genius scans.</p><label style={{display:"flex",gap:10,alignItems:"center"}}><input type="checkbox" checked={seoEnabled} onChange={e=>setSeoEnabled(e.target.checked)}/> Enabled</label></div><div className="adminCard"><History/><h3>Scans</h3><strong>{seoStats.scans}</strong><p>Total stored scans</p></div><div className="adminCard"><Globe2/><h3>Websites</h3><strong>{seoStats.websites}</strong><p>Saved websites</p></div><div className="adminCard"><AlertCircle/><h3>Issues</h3><strong>{seoStats.issues}</strong><p>Stored issue records</p></div><div className="adminCard"><CreditCard/><h3>Subscriptions</h3><strong>{seoStats.subscriptions}</strong><p>Subscription records</p></div></div><h3 style={{marginTop:20}}>Monthly scan limits</h3><div className="grid">{Object.entries(seoLimits).map(([k,v])=><label className="card" key={k}><b>{k.toUpperCase()}</b><input type="number" min="0" value={v} onChange={e=>setSeoLimits(p=>({...p,[k]:Number(e.target.value)}))}/></label>)}</div><button className="btn primary" onClick={saveSeo}><Check size={16}/> Save SEO settings</button><p style={{color:"#8191a9",marginTop:10}}>{msg||"Admin settings are stored in Supabase and protected by RLS."}</p></div>}
   </main>;
 }
 
