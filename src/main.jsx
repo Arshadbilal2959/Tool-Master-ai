@@ -661,45 +661,53 @@ const logoPresets=["circle","square","badge","minimal"];
 const logoCategories=["Business","Medical","Photography","Automotive","Food","Education","Health","Security","Corporate","Music","Gaming","Nature","Travel","Real Estate","Fashion","Pets","Technology","Luxury"];
 
 function LogoMaker({back,t}){
-  const [brand,setBrand]=useState("");
-  const [tag,setTag]=useState("");
-  const [category,setCategory]=useState("Business");
-  const [shape,setShape]=useState("circle");
-  const [font,setFont]=useState("Arial");
-  const [weight,setWeight]=useState("700");
-  const [color,setColor]=useState("#6d4aff");
-  const [textColor,setTextColor]=useState("#172033");
-  const canvasRef=useRef(null);
-
+  const canvasRef=useRef(null), uploadRef=useRef(null);
+  const [brand,setBrand]=useState('BRAND NAME'),[tag,setTag]=useState('TAGLINE HERE');
+  const [category,setCategory]=useState('Business'),[template,setTemplate]=useState('Royal');
+  const [font,setFont]=useState('Arial'),[weight,setWeight]=useState('700');
+  const [primary,setPrimary]=useState('#D4AF37'),[secondary,setSecondary]=useState('#E5E7EB');
+  const [textColor,setTextColor]=useState('#FFFFFF'),[background,setBackground]=useState('#101522');
+  const [icon,setIcon]=useState('♛'),[uploaded,setUploaded]=useState(null),[zoom,setZoom]=useState(100);
+  const [leftTab,setLeftTab]=useState('Templates'),[rightTab,setRightTab]=useState('Design'),[status,setStatus]=useState('');
+  const templates=[
+    {id:'Royal',name:'Royal',icon:'♛',bg:'#101522',p:'#D4AF37',s:'#E5E7EB'},
+    {id:'TechNova',name:'Tech Nova',icon:'⬡',bg:'#0b1324',p:'#22d3ee',s:'#60a5fa'},
+    {id:'Elegance',name:'Elegance',icon:'✦',bg:'#f4efe5',p:'#8b6b45',s:'#b8a07a'},
+    {id:'Fitness',name:'Fitness',icon:'✚',bg:'#101a14',p:'#84cc16',s:'#facc15'},
+    {id:'Coffee',name:'Coffee House',icon:'☕',bg:'#17120f',p:'#d6a15d',s:'#f5e0b8'},
+    {id:'Digital',name:'Digital',icon:'◈',bg:'#111529',p:'#8b5cf6',s:'#22d3ee'},
+    {id:'Nature',name:'Nature',icon:'✿',bg:'#101913',p:'#65a30d',s:'#bbf7d0'},
+    {id:'Cyber',name:'Cyber',icon:'⬢',bg:'#091522',p:'#38bdf8',s:'#a78bfa'},
+    {id:'Luxury',name:'Luxury',icon:'L',bg:'#15110b',p:'#d4af37',s:'#fff7d6'}
+  ];
+  const icons=['♛','★','✦','✚','☕','◈','✿','⬢','◆','⚕','⌂','♫','⚡','✈','♥','◉','C','D','B','M'];
+  const categories=['Business','Technology','Medical','Photography','Food','Education','Health','Security','Corporate','Music','Gaming','Nature','Travel','Real Estate','Fashion','Pets','Luxury'];
+  const fonts=['Arial','Georgia','Verdana','Trebuchet MS','Times New Roman','Impact'];
+  const loadTemplate=x=>{setTemplate(x.id);setIcon(x.icon);setBackground(x.bg);setPrimary(x.p);setSecondary(x.s);};
+  const uploadLogo=file=>{if(!file)return;if(!/^image\//i.test(file.type)){setStatus('Please upload an image file.');return;}const r=new FileReader();r.onload=()=>{setUploaded(String(r.result||''));setStatus('Image/logo uploaded successfully.');};r.readAsDataURL(file);};
   const draw=()=>{
-    const c=canvasRef.current;if(!c)return;
-    const d=900;c.width=d*2;c.height=d*2;const ctx=c.getContext("2d");ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,d,d);ctx.textAlign="center";ctx.textBaseline="middle";
-    ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=18;
-    if(shape==="circle"){ctx.beginPath();ctx.arc(450,300,170,0,Math.PI*2);ctx.stroke();}
-    else if(shape==="square"){drawRoundedRect(ctx,280,130,340,340,36);ctx.stroke();}
-    else if(shape==="badge"){ctx.beginPath();ctx.moveTo(450,100);ctx.lineTo(610,160);ctx.lineTo(610,390);ctx.lineTo(450,500);ctx.lineTo(290,390);ctx.lineTo(290,160);ctx.closePath();ctx.stroke();}
-    else{ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(300,180);ctx.lineTo(600,180);ctx.stroke();}
-    ctx.fillStyle=color;ctx.font="700 110px Arial";ctx.fillText(category.slice(0,1),450,300);
-    ctx.fillStyle=textColor;ctx.font=weight+" 62px "+font;ctx.fillText((brand||"YOUR BRAND").slice(0,20),450,610);
-    ctx.font="400 26px "+font;ctx.fillText((tag||"YOUR TAGLINE").slice(0,40),450,680);
-    ctx.globalAlpha=.65;ctx.font="600 18px "+font;ctx.fillText(category.toUpperCase()+" - TOOLMASTER PRO",450,740);ctx.globalAlpha=1;
+    const c=canvasRef.current;if(!c)return;const w=900,h=900,dpr=2;c.width=w*dpr;c.height=h*dpr;
+    const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);ctx.fillStyle=background;ctx.fillRect(0,0,w,h);
+    const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,primary);bg.addColorStop(1,secondary);ctx.globalAlpha=.1;ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);ctx.globalAlpha=1;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.strokeStyle=primary;ctx.lineWidth=7;ctx.beginPath();ctx.arc(450,350,190,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=.3;ctx.beginPath();ctx.arc(450,350,170,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
+    const drawText=()=>{ctx.fillStyle=textColor;ctx.font=weight+' 66px '+font;ctx.fillText(String(brand||'BRAND NAME').slice(0,22),450,610);ctx.fillStyle=secondary;ctx.font='400 28px '+font;ctx.fillText(String(tag||'TAGLINE HERE').slice(0,38),450,675);ctx.strokeStyle=primary;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(250,735);ctx.lineTo(650,735);ctx.stroke();ctx.fillStyle=secondary;ctx.font='600 18px '+font;ctx.fillText(String(category||'BUSINESS').toUpperCase(),450,775);};
+    if(uploaded){const im=new Image();im.onload=()=>{ctx.drawImage(im,360,205,180,180);drawText();};im.src=uploaded;}else{const g=ctx.createLinearGradient(370,220,530,410);g.addColorStop(0,primary);g.addColorStop(1,secondary);ctx.fillStyle=g;ctx.font='bold 150px '+font;ctx.fillText(icon,450,315);drawText();}
   };
-  useEffect(()=>{draw()},[brand,tag,category,shape,font,weight,color,textColor]);
-
-  return <Shell back={back} t={t}>
-    <div className="workspace">
-      <div className="panel">
-        <h3>Logo Maker</h3><p>Create a simple professional logo.</p>
-        <label>Brand / Name<input value={brand} onChange={e=>setBrand(e.target.value)} placeholder="ToolMaster Pro"/></label>
-        <label>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} placeholder="Smart tools for everyone"/></label>
-        <label>Category<select value={category} onChange={e=>setCategory(e.target.value)}>{logoCategories.map(x=><option key={x}>{x}</option>)}</select></label>
-        <label>Shape<select value={shape} onChange={e=>setShape(e.target.value)}>{logoPresets.map(x=><option key={x}>{x}</option>)}</select></label>
-        <label>Font<select value={font} onChange={e=>setFont(e.target.value)}><option>Arial</option><option>Georgia</option><option>Verdana</option><option>Trebuchet MS</option><option>Times New Roman</option></select></label>
-        <label>Font weight<select value={weight} onChange={e=>setWeight(e.target.value)}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label>
-        <div className="videoOptions"><label>Logo color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label><label>Text color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)}/></label></div>
-        <div className="actions"><button className="btn" onClick={()=>{setBrand("");setTag("");setCategory("Business");setShape("circle")}}>Reset</button><button className="btn primary" onClick={()=>downloadCanvas(canvasRef.current,"toolmaster-logo.png")}><Download size={15}/> Download PNG</button></div>
+  useEffect(()=>{draw();},[brand,tag,category,template,font,weight,primary,secondary,textColor,background,icon,uploaded]);
+  const download=()=>{const c=canvasRef.current;if(!c)return;const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='toolmaster-pro-logo.png';a.click();setStatus('High quality PNG downloaded.');};
+  return <Shell back={back} t={t} status={status}>
+    <div style={{background:'#070b16',borderRadius:22,padding:18,color:'#eef2ff'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,marginBottom:16,flexWrap:'wrap'}}><div><div style={{fontSize:12,color:'#9b8cff',fontWeight:800}}>TOOLMASTER PRO</div><h2 style={{margin:'4px 0',fontSize:30}}>Advanced Logo Maker ✨</h2><div style={{color:'#8d99ad'}}>Templates, icons, uploads, typography, colors, effects and high quality export.</div></div><div style={{display:'flex',gap:8}}><button className="btn" onClick={()=>{setBrand('BRAND NAME');setTag('TAGLINE HERE');setUploaded(null);setStatus('Editor reset.')}}>↶ Reset</button><button className="btn primary" onClick={download}><Download size={15}/> Download</button></div></div>
+      <div style={{display:'grid',gridTemplateColumns:'300px minmax(360px,1fr) 330px',gap:14}}>
+        <aside style={{background:'#0d1322',border:'1px solid #202944',borderRadius:18,padding:14}}>
+          <div style={{display:'flex',gap:6,marginBottom:12}}>{['Templates','Icons','Uploads'].map(x=><button key={x} onClick={()=>setLeftTab(x)} style={{flex:1,padding:'9px 5px',borderRadius:9,border:'1px solid #29324c',background:leftTab===x?'#6d4aff':'#11182a',color:'#fff',fontWeight:800,fontSize:11}}>{x}</button>)}</div>
+          {leftTab==='Templates'&&<><input placeholder="Search templates..." style={{width:'100%',boxSizing:'border-box',padding:11,borderRadius:10,border:'1px solid #29324c',background:'#080d18',color:'#fff',marginBottom:10}}/><div style={{display:'flex',gap:5,flexWrap:'wrap',marginBottom:12}}>{categories.slice(0,8).map(x=><button key={x} onClick={()=>setCategory(x)} style={{border:'1px solid #29324c',borderRadius:20,padding:'6px 8px',background:'#11182a',color:'#cbd5e1',fontSize:10}}>{x}</button>)}</div><div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>{templates.map(x=><button key={x.id} onClick={()=>loadTemplate(x)} style={{height:90,border:template===x.id?'2px solid #7c5cff':'1px solid #29324c',borderRadius:11,background:x.bg,color:'#fff',display:'grid',placeItems:'center',padding:5}}><span style={{fontSize:28,color:x.p}}>{x.icon}</span><small>{x.name}</small></button>)}</div></>}
+          {leftTab==='Icons'&&<div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>{icons.map(x=><button key={x} onClick={()=>{setIcon(x);setUploaded(null)}} style={{height:58,border:'1px solid #29324c',borderRadius:10,background:'#11182a',color:primary,fontSize:25}}>{x}</button>)}</div>}
+          {leftTab==='Uploads'&&<><div onClick={()=>uploadRef.current?.click()} style={{border:'1px dashed #705cff',borderRadius:13,padding:22,textAlign:'center',cursor:'pointer',background:'#10152b'}}><div style={{fontSize:30}}>☁</div><b>Upload Image / Logo</b><div style={{fontSize:11,color:'#8d99ad',marginTop:5}}>Click to upload or drag & drop<br/>PNG, JPG, WEBP, SVG • Max 10MB</div><input ref={uploadRef} type="file" accept="image/*" style={{display:'none'}} onChange={e=>uploadLogo(e.target.files?.[0])}/></div>{uploaded&&<div style={{marginTop:12}}><img src={uploaded} alt="Uploaded logo" style={{width:'100%',height:110,objectFit:'contain',background:'#070b16',borderRadius:8}}/><button className="btn" style={{width:'100%',marginTop:8}} onClick={()=>setUploaded(null)}>Remove Upload</button></div>}</>}
+        </aside>
+        <section style={{background:'#0d1322',border:'1px solid #202944',borderRadius:18,padding:14}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12,flexWrap:'wrap',gap:8}}><b>Canvas</b><div style={{display:'flex',gap:5}}>{['1:1','16:9','4:3','3:4','Custom'].map(x=><button key={x} className="btn" style={{padding:'7px 10px',fontSize:11}}>{x}</button>)}</div></div><div style={{display:'grid',placeItems:'center',background:'#060a12',borderRadius:14,minHeight:620,padding:18,overflow:'auto'}}><canvas ref={canvasRef} style={{width:Math.round(520*zoom/100),height:Math.round(520*zoom/100),maxWidth:'100%',objectFit:'contain',borderRadius:10}}/></div><div style={{display:'flex',justifyContent:'center',gap:10,marginTop:12,alignItems:'center'}}><button className="btn" onClick={()=>setZoom(Math.max(60,zoom-10))}>−</button><span>{zoom}%</span><button className="btn" onClick={()=>setZoom(Math.min(140,zoom+10))}>+</button><button className="btn" onClick={()=>setZoom(100)}>Fit</button></div><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginTop:12}}>{[['◌','AI Enhance'],['✣','AI Background'],['▣','Mockup'],['◒','Shadows']].map(x=><button key={x[1]} className="btn" onClick={()=>setStatus(x[1]+' is available in the advanced editor.')}>{x[0]} {x[1]}</button>)}</div></section>
+        <aside style={{background:'#0d1322',border:'1px solid #202944',borderRadius:18,padding:14}}><div style={{display:'flex',gap:4,borderBottom:'1px solid #202944',paddingBottom:8,marginBottom:12}}>{['Design','Text','Effects','Layers'].map(x=><button key={x} onClick={()=>setRightTab(x)} style={{border:0,background:'transparent',color:rightTab===x?'#a996ff':'#aab4c8',fontWeight:800,padding:8}}>{x}</button>)}</div>{rightTab==='Layers'&&<div>{['Icon / Logo','Brand Name','Tagline','Frame'].map((x,i)=><div key={x} style={{padding:11,border:'1px solid #202944',borderRadius:10,background:'#11182a',marginBottom:7}}>{i===0?'♛': 'T'} &nbsp; {x} <span style={{float:'right'}}>◉ ⋮</span></div>)}</div>}{rightTab!=='Layers'&&<><h3 style={{margin:'5px 0 12px'}}>{rightTab==='Text'?'Typography & Text':rightTab==='Effects'?'Effects & Appearance':'Logo Design'}</h3><label style={{display:'block',marginTop:8}}>Brand Name<input value={brand} onChange={e=>setBrand(e.target.value)} style={{width:'100%',boxSizing:'border-box',padding:10,marginTop:5,borderRadius:9,border:'1px solid #29324c',background:'#080d18',color:'#fff'}}/></label><label style={{display:'block',marginTop:8}}>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} style={{width:'100%',boxSizing:'border-box',padding:10,marginTop:5,borderRadius:9,border:'1px solid #29324c',background:'#080d18',color:'#fff'}}/></label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:10}}><label>Primary<input type="color" value={primary} onChange={e=>setPrimary(e.target.value)} style={{width:'100%',height:38}}/></label><label>Secondary<input type="color" value={secondary} onChange={e=>setSecondary(e.target.value)} style={{width:'100%',height:38}}/></label></div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:10}}><label>Font<select value={font} onChange={e=>setFont(e.target.value)} style={{width:'100%',padding:9}}>{fonts.map(x=><option key={x}>{x}</option>)}</select></label><label>Weight<select value={weight} onChange={e=>setWeight(e.target.value)} style={{width:'100%',padding:9}}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label></div><label style={{display:'block',marginTop:10}}>Background<input type="color" value={background} onChange={e=>setBackground(e.target.value)} style={{width:'100%',height:38}}/></label><div style={{marginTop:12}}><b>Logo Category</b><select value={category} onChange={e=>setCategory(e.target.value)} style={{width:'100%',padding:9,marginTop:5}}>{categories.map(x=><option key={x}>{x}</option>)}</select></div></>}</aside>
       </div>
-      <div className="panel"><h3>Live Preview</h3><div style={{display:"grid",placeItems:"center",minHeight:420,background:"#f8fafc",borderRadius:16}}><canvas ref={canvasRef} style={{maxWidth:"100%",height:"auto"}}/></div></div>
     </div>
   </Shell>;
 }
