@@ -15,17 +15,14 @@ import {
 /* ============================================================
    ToolMaster Pro — single-file production-minded frontend
    Required Vercel environment variables:
-   VITE_SUPABASE_URL
+   VITE_import.meta.env.VITE_SUPABASE_URL
    VITE_SUPABASE_ANON_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY)
    Optional:
    VITE_API_BASE_URL or VITE_SUPABASE_FUNCTION_URL
    ============================================================ */
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
-const SUPABASE_KEY =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  "";
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
 const supabase = SUPABASE_URL && SUPABASE_KEY ? createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 const tools = [
@@ -434,7 +431,7 @@ function AuthModal({mode,setMode,close,onDone}) {
   const submit=async(e)=>{
     e.preventDefault(); setError(""); setMsg(""); setBusy(true);
     try{
-      if(!supabase) throw new Error("Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.");
+      if(!supabase) throw new Error("Supabase is not configured. Add VITE_import.meta.env.VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.");
       if(mode==="signup"){
         if(!fullName.trim()||!username.trim()) throw new Error("Full name and username are required.");
         if(password.length<6) throw new Error("Password must be at least 6 characters.");
@@ -499,7 +496,7 @@ function StudentAIHelper({back,user}) {
   const [answer,setAnswer]=useState("");
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState("");
-  const endpoint = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/student-ai-helper` : "");
+  const endpoint = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL || (import.meta.env.VITE_SUPABASE_URL ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/student-ai-helper` : "");
   const solve=async()=>{
     if(!question.trim() && !files.length){setStatus("Enter a question or upload a study file.");return;}
     if(!endpoint){setStatus("AI backend is not configured. Your question is ready, but no secure AI function is connected.");return;}
@@ -508,7 +505,7 @@ function StudentAIHelper({back,user}) {
       const fd=new FormData();
       fd.append("question",question.trim());
       files.forEach(f=>fd.append("files",f));
-      const headers={...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),...(user?.access_token?{Authorization:`Bearer ${user.access_token}`}:{})};
+      const headers={...(import.meta.env.VITE_SUPABASE_ANON_KEY?{apikey:import.meta.env.VITE_SUPABASE_ANON_KEY}:{}),...(user?.access_token?{Authorization:`Bearer ${user.access_token}`}:{})};
       const r=await fetch(endpoint,{method:"POST",headers,body:fd});
       const data=await r.json().catch(()=>({}));
       if(!r.ok) throw new Error(data.error||data.message||`AI backend error (${r.status})`);
@@ -713,7 +710,7 @@ function AuthModal({mode,setMode,close,onDone}) {
   const submit=async(e)=>{
     e.preventDefault(); setError(""); setMsg(""); setBusy(true);
     try{
-      if(!supabase) throw new Error("Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.");
+      if(!supabase) throw new Error("Supabase is not configured. Add VITE_import.meta.env.VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.");
       if(mode==="signup"){
         if(!fullName.trim()||!username.trim()) throw new Error("Full name and username are required.");
         if(password.length<6) throw new Error("Password must be at least 6 characters.");
@@ -799,7 +796,7 @@ function StudentAIHelper({back,user,openAuth}) {
   const [model,setModel]=useState("gpt-5.6-luna");
   const [selectedPlan,setSelectedPlan]=useState("free");
   const endpoint = import.meta.env.VITE_STUDENT_AI_FUNCTION_URL ||
-    (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/student-ai-helper` : "");
+    (import.meta.env.VITE_SUPABASE_URL ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/student-ai-helper` : "");
 
   const solve=async()=>{
     if(!question.trim() && !files.length){setStatus("Enter a question or upload study material.");return;}
@@ -818,7 +815,7 @@ function StudentAIHelper({back,user,openAuth}) {
       fd.append("level",level);
       files.forEach(f=>fd.append("files",f,f.name));
       const headers={
-        ...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),
+        ...(import.meta.env.VITE_SUPABASE_ANON_KEY?{apikey:import.meta.env.VITE_SUPABASE_ANON_KEY}:{}),
         Authorization:`Bearer ${token}`
       };
       const r=await fetch(endpoint,{method:"POST",headers,body:fd});
@@ -953,13 +950,13 @@ function TextToVideo({back,user,openAuth}) {
   const [progress,setProgress]=useState(0);
   const [selectedPlan,setSelectedPlan]=useState("video-free");
 
-  const getBackend=()=>import.meta.env.VITE_VIDEO_FUNCTION_URL || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/video-generator` : "");
+  const getBackend=()=>import.meta.env.VITE_VIDEO_FUNCTION_URL || (import.meta.env.VITE_SUPABASE_URL ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/video-generator` : "");
 
   const authHeaders=async()=>{
     const token=await getSupabaseAccessToken();
     return {
       "Content-Type":"application/json",
-      ...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),
+      ...(import.meta.env.VITE_SUPABASE_ANON_KEY?{apikey:import.meta.env.VITE_SUPABASE_ANON_KEY}:{}),
       ...(token?{Authorization:`Bearer ${token}`}:{})
     };
   };
@@ -1348,7 +1345,7 @@ function PdfEditorTool({t,back}) {
 async function convertWithSecureBackend(file, target) {
   if (!file) throw new Error("Please choose a file first.");
   const configured = import.meta.env.VITE_DOCUMENT_CONVERTER_URL || "";
-  const base = configured || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/document-converter` : "");
+  const base = configured || (import.meta.env.VITE_SUPABASE_URL ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/document-converter` : "");
   if (!base) {
     throw new Error("Document converter backend is not configured. Add VITE_DOCUMENT_CONVERTER_URL or deploy the document-converter Supabase Edge Function.");
   }
@@ -1358,7 +1355,7 @@ async function convertWithSecureBackend(file, target) {
   form.append("output_format", target);
 
   const headers = {};
-  if (SUPABASE_KEY) headers.apikey = SUPABASE_KEY;
+  if (import.meta.env.VITE_SUPABASE_ANON_KEY) headers.apikey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
   const response = await fetch(base, { method: "POST", headers, body: form });
   const contentType = response.headers.get("content-type") || "";
