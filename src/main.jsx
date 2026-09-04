@@ -509,7 +509,7 @@ function StudentAIHelper({back,user}) {
       const headers = {}; if (import.meta.env.VITE_SUPABASE_ANON_KEY) headers.apikey = import.meta.env.VITE_SUPABASE_ANON_KEY; if (user && user.access_token) headers.Authorization = "Bearer " + user.access_token;
       const r=await fetch(endpoint,{method:"POST",headers,body:fd});
       const data=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(data.error||data.message||`AI backend error (${r.status})`);
+      if(!r.ok) throw new Error(data.error||data.message||"AI backend error (" + r.status + ")");
       setAnswer(data.answer||data.message||"No answer returned.");
       setStatus("AI response received.");
     }catch(e){setStatus(e?.message||"AI request failed.");}
