@@ -576,6 +576,392 @@ const logoPresets=[
 ];
 
 function LogoMaker({back,t}){
+  const [brand,setBrand]=useState("");
+  const [tag,setTag]=useState("");
+  const [category,setCategory]=useState("Business");
+  const [shape,setShape]=useState("circle");
+  const [font,setFont]=useState("Arial");
+  const [weight,setWeight]=useState("700");
+  const [color,setColor]=useState("#6d4aff");
+  const [textColor,setTextColor]=useState("#172033");
+  const [size,setSize]=useState(900);
+  const canvasRef=useRef(null);
+
+  const draw=()=>{
+    const c=canvasRef.current;
+    if(!c)return;
+    const d=900;
+    c.width=d*2;
+    c.height=d*2;
+    const ctx=c.getContext("2d");
+    ctx.scale(2,2);
+    ctx.clearRect(0,0,d,d);
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+    const cx=450,cy=390;
+    ctx.fillStyle=color;
+    ctx.strokeStyle=color;
+    ctx.lineWidth=18;
+
+    if(shape==="circle"){
+      ctx.beginPath();
+      ctx.arc(cx,cy-20,185,0,Math.PI*2);
+      ctx.stroke();
+    }else if(shape==="square"){
+      drawRoundedRect(ctx,265,190,370,370,38);
+      ctx.stroke();
+    }else if(shape==="badge"){
+      ctx.beginPath();
+      ctx.moveTo(450,160);
+      ctx.lineTo(610,215);
+      ctx.lineTo(610,415);
+      ctx.lineTo(450,520);
+      ctx.lineTo(290,415);
+      ctx.lineTo(290,215);
+      ctx.closePath();
+      ctx.stroke();
+    }else{
+      ctx.lineWidth=8;
+      ctx.beginPath();
+      ctx.moveTo(300,180);
+      ctx.lineTo(600,180);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle=color;
+    ctx.font="700 112px Arial";
+    ctx.fillText(category.slice(0,1),450,370);
+    ctx.fillStyle=textColor;
+    ctx.font=weight+" 70px "+font;
+    ctx.fillText((brand||"YOUR BRAND").slice(0,18),450,650);
+    ctx.font="400 26px "+font;
+    ctx.fillStyle="#667085";
+    ctx.fillText((tag||"Your tagline").slice(0,36),450,705);
+  };
+
+  useEffect(()=>{draw()},[brand,tag,category,shape,font,weight,color,textColor]);
+
+  const download=()=>{
+    const c=canvasRef.current;
+    if(!c)return;
+    const a=document.createElement("a");
+    a.href=c.toDataURL("image/png");
+    a.download="toolmaster-logo-"+(brand||"logo").replace(/\s+/g,"-").toLowerCase()+".png";
+    a.click();
+  };
+
+  return <Shell back={back} t={t}>
+    <div className="designPage">
+      <div className="designHeader">
+        <div><button className="backBtn" onClick={back}><ArrowLeft size={17}/> Back</button><h1>Logo Maker</h1><p>Create a professional logo instantly.</p></div>
+      </div>
+      <div className="designBody">
+        <aside className="designLeft">
+          <div className="designSection"><h4>Category</h4>
+            <select value={category} onChange={e=>setCategory(e.target.value)}>
+              {logoCategories.map(x=><option key={x[0]} value={x[0]}>{x[0]}</option>)}
+            </select>
+          </div>
+          <div className="designSection"><h4>Shape</h4>
+            <div className="chipGrid">{logoPresets.map(x=><button key={x.id} className={shape===x.shape?"styleChip active":"styleChip"} onClick={()=>setShape(x.shape)}>{x.name}</button>)}</div>
+          </div>
+        </aside>
+        <section className="designCanvas">
+          <div className="canvasGrid"><canvas ref={canvasRef}/></div>
+          <div className="canvasActions"><button className="iconBtn" onClick={draw}><RefreshCw size={17}/></button><button className="iconBtn" onClick={download}><Download size={17}/></button></div>
+        </section>
+        <aside className="designRight">
+          <h3>Logo details</h3>
+          <p>Enter your brand details and the logo updates instantly.</p>
+          <label>Brand name<input value={brand} onChange={e=>setBrand(e.target.value)} placeholder="ToolMaster Pro"/></label>
+          <label>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} placeholder="Smart tools for everyone"/></label>
+          <label>Font<select value={font} onChange={e=>setFont(e.target.value)}><option>Arial</option><option>Georgia</option><option>Verdana</option><option>Trebuchet MS</option><option>Times New Roman</option></select></label>
+          <label>Weight<select value={weight} onChange={e=>setWeight(e.target.value)}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label>
+          <div className="controlGrid">
+            <label>Logo color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label>
+            <label>Text color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)}/></label>
+          </div>
+          <label>Output size<select value={size} onChange={e=>setSize(+e.target.value)}><option value="700">700 px</option><option value="900">900 px</option><option value="1200">1200 px</option><option value="1600">1600 px</option></select></label>
+          <button className="btn primary full" onClick={download}><Download size={16}/> Download Logo PNG</button>
+        </aside>
+      </div>
+    </div>
+  </Shell>;
+}
+
+function GlobalStyle() { return <style>{css}</style>; }
+
+function App() {
+  const [cat,setCat]=useState("All Tools");
+  const [query,setQuery]=useState("");
+  const [tool,setTool]=useState(null);
+  const [authOpen,setAuthOpen]=useState(false);
+  const [authMode,setAuthMode]=useState("signin");
+  const [user,setUser]=useState(null);
+  const [profile,setProfile]=useState(null);
+  const [admin,setAdmin]=useState(false);
+  const [mobile,setMobile]=useState(false);
+  const [dark,setDark]=useState(false);
+  const [profileOpen,setProfileOpen]=useState(false);
+  const [favorites,setFavorites]=useState([]);
+  const [history,setHistory]=useState([]);
+
+  const filtered = useMemo(() => tools.filter(t =>
+    (cat==="All Tools" || t[1]===cat) &&
+    (t[0].toLowerCase().includes(query.toLowerCase()) || t[2].toLowerCase().includes(query.toLowerCase()))
+  ), [cat,query]);
+
+  useEffect(() => {
+    const savedFav = JSON.parse(localStorage.getItem("tm_favorites") || "[]");
+    const savedHist = JSON.parse(localStorage.getItem("tm_history") || "[]");
+    setFavorites(savedFav); setHistory(savedHist);
+  }, []);
+
+  useEffect(() => {
+    if (!supabase) return;
+    let mounted = true;
+    supabase.auth.getSession().then(async ({data}) => {
+      if (!mounted) return;
+      const u=data.session?.user || null; setUser(u);
+      if(u) loadProfile(u);
+    });
+    const {data: sub} = supabase.auth.onAuthStateChange((_event, session) => {
+      const u=session?.user || null; setUser(u);
+      if(u) loadProfile(u); else setProfile(null);
+    });
+    return () => { mounted=false; sub.subscription.unsubscribe(); };
+  }, []);
+
+  const loadProfile = async (u) => {
+    if (!supabase || !u) return;
+    const {data} = await supabase.from("profiles").select("*").eq("id",u.id).maybeSingle();
+    setProfile(data || {id:u.id, email:u.email, full_name:u.user_metadata?.full_name || "", username:u.user_metadata?.username || ""});
+  };
+
+  const isAdmin = !!(profile?.role === "admin" || user?.app_metadata?.role === "admin" || user?.user_metadata?.role === "admin");
+
+  const openTool = (t) => {
+    setTool(t); setAdmin(false);
+    const next=[t[3],...history.filter(x=>x!==t[3])].slice(0,10);
+    setHistory(next); localStorage.setItem("tm_history",JSON.stringify(next));
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+
+  const toggleFav = (slug) => {
+    const next=favorites.includes(slug)?favorites.filter(x=>x!==slug):[...favorites,slug];
+    setFavorites(next); localStorage.setItem("tm_favorites",JSON.stringify(next));
+  };
+
+  const signOut = async () => {
+    if(supabase) await supabase.auth.signOut();
+    setUser(null); setProfile(null); setAdmin(false); setProfileOpen(false);
+  };
+
+  return <div className="app">
+    <GlobalStyle/>
+    <header className="header"><div className="container nav">
+      <div className="brand"><div className="brandIcon"><Wrench size={21}/></div><span>ToolMaster<span>Pro</span></span></div>
+      <nav className="navLinks">
+        <a href="#tools">Tools</a><a href="#categories">Categories</a><a href="#about">About</a>
+      </nav>
+      <div className="navActions">
+        <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
+        <button className="iconBtn" onClick={()=>setDark(!dark)} title="Theme">{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
+        {isAdmin && <button className="btn" onClick={()=>{setAdmin(!admin);setTool(null)}}><LayoutDashboard size={16}/><span>{admin?"Website":"Admin"}</span></button>}
+        {user ? <div className="profileMenu">
+          <button className="iconBtn" onClick={()=>setProfileOpen(!profileOpen)}><User size={17}/></button>
+          {profileOpen && <div className="profileCard">
+            <b>{profile?.full_name || user.email}</b><small>{profile?.username ? "@"+profile.username+" · " : ""}{user.email}</small>
+            <button className="btn" style={{width:"100%",justifyContent:"center"}} onClick={signOut}><LogOut size={15}/> Sign out</button>
+          </div>}
+        </div> : <><button className="btn" onClick={()=>{setAuthMode("signin");setAuthOpen(true)}}><LogIn size={16}/><span>Sign in</span></button><button className="btn primary" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}><UserPlus size={16}/><span>Sign up</span></button></>}
+      </div>
+    </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
+
+    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user}/></ToolErrorBoundary> :
+      <>
+        <section className="hero"><div className="heroInner">
+          <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
+          <h1>One place for <span>every tool</span> you need.</h1>
+          <p>Fast, modern and privacy-friendly tools for PDF, images, SEO, text, developers, calculators, conversion and AI.</p>
+          <div className="searchBox"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search 100+ tools..."/><div className="kbd">Ctrl K</div></div>
+          <div className="stats"><div><b>{tools.length}+</b><small>Tools</small></div><div><b>13</b><small>Categories</small></div><div><b>{user?"Signed in":"Open"}</b><small>Access</small></div></div>
+        </div></section>
+        <main className="main container" id="tools">
+          <section id="categories"><div className="toolbar">
+            {categories.map(([name,count])=><button className={cat===name?"cat active":"cat"} onClick={()=>setCat(name)} key={name}>{iconForCategory(name)}<span>{name}</span><em>{count}</em></button>)}
+          </div></section>
+          <div className="sectionHead"><div><h2>{cat}</h2><p>{filtered.length} tools available</p></div></div>
+          <div className="grid">{filtered.map(t=><ToolCard key={t[3]} t={t} open={()=>openTool(t)} favorite={favorites.includes(t[3])} onFav={()=>toggleFav(t[3])}/>)}</div>
+          {!filtered.length&&<div className="empty">No tools found. Try another search.</div>}
+        </main>
+      </>
+    }
+    <footer className="footer" id="about"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
+    {authOpen && <AuthModal mode={authMode} setMode={setAuthMode} close={()=>setAuthOpen(false)} onDone={()=>setAuthOpen(false)}/>}
+  </div>;
+}
+
+function ToolCard({t,open,favorite,onFav}) {
+  return <article className="card" onClick={open}>
+    <button className="iconBtn" style={{position:"absolute",top:14,right:14,zIndex:2}} onClick={(e)=>{e.stopPropagation();onFav()}}>{favorite?<Heart size={15} fill="currentColor"/>:<Heart size={15}/>}</button>
+    <div className="toolIcon">{iconForCategory(t[1])}</div><div className="cardBody"><span>{t[1]}</span><h3>{t[0]}</h3><p>{t[2]}</p></div><ArrowRight className="arrow" size={17}/>
+  </article>;
+}
+
+function AuthModal({mode,setMode,close,onDone}) {
+  const [fullName,setFullName]=useState(""); const [username,setUsername]=useState("");
+  const [email,setEmail]=useState(""); const [password,setPassword]=useState(""); const [confirm,setConfirm]=useState("");
+  const [busy,setBusy]=useState(false); const [msg,setMsg]=useState(""); const [error,setError]=useState("");
+
+  const submit=async(e)=>{
+    e.preventDefault(); setError(""); setMsg(""); setBusy(true);
+    try{
+      if(!supabase) throw new Error("Supabase is not configured. Add VITE_import.meta.env.VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.");
+      if(mode==="signup"){
+        if(!fullName.trim()||!username.trim()) throw new Error("Full name and username are required.");
+        if(password.length<6) throw new Error("Password must be at least 6 characters.");
+        if(password!==confirm) throw new Error("Passwords do not match.");
+        const {data,error}=await supabase.auth.signUp({email:email.trim(),password,options:{data:{full_name:fullName.trim(),username:username.trim()}}});
+        if(error) throw error;
+        if(data.session){ setMsg("Account created and signed in."); onDone(); }
+        else setMsg("Account created. Check your email to confirm your account, then sign in.");
+      } else {
+        const {error}=await supabase.auth.signInWithPassword({email:email.trim(),password});
+        if(error) throw error;
+        setMsg("Signed in successfully."); onDone();
+      }
+    }catch(e){setError(e.message || "Authentication failed.");}finally{setBusy(false);}
+  };
+
+  const forgot=async()=>{
+    setError("");setMsg("");
+    if(!supabase) return setError("Supabase is not configured.");
+    if(!email.trim()) return setError("Enter your email first.");
+    setBusy(true);
+    try{
+      const redirect=window.location.origin;
+      const {error}=await supabase.auth.resetPasswordForEmail(email.trim(),{redirectTo:redirect});
+      if(error) throw error;
+      setMsg("Password reset email sent. Check your inbox.");
+    }catch(e){setError(e.message)}finally{setBusy(false)}
+  };
+
+  return <div className="modalBack" onMouseDown={close}><div className="modal" onMouseDown={e=>e.stopPropagation()}>
+    <div className="modalHead"><div><div className="pill"><LockKeyhole size={13}/> Secure Auth</div><h2>{mode==="signup"?"Create your account":"Welcome back"}</h2></div><button className="iconBtn" onClick={close}><X size={17}/></button></div>
+    <div className="authTabs"><button className={mode==="signin"?"active":""} onClick={()=>{setMode("signin");setError("");setMsg("")}}>Sign in</button><button className={mode==="signup"?"active":""} onClick={()=>{setMode("signup");setError("");setMsg("")}}>Sign up</button></div>
+    <form onSubmit={submit}>
+      {mode==="signup"&&<div className="formGrid"><div className="field"><label>Full name</label><input value={fullName} onChange={e=>setFullName(e.target.value)} required/></div><div className="field"><label>Username</label><input value={username} onChange={e=>setUsername(e.target.value)} required/></div></div>}
+      <div className="field"><label>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></div>
+      <div className="field"><label>Password</label><input type="password" value={password} onChange={e=>setPassword(e.target.value)} required/></div>
+      {mode==="signup"&&<div className="field"><label>Confirm password</label><input type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} required/></div>}
+      {error&&<div className="formError"><AlertCircle size={15}/> {error}</div>}{msg&&<div className="formSuccess"><Check size={15}/> {msg}</div>}
+      <button className="btn primary" disabled={busy} style={{width:"100%",justifyContent:"center",marginTop:7}}>{busy?<RefreshCw className="spin"/>:mode==="signup"?<UserPlus size={16}/>:<LogIn size={16}/>} {busy?"Please wait...":mode==="signup"?"Create account":"Sign in"}</button>
+    </form>
+    {mode==="signin"&&<button className="btn ghost" onClick={forgot} disabled={busy} style={{width:"100%",justifyContent:"center",marginTop:10}}><KeyRound size={15}/> Forgot password</button>}
+  </div></div>
+}
+
+
+function FilePicker({multiple=false,accept,onChange,files=[]}) {
+  const inputRef = useRef(null);
+  return <label className="uploadBox" onClick={e=>{ if(e.target===inputRef.current) return; }}>
+    <Upload size={20}/>
+    <div style={{flex:1}}>
+      <b>{multiple ? "Upload files" : "Upload file"}</b>
+      <small style={{display:"block",marginTop:4}}>{accept || "Supported files"}</small>
+      {files.length>0 && <strong>{files.map(f=>f.name).join(", ")}</strong>}
+    </div>
+    <input ref={inputRef} type="file" multiple={multiple} accept={accept} onChange={e=>onChange(Array.from(e.target.files||[]))}/>
+  </label>;
+}
+
+function StudentAIHelper({back,user}) {
+  const [question,setQuestion]=useState("");
+  const [files,setFiles]=useState([]);
+  const [answer,setAnswer]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const supabaseFunctionBase = import.meta.env.VITE_SUPABASE_URL || "";
+  const endpoint = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL || (supabaseFunctionBase ? supabaseFunctionBase + "/functions/v1/student-ai-helper" : "");
+  const solve=async()=>{
+    if(!question.trim() && !files.length){setStatus("Enter a question or upload a study file.");return;}
+    if(!endpoint){setStatus("AI backend is not configured. Your question is ready, but no secure AI function is connected.");return;}
+    setBusy(true);setStatus("Processing...");setAnswer("");
+    try{
+      const fd=new FormData();
+      fd.append("question",question.trim());
+      files.forEach(f=>fd.append("files",f));
+      const headers = {}; if (import.meta.env.VITE_SUPABASE_ANON_KEY) headers.apikey = import.meta.env.VITE_SUPABASE_ANON_KEY; if (user && user.access_token) headers.Authorization = "Bearer " + user.access_token;
+      const r=await fetch(endpoint,{method:"POST",headers,body:fd});
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(data.error||data.message||"AI backend error (" + r.status + ")");
+      setAnswer(data.answer||data.message||"No answer returned.");
+      setStatus("AI response received.");
+    }catch(e){setStatus(e?.message||"AI request failed.");}
+    finally{setBusy(false);}
+  };
+  return <Shell back={back} t={["Student AI Helper","AI & Education","Ask questions or upload study material for step-by-step help.",""]} status={status}>
+    <div className="aiHelper">
+      <div className="aiCard">
+        <h3>📚 Ask your question</h3>
+        {!user && <div className="formError"><AlertCircle size={15}/> Sign in for your account-backed AI usage.</div>}
+        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question or explain what you need help with..."/>
+        <FilePicker multiple accept=".pdf,image/*,.txt,.doc,.docx" onChange={setFiles} files={files}/>
+        <div className="actions">
+          <button className="btn primary" disabled={busy} onClick={solve}><Sparkles size={16}/>{busy?"Processing...":"Get AI Help"}</button>
+          {files.length>0&&<button className="btn" onClick={()=>setFiles([])}><Trash2 size={15}/>Clear files</button>}
+        </div>
+      </div>
+      <div className="aiCard">
+        <h3>🤖 AI Answer</h3>
+        <div className="answer">{answer||"Your step-by-step answer will appear here."}</div>
+        {answer&&<div className="actions"><button className="btn" onClick={()=>navigator.clipboard?.writeText(answer)}><Copy size={15}/>Copy</button><button className="btn" onClick={()=>downloadText(answer,"student-ai-answer.txt")}><Download size={15}/>Download</button></div>}
+      </div>
+    </div>
+  </Shell>;
+}
+
+
+function downloadCanvas(canvas,name){const a=document.createElement("a");a.href=canvas.toDataURL("image/png");a.download=name;a.click()}
+function drawRoundedRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+
+const stampStyles=[
+  {id:"round",name:"Round Seal",icon:"◉"},{id:"square",name:"Classic",icon:"▣"},{id:"badge",name:"Badge",icon:"⬢"},{id:"minimal",name:"Minimal",icon:"□"}
+];
+
+function StampGenerator({back,t}){
+  const [name,setName]=useState(""); const [title,setTitle]=useState(""); const [org,setOrg]=useState(""); const [extra,setExtra]=useState("");
+  const [style,setStyle]=useState("round"); const [color,setColor]=useState("#e53935"); const [size,setSize]=useState(900); const [opacity,setOpacity]=useState(100); const [logo,setLogo]=useState(""); const canvasRef=useRef(null);
+  const draw=()=>{const c=canvasRef.current;if(!c)return;const dpr=2,w=900,h=700;c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);ctx.globalAlpha=opacity/100;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=9;ctx.textAlign="center";ctx.textBaseline="middle";const n=name||"YOUR NAME", tl=title||"DESIGNATION", og=org||"YOUR ORGANIZATION", ex=extra||"APPROVED";
+    if(style==="round"){ctx.beginPath();ctx.arc(450,350,260,0,Math.PI*2);ctx.stroke();ctx.lineWidth=3;ctx.beginPath();ctx.arc(450,350,232,0,Math.PI*2);ctx.stroke();ctx.font="700 27px Arial";ctx.fillText(og.toUpperCase(),450,150);ctx.font="800 52px Arial";ctx.fillText(n.toUpperCase(),450,310);ctx.font="700 28px Arial";ctx.fillText(tl.toUpperCase(),450,375);ctx.font="600 22px Arial";ctx.fillText(ex.toUpperCase(),450,445);ctx.font="700 18px Arial";ctx.fillText("✦  TOOLMASTER PRO  ✦",450,520);}
+    else if(style==="square"){drawRoundedRect(ctx,125,105,650,490,30);ctx.stroke();ctx.lineWidth=3;drawRoundedRect(ctx,145,125,610,450,20);ctx.stroke();ctx.font="800 34px Arial";ctx.fillText(n.toUpperCase(),450,255);ctx.font="700 24px Arial";ctx.fillText(tl.toUpperCase(),450,315);ctx.font="700 28px Arial";ctx.fillText(og.toUpperCase(),450,395);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,465);}
+    else if(style==="badge"){ctx.beginPath();ctx.moveTo(450,80);ctx.lineTo(700,165);ctx.lineTo(700,455);ctx.lineTo(450,620);ctx.lineTo(200,455);ctx.lineTo(200,165);ctx.closePath();ctx.stroke();ctx.font="800 34px Arial";ctx.fillText(og.toUpperCase(),450,225);ctx.font="800 47px Arial";ctx.fillText(n.toUpperCase(),450,320);ctx.font="700 25px Arial";ctx.fillText(tl.toUpperCase(),450,385);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,450);}
+    else {ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(170,180);ctx.lineTo(730,180);ctx.moveTo(170,520);ctx.lineTo(730,520);ctx.stroke();ctx.font="800 48px Arial";ctx.fillText(n,450,280);ctx.font="700 26px Arial";ctx.fillText(tl,450,350);ctx.font="600 22px Arial";ctx.fillText(og,450,410);ctx.font="600 20px Arial";ctx.fillText(ex,450,465);}
+    ctx.globalAlpha=1;
+  };
+  useEffect(()=>{draw()},[name,title,org,extra,style,color,size,opacity]);
+  return <Shell back={back} t={t}>
+    <div className="designApp">
+      <div className="designTop"><button className="designBtn" onClick={()=>{setName("");setTitle("");setOrg("");setExtra("")}}>← Templates</button><div className="designModes"><span><Type size={17}/> Text around</span><span><Type size={17}/> Text in centre</span><span><Shapes size={17}/> Circle</span><span><ImageIcon size={17}/> Images</span></div><button className="designBtn primary" onClick={()=>setStyle("round")}>New stamp +</button></div>
+      <div className="designTabs"><b>Stamp Designer</b><span>Live preview & customization</span></div>
+      <div className="designBody">
+        <aside className="designLeft"><div className="designTabRow"><b>All</b><span>Text</span><span>Figure</span></div><div className="layerList"><div className="layer active"><span>0#</span> Frame</div><div className="layer"><span>1#</span> Main text</div><div className="layer"><span>2#</span> Details</div><div className="layer"><span>3#</span> Extra line</div></div><div className="designSection"><h4>Stamp style</h4>{stampStyles.map(x=><button key={x.id} className={style===x.id?"styleChip active":"styleChip"} onClick={()=>setStyle(x.id)}><b>{x.icon}</b>{x.name}</button>)}</div></aside>
+        <section className="designCanvas"><div className="canvasGrid"><canvas ref={canvasRef}/></div><div className="canvasActions"><button className="iconBtn"><Eye size={17}/></button><button className="iconBtn"><RefreshCw size={17}/></button><button className="iconBtn" onClick={()=>draw()}><Check size={17}/></button></div></section>
+        <aside className="designRight"><h3>Stamp details</h3><p>Write anything about yourself and the stamp updates instantly.</p><label>Name<input value={name} onChange={e=>setName(e.target.value)} placeholder="Muhammad Arshad"/></label><label>Designation<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Managing Director"/></label><label>Company / Organization<input value={org} onChange={e=>setOrg(e.target.value)} placeholder="ABC Enterprises"/></label><label>Extra text<input value={extra} onChange={e=>setExtra(e.target.value)} placeholder="Approved / Verified / Official"/></label><div className="controlGrid"><label>Color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label><label>Opacity <span>{opacity}%</span><input type="range" min="20" max="100" value={opacity} onChange={e=>setOpacity(+e.target.value)}/></label></div><label>Output size<select value={size} onChange={e=>setSize(+e.target.value)}><option value="700">700 px</option><option value="900">900 px</option><option value="1200">1200 px</option><option value="1600">1600 px</option></select></label><button className="btn primary full" onClick={()=>downloadCanvas(canvasRef.current,"toolmaster-stamp-" + (name||"stamp").replace(/\s+/g,"-").toLowerCase() + ".png")}><Download size={16}/> Download Stamp PNG</button></aside>
+      </div><div className="designFooter"><span>Transparent PNG • Browser-based • Instant preview</span><button className="btn" onClick={()=>{setName("");setTitle("");setOrg("");setExtra("");setStyle("round")}}>Reset</button></div>
+    </div>
+  </Shell>
+}
+
+const logoCategories=[
+  ["Business",Building2],["Medical",Stethoscope],["Photography",Camera],["Automotive",Car],["Food",Utensils],["Education",GraduationCap],["Health",HeartPulse],["Security",Shield],["Corporate",Briefcase],["Music",Music],["Gaming",Gamepad2],["Nature",Leaf],["Travel",Plane],["Real Estate",Home],["Fashion",ShoppingBag],["Pets",PawPrint],["Technology",Globe],["Luxury",Crown]
+];
+const logoPresets=[
+  {id:"circle",name:"Circle",shape:"circle"},{id:"square",name:"Square",shape:"square"},{id:"badge",name:"Badge",shape:"badge"},{id:"minimal",name:"Minimal",shape:"minimal"}
+];
+
+function LogoMaker({back,t}){
   const [brand,setBrand]=useState("");const [tag,setTag]=useState("");const [category,setCategory]=useState("Business");const [Icon,setIcon]=useState(Building2);const [shape,setShape]=useState("circle");const [font,setFont]=useState("Arial");const [weight,setWeight]=useState("700");const [color,setColor]=useState("#6d4aff");const [textColor,setTextColor]=useState("#172033");const [size,setSize]=useState(900);const canvasRef=useRef(null);
   useEffect(()=>{const hit=logoCategories.find(x=>x[0]===category);if(hit)setIcon(()=>hit[1])},[category]);
   const draw=()=>{const c=canvasRef.current;if(!c)return;const d=900;c.width=d*2;c.height=d*2;const ctx=c.getContext("2d");ctx.scale(2,2);ctx.clearRect(0,0,d,d);ctx.textAlign="center";ctx.textBaseline="middle";const cx=450,cy=390;ctx.fillStyle=color;ctx.strokeStyle=color;ctx.lineWidth=18;
