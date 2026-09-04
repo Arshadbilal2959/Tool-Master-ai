@@ -7,22 +7,23 @@ import {
   ArrowRight, ShieldCheck, Zap, Sparkles, Upload, Copy, Download, CheckCircle2,
   LockKeyhole, Settings, LayoutDashboard, Trash2, RefreshCw, Eye, Printer,
   LogIn, UserPlus, LogOut, Menu, X, Heart, History, User, Mail, KeyRound,
-  ChevronRight, Star, Moon, Sun, ExternalLink, AlertCircle, Check, CreditCard,
-  Type, Shapes, Building2, Stethoscope, Camera, Car, Utensils, GraduationCap,
-  HeartPulse, Briefcase, Music, Gamepad2, Leaf, ShoppingBag, PawPrint, Plane, Home, Crown
+  ChevronRight, Star, Moon, Sun, ExternalLink, AlertCircle, Check, CreditCard
 } from "lucide-react";
 
 /* ============================================================
    ToolMaster Pro — single-file production-minded frontend
    Required Vercel environment variables:
-   VITE_import.meta.env.VITE_SUPABASE_URL
+   VITE_SUPABASE_URL
    VITE_SUPABASE_ANON_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY)
    Optional:
    VITE_API_BASE_URL or VITE_SUPABASE_FUNCTION_URL
    ============================================================ */
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
+const SUPABASE_KEY =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  "";
 const supabase = SUPABASE_URL && SUPABASE_KEY ? createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 const tools = [
@@ -48,9 +49,6 @@ const tools = [
   ["Image Background Remover","Image Tools","Remove simple near-uniform backgrounds locally.","background-remover"],
   ["Image to Text","Image Tools","Extract text from an image with browser OCR.","image-text"],
   ["QR Code Generator","SEO & Marketing","Create custom QR codes from text or links.","qr-generator"],
-  ["SEO Keyword Generator","SEO & Marketing","Generate keyword ideas, long-tail phrases, questions and search-intent variations.","seo-keyword-generator"],
-  ["Stamp Generator","Design Tools","Create personalized digital stamps and seals with your name, title, company and custom styling.","stamp-generator"],
-  ["Logo Maker","Design Tools","Create professional logos with icons, text, fonts, colors and layouts.","logo-maker"],
   ["Meta Tag Generator","SEO & Marketing","Generate SEO-ready meta tags.","meta-tags"],
   ["Sitemap Generator","SEO & Marketing","Create a basic XML sitemap.","sitemap"],
   ["Robots.txt Generator","SEO & Marketing","Generate a robots.txt file.","robots"],
@@ -130,7 +128,10 @@ const tools = [
   ["Morse Code Converter","Text Tools","Convert text to Morse code.","morse"],
   ["Binary Converter","Developer Tools","Convert text and numbers to binary.","binary"],
   ["ASCII Converter","Developer Tools","Convert text to ASCII codes.","ascii"],
-  ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"]
+  ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"],
+  ["SEO Keyword Generator","SEO & Marketing","Generate seed, long-tail, question, local and search-intent keyword ideas.","seo-keyword-generator"],
+  ["Stamp Generator","Design Tools","Create professional stamps and seals with instant PNG export.","stamp-generator"],
+  ["Logo Maker","Design Tools","Create a simple professional logo and export it as PNG.","logo-maker"]
 ];
 
 const categories = [
@@ -168,7 +169,7 @@ function PlanCards({title,plans,selected,onSelect,openAuth,user,kind}) {
         <div key={p.id} className="card" style={{position:"relative",border:p.id===selected?"2px solid #6d4aff":"1px solid #e5e7ef",boxShadow:p.id===selected?"0 10px 30px rgba(109,74,255,.12)":"none"}}>
           {p.popular && <div className="pill" style={{position:"absolute",right:10,top:10}}>Popular</div>}
           <div style={{fontWeight:800,fontSize:18}}>{p.name}</div>
-          <div style={{fontSize:28,fontWeight:900,marginTop:8}}>{p.price===0?"Free":"$" + p.price}<small style={{fontSize:12,fontWeight:500,color:"#8490a3"}}>{p.price===0?"":" / month"}</small></div>
+          <div style={{fontSize:28,fontWeight:900,marginTop:8}}>{p.price===0?"Free":`$${p.price}`}<small style={{fontSize:12,fontWeight:500,color:"#8490a3"}}>{p.price===0?"":" / month"}</small></div>
           <div style={{color:"#7d889b",fontSize:13,margin:"8px 0 10px"}}>{p.description}</div>
           <div style={{fontWeight:700,fontSize:13,marginBottom:8}}>{p.credits.toLocaleString()} credits · {p.period}</div>
           {Array.isArray(p.features)&&<div style={{display:"grid",gap:5,marginBottom:12}}>{p.features.map(f=><small key={f} style={{display:"flex",gap:6,alignItems:"center"}}><Check size={13}/>{f}</small>)}</div>}
@@ -196,8 +197,7 @@ const iconForCategory = (cat) => ({
   "Utility Tools": <Wrench size={19}/>,
   "Network Tools": <Globe2 size={19}/>,
   "AI & Video": <Sparkles size={19}/>,
-  "AI & Education": <Star size={19}/>,
-  "Design Tools": <Shapes size={19}/>
+  "AI & Education": <Star size={19}/>
 }[cat] || <Wrench size={19}/>);
 
 const downloadBlob = (blob, name) => {
@@ -297,676 +297,6 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
 @media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
-.designApp,.logoApp{border:1px solid #e2e5ec;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 18px 55px rgba(25,32,55,.09)}
-.designTop{height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 18px;border-bottom:1px solid #e5e7ec;background:#fff}.designBtn{border:0;background:#ff4b19;color:#fff;border-radius:9px;padding:12px 18px;font-weight:800;cursor:pointer}.designBtn.primary{background:#ff4b19}.designModes{display:flex;align-items:center;justify-content:center;gap:30px;color:#596476;font-size:12px;font-weight:700}.designModes span{display:flex;align-items:center;gap:7px;white-space:nowrap}.designTabs{height:48px;display:flex;align-items:center;gap:24px;padding:0 18px;border-bottom:1px solid #e7e9ee}.designTabs b{color:#ff4b19}.designTabs span{color:#8a93a3;font-size:12px}.designBody{display:grid;grid-template-columns:285px minmax(0,1fr) 320px;min-height:690px;background:#f2f3f5}.designLeft,.designRight{background:#fff;padding:16px;border-right:1px solid #e1e4e9;overflow:auto}.designRight{border-right:0;border-left:1px solid #e1e4e9}.designTabRow{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid #e3e5e9;margin:-16px -16px 14px}.designTabRow>*{padding:13px;text-align:center;font-size:12px}.designTabRow b{border-bottom:2px solid #ff4b19;color:#ff4b19}.layerList{display:grid;gap:5px}.layer{padding:12px;border-bottom:1px solid #f0f1f3;color:#596477;font-size:12px}.layer span{display:inline-block;width:30px;color:#a0a6b1}.layer.active{color:#ff4b19;background:#fff8f5}.designSection{margin-top:22px;border-top:1px solid #eceef2;padding-top:16px}.designSection h4{margin:0 0 10px}.styleChip{width:100%;border:1px solid #e2e5eb;background:#fff;border-radius:9px;padding:11px;text-align:left;margin:5px 0;display:flex;gap:10px;align-items:center;color:#596477;font-weight:700;cursor:pointer}.styleChip.active{border-color:#ff4b19;background:#fff5f1;color:#e94817}.designCanvas{padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}.canvasGrid{width:min(100%,620px);aspect-ratio:1.285;background-color:#fff;background-image:linear-gradient(45deg,#f0f1f3 25%,transparent 25%),linear-gradient(-45deg,#f0f1f3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#f0f1f3 75%),linear-gradient(-45deg,transparent 75%,#f0f1f3 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0;border:1px solid #dfe2e8;border-radius:10px;display:grid;place-items:center;overflow:hidden}.canvasGrid canvas{width:100%;height:100%;object-fit:contain}.canvasActions{display:flex;gap:9px;margin-top:12px}.designRight h3{margin:0 0 5px}.designRight p{font-size:12px;color:#8992a1;line-height:1.5}.designRight label,.logoControls label{display:grid;gap:6px;margin-top:14px;font-size:12px;font-weight:800;color:#596477}.designRight input,.designRight select,.logoControls input,.logoControls select{width:100%;box-sizing:border-box;border:1px solid #dfe3e9;border-radius:8px;padding:10px;background:#fff;color:#202a3a}.designRight input[type=color],.logoControls input[type=color]{padding:2px;height:40px}.controlGrid,.colorRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.designFooter,.logoFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 17px;border-top:1px solid #e5e7ec;background:#fff;color:#8790a0;font-size:11px}.logoTop{padding:18px 20px;border-bottom:1px solid #e5e7ec;display:flex;justify-content:space-between;align-items:center;gap:15px}.logoTop h2{margin:0;font-size:25px}.logoTop p{margin:5px 0 0;color:#8992a1}.logoBody{display:grid;grid-template-columns:285px minmax(0,1fr) 300px;min-height:720px;background:#f4f5f7}.logoSide,.logoControls{background:#fff;padding:17px;overflow:auto}.logoSide{border-right:1px solid #e1e4e9}.logoControls{border-left:1px solid #e1e4e9}.logoSide h3,.logoControls h3{margin:0 0 12px}.categoryGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.logoCat{border:1px solid #e2e5ea;background:#fff;border-radius:9px;padding:10px 7px;display:flex;align-items:center;gap:7px;color:#657083;font-size:11px;font-weight:700;cursor:pointer}.logoCat.active{border-color:#6d4aff;background:#f5f2ff;color:#6040ea}.logoSection{border-top:1px solid #eceef2;margin-top:17px;padding-top:15px}.shapeGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.shapeBtn{border:1px solid #e1e4ea;background:#fff;border-radius:8px;padding:10px;color:#647083;font-weight:700}.shapeBtn.active{border-color:#6d4aff;background:#f5f2ff;color:#6040ea}.logoPreview{padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center}.previewBadge{align-self:flex-start;border:1px solid #e2ddff;background:#f7f5ff;color:#6645e9;border-radius:999px;padding:7px 11px;font-size:11px;font-weight:800;display:flex;gap:6px;align-items:center}.logoCanvasWrap{width:min(100%,650px);aspect-ratio:1;background-color:#fff;background-image:linear-gradient(45deg,#f0f1f3 25%,transparent 25%),linear-gradient(-45deg,#f0f1f3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#f0f1f3 75%),linear-gradient(-45deg,transparent 75%,#f0f1f3 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0;border:1px solid #dfe2e8;border-radius:16px;display:grid;place-items:center;margin-top:12px}.logoCanvasWrap canvas{width:100%;height:100%;object-fit:contain}.full{width:100%;justify-content:center}
-@media(max-width:1100px){.designBody,.logoBody{grid-template-columns:230px minmax(0,1fr)}.designRight,.logoControls{grid-column:1/-1;border-left:0;border-right:0;border-top:1px solid #e1e4e9}.designModes{gap:14px}.categoryGrid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:700px){.designTop{height:auto;padding:12px;flex-wrap:wrap}.designModes{order:3;width:100%;overflow:auto;justify-content:flex-start}.designBody,.logoBody{grid-template-columns:1fr}.designLeft,.logoSide{border-right:0;border-bottom:1px solid #e1e4e9}.designRight,.logoControls{grid-column:auto;border-left:0}.designCanvas,.logoPreview{min-height:420px;padding:12px}.designFooter,.logoFooter{align-items:flex-start;flex-direction:column}.categoryGrid{grid-template-columns:1fr 1fr}}
-;
-
-function GlobalStyle() { return <style>{css}</style>; }
-
-function App() {
-  const [cat,setCat]=useState("All Tools");
-  const [query,setQuery]=useState("");
-  const [tool,setTool]=useState(null);
-  const [authOpen,setAuthOpen]=useState(false);
-  const [authMode,setAuthMode]=useState("signin");
-  const [user,setUser]=useState(null);
-  const [profile,setProfile]=useState(null);
-  const [admin,setAdmin]=useState(false);
-  const [mobile,setMobile]=useState(false);
-  const [dark,setDark]=useState(false);
-  const [profileOpen,setProfileOpen]=useState(false);
-  const [favorites,setFavorites]=useState([]);
-  const [history,setHistory]=useState([]);
-
-  const filtered = useMemo(() => tools.filter(t =>
-    (cat==="All Tools" || t[1]===cat) &&
-    (t[0].toLowerCase().includes(query.toLowerCase()) || t[2].toLowerCase().includes(query.toLowerCase()))
-  ), [cat,query]);
-
-  useEffect(() => {
-    const savedFav = JSON.parse(localStorage.getItem("tm_favorites") || "[]");
-    const savedHist = JSON.parse(localStorage.getItem("tm_history") || "[]");
-    setFavorites(savedFav); setHistory(savedHist);
-  }, []);
-
-  useEffect(() => {
-    if (!supabase) return;
-    let mounted = true;
-    supabase.auth.getSession().then(async ({data}) => {
-      if (!mounted) return;
-      const u=data.session?.user || null; setUser(u);
-      if(u) loadProfile(u);
-    });
-    const {data: sub} = supabase.auth.onAuthStateChange((_event, session) => {
-      const u=session?.user || null; setUser(u);
-      if(u) loadProfile(u); else setProfile(null);
-    });
-    return () => { mounted=false; sub.subscription.unsubscribe(); };
-  }, []);
-
-  const loadProfile = async (u) => {
-    if (!supabase || !u) return;
-    const {data} = await supabase.from("profiles").select("*").eq("id",u.id).maybeSingle();
-    setProfile(data || {id:u.id, email:u.email, full_name:u.user_metadata?.full_name || "", username:u.user_metadata?.username || ""});
-  };
-
-  const isAdmin = !!(profile?.role === "admin" || user?.app_metadata?.role === "admin" || user?.user_metadata?.role === "admin");
-
-  const openTool = (t) => {
-    setTool(t); setAdmin(false);
-    const next=[t[3],...history.filter(x=>x!==t[3])].slice(0,10);
-    setHistory(next); localStorage.setItem("tm_history",JSON.stringify(next));
-    window.scrollTo({top:0,behavior:"smooth"});
-  };
-
-  const toggleFav = (slug) => {
-    const next=favorites.includes(slug)?favorites.filter(x=>x!==slug):[...favorites,slug];
-    setFavorites(next); localStorage.setItem("tm_favorites",JSON.stringify(next));
-  };
-
-  const signOut = async () => {
-    if(supabase) await supabase.auth.signOut();
-    setUser(null); setProfile(null); setAdmin(false); setProfileOpen(false);
-  };
-
-  return <div className="app">
-    <GlobalStyle/>
-    <header className="header"><div className="container nav">
-      <div className="brand"><div className="brandIcon"><Wrench size={21}/></div><span>ToolMaster<span>Pro</span></span></div>
-      <nav className="navLinks">
-        <a href="#tools">Tools</a><a href="#categories">Categories</a><a href="#about">About</a>
-      </nav>
-      <div className="navActions">
-        <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
-        <button className="iconBtn" onClick={()=>setDark(!dark)} title="Theme">{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
-        {isAdmin && <button className="btn" onClick={()=>{setAdmin(!admin);setTool(null)}}><LayoutDashboard size={16}/><span>{admin?"Website":"Admin"}</span></button>}
-        {user ? <div className="profileMenu">
-          <button className="iconBtn" onClick={()=>setProfileOpen(!profileOpen)}><User size={17}/></button>
-          {profileOpen && <div className="profileCard">
-            <b>{profile?.full_name || user.email}</b><small>{profile?.username ? "@"+profile.username+" · " : ""}{user.email}</small>
-            <button className="btn" style={{width:"100%",justifyContent:"center"}} onClick={signOut}><LogOut size={15}/> Sign out</button>
-          </div>}
-        </div> : <><button className="btn" onClick={()=>{setAuthMode("signin");setAuthOpen(true)}}><LogIn size={16}/><span>Sign in</span></button><button className="btn primary" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}><UserPlus size={16}/><span>Sign up</span></button></>}
-      </div>
-    </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
-
-    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user}/></ToolErrorBoundary> :
-      <>
-        <section className="hero"><div className="heroInner">
-          <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
-          <h1>One place for <span>every tool</span> you need.</h1>
-          <p>Fast, modern and privacy-friendly tools for PDF, images, SEO, text, developers, calculators, conversion and AI.</p>
-          <div className="searchBox"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search 100+ tools..."/><div className="kbd">Ctrl K</div></div>
-          <div className="stats"><div><b>{tools.length}+</b><small>Tools</small></div><div><b>13</b><small>Categories</small></div><div><b>{user?"Signed in":"Open"}</b><small>Access</small></div></div>
-        </div></section>
-        <main className="main container" id="tools">
-          <section id="categories"><div className="toolbar">
-            {categories.map(([name,count])=><button className={cat===name?"cat active":"cat"} onClick={()=>setCat(name)} key={name}>{iconForCategory(name)}<span>{name}</span><em>{count}</em></button>)}
-          </div></section>
-          <div className="sectionHead"><div><h2>{cat}</h2><p>{filtered.length} tools available</p></div></div>
-          <div className="grid">{filtered.map(t=><ToolCard key={t[3]} t={t} open={()=>openTool(t)} favorite={favorites.includes(t[3])} onFav={()=>toggleFav(t[3])}/>)}</div>
-          {!filtered.length&&<div className="empty">No tools found. Try another search.</div>}
-        </main>
-      </>
-    }
-    <footer className="footer" id="about"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
-    {authOpen && <AuthModal mode={authMode} setMode={setAuthMode} close={()=>setAuthOpen(false)} onDone={()=>setAuthOpen(false)}/>}
-  </div>;
-}
-
-function ToolCard({t,open,favorite,onFav}) {
-  return <article className="card" onClick={open}>
-    <button className="iconBtn" style={{position:"absolute",top:14,right:14,zIndex:2}} onClick={(e)=>{e.stopPropagation();onFav()}}>{favorite?<Heart size={15} fill="currentColor"/>:<Heart size={15}/>}</button>
-    <div className="toolIcon">{iconForCategory(t[1])}</div><div className="cardBody"><span>{t[1]}</span><h3>{t[0]}</h3><p>{t[2]}</p></div><ArrowRight className="arrow" size={17}/>
-  </article>;
-}
-
-function AuthModal({mode,setMode,close,onDone}) {
-  const [fullName,setFullName]=useState(""); const [username,setUsername]=useState("");
-  const [email,setEmail]=useState(""); const [password,setPassword]=useState(""); const [confirm,setConfirm]=useState("");
-  const [busy,setBusy]=useState(false); const [msg,setMsg]=useState(""); const [error,setError]=useState("");
-
-  const submit=async(e)=>{
-    e.preventDefault(); setError(""); setMsg(""); setBusy(true);
-    try{
-      if(!supabase) throw new Error("Supabase is not configured. Add VITE_import.meta.env.VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.");
-      if(mode==="signup"){
-        if(!fullName.trim()||!username.trim()) throw new Error("Full name and username are required.");
-        if(password.length<6) throw new Error("Password must be at least 6 characters.");
-        if(password!==confirm) throw new Error("Passwords do not match.");
-        const {data,error}=await supabase.auth.signUp({email:email.trim(),password,options:{data:{full_name:fullName.trim(),username:username.trim()}}});
-        if(error) throw error;
-        if(data.session){ setMsg("Account created and signed in."); onDone(); }
-        else setMsg("Account created. Check your email to confirm your account, then sign in.");
-      } else {
-        const {error}=await supabase.auth.signInWithPassword({email:email.trim(),password});
-        if(error) throw error;
-        setMsg("Signed in successfully."); onDone();
-      }
-    }catch(e){setError(e.message || "Authentication failed.");}finally{setBusy(false);}
-  };
-
-  const forgot=async()=>{
-    setError("");setMsg("");
-    if(!supabase) return setError("Supabase is not configured.");
-    if(!email.trim()) return setError("Enter your email first.");
-    setBusy(true);
-    try{
-      const redirect=window.location.origin;
-      const {error}=await supabase.auth.resetPasswordForEmail(email.trim(),{redirectTo:redirect});
-      if(error) throw error;
-      setMsg("Password reset email sent. Check your inbox.");
-    }catch(e){setError(e.message)}finally{setBusy(false)}
-  };
-
-  return <div className="modalBack" onMouseDown={close}><div className="modal" onMouseDown={e=>e.stopPropagation()}>
-    <div className="modalHead"><div><div className="pill"><LockKeyhole size={13}/> Secure Auth</div><h2>{mode==="signup"?"Create your account":"Welcome back"}</h2></div><button className="iconBtn" onClick={close}><X size={17}/></button></div>
-    <div className="authTabs"><button className={mode==="signin"?"active":""} onClick={()=>{setMode("signin");setError("");setMsg("")}}>Sign in</button><button className={mode==="signup"?"active":""} onClick={()=>{setMode("signup");setError("");setMsg("")}}>Sign up</button></div>
-    <form onSubmit={submit}>
-      {mode==="signup"&&<div className="formGrid"><div className="field"><label>Full name</label><input value={fullName} onChange={e=>setFullName(e.target.value)} required/></div><div className="field"><label>Username</label><input value={username} onChange={e=>setUsername(e.target.value)} required/></div></div>}
-      <div className="field"><label>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></div>
-      <div className="field"><label>Password</label><input type="password" value={password} onChange={e=>setPassword(e.target.value)} required/></div>
-      {mode==="signup"&&<div className="field"><label>Confirm password</label><input type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} required/></div>}
-      {error&&<div className="formError"><AlertCircle size={15}/> {error}</div>}{msg&&<div className="formSuccess"><Check size={15}/> {msg}</div>}
-      <button className="btn primary" disabled={busy} style={{width:"100%",justifyContent:"center",marginTop:7}}>{busy?<RefreshCw className="spin"/>:mode==="signup"?<UserPlus size={16}/>:<LogIn size={16}/>} {busy?"Please wait...":mode==="signup"?"Create account":"Sign in"}</button>
-    </form>
-    {mode==="signin"&&<button className="btn ghost" onClick={forgot} disabled={busy} style={{width:"100%",justifyContent:"center",marginTop:10}}><KeyRound size={15}/> Forgot password</button>}
-  </div></div>
-}
-
-
-function FilePicker({multiple=false,accept,onChange,files=[]}) {
-  const inputRef = useRef(null);
-  return <label className="uploadBox" onClick={e=>{ if(e.target===inputRef.current) return; }}>
-    <Upload size={20}/>
-    <div style={{flex:1}}>
-      <b>{multiple ? "Upload files" : "Upload file"}</b>
-      <small style={{display:"block",marginTop:4}}>{accept || "Supported files"}</small>
-      {files.length>0 && <strong>{files.map(f=>f.name).join(", ")}</strong>}
-    </div>
-    <input ref={inputRef} type="file" multiple={multiple} accept={accept} onChange={e=>onChange(Array.from(e.target.files||[]))}/>
-  </label>;
-}
-
-function StudentAIHelper({back,user}) {
-  const [question,setQuestion]=useState("");
-  const [files,setFiles]=useState([]);
-  const [answer,setAnswer]=useState("");
-  const [busy,setBusy]=useState(false);
-  const [status,setStatus]=useState("");
-  const supabaseFunctionBase = import.meta.env.VITE_SUPABASE_URL || "";
-  const endpoint = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL || (supabaseFunctionBase ? supabaseFunctionBase + "/functions/v1/student-ai-helper" : "");
-  const solve=async()=>{
-    if(!question.trim() && !files.length){setStatus("Enter a question or upload a study file.");return;}
-    if(!endpoint){setStatus("AI backend is not configured. Your question is ready, but no secure AI function is connected.");return;}
-    setBusy(true);setStatus("Processing...");setAnswer("");
-    try{
-      const fd=new FormData();
-      fd.append("question",question.trim());
-      files.forEach(f=>fd.append("files",f));
-      const headers = {}; if (import.meta.env.VITE_SUPABASE_ANON_KEY) headers.apikey = import.meta.env.VITE_SUPABASE_ANON_KEY; if (user && user.access_token) headers.Authorization = "Bearer " + user.access_token;
-      const r=await fetch(endpoint,{method:"POST",headers,body:fd});
-      const data=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(data.error||data.message||"AI backend error (" + r.status + ")");
-      setAnswer(data.answer||data.message||"No answer returned.");
-      setStatus("AI response received.");
-    }catch(e){setStatus(e?.message||"AI request failed.");}
-    finally{setBusy(false);}
-  };
-  return <Shell back={back} t={["Student AI Helper","AI & Education","Ask questions or upload study material for step-by-step help.",""]} status={status}>
-    <div className="aiHelper">
-      <div className="aiCard">
-        <h3>📚 Ask your question</h3>
-        {!user && <div className="formError"><AlertCircle size={15}/> Sign in for your account-backed AI usage.</div>}
-        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question or explain what you need help with..."/>
-        <FilePicker multiple accept=".pdf,image/*,.txt,.doc,.docx" onChange={setFiles} files={files}/>
-        <div className="actions">
-          <button className="btn primary" disabled={busy} onClick={solve}><Sparkles size={16}/>{busy?"Processing...":"Get AI Help"}</button>
-          {files.length>0&&<button className="btn" onClick={()=>setFiles([])}><Trash2 size={15}/>Clear files</button>}
-        </div>
-      </div>
-      <div className="aiCard">
-        <h3>🤖 AI Answer</h3>
-        <div className="answer">{answer||"Your step-by-step answer will appear here."}</div>
-        {answer&&<div className="actions"><button className="btn" onClick={()=>navigator.clipboard?.writeText(answer)}><Copy size={15}/>Copy</button><button className="btn" onClick={()=>downloadText(answer,"student-ai-answer.txt")}><Download size={15}/>Download</button></div>}
-      </div>
-    </div>
-  </Shell>;
-}
-
-
-function downloadCanvas(canvas,name){const a=document.createElement("a");a.href=canvas.toDataURL("image/png");a.download=name;a.click()}
-function drawRoundedRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
-
-const stampStyles=[
-  {id:"round",name:"Round Seal",icon:"◉"},{id:"square",name:"Classic",icon:"▣"},{id:"badge",name:"Badge",icon:"⬢"},{id:"minimal",name:"Minimal",icon:"□"}
-];
-
-function StampGenerator({back,t}){
-  const [name,setName]=useState(""); const [title,setTitle]=useState(""); const [org,setOrg]=useState(""); const [extra,setExtra]=useState("");
-  const [style,setStyle]=useState("round"); const [color,setColor]=useState("#e53935"); const [size,setSize]=useState(900); const [opacity,setOpacity]=useState(100); const [logo,setLogo]=useState(""); const canvasRef=useRef(null);
-  const draw=()=>{const c=canvasRef.current;if(!c)return;const dpr=2,w=900,h=700;c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);ctx.globalAlpha=opacity/100;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=9;ctx.textAlign="center";ctx.textBaseline="middle";const n=name||"YOUR NAME", tl=title||"DESIGNATION", og=org||"YOUR ORGANIZATION", ex=extra||"APPROVED";
-    if(style==="round"){ctx.beginPath();ctx.arc(450,350,260,0,Math.PI*2);ctx.stroke();ctx.lineWidth=3;ctx.beginPath();ctx.arc(450,350,232,0,Math.PI*2);ctx.stroke();ctx.font="700 27px Arial";ctx.fillText(og.toUpperCase(),450,150);ctx.font="800 52px Arial";ctx.fillText(n.toUpperCase(),450,310);ctx.font="700 28px Arial";ctx.fillText(tl.toUpperCase(),450,375);ctx.font="600 22px Arial";ctx.fillText(ex.toUpperCase(),450,445);ctx.font="700 18px Arial";ctx.fillText("✦  TOOLMASTER PRO  ✦",450,520);}
-    else if(style==="square"){drawRoundedRect(ctx,125,105,650,490,30);ctx.stroke();ctx.lineWidth=3;drawRoundedRect(ctx,145,125,610,450,20);ctx.stroke();ctx.font="800 34px Arial";ctx.fillText(n.toUpperCase(),450,255);ctx.font="700 24px Arial";ctx.fillText(tl.toUpperCase(),450,315);ctx.font="700 28px Arial";ctx.fillText(og.toUpperCase(),450,395);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,465);}
-    else if(style==="badge"){ctx.beginPath();ctx.moveTo(450,80);ctx.lineTo(700,165);ctx.lineTo(700,455);ctx.lineTo(450,620);ctx.lineTo(200,455);ctx.lineTo(200,165);ctx.closePath();ctx.stroke();ctx.font="800 34px Arial";ctx.fillText(og.toUpperCase(),450,225);ctx.font="800 47px Arial";ctx.fillText(n.toUpperCase(),450,320);ctx.font="700 25px Arial";ctx.fillText(tl.toUpperCase(),450,385);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,450);}
-    else {ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(170,180);ctx.lineTo(730,180);ctx.moveTo(170,520);ctx.lineTo(730,520);ctx.stroke();ctx.font="800 48px Arial";ctx.fillText(n,450,280);ctx.font="700 26px Arial";ctx.fillText(tl,450,350);ctx.font="600 22px Arial";ctx.fillText(og,450,410);ctx.font="600 20px Arial";ctx.fillText(ex,450,465);}
-    ctx.globalAlpha=1;
-  };
-  useEffect(()=>{draw()},[name,title,org,extra,style,color,size,opacity]);
-  return <Shell back={back} t={t}>
-    <div className="designApp">
-      <div className="designTop"><button className="designBtn" onClick={()=>{setName("");setTitle("");setOrg("");setExtra("")}}>← Templates</button><div className="designModes"><span><Type size={17}/> Text around</span><span><Type size={17}/> Text in centre</span><span><Shapes size={17}/> Circle</span><span><ImageIcon size={17}/> Images</span></div><button className="designBtn primary" onClick={()=>setStyle("round")}>New stamp +</button></div>
-      <div className="designTabs"><b>Stamp Designer</b><span>Live preview & customization</span></div>
-      <div className="designBody">
-        <aside className="designLeft"><div className="designTabRow"><b>All</b><span>Text</span><span>Figure</span></div><div className="layerList"><div className="layer active"><span>0#</span> Frame</div><div className="layer"><span>1#</span> Main text</div><div className="layer"><span>2#</span> Details</div><div className="layer"><span>3#</span> Extra line</div></div><div className="designSection"><h4>Stamp style</h4>{stampStyles.map(x=><button key={x.id} className={style===x.id?"styleChip active":"styleChip"} onClick={()=>setStyle(x.id)}><b>{x.icon}</b>{x.name}</button>)}</div></aside>
-        <section className="designCanvas"><div className="canvasGrid"><canvas ref={canvasRef}/></div><div className="canvasActions"><button className="iconBtn"><Eye size={17}/></button><button className="iconBtn"><RefreshCw size={17}/></button><button className="iconBtn" onClick={()=>draw()}><Check size={17}/></button></div></section>
-        <aside className="designRight"><h3>Stamp details</h3><p>Write anything about yourself and the stamp updates instantly.</p><label>Name<input value={name} onChange={e=>setName(e.target.value)} placeholder="Muhammad Arshad"/></label><label>Designation<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Managing Director"/></label><label>Company / Organization<input value={org} onChange={e=>setOrg(e.target.value)} placeholder="ABC Enterprises"/></label><label>Extra text<input value={extra} onChange={e=>setExtra(e.target.value)} placeholder="Approved / Verified / Official"/></label><div className="controlGrid"><label>Color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label><label>Opacity <span>{opacity}%</span><input type="range" min="20" max="100" value={opacity} onChange={e=>setOpacity(+e.target.value)}/></label></div><label>Output size<select value={size} onChange={e=>setSize(+e.target.value)}><option value="700">700 px</option><option value="900">900 px</option><option value="1200">1200 px</option><option value="1600">1600 px</option></select></label><button className="btn primary full" onClick={()=>downloadCanvas(canvasRef.current,"toolmaster-stamp-" + (name||"stamp").replace(/\s+/g,"-").toLowerCase() + ".png")}><Download size={16}/> Download Stamp PNG</button></aside>
-      </div><div className="designFooter"><span>Transparent PNG • Browser-based • Instant preview</span><button className="btn" onClick={()=>{setName("");setTitle("");setOrg("");setExtra("");setStyle("round")}}>Reset</button></div>
-    </div>
-  </Shell>
-}
-
-const logoCategories=[
-  ["Business",Building2],["Medical",Stethoscope],["Photography",Camera],["Automotive",Car],["Food",Utensils],["Education",GraduationCap],["Health",HeartPulse],["Security",Shield],["Corporate",Briefcase],["Music",Music],["Gaming",Gamepad2],["Nature",Leaf],["Travel",Plane],["Real Estate",Home],["Fashion",ShoppingBag],["Pets",PawPrint],["Technology",Globe],["Luxury",Crown]
-];
-const logoPresets=[
-  {id:"circle",name:"Circle",shape:"circle"},{id:"square",name:"Square",shape:"square"},{id:"badge",name:"Badge",shape:"badge"},{id:"minimal",name:"Minimal",shape:"minimal"}
-];
-
-function LogoMaker({back,t}){
-  const [brand,setBrand]=useState("");
-  const [tag,setTag]=useState("");
-  const [category,setCategory]=useState("Business");
-  const [shape,setShape]=useState("circle");
-  const [font,setFont]=useState("Arial");
-  const [weight,setWeight]=useState("700");
-  const [color,setColor]=useState("#6d4aff");
-  const [textColor,setTextColor]=useState("#172033");
-  const [size,setSize]=useState(900);
-  const canvasRef=useRef(null);
-
-  const draw=()=>{
-    const c=canvasRef.current;
-    if(!c)return;
-    const d=900;
-    c.width=d*2;
-    c.height=d*2;
-    const ctx=c.getContext("2d");
-    ctx.scale(2,2);
-    ctx.clearRect(0,0,d,d);
-    ctx.textAlign="center";
-    ctx.textBaseline="middle";
-    const cx=450,cy=390;
-    ctx.fillStyle=color;
-    ctx.strokeStyle=color;
-    ctx.lineWidth=18;
-
-    if(shape==="circle"){
-      ctx.beginPath();
-      ctx.arc(cx,cy-20,185,0,Math.PI*2);
-      ctx.stroke();
-    }else if(shape==="square"){
-      drawRoundedRect(ctx,265,190,370,370,38);
-      ctx.stroke();
-    }else if(shape==="badge"){
-      ctx.beginPath();
-      ctx.moveTo(450,160);
-      ctx.lineTo(610,215);
-      ctx.lineTo(610,415);
-      ctx.lineTo(450,520);
-      ctx.lineTo(290,415);
-      ctx.lineTo(290,215);
-      ctx.closePath();
-      ctx.stroke();
-    }else{
-      ctx.lineWidth=8;
-      ctx.beginPath();
-      ctx.moveTo(300,180);
-      ctx.lineTo(600,180);
-      ctx.stroke();
-    }
-
-    ctx.fillStyle=color;
-    ctx.font="700 112px Arial";
-    ctx.fillText(category.slice(0,1),450,370);
-    ctx.fillStyle=textColor;
-    ctx.font=weight+" 70px "+font;
-    ctx.fillText((brand||"YOUR BRAND").slice(0,18),450,650);
-    ctx.font="400 26px "+font;
-    ctx.fillStyle="#667085";
-    ctx.fillText((tag||"Your tagline").slice(0,36),450,705);
-  };
-
-  useEffect(()=>{draw()},[brand,tag,category,shape,font,weight,color,textColor]);
-
-  const download=()=>{
-    const c=canvasRef.current;
-    if(!c)return;
-    const a=document.createElement("a");
-    a.href=c.toDataURL("image/png");
-    a.download="toolmaster-logo-"+(brand||"logo").replace(/\s+/g,"-").toLowerCase()+".png";
-    a.click();
-  };
-
-  return <Shell back={back} t={t}>
-    <div className="designPage">
-      <div className="designHeader">
-        <div><button className="backBtn" onClick={back}><ArrowLeft size={17}/> Back</button><h1>Logo Maker</h1><p>Create a professional logo instantly.</p></div>
-      </div>
-      <div className="designBody">
-        <aside className="designLeft">
-          <div className="designSection"><h4>Category</h4>
-            <select value={category} onChange={e=>setCategory(e.target.value)}>
-              {logoCategories.map(x=><option key={x[0]} value={x[0]}>{x[0]}</option>)}
-            </select>
-          </div>
-          <div className="designSection"><h4>Shape</h4>
-            <div className="chipGrid">{logoPresets.map(x=><button key={x.id} className={shape===x.shape?"styleChip active":"styleChip"} onClick={()=>setShape(x.shape)}>{x.name}</button>)}</div>
-          </div>
-        </aside>
-        <section className="designCanvas">
-          <div className="canvasGrid"><canvas ref={canvasRef}/></div>
-          <div className="canvasActions"><button className="iconBtn" onClick={draw}><RefreshCw size={17}/></button><button className="iconBtn" onClick={download}><Download size={17}/></button></div>
-        </section>
-        <aside className="designRight">
-          <h3>Logo details</h3>
-          <p>Enter your brand details and the logo updates instantly.</p>
-          <label>Brand name<input value={brand} onChange={e=>setBrand(e.target.value)} placeholder="ToolMaster Pro"/></label>
-          <label>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} placeholder="Smart tools for everyone"/></label>
-          <label>Font<select value={font} onChange={e=>setFont(e.target.value)}><option>Arial</option><option>Georgia</option><option>Verdana</option><option>Trebuchet MS</option><option>Times New Roman</option></select></label>
-          <label>Weight<select value={weight} onChange={e=>setWeight(e.target.value)}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label>
-          <div className="controlGrid">
-            <label>Logo color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label>
-            <label>Text color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)}/></label>
-          </div>
-          <label>Output size<select value={size} onChange={e=>setSize(+e.target.value)}><option value="700">700 px</option><option value="900">900 px</option><option value="1200">1200 px</option><option value="1600">1600 px</option></select></label>
-          <button className="btn primary full" onClick={download}><Download size={16}/> Download Logo PNG</button>
-        </aside>
-      </div>
-    </div>
-  </Shell>;
-}
-
-function GlobalStyle() { return <style>{css}</style>; }
-
-function App() {
-  const [cat,setCat]=useState("All Tools");
-  const [query,setQuery]=useState("");
-  const [tool,setTool]=useState(null);
-  const [authOpen,setAuthOpen]=useState(false);
-  const [authMode,setAuthMode]=useState("signin");
-  const [user,setUser]=useState(null);
-  const [profile,setProfile]=useState(null);
-  const [admin,setAdmin]=useState(false);
-  const [mobile,setMobile]=useState(false);
-  const [dark,setDark]=useState(false);
-  const [profileOpen,setProfileOpen]=useState(false);
-  const [favorites,setFavorites]=useState([]);
-  const [history,setHistory]=useState([]);
-
-  const filtered = useMemo(() => tools.filter(t =>
-    (cat==="All Tools" || t[1]===cat) &&
-    (t[0].toLowerCase().includes(query.toLowerCase()) || t[2].toLowerCase().includes(query.toLowerCase()))
-  ), [cat,query]);
-
-  useEffect(() => {
-    const savedFav = JSON.parse(localStorage.getItem("tm_favorites") || "[]");
-    const savedHist = JSON.parse(localStorage.getItem("tm_history") || "[]");
-    setFavorites(savedFav); setHistory(savedHist);
-  }, []);
-
-  useEffect(() => {
-    if (!supabase) return;
-    let mounted = true;
-    supabase.auth.getSession().then(async ({data}) => {
-      if (!mounted) return;
-      const u=data.session?.user || null; setUser(u);
-      if(u) loadProfile(u);
-    });
-    const {data: sub} = supabase.auth.onAuthStateChange((_event, session) => {
-      const u=session?.user || null; setUser(u);
-      if(u) loadProfile(u); else setProfile(null);
-    });
-    return () => { mounted=false; sub.subscription.unsubscribe(); };
-  }, []);
-
-  const loadProfile = async (u) => {
-    if (!supabase || !u) return;
-    const {data} = await supabase.from("profiles").select("*").eq("id",u.id).maybeSingle();
-    setProfile(data || {id:u.id, email:u.email, full_name:u.user_metadata?.full_name || "", username:u.user_metadata?.username || ""});
-  };
-
-  const isAdmin = !!(profile?.role === "admin" || user?.app_metadata?.role === "admin" || user?.user_metadata?.role === "admin");
-
-  const openTool = (t) => {
-    setTool(t); setAdmin(false);
-    const next=[t[3],...history.filter(x=>x!==t[3])].slice(0,10);
-    setHistory(next); localStorage.setItem("tm_history",JSON.stringify(next));
-    window.scrollTo({top:0,behavior:"smooth"});
-  };
-
-  const toggleFav = (slug) => {
-    const next=favorites.includes(slug)?favorites.filter(x=>x!==slug):[...favorites,slug];
-    setFavorites(next); localStorage.setItem("tm_favorites",JSON.stringify(next));
-  };
-
-  const signOut = async () => {
-    if(supabase) await supabase.auth.signOut();
-    setUser(null); setProfile(null); setAdmin(false); setProfileOpen(false);
-  };
-
-  return <div className="app">
-    <GlobalStyle/>
-    <header className="header"><div className="container nav">
-      <div className="brand"><div className="brandIcon"><Wrench size={21}/></div><span>ToolMaster<span>Pro</span></span></div>
-      <nav className="navLinks">
-        <a href="#tools">Tools</a><a href="#categories">Categories</a><a href="#about">About</a>
-      </nav>
-      <div className="navActions">
-        <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
-        <button className="iconBtn" onClick={()=>setDark(!dark)} title="Theme">{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
-        {isAdmin && <button className="btn" onClick={()=>{setAdmin(!admin);setTool(null)}}><LayoutDashboard size={16}/><span>{admin?"Website":"Admin"}</span></button>}
-        {user ? <div className="profileMenu">
-          <button className="iconBtn" onClick={()=>setProfileOpen(!profileOpen)}><User size={17}/></button>
-          {profileOpen && <div className="profileCard">
-            <b>{profile?.full_name || user.email}</b><small>{profile?.username ? "@"+profile.username+" · " : ""}{user.email}</small>
-            <button className="btn" style={{width:"100%",justifyContent:"center"}} onClick={signOut}><LogOut size={15}/> Sign out</button>
-          </div>}
-        </div> : <><button className="btn" onClick={()=>{setAuthMode("signin");setAuthOpen(true)}}><LogIn size={16}/><span>Sign in</span></button><button className="btn primary" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}><UserPlus size={16}/><span>Sign up</span></button></>}
-      </div>
-    </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
-
-    {admin ? <Admin user={user} profile={profile} /> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user}/></ToolErrorBoundary> :
-      <>
-        <section className="hero"><div className="heroInner">
-          <div className="pill"><Sparkles size={14}/> 100+ Free Online Tools · Browser-first</div>
-          <h1>One place for <span>every tool</span> you need.</h1>
-          <p>Fast, modern and privacy-friendly tools for PDF, images, SEO, text, developers, calculators, conversion and AI.</p>
-          <div className="searchBox"><Search size={19}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search 100+ tools..."/><div className="kbd">Ctrl K</div></div>
-          <div className="stats"><div><b>{tools.length}+</b><small>Tools</small></div><div><b>13</b><small>Categories</small></div><div><b>{user?"Signed in":"Open"}</b><small>Access</small></div></div>
-        </div></section>
-        <main className="main container" id="tools">
-          <section id="categories"><div className="toolbar">
-            {categories.map(([name,count])=><button className={cat===name?"cat active":"cat"} onClick={()=>setCat(name)} key={name}>{iconForCategory(name)}<span>{name}</span><em>{count}</em></button>)}
-          </div></section>
-          <div className="sectionHead"><div><h2>{cat}</h2><p>{filtered.length} tools available</p></div></div>
-          <div className="grid">{filtered.map(t=><ToolCard key={t[3]} t={t} open={()=>openTool(t)} favorite={favorites.includes(t[3])} onFav={()=>toggleFav(t[3])}/>)}</div>
-          {!filtered.length&&<div className="empty">No tools found. Try another search.</div>}
-        </main>
-      </>
-    }
-    <footer className="footer" id="about"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
-    {authOpen && <AuthModal mode={authMode} setMode={setAuthMode} close={()=>setAuthOpen(false)} onDone={()=>setAuthOpen(false)}/>}
-  </div>;
-}
-
-function ToolCard({t,open,favorite,onFav}) {
-  return <article className="card" onClick={open}>
-    <button className="iconBtn" style={{position:"absolute",top:14,right:14,zIndex:2}} onClick={(e)=>{e.stopPropagation();onFav()}}>{favorite?<Heart size={15} fill="currentColor"/>:<Heart size={15}/>}</button>
-    <div className="toolIcon">{iconForCategory(t[1])}</div><div className="cardBody"><span>{t[1]}</span><h3>{t[0]}</h3><p>{t[2]}</p></div><ArrowRight className="arrow" size={17}/>
-  </article>;
-}
-
-function AuthModal({mode,setMode,close,onDone}) {
-  const [fullName,setFullName]=useState(""); const [username,setUsername]=useState("");
-  const [email,setEmail]=useState(""); const [password,setPassword]=useState(""); const [confirm,setConfirm]=useState("");
-  const [busy,setBusy]=useState(false); const [msg,setMsg]=useState(""); const [error,setError]=useState("");
-
-  const submit=async(e)=>{
-    e.preventDefault(); setError(""); setMsg(""); setBusy(true);
-    try{
-      if(!supabase) throw new Error("Supabase is not configured. Add VITE_import.meta.env.VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.");
-      if(mode==="signup"){
-        if(!fullName.trim()||!username.trim()) throw new Error("Full name and username are required.");
-        if(password.length<6) throw new Error("Password must be at least 6 characters.");
-        if(password!==confirm) throw new Error("Passwords do not match.");
-        const {data,error}=await supabase.auth.signUp({email:email.trim(),password,options:{data:{full_name:fullName.trim(),username:username.trim()}}});
-        if(error) throw error;
-        if(data.session){ setMsg("Account created and signed in."); onDone(); }
-        else setMsg("Account created. Check your email to confirm your account, then sign in.");
-      } else {
-        const {error}=await supabase.auth.signInWithPassword({email:email.trim(),password});
-        if(error) throw error;
-        setMsg("Signed in successfully."); onDone();
-      }
-    }catch(e){setError(e.message || "Authentication failed.");}finally{setBusy(false);}
-  };
-
-  const forgot=async()=>{
-    setError("");setMsg("");
-    if(!supabase) return setError("Supabase is not configured.");
-    if(!email.trim()) return setError("Enter your email first.");
-    setBusy(true);
-    try{
-      const redirect=window.location.origin;
-      const {error}=await supabase.auth.resetPasswordForEmail(email.trim(),{redirectTo:redirect});
-      if(error) throw error;
-      setMsg("Password reset email sent. Check your inbox.");
-    }catch(e){setError(e.message)}finally{setBusy(false)}
-  };
-
-  return <div className="modalBack" onMouseDown={close}><div className="modal" onMouseDown={e=>e.stopPropagation()}>
-    <div className="modalHead"><div><div className="pill"><LockKeyhole size={13}/> Secure Auth</div><h2>{mode==="signup"?"Create your account":"Welcome back"}</h2></div><button className="iconBtn" onClick={close}><X size={17}/></button></div>
-    <div className="authTabs"><button className={mode==="signin"?"active":""} onClick={()=>{setMode("signin");setError("");setMsg("")}}>Sign in</button><button className={mode==="signup"?"active":""} onClick={()=>{setMode("signup");setError("");setMsg("")}}>Sign up</button></div>
-    <form onSubmit={submit}>
-      {mode==="signup"&&<div className="formGrid"><div className="field"><label>Full name</label><input value={fullName} onChange={e=>setFullName(e.target.value)} required/></div><div className="field"><label>Username</label><input value={username} onChange={e=>setUsername(e.target.value)} required/></div></div>}
-      <div className="field"><label>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></div>
-      <div className="field"><label>Password</label><input type="password" value={password} onChange={e=>setPassword(e.target.value)} required/></div>
-      {mode==="signup"&&<div className="field"><label>Confirm password</label><input type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} required/></div>}
-      {error&&<div className="formError"><AlertCircle size={15}/> {error}</div>}{msg&&<div className="formSuccess"><Check size={15}/> {msg}</div>}
-      <button className="btn primary" disabled={busy} style={{width:"100%",justifyContent:"center",marginTop:7}}>{busy?<RefreshCw className="spin"/>:mode==="signup"?<UserPlus size={16}/>:<LogIn size={16}/>} {busy?"Please wait...":mode==="signup"?"Create account":"Sign in"}</button>
-    </form>
-    {mode==="signin"&&<button className="btn ghost" onClick={forgot} disabled={busy} style={{width:"100%",justifyContent:"center",marginTop:10}}><KeyRound size={15}/> Forgot password</button>}
-  </div></div>
-}
-
-
-function FilePicker({multiple=false,accept,onChange,files=[]}) {
-  const inputRef = useRef(null);
-  return <label className="uploadBox" onClick={e=>{ if(e.target===inputRef.current) return; }}>
-    <Upload size={20}/>
-    <div style={{flex:1}}>
-      <b>{multiple ? "Upload files" : "Upload file"}</b>
-      <small style={{display:"block",marginTop:4}}>{accept || "Supported files"}</small>
-      {files.length>0 && <strong>{files.map(f=>f.name).join(", ")}</strong>}
-    </div>
-    <input ref={inputRef} type="file" multiple={multiple} accept={accept} onChange={e=>onChange(Array.from(e.target.files||[]))}/>
-  </label>;
-}
-
-function StudentAIHelper({back,user}) {
-  const [question,setQuestion]=useState("");
-  const [files,setFiles]=useState([]);
-  const [answer,setAnswer]=useState("");
-  const [busy,setBusy]=useState(false);
-  const [status,setStatus]=useState("");
-  const supabaseFunctionBase = import.meta.env.VITE_SUPABASE_URL || "";
-  const endpoint = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_FUNCTION_URL || (supabaseFunctionBase ? supabaseFunctionBase + "/functions/v1/student-ai-helper" : "");
-  const solve=async()=>{
-    if(!question.trim() && !files.length){setStatus("Enter a question or upload a study file.");return;}
-    if(!endpoint){setStatus("AI backend is not configured. Your question is ready, but no secure AI function is connected.");return;}
-    setBusy(true);setStatus("Processing...");setAnswer("");
-    try{
-      const fd=new FormData();
-      fd.append("question",question.trim());
-      files.forEach(f=>fd.append("files",f));
-      const headers = {}; if (import.meta.env.VITE_SUPABASE_ANON_KEY) headers.apikey = import.meta.env.VITE_SUPABASE_ANON_KEY; if (user && user.access_token) headers.Authorization = "Bearer " + user.access_token;
-      const r=await fetch(endpoint,{method:"POST",headers,body:fd});
-      const data=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(data.error||data.message||"AI backend error (" + r.status + ")");
-      setAnswer(data.answer||data.message||"No answer returned.");
-      setStatus("AI response received.");
-    }catch(e){setStatus(e?.message||"AI request failed.");}
-    finally{setBusy(false);}
-  };
-  return <Shell back={back} t={["Student AI Helper","AI & Education","Ask questions or upload study material for step-by-step help.",""]} status={status}>
-    <div className="aiHelper">
-      <div className="aiCard">
-        <h3>📚 Ask your question</h3>
-        {!user && <div className="formError"><AlertCircle size={15}/> Sign in for your account-backed AI usage.</div>}
-        <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question or explain what you need help with..."/>
-        <FilePicker multiple accept=".pdf,image/*,.txt,.doc,.docx" onChange={setFiles} files={files}/>
-        <div className="actions">
-          <button className="btn primary" disabled={busy} onClick={solve}><Sparkles size={16}/>{busy?"Processing...":"Get AI Help"}</button>
-          {files.length>0&&<button className="btn" onClick={()=>setFiles([])}><Trash2 size={15}/>Clear files</button>}
-        </div>
-      </div>
-      <div className="aiCard">
-        <h3>🤖 AI Answer</h3>
-        <div className="answer">{answer||"Your step-by-step answer will appear here."}</div>
-        {answer&&<div className="actions"><button className="btn" onClick={()=>navigator.clipboard?.writeText(answer)}><Copy size={15}/>Copy</button><button className="btn" onClick={()=>downloadText(answer,"student-ai-answer.txt")}><Download size={15}/>Download</button></div>}
-      </div>
-    </div>
-  </Shell>;
-}
-
-
-function downloadCanvas(canvas,name){const a=document.createElement("a");a.href=canvas.toDataURL("image/png");a.download=name;a.click()}
-function drawRoundedRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
-
-const stampStyles=[
-  {id:"round",name:"Round Seal",icon:"◉"},{id:"square",name:"Classic",icon:"▣"},{id:"badge",name:"Badge",icon:"⬢"},{id:"minimal",name:"Minimal",icon:"□"}
-];
-
-function StampGenerator({back,t}){
-  const [name,setName]=useState(""); const [title,setTitle]=useState(""); const [org,setOrg]=useState(""); const [extra,setExtra]=useState("");
-  const [style,setStyle]=useState("round"); const [color,setColor]=useState("#e53935"); const [size,setSize]=useState(900); const [opacity,setOpacity]=useState(100); const [logo,setLogo]=useState(""); const canvasRef=useRef(null);
-  const draw=()=>{const c=canvasRef.current;if(!c)return;const dpr=2,w=900,h=700;c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);ctx.globalAlpha=opacity/100;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=9;ctx.textAlign="center";ctx.textBaseline="middle";const n=name||"YOUR NAME", tl=title||"DESIGNATION", og=org||"YOUR ORGANIZATION", ex=extra||"APPROVED";
-    if(style==="round"){ctx.beginPath();ctx.arc(450,350,260,0,Math.PI*2);ctx.stroke();ctx.lineWidth=3;ctx.beginPath();ctx.arc(450,350,232,0,Math.PI*2);ctx.stroke();ctx.font="700 27px Arial";ctx.fillText(og.toUpperCase(),450,150);ctx.font="800 52px Arial";ctx.fillText(n.toUpperCase(),450,310);ctx.font="700 28px Arial";ctx.fillText(tl.toUpperCase(),450,375);ctx.font="600 22px Arial";ctx.fillText(ex.toUpperCase(),450,445);ctx.font="700 18px Arial";ctx.fillText("✦  TOOLMASTER PRO  ✦",450,520);}
-    else if(style==="square"){drawRoundedRect(ctx,125,105,650,490,30);ctx.stroke();ctx.lineWidth=3;drawRoundedRect(ctx,145,125,610,450,20);ctx.stroke();ctx.font="800 34px Arial";ctx.fillText(n.toUpperCase(),450,255);ctx.font="700 24px Arial";ctx.fillText(tl.toUpperCase(),450,315);ctx.font="700 28px Arial";ctx.fillText(og.toUpperCase(),450,395);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,465);}
-    else if(style==="badge"){ctx.beginPath();ctx.moveTo(450,80);ctx.lineTo(700,165);ctx.lineTo(700,455);ctx.lineTo(450,620);ctx.lineTo(200,455);ctx.lineTo(200,165);ctx.closePath();ctx.stroke();ctx.font="800 34px Arial";ctx.fillText(og.toUpperCase(),450,225);ctx.font="800 47px Arial";ctx.fillText(n.toUpperCase(),450,320);ctx.font="700 25px Arial";ctx.fillText(tl.toUpperCase(),450,385);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,450);}
-    else {ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(170,180);ctx.lineTo(730,180);ctx.moveTo(170,520);ctx.lineTo(730,520);ctx.stroke();ctx.font="800 48px Arial";ctx.fillText(n,450,280);ctx.font="700 26px Arial";ctx.fillText(tl,450,350);ctx.font="600 22px Arial";ctx.fillText(og,450,410);ctx.font="600 20px Arial";ctx.fillText(ex,450,465);}
-    ctx.globalAlpha=1;
-  };
-  useEffect(()=>{draw()},[name,title,org,extra,style,color,size,opacity]);
-  return <Shell back={back} t={t}>
-    <div className="designApp">
-      <div className="designTop"><button className="designBtn" onClick={()=>{setName("");setTitle("");setOrg("");setExtra("")}}>← Templates</button><div className="designModes"><span><Type size={17}/> Text around</span><span><Type size={17}/> Text in centre</span><span><Shapes size={17}/> Circle</span><span><ImageIcon size={17}/> Images</span></div><button className="designBtn primary" onClick={()=>setStyle("round")}>New stamp +</button></div>
-      <div className="designTabs"><b>Stamp Designer</b><span>Live preview & customization</span></div>
-      <div className="designBody">
-        <aside className="designLeft"><div className="designTabRow"><b>All</b><span>Text</span><span>Figure</span></div><div className="layerList"><div className="layer active"><span>0#</span> Frame</div><div className="layer"><span>1#</span> Main text</div><div className="layer"><span>2#</span> Details</div><div className="layer"><span>3#</span> Extra line</div></div><div className="designSection"><h4>Stamp style</h4>{stampStyles.map(x=><button key={x.id} className={style===x.id?"styleChip active":"styleChip"} onClick={()=>setStyle(x.id)}><b>{x.icon}</b>{x.name}</button>)}</div></aside>
-        <section className="designCanvas"><div className="canvasGrid"><canvas ref={canvasRef}/></div><div className="canvasActions"><button className="iconBtn"><Eye size={17}/></button><button className="iconBtn"><RefreshCw size={17}/></button><button className="iconBtn" onClick={()=>draw()}><Check size={17}/></button></div></section>
-        <aside className="designRight"><h3>Stamp details</h3><p>Write anything about yourself and the stamp updates instantly.</p><label>Name<input value={name} onChange={e=>setName(e.target.value)} placeholder="Muhammad Arshad"/></label><label>Designation<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Managing Director"/></label><label>Company / Organization<input value={org} onChange={e=>setOrg(e.target.value)} placeholder="ABC Enterprises"/></label><label>Extra text<input value={extra} onChange={e=>setExtra(e.target.value)} placeholder="Approved / Verified / Official"/></label><div className="controlGrid"><label>Color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label><label>Opacity <span>{opacity}%</span><input type="range" min="20" max="100" value={opacity} onChange={e=>setOpacity(+e.target.value)}/></label></div><label>Output size<select value={size} onChange={e=>setSize(+e.target.value)}><option value="700">700 px</option><option value="900">900 px</option><option value="1200">1200 px</option><option value="1600">1600 px</option></select></label><button className="btn primary full" onClick={()=>downloadCanvas(canvasRef.current,"toolmaster-stamp-" + (name||"stamp").replace(/\s+/g,"-").toLowerCase() + ".png")}><Download size={16}/> Download Stamp PNG</button></aside>
-      </div><div className="designFooter"><span>Transparent PNG • Browser-based • Instant preview</span><button className="btn" onClick={()=>{setName("");setTitle("");setOrg("");setExtra("");setStyle("round")}}>Reset</button></div>
-    </div>
-  </Shell>
-}
-
-const logoCategories=[
-  ["Business",Building2],["Medical",Stethoscope],["Photography",Camera],["Automotive",Car],["Food",Utensils],["Education",GraduationCap],["Health",HeartPulse],["Security",Shield],["Corporate",Briefcase],["Music",Music],["Gaming",Gamepad2],["Nature",Leaf],["Travel",Plane],["Real Estate",Home],["Fashion",ShoppingBag],["Pets",PawPrint],["Technology",Globe],["Luxury",Crown]
-];
-const logoPresets=[
-  {id:"circle",name:"Circle",shape:"circle"},{id:"square",name:"Square",shape:"square"},{id:"badge",name:"Badge",shape:"badge"},{id:"minimal",name:"Minimal",shape:"minimal"}
-];
-
-function LogoMaker({back,t}){
-  const [brand,setBrand]=useState("");const [tag,setTag]=useState("");const [category,setCategory]=useState("Business");const [Icon,setIcon]=useState(Building2);const [shape,setShape]=useState("circle");const [font,setFont]=useState("Arial");const [weight,setWeight]=useState("700");const [color,setColor]=useState("#6d4aff");const [textColor,setTextColor]=useState("#172033");const [size,setSize]=useState(900);const canvasRef=useRef(null);
-  useEffect(()=>{const hit=logoCategories.find(x=>x[0]===category);if(hit)setIcon(()=>hit[1])},[category]);
-  const draw=()=>{const c=canvasRef.current;if(!c)return;const d=900;c.width=d*2;c.height=d*2;const ctx=c.getContext("2d");ctx.scale(2,2);ctx.clearRect(0,0,d,d);ctx.textAlign="center";ctx.textBaseline="middle";const cx=450,cy=390;ctx.fillStyle=color;ctx.strokeStyle=color;ctx.lineWidth=18;
-    if(shape==="circle"){ctx.beginPath();ctx.arc(cx,cy-20,185,0,Math.PI*2);ctx.stroke();} else if(shape==="square"){drawRoundedRect(ctx,265,190,370,370,38);ctx.stroke();} else if(shape==="badge"){ctx.beginPath();ctx.moveTo(450,160);ctx.lineTo(610,215);ctx.lineTo(610,415);ctx.lineTo(450,520);ctx.lineTo(290,415);ctx.lineTo(290,215);ctx.closePath();ctx.stroke();} else {ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(300,180);ctx.lineTo(600,180);ctx.stroke();}
-    ctx.fillStyle=color;ctx.font="700 112px Arial";ctx.fillText(category.slice(0,1),450,370);ctx.fillStyle=textColor;ctx.font=`${weight} 70px ${font}
 `;
 
 function GlobalStyle() { return <style>{css}</style>; }
@@ -1097,7 +427,7 @@ function AuthModal({mode,setMode,close,onDone}) {
   const submit=async(e)=>{
     e.preventDefault(); setError(""); setMsg(""); setBusy(true);
     try{
-      if(!supabase) throw new Error("Supabase is not configured. Add VITE_import.meta.env.VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.");
+      if(!supabase) throw new Error("Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.");
       if(mode==="signup"){
         if(!fullName.trim()||!username.trim()) throw new Error("Full name and username are required.");
         if(password.length<6) throw new Error("Password must be at least 6 characters.");
@@ -1183,7 +513,7 @@ function StudentAIHelper({back,user,openAuth}) {
   const [model,setModel]=useState("gpt-5.6-luna");
   const [selectedPlan,setSelectedPlan]=useState("free");
   const endpoint = import.meta.env.VITE_STUDENT_AI_FUNCTION_URL ||
-    (import.meta.env.VITE_SUPABASE_URL ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/student-ai-helper` : "");
+    (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/student-ai-helper` : "");
 
   const solve=async()=>{
     if(!question.trim() && !files.length){setStatus("Enter a question or upload study material.");return;}
@@ -1202,7 +532,7 @@ function StudentAIHelper({back,user,openAuth}) {
       fd.append("level",level);
       files.forEach(f=>fd.append("files",f,f.name));
       const headers={
-        ...(import.meta.env.VITE_SUPABASE_ANON_KEY?{apikey:import.meta.env.VITE_SUPABASE_ANON_KEY}:{}),
+        ...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),
         Authorization:`Bearer ${token}`
       };
       const r=await fetch(endpoint,{method:"POST",headers,body:fd});
@@ -1245,55 +575,146 @@ function StudentAIHelper({back,user,openAuth}) {
   </Shell>;
 }
 
-function downloadCanvas(canvas,name){const a=document.createElement("a");a.href=canvas.toDataURL("image/png");a.download=name;a.click()}
-function drawRoundedRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+
+function downloadCanvas(canvas,name){
+  if(!canvas)return;
+  const a=document.createElement("a");
+  a.href=canvas.toDataURL("image/png");
+  a.download=name;
+  a.click();
+}
+
+function drawRoundedRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
 
 const stampStyles=[
-  {id:"round",name:"Round Seal",icon:"◉"},{id:"square",name:"Classic",icon:"▣"},{id:"badge",name:"Badge",icon:"⬢"},{id:"minimal",name:"Minimal",icon:"□"}
+  {id:"round",name:"Round Seal"},
+  {id:"square",name:"Classic"},
+  {id:"badge",name:"Badge"},
+  {id:"minimal",name:"Minimal"}
 ];
 
 function StampGenerator({back,t}){
-  const [name,setName]=useState(""); const [title,setTitle]=useState(""); const [org,setOrg]=useState(""); const [extra,setExtra]=useState("");
-  const [style,setStyle]=useState("round"); const [color,setColor]=useState("#e53935"); const [size,setSize]=useState(900); const [opacity,setOpacity]=useState(100); const [logo,setLogo]=useState(""); const canvasRef=useRef(null);
-  const draw=()=>{const c=canvasRef.current;if(!c)return;const dpr=2,w=900,h=700;c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);ctx.globalAlpha=opacity/100;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=9;ctx.textAlign="center";ctx.textBaseline="middle";const n=name||"YOUR NAME", tl=title||"DESIGNATION", og=org||"YOUR ORGANIZATION", ex=extra||"APPROVED";
-    if(style==="round"){ctx.beginPath();ctx.arc(450,350,260,0,Math.PI*2);ctx.stroke();ctx.lineWidth=3;ctx.beginPath();ctx.arc(450,350,232,0,Math.PI*2);ctx.stroke();ctx.font="700 27px Arial";ctx.fillText(og.toUpperCase(),450,150);ctx.font="800 52px Arial";ctx.fillText(n.toUpperCase(),450,310);ctx.font="700 28px Arial";ctx.fillText(tl.toUpperCase(),450,375);ctx.font="600 22px Arial";ctx.fillText(ex.toUpperCase(),450,445);ctx.font="700 18px Arial";ctx.fillText("✦  TOOLMASTER PRO  ✦",450,520);}
-    else if(style==="square"){drawRoundedRect(ctx,125,105,650,490,30);ctx.stroke();ctx.lineWidth=3;drawRoundedRect(ctx,145,125,610,450,20);ctx.stroke();ctx.font="800 34px Arial";ctx.fillText(n.toUpperCase(),450,255);ctx.font="700 24px Arial";ctx.fillText(tl.toUpperCase(),450,315);ctx.font="700 28px Arial";ctx.fillText(og.toUpperCase(),450,395);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,465);}
-    else if(style==="badge"){ctx.beginPath();ctx.moveTo(450,80);ctx.lineTo(700,165);ctx.lineTo(700,455);ctx.lineTo(450,620);ctx.lineTo(200,455);ctx.lineTo(200,165);ctx.closePath();ctx.stroke();ctx.font="800 34px Arial";ctx.fillText(og.toUpperCase(),450,225);ctx.font="800 47px Arial";ctx.fillText(n.toUpperCase(),450,320);ctx.font="700 25px Arial";ctx.fillText(tl.toUpperCase(),450,385);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,450);}
-    else {ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(170,180);ctx.lineTo(730,180);ctx.moveTo(170,520);ctx.lineTo(730,520);ctx.stroke();ctx.font="800 48px Arial";ctx.fillText(n,450,280);ctx.font="700 26px Arial";ctx.fillText(tl,450,350);ctx.font="600 22px Arial";ctx.fillText(og,450,410);ctx.font="600 20px Arial";ctx.fillText(ex,450,465);}
+  const [name,setName]=useState("");
+  const [title,setTitle]=useState("");
+  const [org,setOrg]=useState("");
+  const [extra,setExtra]=useState("");
+  const [style,setStyle]=useState("round");
+  const [color,setColor]=useState("#e53935");
+  const [opacity,setOpacity]=useState(100);
+  const canvasRef=useRef(null);
+
+  const draw=()=>{
+    const c=canvasRef.current;if(!c)return;
+    const w=900,h=700,dpr=2;c.width=w*dpr;c.height=h*dpr;
+    const ctx=c.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+    ctx.globalAlpha=opacity/100;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.textAlign="center";ctx.textBaseline="middle";
+    const n=name||"YOUR NAME",tl=title||"DESIGNATION",og=org||"YOUR ORGANIZATION",ex=extra||"APPROVED";
+    ctx.lineWidth=9;
+    if(style==="round"){
+      ctx.beginPath();ctx.arc(450,350,260,0,Math.PI*2);ctx.stroke();
+      ctx.lineWidth=3;ctx.beginPath();ctx.arc(450,350,232,0,Math.PI*2);ctx.stroke();
+      ctx.font="700 27px Arial";ctx.fillText(og.toUpperCase(),450,150);
+      ctx.font="800 52px Arial";ctx.fillText(n.toUpperCase(),450,310);
+      ctx.font="700 28px Arial";ctx.fillText(tl.toUpperCase(),450,375);
+      ctx.font="600 22px Arial";ctx.fillText(ex.toUpperCase(),450,445);
+      ctx.font="700 18px Arial";ctx.fillText("TOOLMASTER PRO",450,520);
+    }else if(style==="square"){
+      drawRoundedRect(ctx,125,105,650,490,30);ctx.stroke();ctx.lineWidth=3;drawRoundedRect(ctx,145,125,610,450,20);ctx.stroke();
+      ctx.font="800 34px Arial";ctx.fillText(n.toUpperCase(),450,255);ctx.font="700 24px Arial";ctx.fillText(tl.toUpperCase(),450,315);ctx.font="700 28px Arial";ctx.fillText(og.toUpperCase(),450,395);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,465);
+    }else if(style==="badge"){
+      ctx.beginPath();ctx.moveTo(450,80);ctx.lineTo(700,165);ctx.lineTo(700,455);ctx.lineTo(450,620);ctx.lineTo(200,455);ctx.lineTo(200,165);ctx.closePath();ctx.stroke();
+      ctx.font="800 34px Arial";ctx.fillText(og.toUpperCase(),450,225);ctx.font="800 47px Arial";ctx.fillText(n.toUpperCase(),450,320);ctx.font="700 25px Arial";ctx.fillText(tl.toUpperCase(),450,385);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,450);
+    }else{
+      ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(170,180);ctx.lineTo(730,180);ctx.moveTo(170,520);ctx.lineTo(730,520);ctx.stroke();
+      ctx.font="800 48px Arial";ctx.fillText(n,450,280);ctx.font="700 26px Arial";ctx.fillText(tl,450,350);ctx.font="600 22px Arial";ctx.fillText(og,450,410);ctx.font="600 20px Arial";ctx.fillText(ex,450,465);
+    }
     ctx.globalAlpha=1;
   };
-  useEffect(()=>{draw()},[name,title,org,extra,style,color,size,opacity]);
+  useEffect(()=>{draw()},[name,title,org,extra,style,color,opacity]);
+
   return <Shell back={back} t={t}>
-    <div className="designApp">
-      <div className="designTop"><button className="designBtn" onClick={()=>{setName("");setTitle("");setOrg("");setExtra("")}}>← Templates</button><div className="designModes"><span><Type size={17}/> Text around</span><span><Type size={17}/> Text in centre</span><span><Shapes size={17}/> Circle</span><span><ImageIcon size={17}/> Images</span></div><button className="designBtn primary" onClick={()=>setStyle("round")}>New stamp +</button></div>
-      <div className="designTabs"><b>Stamp Designer</b><span>Live preview & customization</span></div>
-      <div className="designBody">
-        <aside className="designLeft"><div className="designTabRow"><b>All</b><span>Text</span><span>Figure</span></div><div className="layerList"><div className="layer active"><span>0#</span> Frame</div><div className="layer"><span>1#</span> Main text</div><div className="layer"><span>2#</span> Details</div><div className="layer"><span>3#</span> Extra line</div></div><div className="designSection"><h4>Stamp style</h4>{stampStyles.map(x=><button key={x.id} className={style===x.id?"styleChip active":"styleChip"} onClick={()=>setStyle(x.id)}><b>{x.icon}</b>{x.name}</button>)}</div></aside>
-        <section className="designCanvas"><div className="canvasGrid"><canvas ref={canvasRef}/></div><div className="canvasActions"><button className="iconBtn"><Eye size={17}/></button><button className="iconBtn"><RefreshCw size={17}/></button><button className="iconBtn" onClick={()=>draw()}><Check size={17}/></button></div></section>
-        <aside className="designRight"><h3>Stamp details</h3><p>Write anything about yourself and the stamp updates instantly.</p><label>Name<input value={name} onChange={e=>setName(e.target.value)} placeholder="Muhammad Arshad"/></label><label>Designation<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Managing Director"/></label><label>Company / Organization<input value={org} onChange={e=>setOrg(e.target.value)} placeholder="ABC Enterprises"/></label><label>Extra text<input value={extra} onChange={e=>setExtra(e.target.value)} placeholder="Approved / Verified / Official"/></label><div className="controlGrid"><label>Color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label><label>Opacity <span>{opacity}%</span><input type="range" min="20" max="100" value={opacity} onChange={e=>setOpacity(+e.target.value)}/></label></div><label>Output size<select value={size} onChange={e=>setSize(+e.target.value)}><option value="700">700 px</option><option value="900">900 px</option><option value="1200">1200 px</option><option value="1600">1600 px</option></select></label><button className="btn primary full" onClick={()=>downloadCanvas(canvasRef.current,"toolmaster-stamp-" + (name||"stamp").replace(/\s+/g,"-").toLowerCase() + ".png")}><Download size={16}/> Download Stamp PNG</button></aside>
-      </div><div className="designFooter"><span>Transparent PNG • Browser-based • Instant preview</span><button className="btn" onClick={()=>{setName("");setTitle("");setOrg("");setExtra("");setStyle("round")}}>Reset</button></div>
+    <div className="workspace">
+      <div className="panel">
+        <h3>Stamp Generator</h3><p>Create your stamp and download it as PNG.</p>
+        <label>Name<input value={name} onChange={e=>setName(e.target.value)} placeholder="Muhammad Arshad"/></label>
+        <label>Designation<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Managing Director"/></label>
+        <label>Company / Organization<input value={org} onChange={e=>setOrg(e.target.value)} placeholder="ABC Enterprises"/></label>
+        <label>Extra text<input value={extra} onChange={e=>setExtra(e.target.value)} placeholder="Approved / Verified / Official"/></label>
+        <div className="videoOptions"><label>Style<select value={style} onChange={e=>setStyle(e.target.value)}>{stampStyles.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select></label><label>Color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label></div>
+        <label>Opacity <span>{opacity}%</span><input type="range" min="20" max="100" value={opacity} onChange={e=>setOpacity(Number(e.target.value))}/></label>
+        <div className="actions"><button className="btn" onClick={draw}><RefreshCw size={15}/> Refresh</button><button className="btn primary" onClick={()=>downloadCanvas(canvasRef.current,"toolmaster-stamp.png")}><Download size={15}/> Download PNG</button></div>
+      </div>
+      <div className="panel"><h3>Live Preview</h3><div style={{display:"grid",placeItems:"center",minHeight:420,background:"#f8fafc",borderRadius:16}}><canvas ref={canvasRef} style={{maxWidth:"100%",height:"auto"}}/></div></div>
     </div>
-  </Shell>
+  </Shell>;
 }
 
-const logoCategories=[
-  ["Business",Building2],["Medical",Stethoscope],["Photography",Camera],["Automotive",Car],["Food",Utensils],["Education",GraduationCap],["Health",HeartPulse],["Security",Shield],["Corporate",Briefcase],["Music",Music],["Gaming",Gamepad2],["Nature",Leaf],["Travel",Plane],["Real Estate",Home],["Fashion",ShoppingBag],["Pets",PawPrint],["Technology",Globe],["Luxury",Crown]
-];
-const logoPresets=[
-  {id:"circle",name:"Circle",shape:"circle"},{id:"square",name:"Square",shape:"square"},{id:"badge",name:"Badge",shape:"badge"},{id:"minimal",name:"Minimal",shape:"minimal"}
-];
+const logoPresets=["circle","square","badge","minimal"];
+const logoCategories=["Business","Medical","Photography","Automotive","Food","Education","Health","Security","Corporate","Music","Gaming","Nature","Travel","Real Estate","Fashion","Pets","Technology","Luxury"];
 
 function LogoMaker({back,t}){
-  const [brand,setBrand]=useState("");const [tag,setTag]=useState("");const [category,setCategory]=useState("Business");const [Icon,setIcon]=useState(Building2);const [shape,setShape]=useState("circle");const [font,setFont]=useState("Arial");const [weight,setWeight]=useState("700");const [color,setColor]=useState("#6d4aff");const [textColor,setTextColor]=useState("#172033");const [size,setSize]=useState(900);const canvasRef=useRef(null);
-  useEffect(()=>{const hit=logoCategories.find(x=>x[0]===category);if(hit)setIcon(()=>hit[1])},[category]);
-  const draw=()=>{const c=canvasRef.current;if(!c)return;const d=900;c.width=d*2;c.height=d*2;const ctx=c.getContext("2d");ctx.scale(2,2);ctx.clearRect(0,0,d,d);ctx.textAlign="center";ctx.textBaseline="middle";const cx=450,cy=390;ctx.fillStyle=color;ctx.strokeStyle=color;ctx.lineWidth=18;
-    if(shape==="circle"){ctx.beginPath();ctx.arc(cx,cy-20,185,0,Math.PI*2);ctx.stroke();} else if(shape==="square"){drawRoundedRect(ctx,265,190,370,370,38);ctx.stroke();} else if(shape==="badge"){ctx.beginPath();ctx.moveTo(450,160);ctx.lineTo(610,215);ctx.lineTo(610,415);ctx.lineTo(450,520);ctx.lineTo(290,415);ctx.lineTo(290,215);ctx.closePath();ctx.stroke();} else {ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(300,180);ctx.lineTo(600,180);ctx.stroke();}
-    ctx.fillStyle=color;ctx.font="700 112px Arial";ctx.fillText(category.slice(0,1),450,370);ctx.fillStyle=textColor;ctx.font=`${weight} 70px ${font}`;ctx.fillText(brand||"YOUR BRAND",450,650);ctx.font=`500 28px ${font}`;ctx.fillText(tag||"YOUR TAGLINE",450,710);ctx.globalAlpha=.7;ctx.font=`600 18px ${font}`;ctx.fillText(category.toUpperCase()+" • TOOLMASTER PRO",450,760);ctx.globalAlpha=1;
+  const [brand,setBrand]=useState("");
+  const [tag,setTag]=useState("");
+  const [category,setCategory]=useState("Business");
+  const [shape,setShape]=useState("circle");
+  const [font,setFont]=useState("Arial");
+  const [weight,setWeight]=useState("700");
+  const [color,setColor]=useState("#6d4aff");
+  const [textColor,setTextColor]=useState("#172033");
+  const canvasRef=useRef(null);
+
+  const draw=()=>{
+    const c=canvasRef.current;if(!c)return;
+    const d=900;c.width=d*2;c.height=d*2;const ctx=c.getContext("2d");ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,d,d);ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=18;
+    if(shape==="circle"){ctx.beginPath();ctx.arc(450,300,170,0,Math.PI*2);ctx.stroke();}
+    else if(shape==="square"){drawRoundedRect(ctx,280,130,340,340,36);ctx.stroke();}
+    else if(shape==="badge"){ctx.beginPath();ctx.moveTo(450,100);ctx.lineTo(610,160);ctx.lineTo(610,390);ctx.lineTo(450,500);ctx.lineTo(290,390);ctx.lineTo(290,160);ctx.closePath();ctx.stroke();}
+    else{ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(300,180);ctx.lineTo(600,180);ctx.stroke();}
+    ctx.fillStyle=color;ctx.font="700 110px Arial";ctx.fillText(category.slice(0,1),450,300);
+    ctx.fillStyle=textColor;ctx.font=weight+" 62px "+font;ctx.fillText((brand||"YOUR BRAND").slice(0,20),450,610);
+    ctx.font="400 26px "+font;ctx.fillText((tag||"YOUR TAGLINE").slice(0,40),450,680);
+    ctx.globalAlpha=.65;ctx.font="600 18px "+font;ctx.fillText(category.toUpperCase()+" - TOOLMASTER PRO",450,740);ctx.globalAlpha=1;
   };
-  useEffect(()=>draw(),[brand,tag,category,shape,font,weight,color,textColor,size]);
-  return <Shell back={back} t={t}><div className="logoApp"><div className="logoTop"><div><h2>Logo Maker Studio</h2><p>Create a logo from your name, text, category and style.</p></div><button className="btn primary" onClick={()=>downloadCanvas(canvasRef.current,"logo-" + (brand||"brand").replace(/\s+/g,"-").toLowerCase() + ".png")}><Download size={16}/> Download PNG</button></div><div className="logoBody"><aside className="logoSide"><h3>Logo categories</h3><div className="categoryGrid">{logoCategories.map(([n,I])=><button key={n} className={category===n?"logoCat active":"logoCat"} onClick={()=>{setCategory(n);setIcon(()=>I)}}><I size={21}/><span>{n}</span></button>)}</div><div className="logoSection"><h3>Shape</h3><div className="shapeGrid">{logoPresets.map(x=><button key={x.id} className={shape===x.id?"shapeBtn active":"shapeBtn"} onClick={()=>setShape(x.id)}>{x.name}</button>)}</div></div></aside><section className="logoPreview"><div className="previewBadge"><Sparkles size={15}/> Live logo preview</div><div className="logoCanvasWrap"><canvas ref={canvasRef}/></div></section><aside className="logoControls"><h3>Customize</h3><label>Brand / Name<input value={brand} onChange={e=>setBrand(e.target.value)} placeholder="Arshad Medical Lab"/></label><label>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} placeholder="Quality • Trust • Care"/></label><label>Font<select value={font} onChange={e=>setFont(e.target.value)}><option>Arial</option><option>Georgia</option><option>Verdana</option><option>Trebuchet MS</option><option>Courier New</option><option>Times New Roman</option></select></label><label>Font style<select value={weight} onChange={e=>setWeight(e.target.value)}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label><div className="colorRow"><label>Logo color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label><label>Text color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)}/></label></div><button className="btn full" onClick={()=>{setBrand("");setTag("");setCategory("Business");setShape("circle")}}>Reset</button></aside></div><div className="logoFooter"><span>PNG export • Transparent background • Fully browser-based</span><button className="btn primary" onClick={()=>downloadCanvas(canvasRef.current,`logo-${Date.now()}.png`)}><Download size={16}/> Export Logo</button></div></div></Shell>
+  useEffect(()=>{draw()},[brand,tag,category,shape,font,weight,color,textColor]);
+
+  return <Shell back={back} t={t}>
+    <div className="workspace">
+      <div className="panel">
+        <h3>Logo Maker</h3><p>Create a simple professional logo.</p>
+        <label>Brand / Name<input value={brand} onChange={e=>setBrand(e.target.value)} placeholder="ToolMaster Pro"/></label>
+        <label>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} placeholder="Smart tools for everyone"/></label>
+        <label>Category<select value={category} onChange={e=>setCategory(e.target.value)}>{logoCategories.map(x=><option key={x}>{x}</option>)}</select></label>
+        <label>Shape<select value={shape} onChange={e=>setShape(e.target.value)}>{logoPresets.map(x=><option key={x}>{x}</option>)}</select></label>
+        <label>Font<select value={font} onChange={e=>setFont(e.target.value)}><option>Arial</option><option>Georgia</option><option>Verdana</option><option>Trebuchet MS</option><option>Times New Roman</option></select></label>
+        <label>Font weight<select value={weight} onChange={e=>setWeight(e.target.value)}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label>
+        <div className="videoOptions"><label>Logo color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label><label>Text color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)}/></label></div>
+        <div className="actions"><button className="btn" onClick={()=>{setBrand("");setTag("");setCategory("Business");setShape("circle")}}>Reset</button><button className="btn primary" onClick={()=>downloadCanvas(canvasRef.current,"toolmaster-logo.png")}><Download size={15}/> Download PNG</button></div>
+      </div>
+      <div className="panel"><h3>Live Preview</h3><div style={{display:"grid",placeItems:"center",minHeight:420,background:"#f8fafc",borderRadius:16}}><canvas ref={canvasRef} style={{maxWidth:"100%",height:"auto"}}/></div></div>
+    </div>
+  </Shell>;
 }
 
+function SeoKeywordGenerator({back,t}){
+  const [seed,setSeed]=useState("");const [language,setLanguage]=useState("English");const [location,setLocation]=useState("");const [intent,setIntent]=useState("All");const [count,setCount]=useState(30);const [out,setOut]=useState([]);const [status,setStatus]=useState("");
+  const generate=()=>{
+    const base=seed.trim();if(!base){setStatus("Enter a seed keyword or topic first.");setOut([]);return;}const clean=base.replace(/\s+/g," ").trim();const loc=location.trim();
+    const core=[clean,clean+" online",clean+" free",clean+" tool",clean+" generator",clean+" software","best "+clean,clean+" for beginners",clean+" for small business",clean+" tutorial",clean+" guide",clean+" tips",clean+" examples",clean+" ideas",clean+" services",clean+" solutions","how to use "+clean,"how to "+clean,"what is "+clean,clean+" near me",clean+" price",clean+" cost",clean+" review",clean+" comparison",clean+" alternatives",clean+" vs",clean+" template",clean+" checklist",clean+" step by step",clean+" for students",clean+" for professionals",clean+" for business",clean+" in 2026"];
+    const modifiers={Informational:["what is","how to","guide","tutorial","examples","tips","learn"],Commercial:["best","review","comparison","alternatives","top","vs"],Transactional:["buy","price","cost","deal","service","quote"],Navigational:["official","login","website","app"]};
+    let ideas=[...core];if(intent!=="All")ideas=[...ideas,...(modifiers[intent]||[]).map(m=>m+" "+clean)];if(loc)ideas=[...ideas,clean+" in "+loc,clean+" near "+loc,"best "+clean+" in "+loc,clean+" services in "+loc,clean+" price in "+loc];if(language!=="English")ideas=[...ideas,clean+" "+language,clean+" tutorial "+language,clean+" guide "+language];
+    ideas=[...new Set(ideas.map(x=>x.trim()).filter(Boolean))].slice(0,Math.max(5,Math.min(100,Number(count)||30)));setOut(ideas);setStatus(ideas.length+" keyword ideas generated locally. No live search-volume data.");
+  };
+  return <Shell back={back} t={t} status={status||"Browser-based keyword suggestions."}><div className="workspace"><div className="panel"><h3>SEO Keyword Generator</h3><label>Seed keyword / topic<input value={seed} onChange={e=>setSeed(e.target.value)} placeholder="e.g. PDF to Word"/></label><div className="videoOptions"><label>Language<select value={language} onChange={e=>setLanguage(e.target.value)}><option>English</option><option>Urdu</option><option>Hindi</option><option>Spanish</option><option>Arabic</option></select></label><label>Intent<select value={intent} onChange={e=>setIntent(e.target.value)}><option>All</option><option>Informational</option><option>Commercial</option><option>Transactional</option><option>Navigational</option></select></label></div><div className="videoOptions"><label>Location<input value={location} onChange={e=>setLocation(e.target.value)} placeholder="Pakistan"/></label><label>Ideas<select value={count} onChange={e=>setCount(Number(e.target.value))}><option value="20">20</option><option value="30">30</option><option value="50">50</option><option value="100">100</option></select></label></div><div className="actions"><button className="btn primary" onClick={generate}><Sparkles size={15}/> Generate</button><button className="btn" onClick={()=>{setSeed("");setLocation("");setOut([]);setStatus("")}}>Clear</button></div></div><div className="panel"><h3>Keyword Ideas</h3>{out.length?<div style={{display:"grid",gap:7,maxHeight:500,overflow:"auto"}}>{out.map((x,i)=><div key={x+"-"+i} style={{display:"flex",justifyContent:"space-between",gap:8,padding:"10px 12px",border:"1px solid #e5e7ed",borderRadius:9}}><span>{x}</span><button className="iconBtn" onClick={()=>navigator.clipboard?.writeText(x)}><Copy size={14}/></button></div>)}</div>:<div className="answer">Your keyword ideas will appear here.</div>}<div className="actions">{out.length>0&&<><button className="btn" onClick={()=>navigator.clipboard?.writeText(out.join("\n"))}><Copy size={15}/> Copy All</button><button className="btn primary" onClick={()=>downloadText(out.join("\n"),"seo-keyword-ideas.txt")}><Download size={15}/> Download TXT</button></>}</div></div></div></Shell>;
+}
 
 class ToolErrorBoundary extends React.Component {
   constructor(props){super(props);this.state={error:null};}
@@ -1337,13 +758,13 @@ function TextToVideo({back,user,openAuth}) {
   const [progress,setProgress]=useState(0);
   const [selectedPlan,setSelectedPlan]=useState("video-free");
 
-  const getBackend=()=>import.meta.env.VITE_VIDEO_FUNCTION_URL || (import.meta.env.VITE_SUPABASE_URL ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/video-generator` : "");
+  const getBackend=()=>import.meta.env.VITE_VIDEO_FUNCTION_URL || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/video-generator` : "");
 
   const authHeaders=async()=>{
     const token=await getSupabaseAccessToken();
     return {
       "Content-Type":"application/json",
-      ...(import.meta.env.VITE_SUPABASE_ANON_KEY?{apikey:import.meta.env.VITE_SUPABASE_ANON_KEY}:{}),
+      ...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),
       ...(token?{Authorization:`Bearer ${token}`}:{})
     };
   };
@@ -1416,11 +837,11 @@ function TextToVideo({back,user,openAuth}) {
           <label>Duration<select value={duration} disabled={busy} onChange={e=>setDuration(e.target.value)}><option>4 seconds</option><option>8 seconds</option><option>12 seconds</option></select></label>
           <label>Aspect<select value={aspect} disabled={busy} onChange={e=>setAspect(e.target.value)}><option>16:9</option><option>9:16</option></select></label>
         </div>
-        <button className="btn primary" disabled={busy||!prompt.trim()} onClick={createVideo} style={{marginTop:12}}><Sparkles size={17}/>{busy?"Generating... " + progress + "%":"Generate Video"}</button>
+        <button className="btn primary" disabled={busy||!prompt.trim()} onClick={createVideo} style={{marginTop:12}}><Sparkles size={17}/>{busy?`Generating... ${progress}%`:"Generate Video"}</button>
         <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Choose a video plan above. Shorter 4–8 second clips are best for quick testing. A signed-in account is required.</small>
       </div>
       <div className="aiCard"><h3>🎥 Video Preview</h3>
-        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?"Rendering: " + (result.status||"queued"):"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
+        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
       </div>
     </div>
     <PlanCards title="Text-to-Video Plans" plans={VIDEO_PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="video"/>
@@ -1732,7 +1153,7 @@ function PdfEditorTool({t,back}) {
 async function convertWithSecureBackend(file, target) {
   if (!file) throw new Error("Please choose a file first.");
   const configured = import.meta.env.VITE_DOCUMENT_CONVERTER_URL || "";
-  const base = configured || (import.meta.env.VITE_SUPABASE_URL ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/document-converter` : "");
+  const base = configured || (SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/document-converter` : "");
   if (!base) {
     throw new Error("Document converter backend is not configured. Add VITE_DOCUMENT_CONVERTER_URL or deploy the document-converter Supabase Edge Function.");
   }
@@ -1742,7 +1163,7 @@ async function convertWithSecureBackend(file, target) {
   form.append("output_format", target);
 
   const headers = {};
-  if (import.meta.env.VITE_SUPABASE_ANON_KEY) headers.apikey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  if (SUPABASE_KEY) headers.apikey = SUPABASE_KEY;
 
   const response = await fetch(base, { method: "POST", headers, body: form });
   const contentType = response.headers.get("content-type") || "";
@@ -2095,7 +1516,7 @@ function BackgroundRemoverTool({t,back}) {
               {bgCategory==="photo" && <>
                 <p style={{fontWeight:700,margin:"0 0 10px"}}>Choose a background</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
-                  {photoBackgrounds.map((src,i)=><button key={src} type="button" onClick={()=>chooseBackground("image",src)} style={{padding:0,border:bgImage===src?"3px solid #2563eb":"1px solid #e1e5eb",borderRadius:12,overflow:"hidden",background:"#fff",cursor:"pointer"}}><img src={src} alt={"Background " + (i+1)} style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/></button>)}
+                  {photoBackgrounds.map((src,i)=><button key={src} type="button" onClick={()=>chooseBackground("image",src)} style={{padding:0,border:bgImage===src?"3px solid #2563eb":"1px solid #e1e5eb",borderRadius:12,overflow:"hidden",background:"#fff",cursor:"pointer"}}><img src={src} alt={`Background ${i+1}`} style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/></button>)}
                 </div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:12}}>
                   <button type="button" className={bgMode==="transparent"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("transparent")}>Transparent</button>
@@ -2104,7 +1525,7 @@ function BackgroundRemoverTool({t,back}) {
               </>}
               {bgCategory==="color" && <>
                 <p style={{fontWeight:700,margin:"0 0 10px"}}>Solid colors</p>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8}}>{colorBackgrounds.map(c=><button key={c} type="button" aria-label={"Set " + c} onClick={()=>{setBgColor(c);chooseBackground("color",c);}} style={{width:"100%",aspectRatio:"1/1",border:bgColor===c&&bgMode==="color"?"3px solid #2563eb":"1px solid #d8dde7",borderRadius:10,background:c,cursor:"pointer"}}/>)}</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8}}>{colorBackgrounds.map(c=><button key={c} type="button" aria-label={`Set ${c}`} onClick={()=>{setBgColor(c);chooseBackground("color",c);}} style={{width:"100%",aspectRatio:"1/1",border:bgColor===c&&bgMode==="color"?"3px solid #2563eb":"1px solid #d8dde7",borderRadius:10,background:c,cursor:"pointer"}}/>)}</div>
                 <label style={{display:"block",marginTop:14}}>Custom color<input type="color" value={bgColor} onChange={e=>{setBgColor(e.target.value);setBgMode("color");setBgImage("");}} style={{display:"block",marginTop:8,width:"100%",height:42}}/></label>
                 <button type="button" className="btn primary" style={{width:"100%",marginTop:10}} onClick={()=>chooseBackground("color",bgColor)}>Apply Color</button>
               </>}
@@ -2147,112 +1568,6 @@ function ImageTool({t,back}) {
     {id==="image-compressor"&&<label>Quality<input type="range" min=".2" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
     <button className="btn primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw/>:<Download/>}{busy?"Processing...":id==="image-text"?"Extract Text":"Process & Download"}</button>
   </div><div className="panel">{files.map(f=><p key={f.name}>🖼️ {f.name}</p>)}<p style={{color:"#8395ae",fontSize:12}}>Image Background Remover uses a simple local near-white background algorithm; complex photos need a dedicated AI model.</p></div></div></Shell>;
-}
-
-
-function SeoKeywordGenerator({back,t}){
-  const [seed,setSeed]=useState("");
-  const [language,setLanguage]=useState("English");
-  const [location,setLocation]=useState("");
-  const [intent,setIntent]=useState("All");
-  const [count,setCount]=useState(30);
-  const [out,setOut]=useState([]);
-  const [status,setStatus]=useState("");
-
-  const generate=()=>{
-    const base=seed.trim();
-    if(!base){setStatus("Enter a seed keyword or topic first.");setOut([]);return;}
-    const clean=base.replace(/\s+/g," ").trim();
-    const loc=location.trim();
-    const core=[
-      clean,
-      `${clean} online`,
-      `${clean} free`,
-      `${clean} tool`,
-      `${clean} generator`,
-      `${clean} software`,
-      `best ${clean}`,
-      `${clean} for beginners`,
-      `${clean} for small business`,
-      `${clean} tutorial`,
-      `${clean} guide`,
-      `${clean} tips`,
-      `${clean} examples`,
-      `${clean} ideas`,
-      `${clean} services`,
-      `${clean} solutions`,
-      `how to use ${clean}`,
-      `how to ${clean}`,
-      `what is ${clean}`,
-      `${clean} near me`,
-      `${clean} price`,
-      `${clean} cost`,
-      `${clean} review`,
-      `${clean} comparison`,
-      `${clean} alternatives`,
-      `${clean} vs`,
-      `${clean} template`,
-      `${clean} checklist`,
-      `${clean} step by step`,
-      `${clean} for students`,
-      `${clean} for professionals`,
-      `${clean} for business`,
-      `${clean} in 2026`
-    ];
-    const modifiers={
-      Informational:["what is","how to","guide","tutorial","examples","tips","learn"],
-      Commercial:["best","review","comparison","alternatives","top","vs"],
-      Transactional:["buy","price","cost","deal","service","quote"],
-      Navigational:["official","login","website","app"]
-    };
-    let ideas=[...core];
-    if(intent!=="All"){
-      ideas=[...ideas,...(modifiers[intent]||[]).map(m=>`${m} ${clean}`)];
-    }
-    if(loc){
-      ideas=[...ideas,`${clean} in ${loc}`,`${clean} near ${loc}`,`best ${clean} in ${loc}`,`${clean} services in ${loc}`,`${clean} price in ${loc}`];
-    }
-    if(language!=="English"){
-      ideas=[...ideas,`${clean} ${language}`,`${clean} tutorial ${language}`,`${clean} guide ${language}`];
-    }
-    ideas=[...new Set(ideas.map(x=>x.trim()).filter(Boolean))].slice(0,Math.max(5,Math.min(100,Number(count)||30)));
-    setOut(ideas);
-    setStatus(`${ideas.length} keyword ideas generated locally. These are suggestions, not live search-volume data.`);
-  };
-
-  const download=()=>{
-    if(!out.length)return;
-    downloadText(out.join("\n"),"seo-keyword-ideas.txt");
-    setStatus("Keyword list downloaded.");
-  };
-
-  return <Shell back={back} t={t} status={status||"Generate SEO keyword ideas locally in your browser."}>
-    <div className="workspace">
-      <div className="panel">
-        <h3>SEO Keyword Generator</h3>
-        <p style={{color:"#7d879a",lineHeight:1.6}}>Create seed, long-tail, question, local and search-intent keyword ideas.</p>
-        <label>Seed keyword / topic<input value={seed} onChange={e=>setSeed(e.target.value)} placeholder="e.g. PDF to Word" /></label>
-        <div className="videoOptions">
-          <label>Language<select value={language} onChange={e=>setLanguage(e.target.value)}><option>English</option><option>Urdu</option><option>Hindi</option><option>Spanish</option><option>Arabic</option></select></label>
-          <label>Search intent<select value={intent} onChange={e=>setIntent(e.target.value)}><option>All</option><option>Informational</option><option>Commercial</option><option>Transactional</option><option>Navigational</option></select></label>
-        </div>
-        <div className="videoOptions">
-          <label>Location (optional)<input value={location} onChange={e=>setLocation(e.target.value)} placeholder="e.g. Pakistan" /></label>
-          <label>Number of ideas<select value={count} onChange={e=>setCount(Number(e.target.value))}><option value="20">20</option><option value="30">30</option><option value="50">50</option><option value="100">100</option></select></label>
-        </div>
-        <div className="actions">
-          <button className="btn primary" onClick={generate}><Sparkles size={16}/> Generate Keywords</button>
-          <button className="btn" onClick={()=>{setSeed("");setLocation("");setOut([]);setStatus("")}}>Clear</button>
-        </div>
-        <div className="notice"><ShieldCheck size={16}/> This browser tool generates keyword variations. It does not provide live Google volume, CPC or competition metrics.</div>
-      </div>
-      <div className="panel">
-        <h3>Keyword Ideas {out.length>0&&<span className="pill" style={{marginLeft:8}}>{out.length}</span>}</h3>
-        {out.length ? <div style={{display:"grid",gap:7,maxHeight:500,overflow:"auto"}}>{out.map((x,i)=><div key={`${x}-${i}`} style={{display:"flex",justifyContent:"space-between",gap:8,alignItems:"center",padding:"10px 12px",border:"1px solid #e5e7ed",borderRadius:9,background:"#fafbfc"}}><span>{x}</span><button className="iconBtn" onClick={()=>navigator.clipboard?.writeText(x)} title="Copy"><Copy size={14}/></button></div>)}</div> : <div className="answer">Your keyword ideas will appear here.</div>}
-        <div className="actions">{out.length>0&&<><button className="btn" onClick={()=>navigator.clipboard?.writeText(out.join("\n"))}><Copy size={15}/> Copy All</button><button className="btn primary" onClick={download}><Download size={15}/> Download TXT</button></>}</div>
-      </div>
-    </div>
-  </Shell>;
 }
 
 function SeoTool({t, back}) {
