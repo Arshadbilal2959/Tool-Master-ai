@@ -506,7 +506,7 @@ function StudentAIHelper({back,user}) {
       const fd=new FormData();
       fd.append("question",question.trim());
       files.forEach(f=>fd.append("files",f));
-      const headers={...(import.meta.env.VITE_SUPABASE_ANON_KEY?{apikey:import.meta.env.VITE_SUPABASE_ANON_KEY}:{}),...(user?.access_token?{Authorization:`Bearer ${user.access_token}`}:{})};
+      const headers = {}; if (import.meta.env.VITE_SUPABASE_ANON_KEY) headers.apikey = import.meta.env.VITE_SUPABASE_ANON_KEY; if (user && user.access_token) headers.Authorization = "Bearer " + user.access_token;
       const r=await fetch(endpoint,{method:"POST",headers,body:fd});
       const data=await r.json().catch(()=>({}));
       if(!r.ok) throw new Error(data.error||data.message||`AI backend error (${r.status})`);
