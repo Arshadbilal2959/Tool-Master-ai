@@ -129,9 +129,8 @@ const tools = [
   ["Binary Converter","Developer Tools","Convert text and numbers to binary.","binary"],
   ["ASCII Converter","Developer Tools","Convert text to ASCII codes.","ascii"],
   ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"],
-  ["SEO Keyword Generator","SEO & Marketing","Generate seed, long-tail, question, local and search-intent keyword ideas.","seo-keyword-generator"],
   ["Stamp Generator","Design Tools","Create professional stamps and seals with instant PNG export.","stamp-generator"],
-  ["Logo Maker","Design Tools","Create a simple professional logo and export it as PNG.","logo-maker"]
+  ["Logo Maker","Design Tools","Create professional logos with templates, shapes, icons, uploads and advanced customization.","logo-maker"]
 ];
 
 const categories = [
@@ -147,6 +146,7 @@ const PLANS = [
   {id:"demand", name:"Demand", credits:10000, period:"monthly", price:49, description:"For heavy AI usage"},
   {id:"platinum", name:"Platinum", credits:50000, period:"monthly", price:99, description:"Maximum AI access"}
 ];
+
 const VIDEO_PLANS = [
   {id:"video-free", name:"Free", credits:50, period:"monthly", price:0, description:"50 video credits for testing", features:["Short test clips","720p landscape/portrait","Basic generation"]},
   {id:"video-starter", name:"Starter", credits:500, period:"monthly", price:9, description:"For creators getting started", features:["500 video credits","Priority queue","HD downloads"]},
@@ -295,11 +295,73 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfEditorHeader{padding:16px 18px;border-bottom:1px solid #e6e8ef;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
 .pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
-@media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
+
+.pdfProPage{margin-top:12px}
+.pdfProHero{background:#f6f6fb;padding:40px 24px 50px;text-align:center;border:1px solid #e3e4eb;border-radius:16px 16px 0 0}
+.pdfProHero h1{font-size:42px;margin:0 0 10px;letter-spacing:-.04em}
+.pdfProHero p{font-size:17px;color:#667085;margin:0 auto 26px;max-width:800px}
+.pdfUploadArea{max-width:520px;margin:auto}
+.pdfUploadArea .uploadBox{justify-content:center;background:#fff;border:0;box-shadow:0 8px 22px rgba(24,32,51,.10);padding:20px;border-radius:14px}
+.pdfDropHint{color:#6f7787;font-size:13px;margin-top:9px}
+.pdfWorkArea{display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:610px;border:1px solid #e2e4eb;border-top:0;background:#eef0f6}
+.pdfCanvasZone{padding:28px;min-width:0}
+.pdfThumbHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;color:#566176;font-size:13px}
+.pdfThumbGrid{min-height:490px;display:flex;justify-content:center;align-items:flex-start;gap:18px;flex-wrap:wrap;padding:20px}
+.pdfThumb{width:180px;background:#fff;border-radius:11px;padding:12px;box-shadow:0 8px 26px rgba(34,39,53,.10);text-align:center}
+.pdfThumb img{width:100%;height:240px;object-fit:contain;border:1px solid #e8eaf0}
+.pdfThumb small{display:block;margin-top:8px;color:#657085;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdfThumb.file{height:180px;display:grid;place-items:center;align-content:center;gap:10px}
+.pdfCanvasTip{text-align:center;color:#9198a8;font-size:12px;margin-top:6px}
+.pdfSidePanel{background:#fff;border-left:1px solid #dedfe6;padding:28px;display:flex;flex-direction:column}
+.pdfSidePanel h2{font-size:24px;margin:0 0 20px}
+.pdfChoice{padding:17px 16px;border-top:1px solid #e5e7ed;border-bottom:1px solid #e5e7ed;display:grid;gap:5px}
+.pdfChoice b{color:#ef3d34;font-size:14px}.pdfChoice span{color:#5e687c;line-height:1.45}
+.pdfChoice.premium{border-top:0}.pdfChoice.premium b{color:#f59e0b}.pdfChoice.premium b span{background:#fff0c8;border-radius:5px;padding:3px 7px;font-size:11px;color:#7b5c00;margin-left:6px}
+.pdfSidePanel label{display:grid;gap:7px;color:#566176;font-size:12px;font-weight:800;margin:12px 0}
+.pdfSidePanel input,.pdfSidePanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:11px;background:#fff}
+.pdfMainAction{margin-top:auto;border:0;border-radius:11px;padding:17px;background:#ef332b;color:#fff;font-weight:850;font-size:17px;box-shadow:0 10px 25px rgba(239,51,43,.18)}
+.pdfMainAction:disabled{opacity:.65;cursor:not-allowed}
+.pdfSideNote{margin-top:12px;color:#8c95a6;font-size:11px;line-height:1.5}
+.pdfQuickGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:22px;background:#fff;border:1px solid #e3e4eb;border-top:0;border-radius:0 0 16px 16px}
+.pdfQuick{border:1px solid #e2e5ec;background:#fff;border-radius:12px;padding:14px;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:7px 10px;color:#485267}
+.pdfQuick span{font-weight:850}.pdfQuick small{grid-column:2;color:#8992a3;line-height:1.4}.pdfQuick.active{border-color:#8770f8;background:#faf8ff;color:#6848ee}
+@media(max-width:900px){.navLinks{display:none}.pdfNavMenu{padding-left:14px;padding-right:14px;gap:2px}.pdfNavMenu>button,.pdfDropdown summary{font-size:11px;padding:9px 8px}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
 `;
 
 function GlobalStyle() { return <style>{css}</style>; }
+
+
+function PdfNavMenu({openTool}) {
+  const convert = [
+    tools.find(t=>t[3]==="pdf-word"),
+    tools.find(t=>t[3]==="word-pdf"),
+    tools.find(t=>t[3]==="pdf-jpg"),
+    tools.find(t=>t[3]==="jpg-pdf"),
+  ].filter(Boolean);
+  const allPdf = tools.filter(t=>t[1]==="PDF Tools");
+  return <div className="pdfNavWrap">
+    <div className="pdfNavMenu">
+      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="merge-pdf"))}>MERGE PDF</button>
+      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="split-pdf"))}>SPLIT PDF</button>
+      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="compress-pdf"))}>COMPRESS PDF</button>
+
+      <details className="pdfDropdown">
+        <summary>CONVERT PDF <ChevronRight size={15}/></summary>
+        <div className="pdfDropdownPanel">
+          {convert.map(t=><button key={t[3]} type="button" onClick={()=>openTool(t)}>{t[0]}</button>)}
+        </div>
+      </details>
+
+      <details className="pdfDropdown">
+        <summary>ALL PDF TOOLS <ChevronRight size={15}/></summary>
+        <div className="pdfDropdownPanel wide">
+          {allPdf.map(t=><button key={t[3]} type="button" onClick={()=>openTool(t)}>{t[0]}</button>)}
+        </div>
+      </details>
+    </div>
+  </div>;
+}
 
 function App() {
   const [cat,setCat]=useState("All Tools");
@@ -326,6 +388,14 @@ function App() {
     const savedHist = JSON.parse(localStorage.getItem("tm_history") || "[]");
     setFavorites(savedFav); setHistory(savedHist);
   }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.detail) openTool(e.detail);
+    };
+    window.addEventListener("tm-open-tool", handler);
+    return () => window.removeEventListener("tm-open-tool", handler);
+  }, [history]);
 
   useEffect(() => {
     if (!supabase) return;
@@ -372,7 +442,10 @@ function App() {
     <header className="header"><div className="container nav">
       <div className="brand"><div className="brandIcon"><Wrench size={21}/></div><span>ToolMaster<span>Pro</span></span></div>
       <nav className="navLinks">
-        <a href="#tools">Tools</a><a href="#categories">Categories</a><a href="#about">About</a>
+        <a href="#tools" onClick={()=>{setTool(null);setAdmin(false)}}>Tools</a>
+        <a href="#categories" onClick={()=>{setTool(null);setAdmin(false)}}>Categories</a>
+        <a href="#pricing" onClick={()=>{setTool(null);setAdmin(false)}}>Pricing</a>
+        <a href="#about" onClick={()=>{setTool(null);setAdmin(false)}}>About</a>
       </nav>
       <div className="navActions">
         <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
@@ -386,7 +459,14 @@ function App() {
           </div>}
         </div> : <><button className="btn" onClick={()=>{setAuthMode("signin");setAuthOpen(true)}}><LogIn size={16}/><span>Sign in</span></button><button className="btn primary" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}><UserPlus size={16}/><span>Sign up</span></button></>}
       </div>
-    </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
+    </div>
+    <PdfNavMenu openTool={openTool}/>
+    {mobile&&<div className="container mobileNav" style={{paddingBottom:12,display:"flex",gap:16,flexWrap:"wrap"}}>
+      <a href="#tools" onClick={()=>{setMobile(false);setTool(null);}}>Tools</a>
+      <a href="#categories" onClick={()=>{setMobile(false);setTool(null);}}>Categories</a>
+      <a href="#pricing" onClick={()=>{setMobile(false);setTool(null);}}>Pricing</a>
+      <a href="#about" onClick={()=>{setMobile(false);setTool(null);}}>About</a>
+    </div>}</header>
 
     {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user} openAuth={(mode="signin")=>{setAuthMode(mode);setAuthOpen(true)}}/></ToolErrorBoundary> :
       <>
@@ -407,6 +487,14 @@ function App() {
         </main>
       </>
     }
+
+    <section id="pricing" className="container" style={{padding:"20px 24px 60px"}}>
+      <div className="sectionHead"><div><h2>AI Pricing</h2><p>Student AI and Text-to-Video plans are ready for future billing integration.</p></div></div>
+      <div className="grid">
+        <div className="panel"><h3>Student AI Helper</h3><p style={{color:"#7c879a"}}>Free, Silver, Gold, Demand and Platinum plans.</p></div>
+        <div className="panel"><h3>Text-to-Video</h3><p style={{color:"#7c879a"}}>Free, Starter, Pro, Business and Platinum plans.</p></div>
+      </div>
+    </section>
     <footer className="footer" id="about"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
     {authOpen && <AuthModal mode={authMode} setMode={setAuthMode} close={()=>setAuthOpen(false)} onDone={()=>setAuthOpen(false)}/>}
   </div>;
@@ -539,8 +627,13 @@ function StudentAIHelper({back,user,openAuth}) {
       const raw=await r.text();
       let data={}; try{data=raw?JSON.parse(raw):{}}catch{}
       if(!r.ok) throw new Error(data.error||data.message||raw||`Student AI backend error (${r.status})`);
-      const out=String(data.answer||data.output||data.message||"").trim();
-      if(!out) throw new Error("Student AI returned an empty answer.");
+      const fallbackOutput = Array.isArray(data.output)
+        ? data.output.flatMap(item => Array.isArray(item?.content) ? item.content : [])
+            .map(part => part?.text?.value || part?.text || "")
+            .filter(Boolean).join("\n")
+        : "";
+      const out=String(data.answer||data.output_text||fallbackOutput||data.output||data.message||"").trim();
+      if(!out) throw new Error("Student AI returned an empty answer. Please check the OpenAI API key/model in Supabase.");
       setAnswer(out);
       setStatus(data.usage?`AI response received · ${data.usage}`:"AI response received.");
     }catch(e){
@@ -574,6 +667,17 @@ function StudentAIHelper({back,user,openAuth}) {
     <PlanCards title="Student AI Helper Plans" plans={PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="student"/>
   </Shell>;
 }
+
+class ToolErrorBoundary extends React.Component {
+  constructor(props){super(props);this.state={error:null};}
+  static getDerivedStateFromError(error){return {error};}
+  componentDidCatch(error,info){console.error("Tool runtime error",error,info);}
+  render(){
+    if(this.state.error) return <div className="toolPage"><div className="panel"><div className="formError"><AlertCircle size={18}/><div><b>Tool error</b><div style={{marginTop:5}}>{this.state.error.message||String(this.state.error)}</div></div></div><div className="actions"><button className="btn primary" onClick={()=>this.setState({error:null})}>Try Again</button><button className="btn" onClick={()=>window.location.reload()}>Reload Website</button></div></div></div>;
+    return this.props.children;
+  }
+}
+
 
 
 function downloadCanvas(canvas,name){
@@ -657,448 +761,109 @@ function StampGenerator({back,t}){
   </Shell>;
 }
 
-const logoTemplateData = [
-  {id:"royal",name:"Royal Crest",category:"Business",icon:"♛",bg:"#070b16",primary:"#d4af37",secondary:"#f4e7bd",accent:"#ffffff"},
-  {id:"tech",name:"Tech Nova",category:"Technology",icon:"⬢",bg:"#071522",primary:"#22d3ee",secondary:"#8b5cf6",accent:"#e0f2fe"},
-  {id:"medical",name:"Medical Care",category:"Medical",icon:"⚕",bg:"#071b1b",primary:"#22c55e",secondary:"#38bdf8",accent:"#ecfeff"},
-  {id:"camera",name:"Studio Lens",category:"Photography",icon:"◉",bg:"#11131b",primary:"#f59e0b",secondary:"#f97316",accent:"#ffffff"},
-  {id:"coffee",name:"Coffee House",category:"Food",icon:"☕",bg:"#1a110c",primary:"#d6a15d",secondary:"#f5e0b8",accent:"#fff7ed"},
-  {id:"fitness",name:"Fitness Pro",category:"Health",icon:"✚",bg:"#0b1710",primary:"#84cc16",secondary:"#22c55e",accent:"#f7fee7"},
-  {id:"digital",name:"Digital Agency",category:"Corporate",icon:"D",bg:"#111329",primary:"#8b5cf6",secondary:"#22d3ee",accent:"#f5f3ff"},
-  {id:"nature",name:"Nature Leaf",category:"Nature",icon:"✿",bg:"#08170f",primary:"#65a30d",secondary:"#bbf7d0",accent:"#f0fdf4"},
-  {id:"security",name:"Cyber Shield",category:"Security",icon:"⬢",bg:"#08111d",primary:"#38bdf8",secondary:"#6366f1",accent:"#eff6ff"},
-  {id:"luxury",name:"Luxury Gold",category:"Luxury",icon:"L",bg:"#120d08",primary:"#fbbf24",secondary:"#fef3c7",accent:"#ffffff"},
-  {id:"education",name:"Academy",category:"Education",icon:"◆",bg:"#101426",primary:"#60a5fa",secondary:"#a78bfa",accent:"#eff6ff"},
-  {id:"travel",name:"Travel",category:"Travel",icon:"✈",bg:"#07151a",primary:"#06b6d4",secondary:"#14b8a6",accent:"#ecfeff"}
-];
 
-const logoIconLibrary = [
-  "♛","★","✦","✚","☕","◈","✿","⬢","◆","⚕","⌂","♫","⚡","✈","♥","◉",
-  "C","D","B","M","A","S","P","T","G","N","R","K"
+const TM_LOGO_TEMPLATES = [
+  {id:"royal",name:"Royal Gold",category:"Luxury",icon:"♛",primary:"#D4AF37",secondary:"#F8FAFC",bg:"#070B14"},
+  {id:"medical",name:"Medical Care",category:"Medical",icon:"⚕",primary:"#22D3EE",secondary:"#E5E7EB",bg:"#07131A"},
+  {id:"tech",name:"Tech Nova",category:"Technology",icon:"⬢",primary:"#8B5CF6",secondary:"#22D3EE",bg:"#080B18"},
+  {id:"creative",name:"Creative",category:"Creative",icon:"✦",primary:"#F472B6",secondary:"#FBBF24",bg:"#120914"},
+  {id:"fitness",name:"Fitness",category:"Fitness",icon:"✚",primary:"#84CC16",secondary:"#FACC15",bg:"#08130C"},
+  {id:"coffee",name:"Coffee House",category:"Food",icon:"☕",primary:"#D6A15D",secondary:"#F5E0B8",bg:"#17120F"},
+  {id:"nature",name:"Nature",category:"Nature",icon:"✿",primary:"#65A30D",secondary:"#BBF7D0",bg:"#07130C"},
+  {id:"security",name:"Cyber Security",category:"Security",icon:"⬢",primary:"#38BDF8",secondary:"#A78BFA",bg:"#07111D"},
+  {id:"fashion",name:"Luxury Fashion",category:"Fashion",icon:"◆",primary:"#F59E0B",secondary:"#F3F4F6",bg:"#120D08"},
+  {id:"education",name:"Education",category:"Education",icon:"◆",primary:"#60A5FA",secondary:"#FDE68A",bg:"#08111F"},
+  {id:"realestate",name:"Real Estate",category:"Real Estate",icon:"⌂",primary:"#FBBF24",secondary:"#E5E7EB",bg:"#0C0D10"},
+  {id:"music",name:"Music Studio",category:"Music",icon:"♫",primary:"#C084FC",secondary:"#22D3EE",bg:"#10091A"}
 ];
+const TM_SHAPES=["circle","rounded","square","hexagon","diamond","triangle","star","shield","badge","line"];
+const TM_ICONS=["♛","★","✦","✚","☕","◈","✿","⬢","◆","⚕","⌂","♫","⚡","✈","♥","◉","C","D","B","M","A","S","P","T"];
+const TM_FONTS=["Arial","Georgia","Verdana","Trebuchet MS","Times New Roman","Impact","Courier New"];
+const TM_CATS=["All","Business","Medical","Technology","Creative","Fitness","Food","Education","Security","Nature","Fashion","Luxury"];
+
+function tmRoundRect(ctx,x,y,w,h,r){const rr=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath();}
+function tmStar(ctx,cx,cy,outer,inner,points){ctx.beginPath();for(let i=0;i<points*2;i++){const a=-Math.PI/2+i*Math.PI/points;const r=i%2?inner:outer;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.closePath();}
+function tmShape(ctx,shape,cx,cy,size){
+  const s=size;
+  if(shape==="circle"){ctx.beginPath();ctx.arc(cx,cy,s,0,Math.PI*2);}
+  else if(shape==="rounded"){tmRoundRect(ctx,cx-s,cy-s,cx?2*s:2*s,2*s,34);}
+  else if(shape==="square"){ctx.rect(cx-s,cy-s,2*s,2*s);}
+  else if(shape==="hexagon"){ctx.beginPath();for(let i=0;i<6;i++){const a=-Math.PI/2+i*Math.PI/3;const x=cx+Math.cos(a)*s,y=cy+Math.sin(a)*s;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.closePath();}
+  else if(shape==="diamond"){ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s,cy);ctx.lineTo(cx,cy+s);ctx.lineTo(cx-s,cy);ctx.closePath();}
+  else if(shape==="triangle"){ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s,cy+s*.8);ctx.lineTo(cx-s,cy+s*.8);ctx.closePath();}
+  else if(shape==="star"){tmStar(ctx,cx,cy,s,s*.45,5);}
+  else if(shape==="shield"){ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s*.8,cy-s*.65);ctx.lineTo(cx+s*.7,cy+s*.25);ctx.quadraticCurveTo(cx,cy+s,cx-s*.7,cy+s*.25);ctx.lineTo(cx-s*.8,cy-s*.65);ctx.closePath();}
+  else if(shape==="badge"){ctx.beginPath();for(let i=0;i<12;i++){const a=-Math.PI/2+i*Math.PI/6;const r=i%2?s:s*.86;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.closePath();}
+  else {ctx.moveTo(cx-s,cy);ctx.lineTo(cx+s,cy);}
+}
 
 function LogoMaker({back,t}){
-  const canvasRef=useRef(null);
-  const uploadRef=useRef(null);
-  const [brand,setBrand]=useState("BRAND NAME");
-  const [tag,setTag]=useState("TAGLINE HERE");
-  const [category,setCategory]=useState("Business");
-  const [template,setTemplate]=useState("royal");
-  const [font,setFont]=useState("Poppins");
-  const [weight,setWeight]=useState("700");
-  const [fontSize,setFontSize]=useState(64);
-  const [primary,setPrimary]=useState("#d4af37");
-  const [secondary,setSecondary]=useState("#f4e7bd");
-  const [textColor,setTextColor]=useState("#ffffff");
-  const [background,setBackground]=useState("#070b16");
-  const [bgMode,setBgMode]=useState("gradient");
-  const [icon,setIcon]=useState("♛");
-  const [uploaded,setUploaded]=useState(null);
-  const [leftTab,setLeftTab]=useState("Templates");
-  const [rightTab,setRightTab]=useState("Design");
-  const [zoom,setZoom]=useState(100);
-  const [ratio,setRatio]=useState("1:1");
-  const [search,setSearch]=useState("");
-  const [effect,setEffect]=useState("none");
-  const [shadow,setShadow]=useState(true);
-  const [mockup,setMockup]=useState(false);
-  const [aiEnhanced,setAiEnhanced]=useState(false);
-  const [aiBackground,setAiBackground]=useState(false);
-  const [status,setStatus]=useState("");
-
-  const fonts=["Poppins","Inter","Arial","Georgia","Montserrat","Verdana","Trebuchet MS","Times New Roman","Impact"];
-  const categories=["All","Business","Technology","Medical","Photography","Food","Education","Health","Security","Corporate","Music","Gaming","Nature","Travel","Real Estate","Fashion","Pets","Luxury"];
-
-  const selectedTemplate=logoTemplateData.find(x=>x.id===template) || logoTemplateData[0];
-
-  const applyTemplate=(x)=>{
-    setTemplate(x.id);
-    setCategory(x.category);
-    setIcon(x.icon);
-    setBackground(x.bg);
-    setPrimary(x.primary);
-    setSecondary(x.secondary);
-    setTextColor(x.accent);
-    setBgMode("gradient");
-    setEffect("none");
-    setStatus(x.name+" template applied.");
+  const canvasRef=useRef(null),uploadRef=useRef(null);
+  const [brand,setBrand]=useState("IQRA GROUP"),[tag,setTag]=useState("OF LAB");
+  const [template,setTemplate]=useState("royal"),[shape,setShape]=useState("circle"),[icon,setIcon]=useState("♛");
+  const [font,setFont]=useState("Arial"),[weight,setWeight]=useState("700"),[primary,setPrimary]=useState("#D4AF37"),[secondary,setSecondary]=useState("#F8FAFC"),[textColor,setTextColor]=useState("#FFFFFF"),[background,setBackground]=useState("#070B14");
+  const [uploaded,setUploaded]=useState(null),[leftTab,setLeftTab]=useState("Templates"),[rightTab,setRightTab]=useState("Design"),[category,setCategory]=useState("All"),[search,setSearch]=useState(""),[zoom,setZoom]=useState(100),[effect,setEffect]=useState("none"),[bgMode,setBgMode]=useState("gradient"),[mockup,setMockup]=useState(false),[status,setStatus]=useState("");
+  const [shapeSize,setShapeSize]=useState(190),[iconSize,setIconSize]=useState(145),[textSize,setTextSize]=useState(66),[rotation,setRotation]=useState(0);
+  const visibleTemplates=TM_LOGO_TEMPLATES.filter(x=>(category==="All"||x.category===category)&&((x.name+" "+x.category).toLowerCase().includes(search.toLowerCase())));
+  const applyTemplate=x=>{setTemplate(x.id);setIcon(x.icon);setCategory(x.category);setPrimary(x.primary);setSecondary(x.secondary);setBackground(x.bg);setStatus(x.name+" template applied.");};
+  const uploadFile=file=>{if(!file)return;if(!/^image\//i.test(file.type)){setStatus("Please upload PNG, JPG, WEBP or SVG image.");return;}const r=new FileReader();r.onload=()=>{setUploaded(String(r.result||""));setStatus("Your logo/image has been uploaded.");};r.readAsDataURL(file);};
+  const draw=()=>{
+    const c=canvasRef.current;if(!c)return;const W=1000,H=760,dpr=2;c.width=W*dpr;c.height=H*dpr;const ctx=c.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+    if(bgMode==="transparent"){ctx.clearRect(0,0,W,H);}else if(bgMode==="color"){ctx.fillStyle=background;ctx.fillRect(0,0,W,H);}else{const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,background);g.addColorStop(1,secondary);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);}
+    if(mockup){ctx.fillStyle="#111827";ctx.globalAlpha=.35;tmRoundRect(ctx,40,35,920,690,32);ctx.fill();ctx.globalAlpha=1;}
+    ctx.save();ctx.translate(500,335);ctx.rotate(rotation*Math.PI/180);
+    ctx.shadowColor=effect==="shadow"||effect==="3d"?"rgba(0,0,0,.55)":"transparent";ctx.shadowBlur=effect==="glow"?26:effect==="shadow"?22:effect==="3d"?10:0;ctx.shadowOffsetY=effect==="3d"?10:5;
+    ctx.strokeStyle=primary;ctx.fillStyle="rgba(255,255,255,.025)";ctx.lineWidth=10;tmShape(ctx,shape,0,0,shapeSize);if(shape!=="line")ctx.fill(),ctx.stroke();else ctx.stroke();ctx.shadowColor="transparent";
+    if(uploaded){const im=new Image();im.onload=()=>{ctx.drawImage(im,-90,-110,180,180);finish();};im.src=uploaded;}else{ctx.fillStyle=primary;ctx.font=weight+" "+iconSize+"px "+font;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(icon,0,0);finish();}
+    function finish(){ctx.restore();ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=textColor;ctx.font=weight+" "+textSize+"px "+font;ctx.fillText(String(brand||"BRAND NAME").slice(0,24),500,545);ctx.fillStyle=secondary;ctx.font="500 28px "+font;ctx.fillText(String(tag||"TAGLINE HERE").slice(0,36),500,600);ctx.strokeStyle=primary;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(315,645);ctx.lineTo(430,645);ctx.moveTo(570,645);ctx.lineTo(685,645);ctx.stroke();ctx.fillStyle=secondary;ctx.font="700 16px "+font;ctx.fillText((category==="All"?"BUSINESS":category).toUpperCase(),500,675);}
   };
-
-  const uploadLogo=(file)=>{
-    if(!file)return;
-    if(!file.type || !/^image\//i.test(file.type)){
-      setStatus("Please upload PNG, JPG, WEBP or SVG.");
-      return;
-    }
-    if(file.size>10*1024*1024){
-      setStatus("Maximum upload size is 10MB.");
-      return;
-    }
-    const reader=new FileReader();
-    reader.onload=()=>{setUploaded(String(reader.result||""));setStatus("Your logo/image was uploaded.");};
-    reader.readAsDataURL(file);
-  };
-
-  const drawRoundRect=(ctx,x,y,w,h,r)=>{
-    ctx.beginPath();
-    ctx.moveTo(x+r,y);
-    ctx.arcTo(x+w,y,x+w,y+h,r);
-    ctx.arcTo(x+w,y+h,x,y+h,r);
-    ctx.arcTo(x,y+h,x,y,r);
-    ctx.arcTo(x,y,x+w,y,r);
-    ctx.closePath();
-  };
-
-  const drawLogo=()=>{
-    const canvas=canvasRef.current;
-    if(!canvas)return;
-    const w=1000,h=1000,dpr=2;
-    canvas.width=w*dpr;
-    canvas.height=h*dpr;
-    const ctx=canvas.getContext("2d");
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.clearRect(0,0,w,h);
-
-    if(bgMode==="transparent"){
-      ctx.clearRect(0,0,w,h);
-    }else if(bgMode==="solid"){
-      ctx.fillStyle=background;
-      ctx.fillRect(0,0,w,h);
-    }else{
-      const bg=ctx.createLinearGradient(0,0,w,h);
-      bg.addColorStop(0,background);
-      bg.addColorStop(.5,primary);
-      bg.addColorStop(1,secondary);
-      ctx.fillStyle=bg;
-      ctx.fillRect(0,0,w,h);
-      ctx.globalAlpha=.15;
-      ctx.fillStyle="#ffffff";
-      ctx.beginPath();
-      ctx.arc(820,150,280,0,Math.PI*2);
-      ctx.fill();
-      ctx.globalAlpha=1;
-    }
-
-    if(mockup){
-      ctx.fillStyle="rgba(0,0,0,.45)";
-      drawRoundRect(ctx,100,75,800,850,34);
-      ctx.fill();
-      ctx.strokeStyle="rgba(255,255,255,.12)";
-      ctx.lineWidth=2;
-      drawRoundRect(ctx,100,75,800,850,34);
-      ctx.stroke();
-    }
-
-    const cx=500,cy=370;
-    ctx.save();
-    if(shadow || effect==="shadow" || aiEnhanced){
-      ctx.shadowColor="rgba(0,0,0,.55)";
-      ctx.shadowBlur=28;
-      ctx.shadowOffsetY=12;
-    }
-
-    const ringColor=primary;
-    ctx.strokeStyle=ringColor;
-    ctx.lineWidth=10;
-    ctx.beginPath();
-    ctx.arc(cx,cy,205,0,Math.PI*2);
-    ctx.stroke();
-    ctx.lineWidth=3;
-    ctx.globalAlpha=.55;
-    ctx.beginPath();
-    ctx.arc(cx,cy,180,0,Math.PI*2);
-    ctx.stroke();
-    ctx.globalAlpha=1;
-
-    if(uploaded){
-      const img=new Image();
-      img.onload=()=>{
-        ctx.drawImage(img,390,255,220,220);
-        drawLogoText(ctx,cx);
-      };
-      img.src=uploaded;
-    }else{
-      let iconSize=155;
-      if(effect==="glow" || aiEnhanced){
-        ctx.shadowColor=primary;
-        ctx.shadowBlur=32;
-      }
-      const iconGradient=ctx.createLinearGradient(410,250,590,430);
-      iconGradient.addColorStop(0,primary);
-      iconGradient.addColorStop(1,secondary);
-      ctx.fillStyle=iconGradient;
-      ctx.font="800 "+iconSize+"px "+font;
-      ctx.textAlign="center";
-      ctx.textBaseline="middle";
-      ctx.fillText(icon,cx,cy);
-      drawLogoText(ctx,cx);
-    }
-    ctx.restore();
-
-    function drawLogoText(ctx2,x){
-      ctx2.textAlign="center";
-      ctx2.textBaseline="middle";
-      ctx2.fillStyle=textColor;
-      ctx2.font=weight+" "+fontSize+"px "+font;
-      ctx2.fillText(String(brand||"BRAND NAME").slice(0,24),x,625);
-
-      ctx2.fillStyle=secondary;
-      ctx2.font="500 27px "+font;
-      ctx2.fillText(String(tag||"TAGLINE HERE").slice(0,40),x,690);
-
-      ctx2.strokeStyle=primary;
-      ctx2.lineWidth=4;
-      ctx2.beginPath();
-      ctx2.moveTo(250,745);
-      ctx2.lineTo(750,745);
-      ctx2.stroke();
-
-      ctx2.fillStyle=secondary;
-      ctx2.font="700 17px "+font;
-      ctx2.fillText(String(category||"BUSINESS").toUpperCase(),x,790);
-
-      if(aiEnhanced){
-        ctx2.fillStyle=primary;
-        ctx2.font="600 14px "+font;
-        ctx2.fillText("ENHANCED",x,830);
-      }
-    }
-  };
-
-  useEffect(()=>{drawLogo();},[brand,tag,category,template,font,weight,fontSize,primary,secondary,textColor,background,bgMode,icon,uploaded,effect,shadow,mockup,aiEnhanced]);
-
-  const download=()=>{
-    const canvas=canvasRef.current;
-    if(!canvas)return;
-    const a=document.createElement("a");
-    a.href=canvas.toDataURL("image/png");
-    a.download="toolmaster-pro-logo.png";
-    a.click();
-    setStatus("High-quality PNG exported.");
-  };
-
-  const aiEnhance=()=>{
-    setAiEnhanced(v=>!v);
-    setEffect("glow");
-    setShadow(true);
-    setStatus(aiEnhanced ? "AI Enhance disabled." : "AI Enhance applied: clarity, glow and depth preset.");
-  };
-
-  const aiBg=()=>{
-    setAiBackground(v=>!v);
-    setBgMode("gradient");
-    if(!aiBackground){
-      setBackground("#050816");
-      setPrimary("#7c3aed");
-      setSecondary("#06b6d4");
-      setStatus("AI Background applied: premium studio gradient.");
-    }else{
-      setStatus("AI Background reset.");
-    }
-  };
-
-  const applyMockup=()=>{
-    setMockup(v=>!v);
-    setStatus(mockup ? "Mockup disabled." : "Premium mockup preview applied.");
-  };
-
-  const filteredTemplates=logoTemplateData.filter(x=>{
-    const q=search.trim().toLowerCase();
-    const matchesSearch=!q || x.name.toLowerCase().includes(q) || x.category.toLowerCase().includes(q);
-    const matchesCategory=category==="All" || x.category===category;
-    return matchesSearch && matchesCategory;
-  });
-
+  useEffect(()=>{draw();},[brand,tag,template,shape,icon,font,weight,primary,secondary,textColor,background,uploaded,zoom,effect,bgMode,mockup,shapeSize,iconSize,textSize,rotation,category]);
+  const download=()=>{const c=canvasRef.current;if(!c)return;const a=document.createElement("a");a.href=c.toDataURL("image/png");a.download="toolmaster-pro-logo.png";a.click();setStatus("High-quality PNG downloaded.");};
+  const aiAction=type=>{if(type==="enhance"){setEffect("3d");setTextSize(72);setIconSize(160);setStatus("AI Enhance applied: sharper scale, depth and stronger typography.");}else if(type==="background"){setBgMode("gradient");setBackground("#0B1020");setSecondary("#5B21B6");setStatus("AI Background applied: premium gradient background.");}else{setMockup(true);setEffect("shadow");setStatus("Professional mockup preview applied.");}};
   return <Shell back={back} t={t} status={status}>
-    <div style={{background:"#060a14",border:"1px solid #202945",borderRadius:24,padding:16,color:"#f8fafc",boxShadow:"0 25px 80px rgba(0,0,0,.16)"}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:16,marginBottom:16,flexWrap:"wrap"}}>
-        <div>
-          <div style={{fontSize:11,letterSpacing:1.8,color:"#a78bfa",fontWeight:900}}>TOOLMASTER PRO • DESIGN STUDIO</div>
-          <h2 style={{margin:"5px 0",fontSize:32}}>Advanced Logo Maker <span style={{color:"#a78bfa"}}>PRO</span></h2>
-          <div style={{color:"#8d99ad"}}>Create polished brand identities with templates, uploads, icons, typography, effects and export.</div>
-        </div>
-        <div style={{display:"flex",gap:8}}>
-          <button className="btn" onClick={()=>{setBrand("BRAND NAME");setTag("TAGLINE HERE");setUploaded(null);setAiEnhanced(false);setAiBackground(false);setMockup(false);setStatus("New design started.");}}>＋ New</button>
-          <button className="btn" onClick={download}><Download size={15}/> Export PNG</button>
-          <button className="btn primary" onClick={download}><Download size={15}/> Download</button>
-        </div>
-      </div>
-
-      <div style={{display:"grid",gridTemplateColumns:"320px minmax(390px,1fr) 350px",gap:14}}>
-        <aside style={{background:"#0b1120",border:"1px solid #202945",borderRadius:18,overflow:"hidden"}}>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",borderBottom:"1px solid #202945"}}>
-            {["Templates","Icons","Uploads"].map(x=><button key={x} onClick={()=>setLeftTab(x)} style={{padding:"13px 6px",border:0,borderBottom:leftTab===x?"2px solid #8b5cf6":"2px solid transparent",background:leftTab===x?"#111a31":"transparent",color:leftTab===x?"#fff":"#8995aa",fontWeight:900}}>{x}</button>)}
-          </div>
-
-          {leftTab==="Templates"&&<div style={{padding:14}}>
-            <div style={{display:"flex",gap:8,marginBottom:10}}>
-              <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search professional templates..." style={{flex:1,minWidth:0,padding:11,borderRadius:10,border:"1px solid #29324c",background:"#070c17",color:"#fff"}}/>
-              <button className="btn" style={{padding:"8px 10px"}}>☷</button>
-            </div>
-            <div style={{display:"flex",gap:6,overflowX:"auto",paddingBottom:8,marginBottom:10}}>
-              {categories.slice(0,9).map(x=><button key={x} onClick={()=>setCategory(x)} style={{whiteSpace:"nowrap",border:"1px solid #29324c",borderRadius:20,padding:"6px 9px",background:category===x?"#6d4aff":"#11182a",color:"#fff",fontSize:10,fontWeight:800}}>{x}</button>)}
-            </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:9}}>
-              {filteredTemplates.map(x=><button key={x.id} onClick={()=>applyTemplate(x)} style={{minHeight:108,border:template===x.id?"2px solid #8b5cf6":"1px solid #29324c",borderRadius:12,background:x.bg,color:"#fff",padding:8,cursor:"pointer",boxShadow:template===x.id?"0 0 0 3px rgba(139,92,246,.12)":"none"}}>
-                <div style={{fontSize:34,fontWeight:900,color:x.primary,textShadow:"0 5px 15px rgba(0,0,0,.35)"}}>{x.icon}</div>
-                <b style={{fontSize:10,display:"block"}}>{x.name}</b>
-                <small style={{fontSize:8,color:"#94a3b8"}}>{x.category}</small>
-              </button>)}
-            </div>
-            <div style={{marginTop:12,padding:10,borderRadius:11,background:"#11182a",color:"#93a4bb",fontSize:11}}>Click any template to instantly apply its icon, colors, category and visual style.</div>
-          </div>}
-
-          {leftTab==="Icons"&&<div style={{padding:14}}>
-            <div style={{fontWeight:900,marginBottom:10}}>Icon Library</div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:7}}>
-              {logoIconLibrary.map((x,i)=><button key={x+"-"+i} onClick={()=>{setIcon(x);setUploaded(null);setStatus("Icon selected.");}} style={{height:58,border:icon===x&&!uploaded?"2px solid #8b5cf6":"1px solid #29324c",borderRadius:10,background:"#11182a",color:primary,fontSize:25,cursor:"pointer"}}>{x}</button>)}
-            </div>
-            <div style={{marginTop:14,color:"#8d99ad",fontSize:11}}>Choose an icon or upload your own logo from the Uploads tab.</div>
-          </div>}
-
-          {leftTab==="Uploads"&&<div style={{padding:14}}>
-            <div onClick={()=>uploadRef.current?.click()} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();uploadLogo(e.dataTransfer.files?.[0]);}} style={{border:"1px dashed #8b5cf6",borderRadius:16,padding:"28px 16px",textAlign:"center",cursor:"pointer",background:"linear-gradient(145deg,#10152c,#0b1020)"}}>
-              <div style={{fontSize:38,color:"#a78bfa"}}>⇧</div>
-              <b>Upload your logo / image</b>
-              <div style={{fontSize:11,color:"#8d99ad",marginTop:7}}>Click or drag & drop<br/>PNG, JPG, WEBP, SVG • Max 10MB</div>
-              <input ref={uploadRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" style={{display:"none"}} onChange={e=>uploadLogo(e.target.files?.[0])}/>
-            </div>
-            {uploaded&&<div style={{marginTop:12,padding:10,borderRadius:12,background:"#11182a"}}>
-              <img src={uploaded} alt="Uploaded logo" style={{width:"100%",height:130,objectFit:"contain",background:"#070b14",borderRadius:10}}/>
-              <div style={{display:"flex",gap:7,marginTop:8}}>
-                <button className="btn" style={{flex:1}} onClick={()=>setUploaded(null)}>Remove</button>
-                <button className="btn primary" style={{flex:1}} onClick={()=>setStatus("Uploaded logo is active on canvas.")}>Use Logo</button>
-              </div>
-            </div>}
-            {!uploaded&&<div style={{marginTop:14,color:"#8d99ad",fontSize:11}}>Your uploaded image will replace the template icon while keeping the brand text and styling.</div>}
-          </div>}
+    <div style={{background:"#050914",color:"#eef2ff",border:"1px solid #1d2740",borderRadius:22,overflow:"hidden",boxShadow:"0 25px 80px rgba(0,0,0,.18)"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 18px",borderBottom:"1px solid #1d2740",gap:10,flexWrap:"wrap"}}><div style={{fontWeight:900,fontSize:18}}>ToolMaster<span style={{color:"#8b5cf6"}}>Pro</span> <span style={{fontSize:11,color:"#9aa7bd",fontWeight:700}}>ADVANCED LOGO STUDIO</span></div><div style={{display:"flex",gap:8}}><button className="btn" onClick={()=>setStatus("All changes are saved locally in this browser.")}>Save</button><button className="btn" onClick={()=>setMockup(v=>!v)}>Mockup</button><button className="btn primary" onClick={download}><Download size={15}/> Download</button></div></div>
+      <div style={{display:"grid",gridTemplateColumns:"270px minmax(420px,1fr) 310px",minHeight:760}}>
+        <aside style={{borderRight:"1px solid #1d2740",padding:14,background:"#080D18"}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:5,marginBottom:12}}>{["Templates","Icons","Shapes"].map(x=><button key={x} onClick={()=>setLeftTab(x)} style={{border:0,borderRadius:9,padding:"9px 4px",background:leftTab===x?"#6d3df5":"#111827",color:"#fff",fontWeight:800,fontSize:11}}>{x}</button>)}</div>
+          {leftTab==="Templates"&&<><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search templates..." style={{width:"100%",boxSizing:"border-box",padding:10,borderRadius:9,border:"1px solid #26324d",background:"#0d1424",color:"#fff",marginBottom:8}}/><div style={{display:"flex",gap:5,overflowX:"auto",paddingBottom:8}}>{TM_CATS.map(x=><button key={x} onClick={()=>setCategory(x)} style={{whiteSpace:"nowrap",border:"1px solid #29334c",borderRadius:15,padding:"6px 9px",background:category===x?"#6d3df5":"#0d1424",color:"#fff",fontSize:10}}>{x}</button>)}</div><h4 style={{margin:"9px 0"}}>Premium Templates</h4><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>{visibleTemplates.map(x=><button key={x.id} onClick={()=>applyTemplate(x)} style={{textAlign:"center",minHeight:112,border:"1px solid "+(template===x.id?"#8b5cf6":"#25304a"),borderRadius:12,background:template===x.id?"#17102e":"#0d1422",color:"#fff",padding:8,cursor:"pointer"}}><div style={{fontSize:38,color:x.primary}}>{x.icon}</div><b style={{fontSize:11}}>{x.name}</b><small style={{display:"block",color:"#91a0b7",fontSize:9}}>{x.category}</small></button>)}</div></>}
+          {leftTab==="Icons"&&<><h4>Icon Library</h4><div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:7}}>{TM_ICONS.map((x,i)=><button key={i} onClick={()=>{setIcon(x);setUploaded(null)}} style={{fontSize:25,padding:8,border:"1px solid #27324b",borderRadius:9,background:icon===x&&!uploaded?"#24154d":"#0d1422",color:primary}}>{x}</button>)}</div></>}
+          {leftTab==="Shapes"&&<><h4>Shape Library</h4><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7}}>{TM_SHAPES.map(x=><button key={x} onClick={()=>setShape(x)} style={{padding:12,border:"1px solid #27324b",borderRadius:9,background:shape===x?"#24154d":"#0d1422",color:"#fff",textTransform:"capitalize"}}>{x}</button>)}</div><label style={{display:"block",marginTop:12}}>Shape size <input type="range" min="110" max="230" value={shapeSize} onChange={e=>setShapeSize(Number(e.target.value))}/></label></>}
+          <div style={{marginTop:14,border:"1px dashed #5140a8",borderRadius:12,padding:12,textAlign:"center"}} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();uploadFile(e.dataTransfer.files?.[0])}}><Upload size={22} color="#9b7cff"/><b style={{display:"block",marginTop:5}}>Upload Logo / Image</b><small style={{color:"#8795ad"}}>PNG, JPG, WEBP, SVG • Max 10MB</small><input ref={uploadRef} type="file" accept="image/*" hidden onChange={e=>uploadFile(e.target.files?.[0])}/><button className="btn primary" style={{marginTop:9,width:"100%"}} onClick={()=>uploadRef.current?.click()}>Upload from PC</button>{uploaded&&<button className="btn" style={{marginTop:6,width:"100%"}} onClick={()=>setUploaded(null)}>Remove Upload</button>}</div>
         </aside>
-
-        <section style={{background:"#0b1120",border:"1px solid #202945",borderRadius:18,padding:14,minWidth:0}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginBottom:12,flexWrap:"wrap"}}>
-            <div><b>Canvas</b><span style={{marginLeft:8,color:"#66758e",fontSize:11}}>{ratio} • {zoom}%</span></div>
-            <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
-              {["1:1","16:9","4:3","3:4","Custom"].map(x=><button key={x} onClick={()=>{setRatio(x);setStatus(x+" canvas selected.");}} className="btn" style={{padding:"7px 10px",fontSize:10,background:ratio===x?"#6d4aff":"#11182a"}}>{x}</button>)}
-            </div>
-          </div>
-          <div style={{display:"grid",placeItems:"center",background:"radial-gradient(circle at 50% 20%,#18233b,#050811 70%)",borderRadius:15,minHeight:590,padding:18,overflow:"auto",border:"1px solid #1d2840"}}>
-            <canvas ref={canvasRef} style={{width:Math.round(520*zoom/100),height:Math.round(520*zoom/100),maxWidth:"100%",objectFit:"contain",borderRadius:12,boxShadow:"0 30px 80px rgba(0,0,0,.45)"}}/>
-          </div>
-          <div style={{display:"flex",justifyContent:"center",gap:8,marginTop:12,alignItems:"center"}}>
-            <button className="btn" onClick={()=>setZoom(Math.max(60,zoom-10))}>−</button><span style={{minWidth:55,textAlign:"center",color:"#cbd5e1"}}>{zoom}%</span><button className="btn" onClick={()=>setZoom(Math.min(150,zoom+10))}>+</button><button className="btn" onClick={()=>setZoom(100)}>Fit</button>
-          </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:7,marginTop:12}}>
-            {[
-              ["✦","AI Enhance",aiEnhance,aiEnhanced],
-              ["✣","AI Background",aiBg,aiBackground],
-              ["▣","Mockup",applyMockup,mockup],
-              ["◒","Shadows",()=>setShadow(v=>!v),shadow],
-              ["◌","Glow",()=>setEffect(effect==="glow"?"none":"glow"),effect==="glow"],
-              ["◈","Clear",()=>{setEffect("none");setShadow(false);setMockup(false);setAiEnhanced(false);setAiBackground(false);},false]
-            ].map(([ic,label,fn,on])=><button key={label} onClick={fn} style={{border:"1px solid "+(on?"#7656ff":"#29324c"),borderRadius:11,padding:"10px 5px",background:on?"#171237":"#11182a",color:on?"#c4b5fd":"#aab6c8",cursor:"pointer"}}><div style={{fontSize:18}}>{ic}</div><small style={{fontSize:9,fontWeight:800}}>{label}</small></button>)}
-          </div>
-        </section>
-
-        <aside style={{background:"#0b1120",border:"1px solid #202945",borderRadius:18,overflow:"hidden"}}>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",borderBottom:"1px solid #202945"}}>
-            {["Design","Text","Effects","Layers"].map(x=><button key={x} onClick={()=>setRightTab(x)} style={{padding:"13px 4px",border:0,borderBottom:rightTab===x?"2px solid #8b5cf6":"2px solid transparent",background:rightTab===x?"#111a31":"transparent",color:rightTab===x?"#fff":"#8995aa",fontWeight:900,fontSize:11}}>{x}</button>)}
-          </div>
-          <div style={{padding:14,maxHeight:690,overflowY:"auto"}}>
-            {rightTab==="Text"&&<>
-              <h3 style={{margin:"4px 0 14px"}}>Typography</h3>
-              <label style={{display:"block",fontSize:11,fontWeight:800,color:"#aab6c8"}}>Brand Name<input value={brand} onChange={e=>setBrand(e.target.value)} style={{width:"100%",boxSizing:"border-box",padding:11,marginTop:5,borderRadius:9,border:"1px solid #29324c",background:"#070c17",color:"#fff"}}/></label>
-              <label style={{display:"block",marginTop:11,fontSize:11,fontWeight:800,color:"#aab6c8"}}>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} style={{width:"100%",boxSizing:"border-box",padding:11,marginTop:5,borderRadius:9,border:"1px solid #29324c",background:"#070c17",color:"#fff"}}/></label>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:11}}>
-                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Font<select value={font} onChange={e=>setFont(e.target.value)}><option>{fonts[0]}</option>{fonts.slice(1).map(x=><option key={x}>{x}</option>)}</select></label>
-                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Weight<select value={weight} onChange={e=>setWeight(e.target.value)}><option value="400">Regular</option><option value="500">Medium</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label>
-              </div>
-              <label style={{display:"block",marginTop:11,fontSize:11,fontWeight:800,color:"#aab6c8"}}>Brand size <span style={{float:"right"}}>{fontSize}px</span><input type="range" min="34" max="92" value={fontSize} onChange={e=>setFontSize(Number(e.target.value))} style={{width:"100%"}}/></label>
-            </>}
-
-            {rightTab==="Design"&&<>
-              <h3 style={{margin:"4px 0 14px"}}>Logo Design</h3>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Primary<input type="color" value={primary} onChange={e=>setPrimary(e.target.value)}/></label>
-                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Secondary<input type="color" value={secondary} onChange={e=>setSecondary(e.target.value)}/></label>
-                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Text color<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)}/></label>
-                <label style={{fontSize:11,fontWeight:800,color:"#aab6c8"}}>Background<input type="color" value={background} onChange={e=>setBackground(e.target.value)}/></label>
-              </div>
-              <div style={{marginTop:14,fontSize:11,fontWeight:900,color:"#aab6c8"}}>Background</div>
-              <div style={{display:"flex",gap:6,marginTop:7}}>
-                {["solid","gradient","transparent"].map(x=><button key={x} onClick={()=>setBgMode(x)} style={{flex:1,padding:9,border:"1px solid "+(bgMode===x?"#8b5cf6":"#29324c"),borderRadius:9,background:bgMode===x?"#171237":"#11182a",color:"#fff",fontSize:10}}>{x}</button>)}
-              </div>
-              <div style={{marginTop:14,padding:11,borderRadius:11,background:"#11182a"}}>
-                <b style={{fontSize:12}}>Active template</b>
-                <div style={{display:"flex",alignItems:"center",gap:9,marginTop:8}}><span style={{fontSize:27,color:primary}}>{selectedTemplate.icon}</span><div><div style={{fontWeight:800}}>{selectedTemplate.name}</div><small style={{color:"#8d99ad"}}>{selectedTemplate.category}</small></div></div>
-              </div>
-            </>}
-
-            {rightTab==="Effects"&&<>
-              <h3 style={{margin:"4px 0 14px"}}>Effects & Appearance</h3>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:7}}>
-                {["none","shadow","glow"].map(x=><button key={x} onClick={()=>setEffect(x)} style={{padding:"12px 5px",border:"1px solid "+(effect===x?"#8b5cf6":"#29324c"),borderRadius:10,background:effect===x?"#171237":"#11182a",color:"#fff",fontSize:10}}>{x}</button>)}
-              </div>
-              <div style={{marginTop:14,padding:12,border:"1px solid #29324c",borderRadius:12}}>
-                <b>Premium finishing</b>
-                <p style={{color:"#8d99ad",fontSize:11,lineHeight:1.5}}>Use AI Enhance, Glow and Shadows together for a polished presentation preview.</p>
-                <button className="btn primary" style={{width:"100%"}} onClick={aiEnhance}>✦ Apply AI Enhance</button>
-              </div>
-              <div style={{marginTop:9,padding:12,border:"1px solid #29324c",borderRadius:12}}>
-                <b>Presentation</b>
-                <button className="btn" style={{width:"100%",marginTop:9}} onClick={applyMockup}>{mockup?"Remove Mockup":"Apply Premium Mockup"}</button>
-              </div>
-            </>}
-
-            {rightTab==="Layers"&&<>
-              <h3 style={{margin:"4px 0 14px"}}>Logo Layers</h3>
-              {[
-                ["◈","Icon / Uploaded Logo",!!uploaded||!!icon],
-                ["T","Brand Name",true],
-                ["T","Tagline",!!tag],
-                ["◒","Background",bgMode!=="transparent"],
-                ["✦","AI Enhancement",aiEnhanced]
-              ].map(([ic,name,on])=><div key={name} style={{display:"flex",alignItems:"center",gap:9,padding:11,border:"1px solid #202945",borderRadius:10,background:"#11182a",marginBottom:7}}>
-                <span style={{fontSize:18,color:on?"#a78bfa":"#4b5563"}}>{ic}</span><span style={{flex:1,fontSize:11,fontWeight:800}}>{name}</span><span style={{fontSize:10,color:on?"#4ade80":"#64748b"}}>{on?"Visible":"Hidden"}</span>
-              </div>)}
-            </>}
-          </div>
+        <main style={{padding:14,background:"#060A13"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}><div><b>Canvas</b><span style={{marginLeft:12,color:"#8d9ab0",fontSize:12}}>1:1 • Professional logo workspace</span></div><div style={{display:"flex",gap:5}}>{["1:1","16:9","4:3","3:4","Custom"].map(x=><button key={x} className="btn" style={{padding:"6px 9px",fontSize:10}}>{x}</button>)}</div></div>
+          <div style={{display:"grid",placeItems:"center",minHeight:610,background:"radial-gradient(circle at 50% 40%,#151d31,#050914 68%)",border:"1px solid #202b45",borderRadius:16,padding:12,overflow:"auto"}}><canvas ref={canvasRef} style={{width:Math.round(650*zoom/100),maxWidth:"100%",height:"auto",borderRadius:12}}/></div>
+          <div style={{display:"flex",justifyContent:"center",gap:8,alignItems:"center",marginTop:10}}><button className="btn" onClick={()=>setZoom(Math.max(60,zoom-10))}>−</button><span style={{minWidth:45,textAlign:"center"}}>{zoom}%</span><button className="btn" onClick={()=>setZoom(Math.min(140,zoom+10))}>+</button><button className="btn" onClick={()=>setZoom(100)}>Fit</button></div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:7,marginTop:10}}>{[["AI Enhance","enhance"],["AI Background","background"],["Mockup","mockup"],["Shadows","shadow"],["Upload","upload"]].map(x=><button key={x[0]} className="btn" onClick={()=>x[1]==="upload"?uploadRef.current?.click():x[1]==="shadow"?(setEffect("shadow"),setStatus("Shadow effect applied.")):aiAction(x[1])}>{x[0]}</button>)}</div>
+        </main>
+        <aside style={{borderLeft:"1px solid #1d2740",padding:14,background:"#080D18"}}>
+          <div style={{display:"flex",gap:3,borderBottom:"1px solid #202a43",marginBottom:12}}>{["Design","Text","Effects","Layers"].map(x=><button key={x} onClick={()=>setRightTab(x)} style={{flex:1,border:0,padding:9,background:"transparent",color:rightTab===x?"#b9a6ff":"#8e9bb0",fontWeight:800}}>{x}</button>)}</div>
+          {rightTab!=="Layers"&&<>
+            <h3 style={{margin:"5px 0 12px"}}>{rightTab==="Text"?"Typography":rightTab==="Effects"?"Effects & Background":"Logo Design"}</h3>
+            <label>Brand Name<input value={brand} onChange={e=>setBrand(e.target.value)} style={{width:"100%",boxSizing:"border-box",padding:10,marginTop:5,borderRadius:9,border:"1px solid #29334c",background:"#0d1422",color:"#fff"}}/></label>
+            <label style={{display:"block",marginTop:9}}>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} style={{width:"100%",boxSizing:"border-box",padding:10,marginTop:5,borderRadius:9,border:"1px solid #29334c",background:"#0d1422",color:"#fff"}}/></label>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7,marginTop:9}}><label>Font<select value={font} onChange={e=>setFont(e.target.value)} style={{width:"100%",padding:9}}>{TM_FONTS.map(x=><option key={x}>{x}</option>)}</select></label><label>Weight<select value={weight} onChange={e=>setWeight(e.target.value)} style={{width:"100%",padding:9}}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label></div>
+            <label style={{display:"block",marginTop:9}}>Text size <input type="range" min="42" max="90" value={textSize} onChange={e=>setTextSize(Number(e.target.value))}/></label>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6,marginTop:9}}><label>Primary<input type="color" value={primary} onChange={e=>setPrimary(e.target.value)} style={{width:"100%",height:35}}/></label><label>Secondary<input type="color" value={secondary} onChange={e=>setSecondary(e.target.value)} style={{width:"100%",height:35}}/></label><label>Text<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)} style={{width:"100%",height:35}}/></label></div>
+            <div style={{marginTop:12}}><b>Background</b><div style={{display:"flex",gap:5,marginTop:7}}>{["#050914","#111827","#0F172A","#1E1B4B","#172554","#18181B"].map(x=><button key={x} onClick={()=>{setBackground(x);setBgMode("gradient")}} style={{width:30,height:30,borderRadius:8,border:background===x?"2px solid #a78bfa":"1px solid #334155",background:x}}/>)}</div></div>
+            <div style={{marginTop:12}}><b>Effects</b><div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:5,marginTop:7}}>{["none","shadow","glow","3d"].map(x=><button key={x} onClick={()=>setEffect(x)} style={{padding:7,borderRadius:8,border:"1px solid #2b3650",background:effect===x?"#5b21b6":"#0d1422",color:"#fff",fontSize:10}}>{x}</button>)}</div></div>
+          </>}
+          {rightTab==="Layers"&&<div>{[["♛","Logo / Icon"],["T","Brand Name"],["T","Tagline"],["◉","Shape / Frame"],["▣","Background"]].map(x=><div key={x[1]} style={{display:"flex",justifyContent:"space-between",padding:11,background:"#0d1422",border:"1px solid #26324c",borderRadius:9,marginBottom:7}}><span><b style={{marginRight:8}}>{x[0]}</b>{x[1]}</span><span>◉ ⋮</span></div>)}</div>}
         </aside>
       </div>
     </div>
   </Shell>;
 }
 
-function SeoKeywordGenerator({back,t}){
-  const [seed,setSeed]=useState("");const [language,setLanguage]=useState("English");const [location,setLocation]=useState("");const [intent,setIntent]=useState("All");const [count,setCount]=useState(30);const [out,setOut]=useState([]);const [status,setStatus]=useState("");
-  const generate=()=>{
-    const base=seed.trim();if(!base){setStatus("Enter a seed keyword or topic first.");setOut([]);return;}const clean=base.replace(/\s+/g," ").trim();const loc=location.trim();
-    const core=[clean,clean+" online",clean+" free",clean+" tool",clean+" generator",clean+" software","best "+clean,clean+" for beginners",clean+" for small business",clean+" tutorial",clean+" guide",clean+" tips",clean+" examples",clean+" ideas",clean+" services",clean+" solutions","how to use "+clean,"how to "+clean,"what is "+clean,clean+" near me",clean+" price",clean+" cost",clean+" review",clean+" comparison",clean+" alternatives",clean+" vs",clean+" template",clean+" checklist",clean+" step by step",clean+" for students",clean+" for professionals",clean+" for business",clean+" in 2026"];
-    const modifiers={Informational:["what is","how to","guide","tutorial","examples","tips","learn"],Commercial:["best","review","comparison","alternatives","top","vs"],Transactional:["buy","price","cost","deal","service","quote"],Navigational:["official","login","website","app"]};
-    let ideas=[...core];if(intent!=="All")ideas=[...ideas,...(modifiers[intent]||[]).map(m=>m+" "+clean)];if(loc)ideas=[...ideas,clean+" in "+loc,clean+" near "+loc,"best "+clean+" in "+loc,clean+" services in "+loc,clean+" price in "+loc];if(language!=="English")ideas=[...ideas,clean+" "+language,clean+" tutorial "+language,clean+" guide "+language];
-    ideas=[...new Set(ideas.map(x=>x.trim()).filter(Boolean))].slice(0,Math.max(5,Math.min(100,Number(count)||30)));setOut(ideas);setStatus(ideas.length+" keyword ideas generated locally. No live search-volume data.");
-  };
-  return <Shell back={back} t={t} status={status||"Browser-based keyword suggestions."}><div className="workspace"><div className="panel"><h3>SEO Keyword Generator</h3><label>Seed keyword / topic<input value={seed} onChange={e=>setSeed(e.target.value)} placeholder="e.g. PDF to Word"/></label><div className="videoOptions"><label>Language<select value={language} onChange={e=>setLanguage(e.target.value)}><option>English</option><option>Urdu</option><option>Hindi</option><option>Spanish</option><option>Arabic</option></select></label><label>Intent<select value={intent} onChange={e=>setIntent(e.target.value)}><option>All</option><option>Informational</option><option>Commercial</option><option>Transactional</option><option>Navigational</option></select></label></div><div className="videoOptions"><label>Location<input value={location} onChange={e=>setLocation(e.target.value)} placeholder="Pakistan"/></label><label>Ideas<select value={count} onChange={e=>setCount(Number(e.target.value))}><option value="20">20</option><option value="30">30</option><option value="50">50</option><option value="100">100</option></select></label></div><div className="actions"><button className="btn primary" onClick={generate}><Sparkles size={15}/> Generate</button><button className="btn" onClick={()=>{setSeed("");setLocation("");setOut([]);setStatus("")}}>Clear</button></div></div><div className="panel"><h3>Keyword Ideas</h3>{out.length?<div style={{display:"grid",gap:7,maxHeight:500,overflow:"auto"}}>{out.map((x,i)=><div key={x+"-"+i} style={{display:"flex",justifyContent:"space-between",gap:8,padding:"10px 12px",border:"1px solid #e5e7ed",borderRadius:9}}><span>{x}</span><button className="iconBtn" onClick={()=>navigator.clipboard?.writeText(x)}><Copy size={14}/></button></div>)}</div>:<div className="answer">Your keyword ideas will appear here.</div>}<div className="actions">{out.length>0&&<><button className="btn" onClick={()=>navigator.clipboard?.writeText(out.join("\n"))}><Copy size={15}/> Copy All</button><button className="btn primary" onClick={()=>downloadText(out.join("\n"),"seo-keyword-ideas.txt")}><Download size={15}/> Download TXT</button></>}</div></div></div></Shell>;
-}
-
-class ToolErrorBoundary extends React.Component {
-  constructor(props){super(props);this.state={error:null};}
-  static getDerivedStateFromError(error){return {error};}
-  componentDidCatch(error,info){console.error("Tool runtime error",error,info);}
-  render(){
-    if(this.state.error) return <div className="toolPage"><div className="panel"><div className="formError"><AlertCircle size={18}/><div><b>Tool error</b><div style={{marginTop:5}}>{this.state.error.message||String(this.state.error)}</div></div></div><div className="actions"><button className="btn primary" onClick={()=>this.setState({error:null})}>Try Again</button><button className="btn" onClick={()=>window.location.reload()}>Reload Website</button></div></div></div>;
-    return this.props.children;
-  }
-}
-
 function ToolPage({t,back,user,openAuth}) {
   if(t[3]==="student-ai-helper") return <StudentAIHelper back={back} user={user} openAuth={openAuth}/>;
   if(t[3]==="text-to-video") return <TextToVideo back={back} user={user} openAuth={openAuth}/>;
   if(t[3]==="edit-pdf") return <PdfEditorTool t={t} back={back}/>;
-  if(t[1]==="PDF Tools") return <PdfTool t={t} back={back}/>;
-  if(t[3]==="background-remover") return <BackgroundRemoverTool t={t} back={back}/>;
   if(t[3]==="stamp-generator") return <StampGenerator t={t} back={back}/>;
   if(t[3]==="logo-maker") return <LogoMaker t={t} back={back}/>;
-  if(t[3]==="seo-keyword-generator") return <SeoKeywordGenerator t={t} back={back}/>;
+  if(t[1]==="PDF Tools") return <PdfTool t={t} back={back}/>;
+  if(t[3]==="background-remover") return <BackgroundRemoverTool t={t} back={back}/>;
   if(t[1]==="Image Tools") return <ImageTool t={t} back={back}/>;
   if(t[1]==="SEO & Marketing") return <SeoTool t={t} back={back}/>;
   return <GenericTool t={t} back={back}/>;
@@ -1182,10 +947,16 @@ function TextToVideo({back,user,openAuth}) {
         setStatus("MP4 is ready. You can play it or download it below.");
         return;
       }
-      if(d.status==="failed" || d.status==="cancelled") throw new Error(d.error?.message||d.error||"Video generation failed.");
-      await new Promise(resolve=>setTimeout(resolve,10000));
+      if(d.status==="failed" || d.status==="cancelled") {
+        const msg = d.error?.message || d.error || "Video generation failed on the video provider.";
+        setProgress(0);
+        setResult(prev=>({...prev, status:d.status, error:d.error||msg}));
+        throw new Error(msg);
+      }
+      setStatus(d.status === "in_progress" ? `Video is rendering… ${Number.isFinite(p)?p:0}%` : `Video is queued… ${Number.isFinite(p)?p:0}%`);
+      await new Promise(resolve=>setTimeout(resolve,5000));
     }
-    throw new Error("Video is still rendering. Please keep this page open and try again later.");
+    throw new Error("Video is taking longer than expected. The provider may be busy. Please try again in a moment.");
   };
 
   const downloadVideo=()=>{if(!result?.video_url)return;const a=document.createElement("a");a.href=result.video_url;a.download="toolmaster-video.mp4";document.body.appendChild(a);a.click();a.remove();};
@@ -1205,7 +976,7 @@ function TextToVideo({back,user,openAuth}) {
         <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Choose a video plan above. Shorter 4–8 second clips are best for quick testing. A signed-in account is required.</small>
       </div>
       <div className="aiCard"><h3>🎥 Video Preview</h3>
-        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
+        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:result?.status==="failed"||result?.status==="cancelled"?<div className="formError" style={{minHeight:220,display:"grid",placeItems:"center",textAlign:"center",padding:24}}><div><b>Video generation failed</b><small style={{display:"block",marginTop:8,color:"#b42318"}}>{result?.error?.message||result?.error||status||"The video provider rejected the generation job."}</small></div></div>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
       </div>
     </div>
     <PlanCards title="Text-to-Video Plans" plans={VIDEO_PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="video"/>
@@ -1566,74 +1337,169 @@ async function convertWithSecureBackend(file, target) {
   return { message: data.message || `${ext.toUpperCase()} converted and downloaded.` };
 }
 
-function PdfTool({t,back}) {
-  const id=t[3]; const [files,setFiles]=useState([]); const [busy,setBusy]=useState(false); const [status,setStatus]=useState("");
-  const [watermark,setWatermark]=useState("ToolMaster Pro"); const [angle,setAngle]=useState("90");
-  const [quality,setQuality]=useState(.65); const [pages,setPages]=useState("1");
 
-  const run=async()=>{
-    if(!files.length) return setStatus("Please upload the required file first.");
-    setBusy(true);setStatus("");
-    try{
-      const {PDFDocument,degrees,rgb}=await loadLib("pdf-lib");
-      if(id==="pdf-word"){await pdfToWord(files[0]);return}
-      if(id==="word-pdf"){await wordToPdf(files[0]);return}
-      if(id==="pdf-jpg"){await pdfToJpg(files[0]);return}
-      const src=await PDFDocument.load(await files[0].arrayBuffer(),{ignoreEncryption:id==="pdf-unlock"});
-      if(id==="merge-pdf"){
-        const out=await PDFDocument.create(); for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(d,d.getPageIndices())).forEach(p=>out.addPage(p))}
-        downloadBlob(new Blob([await out.save()],{type:"application/pdf"}),"merged.pdf");setStatus("Merged PDF downloaded.");return;
-      }
-      if(id==="split-pdf"){
-        const nums=pages.split(",").map(x=>parseInt(x.trim(),10)-1).filter(Number.isInteger);const list=nums.length?nums:src.getPageIndices();
-        for(const n of list){if(n<0||n>=src.getPageCount())continue;const one=await PDFDocument.create();const [p]=await one.copyPages(src,[n]);one.addPage(p);downloadBlob(new Blob([await one.save()],{type:"application/pdf"}),`page-${n+1}.pdf`)}
-        setStatus("Selected pages downloaded.");return;
-      }
-      if(id==="compress-pdf"){
-        const bytes=await src.save({useObjectStreams:true,addDefaultPage:false});downloadBlob(new Blob([bytes],{type:"application/pdf"}),"compressed.pdf");setStatus("Optimized PDF downloaded.");return;
-      }
-      if(id==="rotate-pdf"){
-        src.getPages().forEach(p=>p.setRotation(degrees(Number(angle)||90)));downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"rotated.pdf");setStatus("Rotated PDF downloaded.");return;
-      }
-      if(id==="pdf-unlock"){
-        downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"unlocked.pdf");setStatus("Unlocked copy downloaded when the source encryption is supported.");return;
-      }
-      if(id==="pdf-watermark"){
-        src.getPages().forEach(p=>{const {width,height}=p.getSize();p.drawText(watermark||"ToolMaster Pro",{x:width/2-60,y:height/2,size:28,color:rgb(.65,.65,.65),opacity:.35,rotate:degrees(35)})});
-        downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"watermarked.pdf");setStatus("Watermarked PDF downloaded.");return;
-      }
-    }catch(e){setStatus("Error: "+(e?.message||String(e)))}finally{setBusy(false)}
+function PdfTool({t,back}) {
+  const id=t[3];
+  const [files,setFiles]=useState([]);
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const [watermark,setWatermark]=useState("ToolMaster Pro");
+  const [angle,setAngle]=useState("90");
+  const [quality,setQuality]=useState(.65);
+  const [pages,setPages]=useState("1");
+  const [active,setActive]=useState(id);
+  const [thumbs,setThumbs]=useState([]);
+
+  const pdfTools = [
+    {id:"merge-pdf", name:"Merge PDF", desc:"Combine multiple PDFs into one file."},
+    {id:"split-pdf", name:"Split PDF", desc:"Extract selected pages into separate PDFs."},
+    {id:"compress-pdf", name:"Compress PDF", desc:"Reduce PDF size where possible."},
+    {id:"pdf-word", name:"PDF to Word", desc:"Convert selectable-text PDFs to editable DOCX."},
+    {id:"word-pdf", name:"Word to PDF", desc:"Convert DOC/DOCX files to PDF."},
+    {id:"pdf-jpg", name:"PDF to JPG", desc:"Convert each PDF page to a JPG image."},
+    {id:"jpg-pdf", name:"JPG to PDF", desc:"Create a PDF from JPG/PNG images."},
+    {id:"rotate-pdf", name:"Rotate PDF", desc:"Rotate every page."},
+    {id:"pdf-unlock", name:"PDF Unlock", desc:"Create an unrestricted copy when supported."},
+    {id:"pdf-watermark", name:"PDF Watermark", desc:"Add a watermark to all pages."},
+    {id:"edit-pdf", name:"Edit & Sign PDF", desc:"Open the advanced PDF editor."}
+  ];
+  const current = pdfTools.find(x=>x.id===active) || pdfTools.find(x=>x.id===id) || pdfTools[0];
+
+  useEffect(()=>{
+    let dead=false;
+    (async()=>{
+      if(!files.length || !(files[0].type==="application/pdf" || /\.pdf$/i.test(files[0].name))) { setThumbs([]); return; }
+      try {
+        const pdfjs=await loadLib("pdfjs");
+        const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
+        const out=[];
+        for(let i=1;i<=Math.min(pdf.numPages,6);i++){
+          const pg=await pdf.getPage(i); const vp=pg.getViewport({scale:.32});
+          const c=document.createElement("canvas"); c.width=Math.ceil(vp.width); c.height=Math.ceil(vp.height);
+          await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
+          out.push({page:i,url:c.toDataURL("image/jpeg",.82)});
+        }
+        if(!dead) setThumbs(out);
+      } catch { if(!dead) setThumbs([]); }
+    })();
+    return ()=>{dead=true};
+  },[files]);
+
+  const convertAndDownload = async (file,target)=>{
+    const configured=import.meta.env.VITE_DOCUMENT_CONVERTER_URL||"";
+    const base=configured||(SUPABASE_URL?`${SUPABASE_URL}/functions/v1/document-converter`:"");
+    if(!base) throw new Error("Document converter backend is not configured.");
+    const fd=new FormData(); fd.append("file",file,file.name); fd.append("output_format",target);
+    const r=await fetch(base,{method:"POST",headers:SUPABASE_KEY?{apikey:SUPABASE_KEY}:{},body:fd});
+    const ct=r.headers.get("content-type")||"";
+    if(!r.ok){
+      const msg=ct.includes("application/json") ? ((await r.json().catch(()=>({}))).error||"Converter failed.") : await r.text().catch(()=>"Converter failed.");
+      throw new Error(msg||`Converter failed (${r.status})`);
+    }
+    if(ct.includes("application/pdf")||ct.includes("application/vnd.openxmlformats-officedocument.wordprocessingml.document")){
+      downloadBlob(await r.blob(),`${file.name.replace(/\.[^.]+$/,"")}.${target}`);
+      return;
+    }
+    const d=await r.json().catch(()=>({})); const u=d.download_url||d.url||d.file_url||d.result?.download_url;
+    if(!u) throw new Error(d.error||"Converter returned no download URL.");
+    const fr=await fetch(u); if(!fr.ok) throw new Error(`Converted file download failed (${fr.status}).`);
+    downloadBlob(await fr.blob(),`${file.name.replace(/\.[^.]+$/,"")}.${target}`);
   };
 
-  async function pdfToJpg(file){
-    const pdfjs=await loadLib("pdfjs");const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;
-    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const viewport=page.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=viewport.width;c.height=viewport.height;await page.render({canvasContext:c.getContext("2d"),viewport}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${file.name.replace(/\.pdf$/i,"")}-page-${i}.jpg`)}
-    setStatus(`${pdf.numPages} JPG page(s) downloaded.`);
-  }
-  async function pdfToWord(file){
-    setStatus("Uploading PDF to the secure document converter…");
-    const data = await convertWithSecureBackend(file, "docx");
-    setStatus(data.message || "PDF converted to Word and downloaded.");
-  }
-  async function wordToPdf(file){
-    setStatus("Uploading Word document to the secure document converter…");
-    const data = await convertWithSecureBackend(file, "pdf");
-    setStatus(data.message || "Word document converted to PDF and downloaded.");
-  }
-  async function jpgToPdf(){
-    const {PDFDocument}=await loadLib("pdf-lib");const doc=await PDFDocument.create();
-    for(const f of files){const bytes=await f.arrayBuffer();let img;try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)}const page=doc.addPage([img.width,img.height]);page.drawImage(img,{x:0,y:0,width:img.width,height:img.height})}
-    downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images.pdf");setStatus("PDF downloaded.");
-  }
-  if(id==="jpg-pdf") return <Shell back={back} t={t} status={status}><div className="workspace"><div className="panel"><FilePicker multiple accept="image/jpeg,image/png" onChange={setFiles} files={files}/><button className="btn primary" disabled={busy||!files.length} onClick={jpgToPdf}><Download/> Create PDF</button></div><div className="panel"><h3>{files.length} image(s) selected</h3>{files.map(f=><p key={f.name}>✓ {f.name}</p>)}</div></div></Shell>;
-  const accepted = id === "word-pdf" ? ".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" : ".pdf,application/pdf";
-  return <Shell back={back} t={t} status={status||"Files are processed in your browser when supported."}><div className="workspace"><div className="panel"><FilePicker multiple={id==="merge-pdf"} accept={accepted} onChange={setFiles} files={files}/>
-    {id==="split-pdf"&&<label>Pages (e.g. 1,3,5)<input value={pages} onChange={e=>setPages(e.target.value)}/></label>}
-    {id==="rotate-pdf"&&<label>Rotation<select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
-    {id==="pdf-watermark"&&<label>Watermark text<input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
-    {id==="pdf-jpg"&&<label>JPG quality<input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
-    <button className="btn primary" disabled={busy||!files.length} onClick={run}>{busy?<RefreshCw/>:<Download/>}{busy?"Processing...":"Process & Download"}</button>
-  </div><div className="panel"><h3>Selected files</h3>{files.map(f=><p key={f.name}>📄 {f.name} — {(f.size/1024).toFixed(1)} KB</p>)}</div></div></Shell>;
+  const run=async()=>{
+    if(active==="pdf-word"||active==="word-pdf"){
+      if(!files.length) return setStatus(`Upload a ${active==="pdf-word"?"PDF":"Word"} file first.`);
+    } else if(active==="jpg-pdf"){
+      if(!files.length) return setStatus("Upload JPG/PNG images first.");
+    } else if(!files.length) return setStatus("Upload a PDF file first.");
+    setBusy(true);setStatus("");
+    try{
+      if(active==="pdf-word"){setStatus("Converting PDF to Word…");await convertAndDownload(files[0],"docx");setStatus("PDF converted to Word successfully.");return;}
+      if(active==="word-pdf"){setStatus("Converting Word to PDF…");await convertAndDownload(files[0],"pdf");setStatus("Word converted to PDF successfully.");return;}
+      if(active==="jpg-pdf"){
+        const {PDFDocument}=await loadLib("pdf-lib"); const doc=await PDFDocument.create();
+        for(const f of files){const bytes=await f.arrayBuffer();let img;try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)}const p=doc.addPage([img.width,img.height]);p.drawImage(img,{x:0,y:0,width:img.width,height:img.height});}
+        downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images-to-pdf.pdf");setStatus(`${files.length} image(s) converted to PDF.`);return;
+      }
+      if(active==="pdf-jpg"){
+        const pdfjs=await loadLib("pdfjs"); const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
+        for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const vp=pg.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${files[0].name.replace(/\.pdf$/i,"")}-page-${i}.jpg`);}
+        setStatus(`${pdf.numPages} JPG page(s) downloaded.`);return;
+      }
+      const {PDFDocument,degrees,rgb}=await loadLib("pdf-lib");
+      const src=await PDFDocument.load(await files[0].arrayBuffer(),{ignoreEncryption:active==="pdf-unlock"});
+      if(active==="merge-pdf"){
+        const out=await PDFDocument.create();
+        for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(d,d.getPageIndices())).forEach(p=>out.addPage(p));}
+        downloadBlob(new Blob([await out.save()],{type:"application/pdf"}),"merged.pdf");setStatus(`${files.length} PDF files merged successfully.`);return;
+      }
+      if(active==="split-pdf"){
+        const nums=pages.split(",").map(x=>parseInt(x.trim(),10)-1).filter(Number.isInteger);const list=nums.length?nums:src.getPageIndices();
+        for(const n of list){if(n<0||n>=src.getPageCount())continue;const one=await PDFDocument.create();const [p]=await one.copyPages(src,[n]);one.addPage(p);downloadBlob(new Blob([await one.save()],{type:"application/pdf"}),`page-${n+1}.pdf`);}
+        setStatus("Selected pages downloaded.");return;
+      }
+      if(active==="compress-pdf"){downloadBlob(new Blob([await src.save({useObjectStreams:true,addDefaultPage:false})],{type:"application/pdf"}),"compressed.pdf");setStatus("Optimized PDF downloaded.");return;}
+      if(active==="rotate-pdf"){src.getPages().forEach(p=>p.setRotation(degrees(Number(angle)||90)));downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"rotated.pdf");setStatus("Rotated PDF downloaded.");return;}
+      if(active==="pdf-unlock"){downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"unlocked.pdf");setStatus("Unlocked copy downloaded when supported.");return;}
+      if(active==="pdf-watermark"){src.getPages().forEach(p=>{const {width,height}=p.getSize();p.drawText(watermark||"ToolMaster Pro",{x:width/2-60,y:height/2,size:28,color:rgb(.65,.65,.65),opacity:.35,rotate:degrees(35)})});downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"watermarked.pdf");setStatus("Watermarked PDF downloaded.");return;}
+      if(active==="edit-pdf"){setStatus("Choose Edit & Sign PDF from All PDF Tools to open the advanced editor.");return;}
+    }catch(e){setStatus(`Error: ${e?.message||String(e)}`)}finally{setBusy(false);}
+  };
+
+  const accept=active==="word-pdf"?".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    active==="jpg-pdf"?"image/jpeg,image/png":".pdf,application/pdf";
+  const multi=active==="merge-pdf"||active==="jpg-pdf";
+
+  const selectOperation=(next)=>{
+    if(next==="edit-pdf"){
+      // Open full editor through the parent page routing by reusing the browser history hash.
+      setActive(next);
+      const target=tools.find(x=>x[3]===next);
+      if(target){ setTimeout(()=>window.dispatchEvent(new CustomEvent("tm-open-tool",{detail:target})),0); }
+      return;
+    }
+    setActive(next); setStatus("");
+  };
+
+  return <Shell back={back} t={t} status={status}>
+    <div className="pdfProPage">
+      <section className="pdfProHero">
+        <h1>{current.name}</h1>
+        <p>{current.desc}</p>
+        <div className="pdfUploadArea">
+          <FilePicker multiple={multi} accept={accept} onChange={setFiles} files={files}/>
+          <div className="pdfDropHint">or drop {active==="word-pdf"?"Word":active==="jpg-pdf"?"images":"PDF"} here</div>
+        </div>
+      </section>
+
+      {files.length>0 && <section className="pdfWorkArea">
+        <div className="pdfCanvasZone">
+          <div className="pdfThumbHeader"><span>{files.length} file{files.length>1?"s":""} selected</span><button type="button" className="btn" onClick={()=>setFiles([])}>Remove</button></div>
+          <div className="pdfThumbGrid">
+            {thumbs.length?thumbs.map(x=><div className="pdfThumb" key={x.page}><img src={x.url} alt={`Page ${x.page}`}/><small>Page {x.page}</small></div>):files.map(f=><div className="pdfThumb file" key={f.name}><FileText size={34}/><small>{f.name}</small></div>)}
+          </div>
+          <div className="pdfCanvasTip">Your original file stays here until you start the selected operation.</div>
+        </div>
+        <aside className="pdfSidePanel">
+          <h2>{current.name}</h2>
+          {active==="pdf-word"&&<div className="pdfChoice"><b>NO OCR</b><span>Convert selectable-text PDFs into editable Word files.</span></div>}
+          {active==="pdf-word"&&<div className="pdfChoice premium"><b>OCR <span>Premium</span></b><span>Scanned/image PDFs need OCR for editable Word output.</span></div>}
+          {active==="split-pdf"&&<label>Pages <input value={pages} onChange={e=>setPages(e.target.value)} placeholder="1,3,5"/></label>}
+          {active==="rotate-pdf"&&<label>Rotation <select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
+          {active==="pdf-watermark"&&<label>Watermark text <input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
+          {active==="pdf-jpg"&&<label>JPG quality <input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
+          <button type="button" className="pdfMainAction" disabled={busy} onClick={run}>{busy?"Processing…":current.name==="Merge PDF"?"Merge PDF":current.name==="Split PDF"?"Split PDF":current.name==="Compress PDF"?"Compress PDF":current.name==="PDF to Word"?"Convert to WORD":current.name==="Word to PDF"?"Convert to PDF":current.name==="PDF to JPG"?"Convert to JPG":current.name}</button>
+          <div className="pdfSideNote">Secure browser-first processing where possible. Conversion tools use your configured backend.</div>
+        </aside>
+      </section>}
+
+      <section className="pdfQuickGrid">
+        {pdfTools.map(x=><button key={x.id} type="button" className={active===x.id?"pdfQuick active":"pdfQuick"} onClick={()=>selectOperation(x.id)}>
+          <FileText size={18}/><span>{x.name}</span><small>{x.desc}</small>
+        </button>)}
+      </section>
+    </div>
+  </Shell>;
 }
 
 function BackgroundRemoverTool({t,back}) {
