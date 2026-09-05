@@ -1899,6 +1899,25 @@ function BackgroundRemoverTool({t,back}) {
     if(lastCutoutReady || resultBlob || cutoutBlob) await renderComposite({bgMode:mode,bgImage:mode==="image"?value:"" , bgColor: mode==="color" ? (value || bgColor) : bgColor});
   };
 
+  const uploadWallpaper = async e => {
+    const f=e.target.files?.[0];
+    e.target.value="";
+    if(!f) return;
+    if(!/^image\/(png|jpe?g|webp)$/i.test(f.type)){
+      setStatus("Please upload a JPG, PNG or WebP wallpaper.");
+      return;
+    }
+    const u=URL.createObjectURL(f);
+    setBgMode("image");
+    setBgImage(u);
+    setBgCategory("photo");
+    setTab("background");
+    setStatus("Wallpaper uploaded. Applying it to your cutout…");
+    if(lastCutoutReady || resultBlob || cutoutBlob){
+      await renderComposite({bgMode:"image",bgImage:u});
+    }
+  };
+
   const download = (hd=false) => {
     if(!resultBlob) return setStatus("Your image is still processing.");
     downloadBlob(resultBlob,hd?"toolmaster-background-remover-hd.png":"toolmaster-background-remover.png");
