@@ -298,7 +298,7 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
 
 
-.pdfNavWrap{background:#fff;border-bottom:1px solid #e5e7eb;box-shadow:0 2px 10px rgba(15,23,42,.04);position:relative;z-index:40}.pdfNavMenu{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none}.pdfNavMenu::-webkit-scrollbar{display:none}.pdfNavMenu>button,.pdfDropdown summary{appearance:none;border:0;background:#fff;color:#111827;font-weight:900;font-size:14px;letter-spacing:.01em;padding:17px 18px;white-space:nowrap;display:flex;align-items:center;gap:5px;cursor:pointer}.pdfNavMenu>button:hover,.pdfDropdown summary:hover{color:#ef2b2d}.pdfNavMenu>button.pdfNavActive,.pdfDropdown.active summary{color:#ef2b2d}.pdfDropdown{position:relative}.pdfDropdown summary{list-style:none}.pdfDropdown summary::-webkit-details-marker{display:none}.pdfDropdown[open] summary{color:#ef2b2d}.pdfDropdownPanel{position:absolute;top:100%;left:0;min-width:260px;background:#fff;border:1px solid #e5e7eb;border-top:3px solid #ef2b2d;border-radius:0 0 10px 10px;box-shadow:0 16px 35px rgba(15,23,42,.12);padding:8px;display:grid;gap:3px}.pdfDropdownPanel.wide{min-width:620px;grid-template-columns:repeat(3,minmax(160px,1fr))}.pdfDropdownPanel button{border:0;background:#fff;text-align:left;padding:10px 12px;border-radius:7px;color:#111827;font-weight:800;cursor:pointer}.pdfDropdownPanel button:hover{background:#fff2f2;color:#ef2b2d}.pdfCloudButtons{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;width:58px}.pdfCloudBtn{width:42px;height:42px;padding:0;border:0;background:#ef2b2d;color:#fff;border-radius:50%;display:grid;place-items:center;font-weight:900;cursor:pointer;box-shadow:0 4px 10px rgba(239,43,45,.22);transition:transform .15s ease,box-shadow .15s ease}.pdfCloudBtn:hover{background:#d92325;transform:translateY(-1px);box-shadow:0 6px 14px rgba(239,43,45,.28)}.pdfCloudBtn span:last-child{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.cloudCircle{width:auto;height:auto;background:transparent;color:#fff;display:grid;place-items:center;font-size:17px;font-weight:900}.pdfUploadArea .pdfCloudButtons{margin-top:0}.pdfSelectedFile{width:min(720px,100%);margin:18px auto 0;border:1px solid #e5e7eb;border-radius:10px;background:#fff;padding:12px 14px;display:flex;align-items:center;gap:12px;text-align:left;box-shadow:0 5px 15px rgba(15,23,42,.05)}.pdfSelectedFile .pdfFileIcon{width:38px;height:38px;border-radius:8px;background:#fff0f0;color:#ef2b2d;display:grid;place-items:center;flex:0 0 auto}.pdfSelectedFile strong{display:block;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pdfSelectedFile small{color:#7b8493}.pdfSelectedFile .removeFile{margin-left:auto;border:0;background:#fff0f0;color:#d52b2e;border-radius:7px;padding:7px 9px;font-weight:900;cursor:pointer}.pdfWorkNav{display:flex;gap:0;flex-wrap:wrap;background:#fff;border:1px solid #e5e7eb;border-top:0;padding:0}.pdfWorkNav button{border:0;background:#fff;color:#111827;font-weight:900;padding:13px 15px;border-right:1px solid #e5e7eb;cursor:pointer}.pdfWorkNav button.active{background:#ef2b2d;color:#fff}.bgTopControls{display:flex;gap:7px;flex-wrap:wrap}.bgTopControls .btn{font-weight:900;color:#111827}.bgTopControls .btn.primary{color:#fff}.bgUploadBtn{border:2px dashed #ef2b2d!important;background:#fff7f7!important;color:#111827!important}.bgUploadBtn:hover{background:#fff0f0!important}.bgGallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:430px;overflow:auto;padding-right:3px}.bgGallery button{padding:0;border:1px solid #e1e5eb;border-radius:12px;overflow:hidden;background:#fff;cursor:pointer}.bgGallery img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}.bgGallery button.selected{border:3px solid #ef2b2d}.bgCount{font-size:12px;color:#7b8493;margin:0 0 9px}.fastCutoutNote{padding:11px 12px;border-radius:10px;background:#f8fafc;border:1px solid #e5e7eb;color:#667085;font-size:12px;line-height:1.5}.bgUploadInline{display:none}@media(max-width:900px){.pdfUploadArea>div:first-child{grid-template-columns:1fr!important}.pdfCloudButtons{grid-template-columns:1fr 1fr}.pdfDropdownPanel.wide{min-width:420px;grid-template-columns:repeat(2,minmax(140px,1fr))}}@media(max-width:560px){.pdfNavMenu>button,.pdfDropdown summary{font-size:12px;padding:14px 11px}.pdfDropdownPanel.wide{min-width:310px;grid-template-columns:1fr}.bgGallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pdfNavWrap{background:#fff;border-bottom:1px solid #e5e7eb;box-shadow:0 2px 10px rgba(15,23,42,.04);position:relative;z-index:40}.pdfNavMenu{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none}.pdfNavMenu::-webkit-scrollbar{display:none}.pdfNavMenu>button,.pdfDropdown summary{appearance:none;border:0;background:#fff;color:#111827;font-weight:900;font-size:14px;letter-spacing:.01em;padding:17px 18px;white-space:nowrap;display:flex;align-items:center;gap:5px;cursor:pointer}.pdfNavMenu>button:hover,.pdfDropdown summary:hover{color:#ef2b2d}.pdfNavMenu>button.pdfNavActive,.pdfDropdown.active summary{color:#ef2b2d}.pdfDropdown{position:relative}.pdfDropdown summary{list-style:none}.pdfDropdown summary::-webkit-details-marker{display:none}.pdfDropdown[open] summary{color:#ef2b2d}.pdfDropdownPanel{position:absolute;top:100%;left:0;min-width:260px;background:#fff;border:1px solid #e5e7eb;border-top:3px solid #ef2b2d;border-radius:0 0 10px 10px;box-shadow:0 16px 35px rgba(15,23,42,.12);padding:8px;display:grid;gap:3px}.pdfDropdownPanel.wide{min-width:620px;grid-template-columns:repeat(3,minmax(160px,1fr))}.pdfDropdownPanel button{border:0;background:#fff;text-align:left;padding:10px 12px;border-radius:7px;color:#111827;font-weight:800;cursor:pointer}.pdfDropdownPanel button:hover{background:#fff2f2;color:#ef2b2d}.pdfCloudButtons{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;width:58px}.pdfCloudBtn{width:42px;height:42px;padding:0;border:0;background:#ef2b2d;color:#fff;border-radius:50%;display:grid;place-items:center;font-weight:900;cursor:pointer;box-shadow:0 4px 10px rgba(239,43,45,.22);transition:transform .15s ease,box-shadow .15s ease}.pdfCloudBtn:hover{background:#d92325;transform:translateY(-1px);box-shadow:0 6px 14px rgba(239,43,45,.28)}.pdfCloudBtn span:last-child{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.cloudCircle{width:auto;height:auto;background:transparent;color:#fff;display:grid;place-items:center;font-size:17px;font-weight:900}.pdfUploadArea .pdfCloudButtons{margin-top:0}.pdfSelectedFile{width:min(720px,100%);margin:18px auto 0;border:1px solid #e5e7eb;border-radius:10px;background:#fff;padding:12px 14px;display:flex;align-items:center;gap:12px;text-align:left;box-shadow:0 5px 15px rgba(15,23,42,.05)}.pdfSelectedFile .pdfFileIcon{width:38px;height:38px;border-radius:8px;background:#fff0f0;color:#ef2b2d;display:grid;place-items:center;flex:0 0 auto}.pdfSelectedFile strong{display:block;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pdfSelectedFile small{color:#7b8493}.pdfSelectedFile .removeFile{margin-left:auto;border:0;background:#fff0f0;color:#d52b2e;border-radius:7px;padding:7px 9px;font-weight:900;cursor:pointer}.pdfWorkNav{display:flex;gap:0;flex-wrap:wrap;background:#fff;border:1px solid #e5e7eb;border-top:0;padding:0}.pdfWorkNav button{border:0;background:#fff;color:#111827;font-weight:900;padding:13px 15px;border-right:1px solid #e5e7eb;cursor:pointer}.pdfWorkNav button.active{background:#ef2b2d;color:#fff}.bgTopControls{display:flex;gap:7px;flex-wrap:wrap}.bgTopControls .btn{font-weight:900;color:#111827}.bgTopControls .btn.primary{color:#fff}.bgUploadBtn{border:2px dashed #ef2b2d!important;background:#fff7f7!important;color:#111827!important}.bgUploadBtn:hover{background:#fff0f0!important}.bgGallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:430px;overflow:auto;padding-right:3px}.bgGallery button{padding:0;border:1px solid #e1e5eb;border-radius:12px;overflow:hidden;background:#fff;cursor:pointer}.bgGallery img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}.bgGallery button.selected{border:3px solid #ef2b2d}.bgCount{font-size:12px;color:#7b8493;margin:0 0 9px}.fastCutoutNote{padding:11px 12px;border-radius:10px;background:#f8fafc;border:1px solid #e5e7eb;color:#667085;font-size:12px;line-height:1.5}.bgUploadInline{display:none}@media(max-width:900px){#about .panel>div:last-child{grid-template-columns:1fr!important}.pdfUploadArea>div:first-child{grid-template-columns:1fr!important}.pdfCloudButtons{grid-template-columns:1fr 1fr}.pdfDropdownPanel.wide{min-width:420px;grid-template-columns:repeat(2,minmax(140px,1fr))}}@media(max-width:560px){.pdfNavMenu>button,.pdfDropdown summary{font-size:12px;padding:14px 11px}.pdfDropdownPanel.wide{min-width:310px;grid-template-columns:1fr}.bgGallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .pdfProPage{margin-top:12px}
 .pdfProHero{background:#f6f6fb;padding:40px 24px 50px;text-align:center;border:1px solid #e3e4eb;border-radius:16px 16px 0 0}
 .pdfProHero h1{font-size:42px;margin:0 0 10px;letter-spacing:-.04em}
@@ -443,6 +443,7 @@ function App() {
         <a href="#categories" onClick={()=>{setTool(null);setAdmin(false)}}>Categories</a>
         <a href="#pricing" onClick={()=>{setTool(null);setAdmin(false)}}>Pricing</a>
         <a href="#about" onClick={()=>{setTool(null);setAdmin(false)}}>About</a>
+        <a href="#contact" onClick={()=>{setTool(null);setAdmin(false)}}>Contact</a>
         <a href="#seo-genius" onClick={()=>{const x=tools.find(t=>t[3]==="seo-genius");if(x)openTool(x)}} style={{fontWeight:900,color:"#ef2b2d"}}>SEO Genius AI</a>
       </nav>
       <div className="navActions">
@@ -464,6 +465,7 @@ function App() {
       <a href="#categories" onClick={()=>{setMobile(false);setTool(null);}}>Categories</a>
       <a href="#pricing" onClick={()=>{setMobile(false);setTool(null);}}>Pricing</a>
       <a href="#about" onClick={()=>{setMobile(false);setTool(null);}}>About</a>
+      <a href="#contact" onClick={()=>{setMobile(false);setTool(null);}}>Contact</a>
       <a href="#seo-genius" onClick={()=>{setMobile(false);const x=tools.find(t=>t[3]==="seo-genius");if(x)openTool(x);}}>SEO Genius AI</a>
     </div>}</header>
 
@@ -494,7 +496,55 @@ function App() {
         <div className="panel"><h3>Text-to-Video</h3><p style={{color:"#7c879a"}}>Free, Starter, Pro, Business and Platinum plans.</p></div>
       </div>
     </section>
-    <footer className="footer" id="about"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
+    <section id="about" className="container" style={{padding:"28px 24px 20px"}}>
+      <div className="panel" style={{padding:"28px"}}>
+        <div className="sectionHead"><div><div className="pill"><Sparkles size={14}/> About ToolMaster Pro</div><h2>One place for every tool you need.</h2></div></div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:14}}>
+          <div className="card"><h3>Fast & Simple</h3><p>Easy-to-use online tools with clear workflows and instant results.</p></div>
+          <div className="card"><h3>Privacy First</h3><p>Browser-first processing is used where practical, with secure server processing for supported features.</p></div>
+          <div className="card"><h3>100+ Tools</h3><p>PDF, image, SEO, text, developer, calculator, converter and AI tools in one place.</p></div>
+        </div>
+      </div>
+    </section>
+    <section id="contact" className="container" style={{padding:"20px 24px 50px"}}>
+      <div className="workspace">
+        <div className="panel">
+          <div className="pill"><Mail size={14}/> Contact ToolMaster Pro</div>
+          <h2 style={{marginBottom:8}}>We'd love to hear from you.</h2>
+          <p style={{color:"#7c879a",lineHeight:1.6}}>Send feedback, report a broken tool, request a feature, or ask a question.</p>
+          <div style={{display:"grid",gap:10,marginTop:16}}>
+            <div className="twoFields">
+              <label>Name<input id="contact-name" placeholder="Your name"/></label>
+              <label>Email<input id="contact-email" type="email" placeholder="you@example.com"/></label>
+            </div>
+            <label>Message<textarea id="contact-message" placeholder="How can we help?"></textarea></label>
+            <button className="btn primary" type="button" onClick={async()=>{
+              const name=document.getElementById("contact-name")?.value?.trim();
+              const email=document.getElementById("contact-email")?.value?.trim();
+              const message=document.getElementById("contact-message")?.value?.trim();
+              if(!name||!email||!message){alert("Please fill in name, email and message.");return;}
+              if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Please enter a valid email.");return;}
+              try{
+                if(!supabase) throw new Error("Supabase is not configured.");
+                const {error}=await supabase.from("contact_messages").insert({name,email,message});
+                if(error) throw error;
+                document.getElementById("contact-name").value="";document.getElementById("contact-email").value="";document.getElementById("contact-message").value="";
+                alert("Message sent successfully. Thank you!");
+              }catch(e){
+                window.location.href=`mailto:support@toolmasterpro.com?subject=${encodeURIComponent("ToolMaster Pro Contact")}&body=${encodeURIComponent(message+"\n\nName: "+name+"\nEmail: "+email)}`;
+              }
+            }}><Mail size={16}/> Send Message</button>
+          </div>
+        </div>
+        <div className="panel" style={{display:"flex",flexDirection:"column",justifyContent:"center"}}>
+          <h3>Support</h3>
+          <p style={{color:"#7c879a",lineHeight:1.7}}>For tool issues, include the tool name and a screenshot or exact error message. This helps us fix problems faster.</p>
+          <div className="notice"><CheckCircle2 size={17}/> ToolMaster Pro support is available through the contact form.</div>
+          <div style={{marginTop:18}}><b>Popular areas</b><p style={{color:"#7c879a"}}>PDF Tools · Image Tools · SEO Genius AI · Developer Tools · AI & Education</p></div>
+        </div>
+      </div>
+    </section>
+    <footer className="footer"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
     {authOpen && <AuthModal mode={authMode} setMode={setAuthMode} close={()=>setAuthOpen(false)} onDone={()=>setAuthOpen(false)}/>}
   </div>;
 }
@@ -1807,6 +1857,15 @@ function BackgroundRemoverTool({t,back}) {
       setCutoutBlob(blob); setNewResult(blob); setLastCutoutReady(true);
       setStatus(useAI?"AI background removed. Choose a background or download.":"Background removed automatically. Choose Magic, Color, or upload your own wallpaper.");
     }catch(e){
+      if(useAI){
+        try{
+          setStatus("AI engine unavailable — trying fast local removal…");
+          const blob=await fastRemove(sourceFile);
+          setCutoutBlob(blob); setNewResult(blob); setLastCutoutReady(true);
+          setStatus("Fast local background removal completed. You can replace the background below.");
+          return;
+        }catch(fastErr){}
+      }
       try{
         const img=await readImage(sourceFile), c=document.createElement("canvas"), ctx=c.getContext("2d");
         c.width=img.naturalWidth; c.height=img.naturalHeight; ctx.drawImage(img,0,0);
@@ -1818,10 +1877,8 @@ function BackgroundRemoverTool({t,back}) {
         ctx.putImageData(data,0,0);
         const blob=await new Promise(r=>c.toBlob(r,"image/png"));
         if(!blob) throw new Error("Fallback cutout could not create PNG.");
-        setCutoutBlob(blob);
-        setNewResult(blob);
-        setLastCutoutReady(true);
-        setStatus("AI model was unavailable, so a local light-background fallback was used.");
+        setCutoutBlob(blob); setNewResult(blob); setLastCutoutReady(true);
+        setStatus("A light-background fallback was used. For complex photos, try AI Remove HD again.");
       }catch(fallbackErr){
         setStatus(`Background removal failed: ${fallbackErr?.message||String(e)}`);
       }
@@ -1846,7 +1903,7 @@ function BackgroundRemoverTool({t,back}) {
     setBgCategory("photo");
     setTab("cutout");
     setStatus("Image uploaded — removing background automatically…");
-    setTimeout(() => { void doCutout(f,false); }, 30);
+    setTimeout(() => { void doCutout(f,true); }, 30);
   };
 
   const renderComposite = async (overrides={}) => {
