@@ -1778,7 +1778,7 @@ function BackgroundRemoverTool({t,back}) {
 
   const fastRemove = async sourceFile => {
     const img=await readImage(sourceFile);
-    const maxSide=900; const ratio=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight));
+    const maxSide=650; const ratio=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight));
     const w=Math.max(1,Math.round(img.naturalWidth*ratio)),h=Math.max(1,Math.round(img.naturalHeight*ratio));
     const c=document.createElement("canvas"); c.width=w;c.height=h; const ctx=c.getContext("2d"); ctx.drawImage(img,0,0,w,h);
     const im=ctx.getImageData(0,0,w,h), d=im.data;
@@ -1805,7 +1805,7 @@ function BackgroundRemoverTool({t,back}) {
         blob=await fastRemove(sourceFile);
       }
       setCutoutBlob(blob); setNewResult(blob); setLastCutoutReady(true);
-      setStatus(useAI?"AI background removed. Choose a background or download.":"Fast background removal complete. For complex images you can use AI Remove HD.");
+      setStatus(useAI?"AI background removed. Choose a background or download.":"Background removed automatically. Choose Magic, Color, or upload your own wallpaper.");
     }catch(e){
       try{
         const img=await readImage(sourceFile), c=document.createElement("canvas"), ctx=c.getContext("2d");
@@ -1845,7 +1845,8 @@ function BackgroundRemoverTool({t,back}) {
     setBgImage("");
     setBgCategory("photo");
     setTab("cutout");
-    doCutout(f);
+    setStatus("Image uploaded — removing background automatically…");
+    setTimeout(() => { void doCutout(f,false); }, 30);
   };
 
   const renderComposite = async (overrides={}) => {
