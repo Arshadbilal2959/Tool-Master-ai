@@ -297,12 +297,14 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
 
+
+.pdfNavWrap{background:#fff;border-bottom:1px solid #e5e7eb;box-shadow:0 2px 10px rgba(15,23,42,.04);position:relative;z-index:40}.pdfNavMenu{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none}.pdfNavMenu::-webkit-scrollbar{display:none}.pdfNavMenu>button,.pdfDropdown summary{appearance:none;border:0;background:#fff;color:#111827;font-weight:900;font-size:14px;letter-spacing:.01em;padding:17px 18px;white-space:nowrap;display:flex;align-items:center;gap:5px;cursor:pointer}.pdfNavMenu>button:hover,.pdfDropdown summary:hover{color:#ef2b2d}.pdfNavMenu>button.pdfNavActive,.pdfDropdown.active summary{color:#ef2b2d}.pdfDropdown{position:relative}.pdfDropdown summary{list-style:none}.pdfDropdown summary::-webkit-details-marker{display:none}.pdfDropdown[open] summary{color:#ef2b2d}.pdfDropdownPanel{position:absolute;top:100%;left:0;min-width:260px;background:#fff;border:1px solid #e5e7eb;border-top:3px solid #ef2b2d;border-radius:0 0 10px 10px;box-shadow:0 16px 35px rgba(15,23,42,.12);padding:8px;display:grid;gap:3px}.pdfDropdownPanel.wide{min-width:620px;grid-template-columns:repeat(3,minmax(160px,1fr))}.pdfDropdownPanel button{border:0;background:#fff;text-align:left;padding:10px 12px;border-radius:7px;color:#111827;font-weight:800;cursor:pointer}.pdfDropdownPanel button:hover{background:#fff2f2;color:#ef2b2d}.pdfCloudButtons{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}.pdfCloudBtn{border:2px solid #ef2b2d;background:#fff;color:#111827;border-radius:9px;padding:11px 16px;display:inline-flex;align-items:center;gap:9px;font-weight:900;cursor:pointer;box-shadow:0 3px 10px rgba(239,43,45,.08)}.pdfCloudBtn:hover{background:#fff5f5}.cloudCircle{width:25px;height:25px;border-radius:7px;background:#ef2b2d;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:900}.pdfSelectedFile{width:min(720px,100%);margin:18px auto 0;border:1px solid #e5e7eb;border-radius:10px;background:#fff;padding:12px 14px;display:flex;align-items:center;gap:12px;text-align:left;box-shadow:0 5px 15px rgba(15,23,42,.05)}.pdfSelectedFile .pdfFileIcon{width:38px;height:38px;border-radius:8px;background:#fff0f0;color:#ef2b2d;display:grid;place-items:center;flex:0 0 auto}.pdfSelectedFile strong{display:block;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pdfSelectedFile small{color:#7b8493}.pdfSelectedFile .removeFile{margin-left:auto;border:0;background:#fff0f0;color:#d52b2e;border-radius:7px;padding:7px 9px;font-weight:900;cursor:pointer}.pdfWorkNav{display:flex;gap:0;flex-wrap:wrap;background:#fff;border:1px solid #e5e7eb;border-top:0;padding:0}.pdfWorkNav button{border:0;background:#fff;color:#111827;font-weight:900;padding:13px 15px;border-right:1px solid #e5e7eb;cursor:pointer}.pdfWorkNav button.active{background:#ef2b2d;color:#fff}.bgTopControls{display:flex;gap:7px;flex-wrap:wrap}.bgTopControls .btn{font-weight:900;color:#111827}.bgTopControls .btn.primary{color:#fff}.bgUploadBtn{border:2px dashed #ef2b2d!important;background:#fff7f7!important;color:#111827!important}.bgUploadBtn:hover{background:#fff0f0!important}.bgGallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.bgGallery button{padding:0;border:1px solid #e1e5eb;border-radius:12px;overflow:hidden;background:#fff;cursor:pointer}.bgGallery img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}.bgGallery button.selected{border:3px solid #ef2b2d}.bgCount{font-size:12px;color:#7b8493;margin:0 0 9px}.fastCutoutNote{padding:11px 12px;border-radius:10px;background:#f8fafc;border:1px solid #e5e7eb;color:#667085;font-size:12px;line-height:1.5}.bgUploadInline{display:none}@media(max-width:900px){.pdfDropdownPanel.wide{min-width:420px;grid-template-columns:repeat(2,minmax(140px,1fr))}}@media(max-width:560px){.pdfNavMenu>button,.pdfDropdown summary{font-size:12px;padding:14px 11px}.pdfDropdownPanel.wide{min-width:310px;grid-template-columns:1fr}.bgGallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .pdfProPage{margin-top:12px}
 .pdfProHero{background:#f6f6fb;padding:40px 24px 50px;text-align:center;border:1px solid #e3e4eb;border-radius:16px 16px 0 0}
 .pdfProHero h1{font-size:42px;margin:0 0 10px;letter-spacing:-.04em}
 .pdfProHero p{font-size:17px;color:#667085;margin:0 auto 26px;max-width:800px}
-.pdfUploadArea{max-width:520px;margin:auto}
-.pdfUploadArea .uploadBox{justify-content:center;background:#fff;border:0;box-shadow:0 8px 22px rgba(24,32,51,.10);padding:20px;border-radius:14px}
+.pdfUploadArea{max-width:760px;margin:auto;background:#fff;border:1px solid #ececf1;border-radius:12px;padding:20px;box-shadow:0 10px 30px rgba(17,24,39,.06)}
+.pdfUploadArea .uploadBox{justify-content:center;background:#ef2b2d;color:#fff;border:0;box-shadow:0 8px 22px rgba(239,43,45,.22);padding:20px;border-radius:9px;font-weight:950}.pdfUploadArea .uploadBox strong{color:#fff}.pdfUploadArea .uploadBox span{color:#fff}
 .pdfDropHint{color:#6f7787;font-size:13px;margin-top:9px}
 .pdfWorkArea{display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:610px;border:1px solid #e2e4eb;border-top:0;background:#eef0f6}
 .pdfCanvasZone{padding:28px;min-width:0}
@@ -328,61 +330,33 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .pdfQuick span{font-weight:850}.pdfQuick small{grid-column:2;color:#8992a3;line-height:1.4}.pdfQuick.active{border-color:#8770f8;background:#faf8ff;color:#6848ee}
 @media(max-width:900px){.navLinks{display:none}.pdfNavMenu{padding-left:14px;padding-right:14px;gap:2px}.pdfNavMenu>button,.pdfDropdown summary{font-size:11px;padding:9px 8px}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
-/* ToolMaster Pro PDF red / iLovePDF-inspired upgrade */
-.tmPdfRedCard{width:min(1120px,calc(100% - 28px));margin:0 auto 28px;border-top:5px solid #ef2b2d!important}
-.pdfRedEyebrow{color:#ef2b2d;font-size:12px;font-weight:950;letter-spacing:.14em;margin-bottom:7px}
-.tmPdfTopNav{display:flex;align-items:center;gap:0;border-top:1px solid #eee;border-bottom:1px solid #eee;background:#fff;overflow:auto;white-space:nowrap;padding:0 12px}
-.tmPdfNavBtn{border:0;background:transparent;color:#111827;font-weight:950;font-size:12px;padding:15px 16px;cursor:pointer;border-bottom:3px solid transparent}
-.tmPdfNavBtn:hover{color:#ef2b2d}
-.tmPdfNavBtn.active{color:#ef2b2d;border-bottom-color:#ef2b2d}
-.tmPdfUploadWrap{margin:22px 28px;padding:38px 20px 30px;border:2px dashed #f0b4b5;background:#fff9f9;border-radius:12px;text-align:center}
-.tmPdfSelectBtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#ef2b2d;color:#fff;border-radius:9px;padding:18px 48px;font-size:23px;font-weight:950;cursor:pointer;box-shadow:0 7px 18px rgba(239,43,45,.18)}
-.tmPdfSelectBtn input{display:none}
-.tmPdfDropText{margin-top:13px;color:#737b89;font-size:14px}
-.tmPdfCloudRow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
-.tmPdfCloudBtn{border:1px solid #efb4b5;background:#fff;color:#111827;border-radius:8px;padding:11px 15px;cursor:pointer;font-size:13px}
-.tmPdfCloudBtn:hover{border-color:#ef2b2d;color:#ef2b2d}
-.tmPdfSelectedBox,.tmPdfPreview{margin:0 28px 18px;border:1px solid #e8eaee;border-radius:10px;background:#fff;overflow:hidden}
-.tmPdfSelectedHead{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid #eee;background:#fafafa;color:#111827}
-.tmPdfSelectedHead button{border:0;background:transparent;color:#ef2b2d;font-weight:900;cursor:pointer}
-.tmPdfFiles{display:grid;gap:7px;padding:12px}.tmPdfFileRow{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #eceef2;border-radius:8px}.tmPdfFileRow>div{display:grid;gap:2px;flex:1}.tmPdfFileRow span{font-size:12px;color:#7c8490}.tmPdfCheck{color:#16a36f!important;font-weight:900}
-.tmPdfPreviewTitle{padding:12px 15px;font-weight:900;border-bottom:1px solid #eee}.tmPdfThumbGrid{display:flex;gap:12px;overflow:auto;padding:14px}.tmPdfOptions{padding:0 28px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.tmPdfOptions label{display:grid;gap:6px;font-size:12px;font-weight:900;color:#555e6e}.tmPdfOptions input,.tmPdfOptions select{padding:10px;border:1px solid #dddfe5;border-radius:8px}.tmPdfBottom{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:20px 28px;margin-top:18px;border-top:1px solid #eee}.tmPdfBottom span{font-size:12px;color:#7a8290}.tmPdfProcessBtn{border:0;background:#ef2b2d;color:#fff;border-radius:8px;padding:13px 22px;font-weight:950;cursor:pointer}.tmPdfProcessBtn:disabled{opacity:.45;cursor:not-allowed}.tmPdfToolStrip{display:flex;gap:0;overflow:auto;border-top:1px solid #eee;padding:8px 12px}.tmPdfStripBtn{border:0;background:#fff;color:#111827;font-weight:900;padding:10px 13px;white-space:nowrap;cursor:pointer;border-radius:6px}.tmPdfStripBtn.active{background:#ef2b2d;color:#fff}.pdfThumbGrid{display:flex;gap:12px;overflow:auto;padding:14px}.pdfThumb{min-width:115px;border:1px solid #e4e6eb;border-radius:8px;overflow:hidden;background:#fff;text-align:center}.pdfThumb img{width:115px;height:150px;object-fit:cover;display:block}.pdfThumb small{display:block;padding:6px;font-size:11px;color:#667085}.pdfThumb.file{display:grid;place-items:center;min-height:170px;padding:14px}
-@media(max-width:700px){.tmPdfUploadWrap{margin:14px 12px}.tmPdfSelectBtn{font-size:18px;padding:15px 25px}.tmPdfSelectedBox,.tmPdfPreview{margin-left:12px;margin-right:12px}.tmPdfOptions{grid-template-columns:1fr;padding:0 12px}.tmPdfBottom{padding:16px 12px;flex-direction:column;align-items:stretch}.tmPdfProcessBtn{width:100%}.tmPdfNavBtn{padding:13px 11px;font-size:11px}}
-
 `;
 
-function GlobalStyle() { return <style>{css}
-</style>; }
+function GlobalStyle() { return <style>{css}</style>; }
 
 
-function PdfNavMenu({openTool}) {
-  const convert = [
-    tools.find(t=>t[3]==="pdf-word"),
-    tools.find(t=>t[3]==="word-pdf"),
-    tools.find(t=>t[3]==="pdf-jpg"),
-    tools.find(t=>t[3]==="jpg-pdf"),
-  ].filter(Boolean);
+function PdfNavMenu({openTool,activeId}) {
   const allPdf = tools.filter(t=>t[1]==="PDF Tools");
+  const convert = ["jpg-pdf","word-pdf","pdf-ppt","pdf-excel","html-pdf","pdf-jpg","pdf-word","pdf-ppt","pdf-excel","pdf-pdfa"].map(id=>tools.find(t=>t[3]===id)).filter(Boolean);
+  const [expanded,setExpanded]=useState(null);
+  const nav=[
+    ["merge-pdf","MERGE PDF"],["split-pdf","SPLIT PDF"],["compress-pdf","COMPRESS PDF"]
+  ];
+  const go=t=>{if(t){openTool(t);setExpanded(null)}};
   return <div className="pdfNavWrap">
     <div className="pdfNavMenu">
-      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="merge-pdf"))}>MERGE PDF</button>
-      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="split-pdf"))}>SPLIT PDF</button>
-      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="compress-pdf"))}>COMPRESS PDF</button>
-
-      <details className="pdfDropdown">
-        <summary>CONVERT PDF <ChevronRight size={15}/></summary>
-        <div className="pdfDropdownPanel">
-          {convert.map(t=><button key={t[3]} type="button" onClick={()=>openTool(t)}>{t[0]}</button>)}
-        </div>
-      </details>
-
-      <details className="pdfDropdown">
-        <summary>ALL PDF TOOLS <ChevronRight size={15}/></summary>
-        <div className="pdfDropdownPanel wide">
-          {allPdf.map(t=><button key={t[3]} type="button" onClick={()=>openTool(t)}>{t[0]}</button>)}
-        </div>
-      </details>
+      {nav.map(([id,label])=>{const t=tools.find(x=>x[3]===id);return <button key={id} className={activeId===id?"pdfNavActive":""} type="button" onClick={()=>go(t)}>{label}</button>})}
+      <button type="button" className={expanded==="convert"||convert.some(x=>x[3]===activeId)?"pdfNavActive":""} onClick={()=>setExpanded(expanded==="convert"?null:"convert")}>CONVERT PDF <ChevronRight size={15}/></button>
+      <button type="button" className={expanded==="all"||allPdf.some(x=>x[3]===activeId)?"pdfNavActive":""} onClick={()=>setExpanded(expanded==="all"?null:"all")}>ALL PDF TOOLS <ChevronRight size={15}/></button>
     </div>
+    {expanded && <div style={{position:"absolute",left:0,right:0,top:"100%",background:"#fff",borderBottom:"1px solid #e5e7eb",boxShadow:"0 18px 40px rgba(15,23,42,.12)"}}>
+      <div style={{maxWidth:1440,margin:"0 auto",padding:"12px 24px"}}>
+        <div style={{fontSize:12,fontWeight:900,color:"#ef2b2d",marginBottom:8}}>{expanded==="convert"?"CONVERT PDF":"ALL PDF TOOLS"}</div>
+        <div style={{display:"grid",gridTemplateColumns:expanded==="convert"?"repeat(4,minmax(150px,1fr))":"repeat(5,minmax(150px,1fr))",gap:6}}>
+          {(expanded==="convert"?convert:allPdf).map(t=><button key={t[3]} type="button" onClick={()=>go(t)} style={{border:0,background:"#fff",textAlign:"left",padding:"11px 12px",borderRadius:8,color:"#111827",fontWeight:850,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#fff2f2"} onMouseLeave={e=>e.currentTarget.style.background="#fff"}>{t[0]}</button>)}
+        </div>
+      </div>
+    </div>}
   </div>;
 }
 
@@ -469,6 +443,7 @@ function App() {
         <a href="#categories" onClick={()=>{setTool(null);setAdmin(false)}}>Categories</a>
         <a href="#pricing" onClick={()=>{setTool(null);setAdmin(false)}}>Pricing</a>
         <a href="#about" onClick={()=>{setTool(null);setAdmin(false)}}>About</a>
+        <a href="#seo-genius" onClick={()=>{const x=tools.find(t=>t[3]==="seo-genius");if(x)openTool(x)}} style={{fontWeight:900,color:"#ef2b2d"}}>SEO Genius AI</a>
       </nav>
       <div className="navActions">
         <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
@@ -483,12 +458,13 @@ function App() {
         </div> : <><button className="btn" onClick={()=>{setAuthMode("signin");setAuthOpen(true)}}><LogIn size={16}/><span>Sign in</span></button><button className="btn primary" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}><UserPlus size={16}/><span>Sign up</span></button></>}
       </div>
     </div>
-    <PdfNavMenu openTool={openTool}/>
+    <PdfNavMenu openTool={openTool} activeId={tool?.[3]}/> 
     {mobile&&<div className="container mobileNav" style={{paddingBottom:12,display:"flex",gap:16,flexWrap:"wrap"}}>
       <a href="#tools" onClick={()=>{setMobile(false);setTool(null);}}>Tools</a>
       <a href="#categories" onClick={()=>{setMobile(false);setTool(null);}}>Categories</a>
       <a href="#pricing" onClick={()=>{setMobile(false);setTool(null);}}>Pricing</a>
       <a href="#about" onClick={()=>{setMobile(false);setTool(null);}}>About</a>
+      <a href="#seo-genius" onClick={()=>{setMobile(false);const x=tools.find(t=>t[3]==="seo-genius");if(x)openTool(x);}}>SEO Genius AI</a>
     </div>}</header>
 
     {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user} openAuth={(mode="signin")=>{setAuthMode(mode);setAuthOpen(true)}}/></ToolErrorBoundary> :
@@ -1501,163 +1477,191 @@ async function convertWithSecureBackend(file, target) {
 }
 
 
+function PdfCloudButtons({onStatus,onFile}) {
+  const drive=()=>{
+    if(window.google?.picker && import.meta.env.VITE_GOOGLE_API_KEY && import.meta.env.VITE_GOOGLE_CLIENT_ID && import.meta.env.VITE_GOOGLE_APP_ID){
+      onStatus?.("Google Drive Picker is configured; complete the picker OAuth setup to enable direct selection.");
+    }else{
+      window.open("https://drive.google.com/drive/my-drive","_blank","noopener,noreferrer");
+      onStatus?.("Google Drive opened. Select/download your PDF, then use Select PDF file.");
+    }
+  };
+  const dropbox=()=>{
+    if(window.Dropbox?.choose && import.meta.env.VITE_DROPBOX_APP_KEY){
+      window.Dropbox.choose({success:async files=>{const link=files?.[0]?.link;if(!link)return;try{const r=await fetch(link);const blob=await r.blob();onFile?.(new File([blob],files[0].name||"cloud-file.pdf",{type:"application/pdf"}));onStatus?.("Dropbox PDF selected.");}catch{onStatus?.("Dropbox selected. If direct import is blocked, download the file and use Select PDF file.");}},cancel:()=>{},linkType:"direct",multiselect:false,extensions:[".pdf"]});
+    }else{
+      window.open("https://www.dropbox.com/home","_blank","noopener,noreferrer");
+      onStatus?.("Dropbox opened. Select/download your PDF, then use Select PDF file.");
+    }
+  };
+  return <div className="pdfCloudButtons">
+    <button type="button" className="pdfCloudBtn" onClick={drive}><span className="cloudCircle">G</span><span>Select from Google Drive</span></button>
+    <button type="button" className="pdfCloudBtn" onClick={dropbox}><span className="cloudCircle">D</span><span>Select from Dropbox</span></button>
+  </div>;
+}
+
 function PdfTool({t,back}) {
   const id=t[3];
   const [files,setFiles]=useState([]);
   const [busy,setBusy]=useState(false);
   const [status,setStatus]=useState("");
-  const [active,setActive]=useState(id);
   const [watermark,setWatermark]=useState("ToolMaster Pro");
   const [angle,setAngle]=useState("90");
-  const [quality,setQuality]=useState(.75);
+  const [quality,setQuality]=useState(.65);
   const [pages,setPages]=useState("1");
+  const [active,setActive]=useState(id);
   const [thumbs,setThumbs]=useState([]);
 
-  const pdfTools=[
-    {id:"merge-pdf",name:"MERGE PDF",desc:"Combine multiple PDF files."},
-    {id:"split-pdf",name:"SPLIT PDF",desc:"Split PDF pages."},
-    {id:"compress-pdf",name:"COMPRESS PDF",desc:"Reduce PDF file size."},
-    {id:"pdf-word",name:"PDF TO WORD",desc:"Convert PDF to editable Word."},
-    {id:"word-pdf",name:"WORD TO PDF",desc:"Convert Word documents to PDF."},
-    {id:"pdf-jpg",name:"PDF TO JPG",desc:"Convert PDF pages to JPG."},
-    {id:"jpg-pdf",name:"JPG TO PDF",desc:"Create PDF from images."},
-    {id:"rotate-pdf",name:"ROTATE PDF",desc:"Rotate PDF pages."},
-    {id:"pdf-unlock",name:"UNLOCK PDF",desc:"Remove restrictions when supported."},
-    {id:"pdf-watermark",name:"WATERMARK",desc:"Add watermark to PDF."},
-    {id:"edit-pdf",name:"EDIT PDF",desc:"Edit and sign PDF."}
+  const pdfTools = [
+    {id:"merge-pdf", name:"Merge PDF", desc:"Combine multiple PDFs into one file."},
+    {id:"split-pdf", name:"Split PDF", desc:"Extract selected pages into separate PDFs."},
+    {id:"compress-pdf", name:"Compress PDF", desc:"Reduce PDF size where possible."},
+    {id:"pdf-word", name:"PDF to Word", desc:"Convert selectable-text PDFs to editable DOCX."},
+    {id:"word-pdf", name:"Word to PDF", desc:"Convert DOC/DOCX files to PDF."},
+    {id:"pdf-jpg", name:"PDF to JPG", desc:"Convert each PDF page to a JPG image."},
+    {id:"jpg-pdf", name:"JPG to PDF", desc:"Create a PDF from JPG/PNG images."},
+    {id:"rotate-pdf", name:"Rotate PDF", desc:"Rotate every page."},
+    {id:"pdf-unlock", name:"PDF Unlock", desc:"Create an unrestricted copy when supported."},
+    {id:"pdf-watermark", name:"PDF Watermark", desc:"Add a watermark to all pages."},
+    {id:"edit-pdf", name:"Edit & Sign PDF", desc:"Open the advanced PDF editor."}
   ];
-  const current=pdfTools.find(x=>x.id===active)||pdfTools[0];
-  const accepted=active==="word-pdf"?".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document":active==="jpg-pdf"?"image/jpeg,image/png,image/webp":"application/pdf,.pdf";
-  const multiple=active==="merge-pdf"||active==="jpg-pdf";
+  const current = pdfTools.find(x=>x.id===active) || pdfTools.find(x=>x.id===id) || pdfTools[0];
 
   useEffect(()=>{
     let dead=false;
     (async()=>{
-      if(!files.length || !/\.pdf$/i.test(files[0].name)){setThumbs([]);return;}
-      try{
+      if(!files.length || !(files[0].type==="application/pdf" || /\.pdf$/i.test(files[0].name))) { setThumbs([]); return; }
+      try {
         const pdfjs=await loadLib("pdfjs");
         const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
         const out=[];
-        for(let i=1;i<=Math.min(pdf.numPages,8);i++){
-          const pg=await pdf.getPage(i);const vp=pg.getViewport({scale:.34});
-          const c=document.createElement("canvas");c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
+        for(let i=1;i<=Math.min(pdf.numPages,6);i++){
+          const pg=await pdf.getPage(i); const vp=pg.getViewport({scale:.32});
+          const c=document.createElement("canvas"); c.width=Math.ceil(vp.width); c.height=Math.ceil(vp.height);
           await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
-          out.push({page:i,url:c.toDataURL("image/jpeg",.86)});
+          out.push({page:i,url:c.toDataURL("image/jpeg",.82)});
         }
-        if(!dead)setThumbs(out);
-      }catch{if(!dead)setThumbs([]);}
+        if(!dead) setThumbs(out);
+      } catch { if(!dead) setThumbs([]); }
     })();
-    return()=>{dead=true};
+    return ()=>{dead=true};
   },[files]);
 
-  const cloudDrive=()=>{
-    window.open("https://drive.google.com/drive/my-drive","_blank","noopener,noreferrer");
-    setStatus("Google Drive opened. Download the PDF to your PC, then select it here. Direct Picker can be enabled with Google Picker credentials.");
-  };
-  const cloudDropbox=()=>{
-    if(window.Dropbox?.choose && import.meta.env.VITE_DROPBOX_APP_KEY){
-      window.Dropbox.choose({success:async picked=>{
-        const link=picked?.[0]?.link;
-        if(!link)return;
-        try{
-          const direct=link.replace(/\\?dl=0$/,"?dl=1");
-          const r=await fetch(direct);
-          if(!r.ok)throw new Error("Dropbox file could not be downloaded.");
-          const blob=await r.blob();
-          const f=new File([blob],picked[0].name||"dropbox-file.pdf",{type:blob.type||"application/pdf"});
-          setFiles([f]);setStatus("Dropbox PDF selected successfully.");
-        }catch(e){setStatus(e.message||"Dropbox import failed.");}
-      },cancel:()=>{},linkType:"direct",multiselect:multiple,extensions:[".pdf"]});
-    }else{
-      window.open("https://www.dropbox.com/home","_blank","noopener,noreferrer");
-      setStatus("Dropbox opened. Download the PDF to your PC, then select it here. Add VITE_DROPBOX_APP_KEY for direct import.");
-    }
-  };
-
-  const convertAndDownload=async(file,target)=>{
-    const base=import.meta.env.VITE_DOCUMENT_CONVERTER_URL||(SUPABASE_URL?`${SUPABASE_URL}/functions/v1/document-converter`:"");
-    if(!base)throw new Error("Document converter backend is not configured.");
-    const fd=new FormData();fd.append("file",file,file.name);fd.append("output_format",target);
+  const convertAndDownload = async (file,target)=>{
+    const configured=import.meta.env.VITE_DOCUMENT_CONVERTER_URL||"";
+    const base=configured||(SUPABASE_URL?`${SUPABASE_URL}/functions/v1/document-converter`:"");
+    if(!base) throw new Error("Document converter backend is not configured.");
+    const fd=new FormData(); fd.append("file",file,file.name); fd.append("output_format",target);
     const r=await fetch(base,{method:"POST",headers:SUPABASE_KEY?{apikey:SUPABASE_KEY}:{},body:fd});
     const ct=r.headers.get("content-type")||"";
-    if(!r.ok){const msg=ct.includes("application/json")?((await r.json().catch(()=>({}))).error||"Converter failed."):await r.text().catch(()=>"");throw new Error(msg||`Converter failed (${r.status})`);}
-    if(ct.includes("application/pdf")||ct.includes("application/vnd.openxmlformats-officedocument.wordprocessingml.document")||ct.includes("application/msword")){
-      downloadBlob(await r.blob(),`${file.name.replace(/\.[^.]+$/,".")}${target}`);return;
+    if(!r.ok){
+      const msg=ct.includes("application/json") ? ((await r.json().catch(()=>({}))).error||"Converter failed.") : await r.text().catch(()=>"Converter failed.");
+      throw new Error(msg||`Converter failed (${r.status})`);
     }
-    const d=await r.json().catch(()=>({}));const u=d.download_url||d.url||d.file_url||d.result?.download_url||d.result?.url;
-    if(!u)throw new Error(d.error||"Converter returned no download URL.");
-    const fr=await fetch(u);if(!fr.ok)throw new Error(`Converted file download failed (${fr.status}).`);
-    downloadBlob(await fr.blob(),`${file.name.replace(/\.[^.]+$/,".")}${target}`);
+    if(ct.includes("application/pdf")||ct.includes("application/vnd.openxmlformats-officedocument.wordprocessingml.document")){
+      downloadBlob(await r.blob(),`${file.name.replace(/\.[^.]+$/,"")}.${target}`);
+      return;
+    }
+    const d=await r.json().catch(()=>({})); const u=d.download_url||d.url||d.file_url||d.result?.download_url;
+    if(!u) throw new Error(d.error||"Converter returned no download URL.");
+    const fr=await fetch(u); if(!fr.ok) throw new Error(`Converted file download failed (${fr.status}).`);
+    downloadBlob(await fr.blob(),`${file.name.replace(/\.[^.]+$/,"")}.${target}`);
   };
 
   const run=async()=>{
-    if(!files.length)return setStatus(active==="word-pdf"?"Select a Word file first.":active==="jpg-pdf"?"Select JPG/PNG images first.":"Select a PDF file first.");
+    if(active==="pdf-word"||active==="word-pdf"){
+      if(!files.length) return setStatus(`Upload a ${active==="pdf-word"?"PDF":"Word"} file first.`);
+    } else if(active==="jpg-pdf"){
+      if(!files.length) return setStatus("Upload JPG/PNG images first.");
+    } else if(!files.length) return setStatus("Upload a PDF file first.");
     setBusy(true);setStatus("");
     try{
       if(active==="pdf-word"){setStatus("Converting PDF to Word…");await convertAndDownload(files[0],"docx");setStatus("PDF converted to Word successfully.");return;}
       if(active==="word-pdf"){setStatus("Converting Word to PDF…");await convertAndDownload(files[0],"pdf");setStatus("Word converted to PDF successfully.");return;}
       if(active==="jpg-pdf"){
-        const {PDFDocument}=await loadLib("pdf-lib");const doc=await PDFDocument.create();
-        for(const f of files){const bytes=await f.arrayBuffer();let img;try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)}const pg=doc.addPage([img.width,img.height]);pg.drawImage(img,{x:0,y:0,width:img.width,height:img.height});}
+        const {PDFDocument}=await loadLib("pdf-lib"); const doc=await PDFDocument.create();
+        for(const f of files){const bytes=await f.arrayBuffer();let img;try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)}const p=doc.addPage([img.width,img.height]);p.drawImage(img,{x:0,y:0,width:img.width,height:img.height});}
         downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images-to-pdf.pdf");setStatus(`${files.length} image(s) converted to PDF.`);return;
       }
       if(active==="pdf-jpg"){
-        const pdfjs=await loadLib("pdfjs");const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
-        for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const vp=pg.getViewport({scale:1.8});const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${files[0].name.replace(/\.pdf$/i,"")}-page-${i}.jpg`);}
+        const pdfjs=await loadLib("pdfjs"); const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
+        for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const vp=pg.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${files[0].name.replace(/\.pdf$/i,"")}-page-${i}.jpg`);}
         setStatus(`${pdf.numPages} JPG page(s) downloaded.`);return;
       }
-      const {PDFDocument,degrees,rgb}=await loadLib("pdf-lib");const src=await PDFDocument.load(await files[0].arrayBuffer(),{ignoreEncryption:active==="pdf-unlock"});
+      const {PDFDocument,degrees,rgb}=await loadLib("pdf-lib");
+      const src=await PDFDocument.load(await files[0].arrayBuffer(),{ignoreEncryption:active==="pdf-unlock"});
       if(active==="merge-pdf"){
-        const out=await PDFDocument.create();for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(d,d.getPageIndices())).forEach(p=>out.addPage(p));}
+        const out=await PDFDocument.create();
+        for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(d,d.getPageIndices())).forEach(p=>out.addPage(p));}
         downloadBlob(new Blob([await out.save()],{type:"application/pdf"}),"merged.pdf");setStatus(`${files.length} PDF files merged successfully.`);return;
       }
       if(active==="split-pdf"){
         const nums=pages.split(",").map(x=>parseInt(x.trim(),10)-1).filter(Number.isInteger);const list=nums.length?nums:src.getPageIndices();
-        for(const n of list){if(n<0||n>=src.getPageCount())continue;const one=await PDFDocument.create();const [pg]=await one.copyPages(src,[n]);one.addPage(pg);downloadBlob(new Blob([await one.save()],{type:"application/pdf"}),`page-${n+1}.pdf`);}
+        for(const n of list){if(n<0||n>=src.getPageCount())continue;const one=await PDFDocument.create();const [p]=await one.copyPages(src,[n]);one.addPage(p);downloadBlob(new Blob([await one.save()],{type:"application/pdf"}),`page-${n+1}.pdf`);}
         setStatus("Selected pages downloaded.");return;
       }
-      if(active==="compress-pdf"){downloadBlob(new Blob([await src.save({useObjectStreams:true})],{type:"application/pdf"}),"compressed.pdf");setStatus("Optimized PDF downloaded.");return;}
-      if(active==="rotate-pdf"){src.getPages().forEach(pg=>pg.setRotation(degrees(Number(angle)||90)));downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"rotated.pdf");setStatus("Rotated PDF downloaded.");return;}
+      if(active==="compress-pdf"){downloadBlob(new Blob([await src.save({useObjectStreams:true,addDefaultPage:false})],{type:"application/pdf"}),"compressed.pdf");setStatus("Optimized PDF downloaded.");return;}
+      if(active==="rotate-pdf"){src.getPages().forEach(p=>p.setRotation(degrees(Number(angle)||90)));downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"rotated.pdf");setStatus("Rotated PDF downloaded.");return;}
       if(active==="pdf-unlock"){downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"unlocked.pdf");setStatus("Unlocked copy downloaded when supported.");return;}
-      if(active==="pdf-watermark"){src.getPages().forEach(pg=>{const {width,height}=pg.getSize();pg.drawText(watermark||"ToolMaster Pro",{x:width/2-60,y:height/2,size:28,color:rgb(.65,.65,.65),opacity:.35,rotate:degrees(35)});});downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"watermarked.pdf");setStatus("Watermarked PDF downloaded.");return;}
-      if(active==="edit-pdf"){
-        const target=tools.find(x=>x[3]==="edit-pdf");if(target)window.dispatchEvent(new CustomEvent("tm-open-tool",{detail:target}));return;
-      }
+      if(active==="pdf-watermark"){src.getPages().forEach(p=>{const {width,height}=p.getSize();p.drawText(watermark||"ToolMaster Pro",{x:width/2-60,y:height/2,size:28,color:rgb(.65,.65,.65),opacity:.35,rotate:degrees(35)})});downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"watermarked.pdf");setStatus("Watermarked PDF downloaded.");return;}
+      if(active==="edit-pdf"){setStatus("Choose Edit & Sign PDF from All PDF Tools to open the advanced editor.");return;}
     }catch(e){setStatus(`Error: ${e?.message||String(e)}`)}finally{setBusy(false);}
   };
 
+  const accept=active==="word-pdf"?".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    active==="jpg-pdf"?"image/jpeg,image/png":".pdf,application/pdf";
+  const multi=active==="merge-pdf"||active==="jpg-pdf";
+
+  const selectOperation=(next)=>{
+    if(next==="edit-pdf"){
+      // Open full editor through the parent page routing by reusing the browser history hash.
+      setActive(next);
+      const target=tools.find(x=>x[3]===next);
+      if(target){ setTimeout(()=>window.dispatchEvent(new CustomEvent("tm-open-tool",{detail:target})),0); }
+      return;
+    }
+    setActive(next); setStatus("");
+  };
+
   return <Shell back={back} t={t} status={status}>
-    <div className="ilpPdfCard tmPdfRedCard">
-      <div className="ilpTitleBlock"><div className="pdfRedEyebrow">PDF TOOLS</div><h2>{current.name}</h2><p>{current.desc}</p></div>
-      <div className="tmPdfTopNav">
-        {pdfTools.slice(0,5).map(x=><button key={x.id} type="button" className={active===x.id?"tmPdfNavBtn active":"tmPdfNavBtn"} onClick={()=>{setActive(x.id);setStatus("");}}>{x.name}</button>)}
-        <button type="button" className="tmPdfNavBtn" onClick={()=>{setActive("edit-pdf");setStatus("");const target=tools.find(x=>x[3]==="edit-pdf");if(target)window.dispatchEvent(new CustomEvent("tm-open-tool",{detail:target}));}}>EDIT PDF</button>
-        <button type="button" className="tmPdfNavBtn" onClick={()=>setStatus("More PDF tools are available below.")}>ALL PDF TOOLS</button>
-      </div>
-      <div className="tmPdfUploadWrap">
-        <label className="tmPdfSelectBtn"><Upload size={22}/>{multiple?"Select PDF files":"Select PDF file"}<input type="file" multiple={multiple} accept={accepted} onChange={e=>setFiles(Array.from(e.target.files||[]))}/></label>
-        <div className="tmPdfDropText">or drop {active==="word-pdf"?"Word":"PDF"} here</div>
-        <div className="tmPdfCloudRow">
-          <button type="button" className="tmPdfCloudBtn" onClick={cloudDrive}>▣ <b>Select from Google Drive</b></button>
-          <button type="button" className="tmPdfCloudBtn" onClick={cloudDropbox}>◈ <b>Select from Dropbox</b></button>
+    <div className="pdfProPage">
+      <section className="pdfProHero">
+        <h1>{current.name}</h1>
+        <p>{current.desc}</p>
+        <div className="pdfUploadArea">
+          <FilePicker multiple={multi} accept={accept} onChange={setFiles} files={files}/>
+          <div className="pdfDropHint">or drop {active==="word-pdf"?"Word":active==="jpg-pdf"?"images":"PDF"} here</div>
+          <PdfCloudButtons onStatus={setStatus} onFile={f=>setFiles([f])}/>
+          {files.length>0 && <div className="pdfSelectedFile"><div className="pdfFileIcon"><FileText size={19}/></div><div style={{minWidth:0}}><strong>{files[0].name}</strong><small>{(files[0].size/1024).toFixed(1)} KB · ready</small></div><button type="button" className="removeFile" onClick={()=>setFiles([])}>Remove</button></div>}
         </div>
-      </div>
-      {files.length>0&&<div className="tmPdfSelectedBox">
-        <div className="tmPdfSelectedHead"><strong>Selected file{files.length>1?"s":""}</strong><button type="button" onClick={()=>{setFiles([]);setThumbs([]);}}>Remove</button></div>
-        <div className="tmPdfFiles">{files.map(f=><div className="tmPdfFileRow" key={`${f.name}-${f.size}`}><FileText size={22}/><div><b>{f.name}</b><span>{(f.size/1024).toFixed(1)} KB</span></div><span className="tmPdfCheck">✓</span></div>)}</div>
-      </div>}
-      {files.length>0&&<div className="tmPdfPreview">
-        <div className="tmPdfPreviewTitle">PDF Preview</div>
-        <div className="tmPdfThumbGrid">{thumbs.length?thumbs.map(x=><div className="pdfThumb" key={x.page}><img src={x.url} alt={`Page ${x.page}`}/><small>Page {x.page}</small></div>):files.map(f=><div className="pdfThumb file" key={f.name}><FileText size={34}/><small>{f.name}</small></div>)}</div>
-      </div>}
-      <div className="tmPdfOptions">
-        {active==="split-pdf"&&<label>Pages<input value={pages} onChange={e=>setPages(e.target.value)} placeholder="1,3,5"/></label>}
-        {active==="rotate-pdf"&&<label>Rotation<select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
-        {active==="pdf-watermark"&&<label>Watermark<input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
-        {active==="pdf-jpg"&&<label>JPG quality<input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
-      </div>
-      <div className="tmPdfBottom"><span>{files.length?"Your file is ready for processing.":"Secure, simple PDF tools in one place."}</span><button type="button" className="tmPdfProcessBtn" disabled={busy||!files.length} onClick={run}>{busy?"Processing…":current.name}</button></div>
-      <div className="tmPdfToolStrip">{pdfTools.map(x=><button type="button" key={x.id} className={active===x.id?"tmPdfStripBtn active":"tmPdfStripBtn"} onClick={()=>setActive(x.id)}>{x.name}</button>)}</div>
+      </section>
+
+      {files.length>0 && <section className="pdfWorkArea">
+        <div className="pdfCanvasZone">
+          <div className="pdfThumbHeader"><span>{files.length} file{files.length>1?"s":""} selected</span><button type="button" className="btn" onClick={()=>setFiles([])}>Remove</button></div>
+          <div className="pdfThumbGrid">
+            {thumbs.length?thumbs.map(x=><div className="pdfThumb" key={x.page}><img src={x.url} alt={`Page ${x.page}`}/><small>Page {x.page}</small></div>):files.map(f=><div className="pdfThumb file" key={f.name}><FileText size={34}/><small>{f.name}</small></div>)}
+          </div>
+          <div className="pdfCanvasTip">Your original file stays here until you start the selected operation.</div>
+        </div>
+        <aside className="pdfSidePanel">
+          <h2>{current.name}</h2>
+          {active==="pdf-word"&&<div className="pdfChoice"><b>NO OCR</b><span>Convert selectable-text PDFs into editable Word files.</span></div>}
+          {active==="pdf-word"&&<div className="pdfChoice premium"><b>OCR <span>Premium</span></b><span>Scanned/image PDFs need OCR for editable Word output.</span></div>}
+          {active==="split-pdf"&&<label>Pages <input value={pages} onChange={e=>setPages(e.target.value)} placeholder="1,3,5"/></label>}
+          {active==="rotate-pdf"&&<label>Rotation <select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
+          {active==="pdf-watermark"&&<label>Watermark text <input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
+          {active==="pdf-jpg"&&<label>JPG quality <input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
+          <button type="button" className="pdfMainAction" disabled={busy} onClick={run}>{busy?"Processing…":current.name==="Merge PDF"?"Merge PDF":current.name==="Split PDF"?"Split PDF":current.name==="Compress PDF"?"Compress PDF":current.name==="PDF to Word"?"Convert to WORD":current.name==="Word to PDF"?"Convert to PDF":current.name==="PDF to JPG"?"Convert to JPG":current.name}</button>
+          <div className="pdfSideNote">Secure browser-first processing where possible. Conversion tools use your configured backend.</div>
+        </aside>
+      </section>}
+
+      <section className="pdfQuickGrid">
+        {pdfTools.map(x=><button key={x.id} type="button" className={active===x.id?"pdfQuick active":"pdfQuick"} onClick={()=>selectOperation(x.id)}>
+          <FileText size={18}/><span>{x.name}</span><small>{x.desc}</small>
+        </button>)}
+      </section>
     </div>
   </Shell>;
 }
@@ -1684,27 +1688,57 @@ function BackgroundRemoverTool({t,back}) {
   const [design,setDesign] = useState("original");
   const [lastCutoutReady,setLastCutoutReady] = useState(false);
 
-  const wallpaperInputRef=useRef(null);
-
   const photoBackgrounds = [
-    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1510784722466-f2aa9c52db6c?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1526481280695-3c687fd643ed?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1473445361085-b9a07f55608b?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=85&sat=-20",
-    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=85&sat=-25&hue=15"
+    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1510784722466-f2aa9c52db6c?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1526481280695-3c687fd643ed?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1473445361085-b9a07f55608b?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1441716844725-09cedc13a54a?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1439853949127-fa647821eba0?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1456926631375-92c8ce872def?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1444080748397-f442f95f3e67?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1473445361085-b9a07f55608b?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1526481280695-3c687fd643ed?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=82"
   ];
 
   const colorBackgrounds = ["#ffffff","#f3f4f6","#111827","#000000","#fde68a","#fecdd3","#bfdbfe","#c7d2fe","#bbf7d0","#ddd6fe"];
@@ -1736,19 +1770,36 @@ function BackgroundRemoverTool({t,back}) {
     setResultBlob(blob);
   };
 
-  const doCutout = async (sourceFile=file) => {
+  const fastRemove = async sourceFile => {
+    const img=await readImage(sourceFile);
+    const maxSide=1500; const ratio=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight));
+    const w=Math.max(1,Math.round(img.naturalWidth*ratio)),h=Math.max(1,Math.round(img.naturalHeight*ratio));
+    const c=document.createElement("canvas"); c.width=w;c.height=h; const ctx=c.getContext("2d"); ctx.drawImage(img,0,0,w,h);
+    const im=ctx.getImageData(0,0,w,h), d=im.data;
+    const samples=[]; const pts=[[0,0],[w-1,0],[0,h-1],[w-1,h-1],[Math.round(w*.05),Math.round(h*.05)],[Math.round(w*.95),Math.round(h*.05)],[Math.round(w*.05),Math.round(h*.95)],[Math.round(w*.95),Math.round(h*.95)]];
+    for(const [x,y] of pts){const i=(y*w+x)*4;samples.push([d[i],d[i+1],d[i+2]])}
+    const avg=samples.reduce((a,v)=>[a[0]+v[0],a[1]+v[1],a[2]+v[2]],[0,0,0]).map(x=>x/samples.length);
+    for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2];const dist=Math.hypot(r-avg[0],g-avg[1],b-avg[2]);const bright=(r+g+b)/3;const lowSat=Math.max(r,g,b)-Math.min(r,g,b)<28;if((dist<48 && (bright>175 || lowSat)) || (bright>242 && dist<75)) d[i+3]=0;}
+    ctx.putImageData(im,0,0); const blob=await new Promise(r=>c.toBlob(r,"image/png")); if(!blob) throw new Error("Fast cutout failed."); return blob;
+  };
+
+  const doCutout = async (sourceFile=file, useAI=false) => {
+
     if(!sourceFile) return setStatus("Upload an image first.");
     setBusy(true);
-    setStatus("Removing background automatically…");
+    setStatus(useAI?"AI background removal…":"Fast background removal…");
     try{
-      const mod=await loadLib("bg-remove");
-      const removeBackground=mod.removeBackground || mod.default?.removeBackground || mod.default;
-      if(typeof removeBackground!=="function") throw new Error("Background-removal engine could not be loaded.");
-      const blob=await removeBackground(sourceFile,{model:"isnet_fp16",output:{format:"image/png",type:"foreground"}});
-      setCutoutBlob(blob);
-      setNewResult(blob);
-      setLastCutoutReady(true);
-      setStatus("Background removed automatically. Choose a background or download the transparent PNG.");
+      let blob;
+      if(useAI){
+        const mod=await loadLib("bg-remove");
+        const removeBackground=mod.removeBackground || mod.default?.removeBackground || mod.default;
+        if(typeof removeBackground!=="function") throw new Error("Background-removal engine could not be loaded.");
+        blob=await removeBackground(sourceFile,{model:"isnet_fp16",output:{format:"image/png",type:"foreground"}});
+      }else{
+        blob=await fastRemove(sourceFile);
+      }
+      setCutoutBlob(blob); setNewResult(blob); setLastCutoutReady(true);
+      setStatus(useAI?"AI background removed. Choose a background or download.":"Fast background removal complete. For complex images you can use AI Remove HD.");
     }catch(e){
       try{
         const img=await readImage(sourceFile), c=document.createElement("canvas"), ctx=c.getContext("2d");
@@ -1789,17 +1840,6 @@ function BackgroundRemoverTool({t,back}) {
     setBgCategory("photo");
     setTab("cutout");
     doCutout(f);
-  };
-
-  const uploadBackgroundWallpaper = e => {
-    const f=e.target.files?.[0];
-    e.target.value="";
-    if(!f)return;
-    if(!/^image\/(png|jpe?g|webp)$/i.test(f.type)){setStatus("Please upload a JPG, PNG or WebP wallpaper.");return;}
-    const url=URL.createObjectURL(f);
-    setBgMode("image");setBgImage(url);setBgCategory("photo");setTab("background");
-    if(lastCutoutReady||resultBlob||cutoutBlob) renderComposite({bgMode:"image",bgImage:url});
-    setStatus("Wallpaper uploaded from your PC and applied.");
   };
 
   const renderComposite = async (overrides={}) => {
@@ -1914,23 +1954,23 @@ function BackgroundRemoverTool({t,back}) {
             {tab==="cutout" && <div>
               <h3 style={{marginTop:0}}>Cutout</h3>
               <p style={{color:"#667085",lineHeight:1.55}}>Your image is removed automatically as soon as it uploads.</p>
-              <button type="button" className="btn primary" disabled={busy} onClick={()=>doCutout()} style={{width:"100%"}}>{busy?"Processing…":resultBlob?"Remove Again":"Remove Background"}</button>
-              <div style={{marginTop:16,padding:14,borderRadius:14,background:"#f8fafc",fontSize:13,color:"#667085"}}>Transparent PNG is kept as the base, so you can switch backgrounds without uploading the photo again.</div>
+              <button type="button" className="btn primary" disabled={busy} onClick={()=>doCutout(file,false)} style={{width:"100%"}}>{busy?"Processing…":resultBlob?"Fast Remove Again":"Remove Background"}</button>
+              <button type="button" className="btn" disabled={busy} onClick={()=>doCutout(file,true)} style={{width:"100%",marginTop:9,borderColor:"#ef2b2d",color:"#ef2b2d",fontWeight:900}}><Sparkles size={15}/> AI Remove HD</button>
+              <div className="fastCutoutNote" style={{marginTop:12}}>Fast Remove runs locally for speed. AI Remove HD is available for more complex images but can take longer.</div>
             </div>}
             {tab==="background" && <div>
-              <div style={{display:"flex",gap:7,marginBottom:14,borderBottom:"1px solid #eceef4",paddingBottom:10,flexWrap:"wrap"}}>
+              <div className="bgTopControls" style={{marginBottom:14,borderBottom:"1px solid #eceef4",paddingBottom:10}}>
                 <button type="button" className={bgCategory==="photo"?"btn primary":"btn"} onClick={()=>setBgCategory("photo")}>Magic</button>
                 <button type="button" className={bgCategory==="color"?"btn primary":"btn"} onClick={()=>setBgCategory("color")}>Color</button>
-                <button type="button" className="btn" onClick={()=>wallpaperInputRef.current?.click()}>Upload Wallpaper</button>
-                <input ref={wallpaperInputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={uploadBackgroundWallpaper} style={{display:"none"}}/>
+                <label className="btn bgUploadBtn" style={{cursor:"pointer"}}><Upload size={15}/> Upload Wallpaper<input className="bgUploadInline" type="file" accept="image/png,image/jpeg,image/webp" onChange={uploadWallpaper}/></label>
               </div>
               {bgCategory==="photo" && <>
-                <p style={{fontWeight:700,margin:"0 0 10px"}}>Choose a background</p>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
-                  {photoBackgrounds.map((src,i)=><button key={src} type="button" onClick={()=>chooseBackground("image",src)} style={{padding:0,border:bgImage===src?"3px solid #2563eb":"1px solid #e1e5eb",borderRadius:12,overflow:"hidden",background:"#fff",cursor:"pointer"}}><img src={src} alt={`Background ${i+1}`} style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/></button>)}
+                <p style={{fontWeight:700,margin:"0 0 5px"}}>Choose a background</p>
+                <p className="bgCount">50+ ready-made wallpapers · or upload your own</p>
+                <div className="bgGallery">
+                  {photoBackgrounds.map((src,i)=><button key={`${src}-${i}`} type="button" className={bgImage===src?"selected":""} onClick={()=>chooseBackground("image",src)}><img loading="lazy" src={src} alt={`Background ${i+1}`}/></button>)}
                 </div>
-                <button type="button" className="btn" style={{width:"100%",justifyContent:"center",marginTop:12,borderStyle:"dashed"}} onClick={()=>wallpaperInputRef.current?.click()}>＋ Upload wallpaper from PC</button>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:10}}>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:12}}>
                   <button type="button" className={bgMode==="transparent"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("transparent")}>Transparent</button>
                   <button type="button" className={bgMode==="white"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("white")}>White</button>
                 </div>
@@ -1950,7 +1990,7 @@ function BackgroundRemoverTool({t,back}) {
 
         <div style={{padding:"11px 16px",borderTop:"1px solid #eceef4",display:"flex",alignItems:"center",gap:10,background:"#fff",flexWrap:"wrap"}}>
           <div style={{width:56,height:56,borderRadius:12,overflow:"hidden",border:"2px solid #2563eb",background:"#f1f5f9",display:"grid",placeItems:"center"}}>{resultUrl?<img src={resultUrl} alt="Result thumbnail" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<img src={originalUrl} alt="Original thumbnail" style={{width:"100%",height:"100%",objectFit:"cover"}}/>}</div>
-          <button type="button" className="btn" onClick={()=>inputRef.current?.click()}>＋</button>
+          <button type="button" className="btn" onClick={()=>inputRef.current?.click()}>＋ Replace</button><label className="btn bgUploadBtn" style={{cursor:"pointer"}}>＋ Wallpaper<input className="bgUploadInline" type="file" accept="image/png,image/jpeg,image/webp" onChange={uploadWallpaper}/></label>
           <div style={{marginLeft:"auto",display:"flex",gap:8}}><button type="button" className="btn" disabled={!resultBlob||busy} onClick={()=>download(false)}>Download PNG</button><button type="button" className="btn" disabled={!resultBlob||busy} onClick={()=>download(true)}>Download HD</button></div>
         </div>
       </>}
