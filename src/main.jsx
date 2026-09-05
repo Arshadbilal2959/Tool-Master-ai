@@ -129,9 +129,9 @@ const tools = [
   ["Binary Converter","Developer Tools","Convert text and numbers to binary.","binary"],
   ["ASCII Converter","Developer Tools","Convert text to ASCII codes.","ascii"],
   ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"],
-  ["SEO Keyword Generator","SEO & Marketing","Generate seed, long-tail, question, local and search-intent keyword ideas.","seo-keyword-generator"],
+  ["SEO Genius AI","SEO & Marketing","AI-powered website SEO and AI Search Visibility auditor with real crawl-based checks and reports.","seo-genius"],
   ["Stamp Generator","Design Tools","Create professional stamps and seals with instant PNG export.","stamp-generator"],
-  ["Logo Maker","Design Tools","Create a simple professional logo and export it as PNG.","logo-maker"]
+  ["Logo Maker","Design Tools","Create professional logos with templates, shapes, icons, uploads and advanced customization.","logo-maker"]
 ];
 
 const categories = [
@@ -147,6 +147,7 @@ const PLANS = [
   {id:"demand", name:"Demand", credits:10000, period:"monthly", price:49, description:"For heavy AI usage"},
   {id:"platinum", name:"Platinum", credits:50000, period:"monthly", price:99, description:"Maximum AI access"}
 ];
+
 const VIDEO_PLANS = [
   {id:"video-free", name:"Free", credits:50, period:"monthly", price:0, description:"50 video credits for testing", features:["Short test clips","720p landscape/portrait","Basic generation"]},
   {id:"video-starter", name:"Starter", credits:500, period:"monthly", price:9, description:"For creators getting started", features:["500 video credits","Priority queue","HD downloads"]},
@@ -289,27 +290,101 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .modalBack{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(30,25,56,.32);backdrop-filter:blur(10px);padding:18px}.modal{width:min(480px,100%);background:#fff;border:1px solid #e2e4eb;border-radius:18px;padding:24px;box-shadow:0 30px 90px rgba(40,35,70,.2)}.modalHead{display:flex;justify-content:space-between;align-items:center}.modal h2{margin:5px 0}.modal p{color:#7c879a;line-height:1.6}.field{margin:12px 0}.field label{display:block;font-size:12px;color:#5b667a;margin-bottom:6px}.field input{width:100%;padding:12px;border-radius:10px;border:1px solid #dfe2ea;background:#fff;color:#1d2737;outline:0}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.authTabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e2e4eb;padding:4px;border-radius:11px;margin:15px 0}.authTabs button{border:0;padding:10px;border-radius:8px;background:transparent;color:#7e8899}.authTabs button.active{background:#f0edff;color:#684af0}.formError,.formSuccess{padding:11px 12px;border-radius:10px;margin:10px 0;font-size:13px}.formError{background:#fff4f5;color:#c2394b;border:1px solid #ffd6dc}.formSuccess{background:#f0fbf6;color:#23845f;border:1px solid #ccefe0}
 .profileMenu{position:relative}.profileCard{position:absolute;right:0;top:50px;width:260px;background:#fff;border:1px solid #e2e4eb;border-radius:14px;padding:14px;box-shadow:var(--shadow);z-index:70}.profileCard b{display:block}.profileCard small{display:block;color:#7f8999;margin:3px 0 12px}.mobileOnly{display:none}
 
-
-.pdfPage{min-height:100vh;background:#f5f5fa;padding-bottom:50px}.pdfBackRow{max-width:1180px;margin:0 auto;padding:14px 20px}.pdfBack{border:0;background:transparent;color:#6b7280;font-weight:800;cursor:pointer}
-.pdfBrandHeader{height:68px;background:#fff;border-top:3px solid #ef2b2d;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 24px;gap:24px;position:sticky;top:0;z-index:45}.pdfBrand{font-size:27px;font-weight:950;letter-spacing:-1.5px;color:#111827;white-space:nowrap}.pdfBrand:before{content:"I ♥ ";color:#ef2b2d}.pdfBrand span{color:#ef2b2d}
-.pdfBrandNav{display:flex;align-items:center;gap:26px;color:#ef2b2d;font-size:13px;font-weight:900;white-space:nowrap;overflow:auto;flex:1}.pdfBrandNav span{cursor:pointer}.pdfHeaderActions{display:flex;align-items:center;gap:9px}.pdfHeaderBtn,.pdfGridBtn{border:0;background:transparent;color:#111827;font-weight:850}.pdfHeaderSignup{border:0;background:#ef2b2d;color:#fff;border-radius:7px;padding:10px 17px;font-weight:900}.pdfGridBtn{font-size:20px}
-.pdfPageIntro{text-align:center;padding:34px 20px 25px}.pdfCategory{color:#ef2b2d;font-size:12px;font-weight:950;letter-spacing:.12em}.pdfPageIntro h1{font-size:42px;margin:8px 0 7px;color:#202533;letter-spacing:-1.4px}.pdfPageIntro p{margin:0;color:#667085;font-size:17px}
-.ilpPdfCard{width:min(1050px,calc(100% - 36px));margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 12px 35px rgba(17,24,39,.08);border:1px solid #ececf1;overflow:hidden}.ilpTitleBlock{text-align:center;padding:25px 20px 12px}.ilpTitleBlock h2{margin:0;font-size:29px;color:#202533}.ilpTitleBlock p{margin:8px auto 0;color:#70788a;max-width:700px}
-.ilpUploadArea{margin:12px 28px 22px;border:2px dashed #efb4b5;background:#fff8f8;min-height:310px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px}.ilpSelectBtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#ef2b2d;color:#fff;border-radius:9px;padding:19px 48px;font-size:23px;font-weight:950;cursor:pointer;box-shadow:0 7px 18px rgba(239,43,45,.2)}.ilpSelectBtn input{display:none}.ilpDropText{margin-top:13px;color:#7b8493;font-size:14px}
-.pdfCloudButtons{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;justify-content:center}.pdfCloudBtn{border:1px solid #f0b9ba;background:#fff;color:#d82729;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-weight:850;cursor:pointer}.cloudCircle{width:23px;height:23px;border-radius:50%;background:#ef2b2d;color:#fff;display:grid;place-items:center;font-size:11px}
-.ilpSelectedFiles{width:min(700px,100%);margin-top:18px;display:grid;gap:7px}.ilpSelectedFiles div{background:#fff;border:1px solid #eceef3;border-radius:8px;padding:9px 12px;color:#475467;font-size:13px}.ilpSelectedFiles span{float:right;color:#98a2b3}.ilpOptions{padding:0 28px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.ilpOptions label{display:grid;gap:6px;font-size:12px;font-weight:850;color:#596273}.ilpOptions input,.ilpOptions select{padding:11px;border:1px solid #e0e3e8;border-radius:8px;background:#fff}.ilpBottom{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:22px 28px;margin-top:20px;border-top:1px solid #eceef2}.ilpHint{color:#7a8493;font-size:12px}.ilpProcessBtn{border:0;background:#ef2b2d;color:#fff;border-radius:8px;padding:13px 21px;font-weight:950;display:inline-flex;align-items:center;gap:8px;cursor:pointer}.ilpProcessBtn:disabled{opacity:.45;cursor:not-allowed}.pdfStatus{max-width:1050px;margin:16px auto 0;background:#fff;border:1px solid #f0c2c3;color:#b42325;border-radius:9px;padding:11px 14px;display:flex;align-items:center;gap:7px;font-size:13px}
-@media(max-width:900px){.pdfBrandHeader{padding:0 14px}.pdfBrandNav{display:none}.pdfPageIntro h1{font-size:34px}.ilpOptions{grid-template-columns:1fr}.ilpBottom{flex-direction:column;align-items:stretch}.ilpProcessBtn{justify-content:center}}@media(max-width:560px){.ilpUploadArea{margin:10px 12px 16px;padding:20px 12px}.ilpSelectBtn{font-size:18px;padding:16px 24px}.pdfPageIntro{padding-top:25px}.pdfPageIntro h1{font-size:29px}}
 .pdfProEditor{border:1px solid #e3e5ed;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 16px 45px rgba(50,43,110,.08)}
 .pdfEditorTop{padding:18px 20px;border-bottom:1px solid #eceef4;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.pdfTopTitle h2{margin:0;font-size:27px;letter-spacing:-.03em}.pdfTopTitle p{margin:5px 0 0;color:#8992a3}.pdfTopActions{display:flex;align-items:center;gap:9px}.pdfEditorToolbar{display:flex;align-items:stretch;gap:8px;padding:10px 12px;border-bottom:1px solid #e6e8ee;overflow:auto;background:#fff}.pdfAction{min-width:94px;border:1px solid #dfe3ec;background:#fff;border-radius:11px;padding:10px 11px;color:#58647a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px;font-weight:800}.pdfAction:hover{border-color:#bfb8f9;background:#faf9ff}.pdfAction.active{color:#6648ef;border-color:#8e77fa;background:#f6f2ff;box-shadow:inset 0 0 0 1px rgba(108,76,245,.08)}.pdfAction span{white-space:nowrap}.dangerAction{color:#dc4451}.spacer{flex:1;min-width:12px}.pdfControlBar{padding:9px 14px;border-bottom:1px solid #e8eaf0;background:#fbfbfd;display:flex;justify-content:space-between;align-items:center;gap:12px}.pageControl,.zoomControl{display:flex;align-items:center;gap:8px;color:#5c6678;font-size:13px}.pageControl input,.zoomControl select{height:34px;border:1px solid #dfe2e9;border-radius:8px;padding:6px 8px;background:#fff}.zoomControl select{width:82px}.pdfWorkspace{display:grid;grid-template-columns:285px minmax(0,1fr);min-height:750px;background:#f1f2f6}.pdfToolsPanel{background:#fff;border-right:1px solid #e2e5eb;padding:18px;overflow:auto}.pdfToolsPanel h3{margin:0 0 8px;font-size:17px}.panelHint,.emptyHint{font-size:12px;line-height:1.55;color:#8891a2}.pdfToolsPanel label{display:grid;gap:6px;margin-top:13px;font-size:12px;font-weight:800;color:#566176}.pdfToolsPanel input,.pdfToolsPanel textarea,.pdfToolsPanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:9px 10px;background:#fff;color:#1b2435;outline:none}.pdfToolsPanel textarea{min-height:82px;resize:vertical}.twoFields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.inlineButtons{display:flex;gap:8px;margin-top:10px}.toggle{width:38px;height:38px;border:1px solid #dfe2ea;background:#fff;border-radius:9px}.toggle.on{border-color:#8f78f8;background:#f2eeff;color:#6848ef}.selectionInfo{display:grid;gap:5px;padding:10px;margin-top:12px;background:#faf8ff;border:1px solid #e3ddff;border-radius:10px;color:#6447ed;font-size:12px}.selectionInfo span{color:#6f7788;line-height:1.45}.detectedList{display:grid;gap:6px;margin-top:14px}.detectedList>b{font-size:12px;color:#5d6779}.detected{border:1px solid #e5e7ed;background:#fff;border-radius:8px;padding:8px;text-align:left;font-size:11px;color:#586477;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.detected.active{border-color:#8e79f6;background:#f7f4ff;color:#6142e7}.editControls{display:grid;gap:10px;margin-top:13px}.formatButtons{display:flex;gap:8px}.formatButtons .toggle{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #dfe2ea;background:#fff;border-radius:9px;padding:9px 8px;color:#596477;font-weight:700}.formatButtons .toggle.on{border-color:#8f78f8;background:#f2eeff;color:#6848ef}.downloadBtn{width:100%;justify-content:center;margin-top:8px}.fileBadge{margin-top:9px;padding:8px;border-radius:8px;background:#effaf5;color:#15966a;font-size:11px}.applyBtn{width:100%;justify-content:center;margin-top:18px}.pdfViewer{padding:24px;display:flex;justify-content:center;align-items:flex-start;overflow:auto}.pdfPaperLive{position:relative;background:#fff;box-shadow:0 10px 34px rgba(30,35,50,.16);border:1px solid #d9dce4;flex:none}.pdfPaperLive canvas{display:block;width:100%;height:100%}.pdfTextOverlay{position:absolute;left:0;top:0;z-index:6;pointer-events:none}.textEditItem{position:absolute;pointer-events:auto}.textHotspot{width:100%;height:100%;display:block;padding:0 1px;pointer-events:auto;border:1px solid transparent;background:transparent;color:transparent;cursor:text;text-align:left;overflow:hidden;border-radius:3px}.textHotspot:hover{background:rgba(112,82,245,.10);border:1px dashed rgba(112,82,245,.75)}.textHotspot.selected{background:rgba(112,82,245,.14);border:2px solid #8062f4;color:transparent}.editedPreviewText{display:block;box-sizing:border-box;line-height:1.05;position:relative;z-index:18}.inlinePdfInput{position:absolute;left:0;top:-2px;z-index:20;box-sizing:border-box;border:2px solid #7050f5;border-radius:4px;padding:2px 5px;background:#fff;color:#111827;font-family:Arial,sans-serif;outline:none;box-shadow:0 6px 18px rgba(67,50,170,.18)}.liveGhost{position:absolute;padding:2px 3px;background:rgba(255,255,255,.78);border:1px dashed rgba(108,76,245,.65);font-weight:500;pointer-events:none;white-space:pre-wrap;max-width:75%}.signGhost{font-family:cursive;color:#1c2a58;border-bottom:1px solid #1c2a58;background:rgba(255,255,255,.7)}.pdfFileBar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid #e7e9ef;flex-wrap:wrap}.pdfFileBar>div:first-child{display:flex;flex-direction:column;gap:3px}.pdfFileBar span{color:#8991a1;font-size:12px}.pdfPrivacy{display:flex;justify-content:center;align-items:center;gap:6px;padding:11px;background:#fbfbfd;border-top:1px solid #eef0f4;color:#7f8899;font-size:12px}.pdfEmptyState{margin:28px;border:2px dashed #dcd8fb;border-radius:18px;background:linear-gradient(180deg,#fcfbff,#f8f7ff);min-height:420px;display:grid;place-items:center;text-align:center;padding:50px 20px;cursor:pointer}.pdfUploadIcon{width:74px;height:74px;border-radius:20px;display:grid;place-items:center;color:#6c4cf5;background:#eeeaff;box-shadow:0 12px 28px rgba(108,76,245,.13)}.pdfEmptyState h3{margin:0;font-size:25px}.pdfEmptyState p{margin:0;color:#858ea0}.pdfEmptyState small{color:#9299a8}
 .pdfEditorShell{border:1px solid #e2e4eb;border-radius:16px;background:#fff;box-shadow:var(--shadow);overflow:hidden}
 .pdfEditorHeader{padding:16px 18px;border-bottom:1px solid #e6e8ef;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
 .pdfEditorTitle h2{margin:0;font-size:26px}.pdfEditorTitle p{margin:5px 0 0;color:#8790a2}.beta{font-size:11px;color:#704ff3;background:#f1edff;padding:4px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
 .pdfToolbar{display:flex;gap:8px;overflow:auto;padding:10px 12px;border-bottom:1px solid #e8e9ef;background:#fff}.pdfToolBtn{min-width:82px;border:1px solid #e2e4eb;background:#fff;border-radius:9px;padding:9px 10px;color:#5d677a;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:750}.pdfToolBtn.active{border-color:#8f78f7;background:#faf8ff;color:#694cf0}.pdfCanvasBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #e8e9ef;background:#fbfbfd}.pdfCanvasBar .grow{flex:1}.pdfEditorBody{display:grid;grid-template-columns:260px 1fr;min-height:660px;background:#f5f6f9}.pdfSide{background:#fff;border-right:1px solid #e3e5ec;padding:16px;overflow:auto}.pdfSide h4{margin:0 0 10px}.pdfSide .hint{font-size:12px;color:#838da0;line-height:1.5}.pdfStage{padding:18px;overflow:auto;display:flex;justify-content:center}.pdfPaper{width:min(760px,100%);min-height:760px;background:#fff;border:1px solid #dfe2e8;box-shadow:0 8px 28px rgba(34,39,53,.08);padding:48px;position:relative}.pdfFakeLine{height:10px;border-radius:6px;background:#e7eaf0;margin:9px 0}.pdfSelection{border:2px solid #8c72f6;border-radius:7px;padding:8px 10px;display:inline-block;background:#fff}.pdfSelection small{display:block;color:#7658ef;font-size:10px;margin-bottom:4px}.pdfEditorFooter{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #e5e7ed;background:#fff;flex-wrap:wrap}.pdfFileMeta{display:flex;flex-direction:column;gap:2px}.pdfPrivacy{padding:12px 16px;text-align:center;color:#7d8798;font-size:12px;background:#fbfbfd;border-top:1px solid #eef0f4}
-@media(max-width:900px){.navLinks{display:none}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
+
+.pdfProPage{margin-top:12px}
+.pdfProHero{background:#f6f6fb;padding:40px 24px 50px;text-align:center;border:1px solid #e3e4eb;border-radius:16px 16px 0 0}
+.pdfProHero h1{font-size:42px;margin:0 0 10px;letter-spacing:-.04em}
+.pdfProHero p{font-size:17px;color:#667085;margin:0 auto 26px;max-width:800px}
+.pdfUploadArea{max-width:520px;margin:auto}
+.pdfUploadArea .uploadBox{justify-content:center;background:#fff;border:0;box-shadow:0 8px 22px rgba(24,32,51,.10);padding:20px;border-radius:14px}
+.pdfDropHint{color:#6f7787;font-size:13px;margin-top:9px}
+.pdfWorkArea{display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:610px;border:1px solid #e2e4eb;border-top:0;background:#eef0f6}
+.pdfCanvasZone{padding:28px;min-width:0}
+.pdfThumbHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;color:#566176;font-size:13px}
+.pdfThumbGrid{min-height:490px;display:flex;justify-content:center;align-items:flex-start;gap:18px;flex-wrap:wrap;padding:20px}
+.pdfThumb{width:180px;background:#fff;border-radius:11px;padding:12px;box-shadow:0 8px 26px rgba(34,39,53,.10);text-align:center}
+.pdfThumb img{width:100%;height:240px;object-fit:contain;border:1px solid #e8eaf0}
+.pdfThumb small{display:block;margin-top:8px;color:#657085;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdfThumb.file{height:180px;display:grid;place-items:center;align-content:center;gap:10px}
+.pdfCanvasTip{text-align:center;color:#9198a8;font-size:12px;margin-top:6px}
+.pdfSidePanel{background:#fff;border-left:1px solid #dedfe6;padding:28px;display:flex;flex-direction:column}
+.pdfSidePanel h2{font-size:24px;margin:0 0 20px}
+.pdfChoice{padding:17px 16px;border-top:1px solid #e5e7ed;border-bottom:1px solid #e5e7ed;display:grid;gap:5px}
+.pdfChoice b{color:#ef3d34;font-size:14px}.pdfChoice span{color:#5e687c;line-height:1.45}
+.pdfChoice.premium{border-top:0}.pdfChoice.premium b{color:#f59e0b}.pdfChoice.premium b span{background:#fff0c8;border-radius:5px;padding:3px 7px;font-size:11px;color:#7b5c00;margin-left:6px}
+.pdfSidePanel label{display:grid;gap:7px;color:#566176;font-size:12px;font-weight:800;margin:12px 0}
+.pdfSidePanel input,.pdfSidePanel select{width:100%;border:1px solid #dfe2ea;border-radius:9px;padding:11px;background:#fff}
+.pdfMainAction{margin-top:auto;border:0;border-radius:11px;padding:17px;background:#ef332b;color:#fff;font-weight:850;font-size:17px;box-shadow:0 10px 25px rgba(239,51,43,.18)}
+.pdfMainAction:disabled{opacity:.65;cursor:not-allowed}
+.pdfSideNote{margin-top:12px;color:#8c95a6;font-size:11px;line-height:1.5}
+.pdfQuickGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:22px;background:#fff;border:1px solid #e3e4eb;border-top:0;border-radius:0 0 16px 16px}
+.pdfQuick{border:1px solid #e2e5ec;background:#fff;border-radius:12px;padding:14px;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:7px 10px;color:#485267}
+.pdfQuick span{font-weight:850}.pdfQuick small{grid-column:2;color:#8992a3;line-height:1.4}.pdfQuick.active{border-color:#8770f8;background:#faf8ff;color:#6848ee}
+@media(max-width:900px){.navLinks{display:none}.pdfNavMenu{padding-left:14px;padding-right:14px;gap:2px}.pdfNavMenu>button,.pdfDropdown summary{font-size:11px;padding:9px 8px}.mobileOnly{display:inline-flex}.workspace,.aiHelper,.adminGrid{grid-template-columns:1fr}.hero{padding-top:55px}.stats{gap:24px}.footerInner,.adminTop{align-items:flex-start;flex-direction:column}.toolHero{align-items:flex-start}.formGrid{grid-template-columns:1fr}.pdfEditorBody{grid-template-columns:1fr}.pdfSide{border-right:0;border-bottom:1px solid #e3e5ec}.pdfPaper{min-height:620px;padding:28px}}
 @media(max-width:560px){.hero h1{font-size:44px}.stats{display:grid;grid-template-columns:1fr 1fr}.videoOptions{grid-template-columns:1fr}.nav{height:64px}.navActions .btn span{display:none}.pdfToolBtn{min-width:72px}.pdfPaper{padding:20px;min-height:520px}}
+/* ToolMaster Pro PDF red / iLovePDF-inspired upgrade */
+.tmPdfRedCard{width:min(1120px,calc(100% - 28px));margin:0 auto 28px;border-top:5px solid #ef2b2d!important}
+.pdfRedEyebrow{color:#ef2b2d;font-size:12px;font-weight:950;letter-spacing:.14em;margin-bottom:7px}
+.tmPdfTopNav{display:flex;align-items:center;gap:0;border-top:1px solid #eee;border-bottom:1px solid #eee;background:#fff;overflow:auto;white-space:nowrap;padding:0 12px}
+.tmPdfNavBtn{border:0;background:transparent;color:#111827;font-weight:950;font-size:12px;padding:15px 16px;cursor:pointer;border-bottom:3px solid transparent}
+.tmPdfNavBtn:hover{color:#ef2b2d}
+.tmPdfNavBtn.active{color:#ef2b2d;border-bottom-color:#ef2b2d}
+.tmPdfUploadWrap{margin:22px 28px;padding:38px 20px 30px;border:2px dashed #f0b4b5;background:#fff9f9;border-radius:12px;text-align:center}
+.tmPdfSelectBtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#ef2b2d;color:#fff;border-radius:9px;padding:18px 48px;font-size:23px;font-weight:950;cursor:pointer;box-shadow:0 7px 18px rgba(239,43,45,.18)}
+.tmPdfSelectBtn input{display:none}
+.tmPdfDropText{margin-top:13px;color:#737b89;font-size:14px}
+.tmPdfCloudRow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+.tmPdfCloudBtn{border:1px solid #efb4b5;background:#fff;color:#111827;border-radius:8px;padding:11px 15px;cursor:pointer;font-size:13px}
+.tmPdfCloudBtn:hover{border-color:#ef2b2d;color:#ef2b2d}
+.tmPdfSelectedBox,.tmPdfPreview{margin:0 28px 18px;border:1px solid #e8eaee;border-radius:10px;background:#fff;overflow:hidden}
+.tmPdfSelectedHead{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid #eee;background:#fafafa;color:#111827}
+.tmPdfSelectedHead button{border:0;background:transparent;color:#ef2b2d;font-weight:900;cursor:pointer}
+.tmPdfFiles{display:grid;gap:7px;padding:12px}.tmPdfFileRow{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #eceef2;border-radius:8px}.tmPdfFileRow>div{display:grid;gap:2px;flex:1}.tmPdfFileRow span{font-size:12px;color:#7c8490}.tmPdfCheck{color:#16a36f!important;font-weight:900}
+.tmPdfPreviewTitle{padding:12px 15px;font-weight:900;border-bottom:1px solid #eee}.tmPdfThumbGrid{display:flex;gap:12px;overflow:auto;padding:14px}.tmPdfOptions{padding:0 28px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.tmPdfOptions label{display:grid;gap:6px;font-size:12px;font-weight:900;color:#555e6e}.tmPdfOptions input,.tmPdfOptions select{padding:10px;border:1px solid #dddfe5;border-radius:8px}.tmPdfBottom{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:20px 28px;margin-top:18px;border-top:1px solid #eee}.tmPdfBottom span{font-size:12px;color:#7a8290}.tmPdfProcessBtn{border:0;background:#ef2b2d;color:#fff;border-radius:8px;padding:13px 22px;font-weight:950;cursor:pointer}.tmPdfProcessBtn:disabled{opacity:.45;cursor:not-allowed}.tmPdfToolStrip{display:flex;gap:0;overflow:auto;border-top:1px solid #eee;padding:8px 12px}.tmPdfStripBtn{border:0;background:#fff;color:#111827;font-weight:900;padding:10px 13px;white-space:nowrap;cursor:pointer;border-radius:6px}.tmPdfStripBtn.active{background:#ef2b2d;color:#fff}.pdfThumbGrid{display:flex;gap:12px;overflow:auto;padding:14px}.pdfThumb{min-width:115px;border:1px solid #e4e6eb;border-radius:8px;overflow:hidden;background:#fff;text-align:center}.pdfThumb img{width:115px;height:150px;object-fit:cover;display:block}.pdfThumb small{display:block;padding:6px;font-size:11px;color:#667085}.pdfThumb.file{display:grid;place-items:center;min-height:170px;padding:14px}
+@media(max-width:700px){.tmPdfUploadWrap{margin:14px 12px}.tmPdfSelectBtn{font-size:18px;padding:15px 25px}.tmPdfSelectedBox,.tmPdfPreview{margin-left:12px;margin-right:12px}.tmPdfOptions{grid-template-columns:1fr;padding:0 12px}.tmPdfBottom{padding:16px 12px;flex-direction:column;align-items:stretch}.tmPdfProcessBtn{width:100%}.tmPdfNavBtn{padding:13px 11px;font-size:11px}}
+
 `;
 
-function GlobalStyle() { return <style>{css}</style>; }
+function GlobalStyle() { return <style>{css}
+</style>; }
+
+
+function PdfNavMenu({openTool}) {
+  const convert = [
+    tools.find(t=>t[3]==="pdf-word"),
+    tools.find(t=>t[3]==="word-pdf"),
+    tools.find(t=>t[3]==="pdf-jpg"),
+    tools.find(t=>t[3]==="jpg-pdf"),
+  ].filter(Boolean);
+  const allPdf = tools.filter(t=>t[1]==="PDF Tools");
+  return <div className="pdfNavWrap">
+    <div className="pdfNavMenu">
+      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="merge-pdf"))}>MERGE PDF</button>
+      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="split-pdf"))}>SPLIT PDF</button>
+      <button type="button" onClick={()=>openTool(tools.find(t=>t[3]==="compress-pdf"))}>COMPRESS PDF</button>
+
+      <details className="pdfDropdown">
+        <summary>CONVERT PDF <ChevronRight size={15}/></summary>
+        <div className="pdfDropdownPanel">
+          {convert.map(t=><button key={t[3]} type="button" onClick={()=>openTool(t)}>{t[0]}</button>)}
+        </div>
+      </details>
+
+      <details className="pdfDropdown">
+        <summary>ALL PDF TOOLS <ChevronRight size={15}/></summary>
+        <div className="pdfDropdownPanel wide">
+          {allPdf.map(t=><button key={t[3]} type="button" onClick={()=>openTool(t)}>{t[0]}</button>)}
+        </div>
+      </details>
+    </div>
+  </div>;
+}
 
 function App() {
   const [cat,setCat]=useState("All Tools");
@@ -336,6 +411,14 @@ function App() {
     const savedHist = JSON.parse(localStorage.getItem("tm_history") || "[]");
     setFavorites(savedFav); setHistory(savedHist);
   }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.detail) openTool(e.detail);
+    };
+    window.addEventListener("tm-open-tool", handler);
+    return () => window.removeEventListener("tm-open-tool", handler);
+  }, [history]);
 
   useEffect(() => {
     if (!supabase) return;
@@ -382,7 +465,10 @@ function App() {
     <header className="header"><div className="container nav">
       <div className="brand"><div className="brandIcon"><Wrench size={21}/></div><span>ToolMaster<span>Pro</span></span></div>
       <nav className="navLinks">
-        <a href="#tools">Tools</a><a href="#categories">Categories</a><a href="#about">About</a>
+        <a href="#tools" onClick={()=>{setTool(null);setAdmin(false)}}>Tools</a>
+        <a href="#categories" onClick={()=>{setTool(null);setAdmin(false)}}>Categories</a>
+        <a href="#pricing" onClick={()=>{setTool(null);setAdmin(false)}}>Pricing</a>
+        <a href="#about" onClick={()=>{setTool(null);setAdmin(false)}}>About</a>
       </nav>
       <div className="navActions">
         <button className="iconBtn mobileOnly" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
@@ -396,7 +482,14 @@ function App() {
           </div>}
         </div> : <><button className="btn" onClick={()=>{setAuthMode("signin");setAuthOpen(true)}}><LogIn size={16}/><span>Sign in</span></button><button className="btn primary" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}><UserPlus size={16}/><span>Sign up</span></button></>}
       </div>
-    </div>{mobile&&<div className="container" style={{paddingBottom:12,display:"flex",gap:16}}><a href="#tools" onClick={()=>setMobile(false)}>Tools</a><a href="#categories" onClick={()=>setMobile(false)}>Categories</a><a href="#about" onClick={()=>setMobile(false)}>About</a></div>}</header>
+    </div>
+    <PdfNavMenu openTool={openTool}/>
+    {mobile&&<div className="container mobileNav" style={{paddingBottom:12,display:"flex",gap:16,flexWrap:"wrap"}}>
+      <a href="#tools" onClick={()=>{setMobile(false);setTool(null);}}>Tools</a>
+      <a href="#categories" onClick={()=>{setMobile(false);setTool(null);}}>Categories</a>
+      <a href="#pricing" onClick={()=>{setMobile(false);setTool(null);}}>Pricing</a>
+      <a href="#about" onClick={()=>{setMobile(false);setTool(null);}}>About</a>
+    </div>}</header>
 
     {admin ? <ToolErrorBoundary><Admin user={user} profile={profile} /></ToolErrorBoundary> : tool ? <ToolErrorBoundary><ToolPage t={tool} back={()=>setTool(null)} user={user} openAuth={(mode="signin")=>{setAuthMode(mode);setAuthOpen(true)}}/></ToolErrorBoundary> :
       <>
@@ -417,6 +510,14 @@ function App() {
         </main>
       </>
     }
+
+    <section id="pricing" className="container" style={{padding:"20px 24px 60px"}}>
+      <div className="sectionHead"><div><h2>AI Pricing</h2><p>Student AI and Text-to-Video plans are ready for future billing integration.</p></div></div>
+      <div className="grid">
+        <div className="panel"><h3>Student AI Helper</h3><p style={{color:"#7c879a"}}>Free, Silver, Gold, Demand and Platinum plans.</p></div>
+        <div className="panel"><h3>Text-to-Video</h3><p style={{color:"#7c879a"}}>Free, Starter, Pro, Business and Platinum plans.</p></div>
+      </div>
+    </section>
     <footer className="footer" id="about"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
     {authOpen && <AuthModal mode={authMode} setMode={setAuthMode} close={()=>setAuthOpen(false)} onDone={()=>setAuthOpen(false)}/>}
   </div>;
@@ -549,8 +650,13 @@ function StudentAIHelper({back,user,openAuth}) {
       const raw=await r.text();
       let data={}; try{data=raw?JSON.parse(raw):{}}catch{}
       if(!r.ok) throw new Error(data.error||data.message||raw||`Student AI backend error (${r.status})`);
-      const out=String(data.answer||data.output||data.message||"").trim();
-      if(!out) throw new Error("Student AI returned an empty answer.");
+      const fallbackOutput = Array.isArray(data.output)
+        ? data.output.flatMap(item => Array.isArray(item?.content) ? item.content : [])
+            .map(part => part?.text?.value || part?.text || "")
+            .filter(Boolean).join("\n")
+        : "";
+      const out=String(data.answer||data.output_text||fallbackOutput||data.output||data.message||"").trim();
+      if(!out) throw new Error("Student AI returned an empty answer. Please check the OpenAI API key/model in Supabase.");
       setAnswer(out);
       setStatus(data.usage?`AI response received · ${data.usage}`:"AI response received.");
     }catch(e){
@@ -584,6 +690,17 @@ function StudentAIHelper({back,user,openAuth}) {
     <PlanCards title="Student AI Helper Plans" plans={PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="student"/>
   </Shell>;
 }
+
+class ToolErrorBoundary extends React.Component {
+  constructor(props){super(props);this.state={error:null};}
+  static getDerivedStateFromError(error){return {error};}
+  componentDidCatch(error,info){console.error("Tool runtime error",error,info);}
+  render(){
+    if(this.state.error) return <div className="toolPage"><div className="panel"><div className="formError"><AlertCircle size={18}/><div><b>Tool error</b><div style={{marginTop:5}}>{this.state.error.message||String(this.state.error)}</div></div></div><div className="actions"><button className="btn primary" onClick={()=>this.setState({error:null})}>Try Again</button><button className="btn" onClick={()=>window.location.reload()}>Reload Website</button></div></div></div>;
+    return this.props.children;
+  }
+}
+
 
 
 function downloadCanvas(canvas,name){
@@ -667,92 +784,249 @@ function StampGenerator({back,t}){
   </Shell>;
 }
 
-const logoPresets=["circle","square","badge","minimal"];
-const logoCategories=["Business","Medical","Photography","Automotive","Food","Education","Health","Security","Corporate","Music","Gaming","Nature","Travel","Real Estate","Fashion","Pets","Technology","Luxury"];
+
+const TM_LOGO_TEMPLATES = [
+  {id:"royal",name:"Royal Gold",category:"Luxury",icon:"♛",primary:"#D4AF37",secondary:"#F8FAFC",bg:"#070B14"},
+  {id:"medical",name:"Medical Care",category:"Medical",icon:"⚕",primary:"#22D3EE",secondary:"#E5E7EB",bg:"#07131A"},
+  {id:"tech",name:"Tech Nova",category:"Technology",icon:"⬢",primary:"#8B5CF6",secondary:"#22D3EE",bg:"#080B18"},
+  {id:"creative",name:"Creative",category:"Creative",icon:"✦",primary:"#F472B6",secondary:"#FBBF24",bg:"#120914"},
+  {id:"fitness",name:"Fitness",category:"Fitness",icon:"✚",primary:"#84CC16",secondary:"#FACC15",bg:"#08130C"},
+  {id:"coffee",name:"Coffee House",category:"Food",icon:"☕",primary:"#D6A15D",secondary:"#F5E0B8",bg:"#17120F"},
+  {id:"nature",name:"Nature",category:"Nature",icon:"✿",primary:"#65A30D",secondary:"#BBF7D0",bg:"#07130C"},
+  {id:"security",name:"Cyber Security",category:"Security",icon:"⬢",primary:"#38BDF8",secondary:"#A78BFA",bg:"#07111D"},
+  {id:"fashion",name:"Luxury Fashion",category:"Fashion",icon:"◆",primary:"#F59E0B",secondary:"#F3F4F6",bg:"#120D08"},
+  {id:"education",name:"Education",category:"Education",icon:"◆",primary:"#60A5FA",secondary:"#FDE68A",bg:"#08111F"},
+  {id:"realestate",name:"Real Estate",category:"Real Estate",icon:"⌂",primary:"#FBBF24",secondary:"#E5E7EB",bg:"#0C0D10"},
+  {id:"music",name:"Music Studio",category:"Music",icon:"♫",primary:"#C084FC",secondary:"#22D3EE",bg:"#10091A"}
+];
+const TM_SHAPES=["circle","rounded","square","hexagon","diamond","triangle","star","shield","badge","line"];
+const TM_ICONS=["♛","★","✦","✚","☕","◈","✿","⬢","◆","⚕","⌂","♫","⚡","✈","♥","◉","C","D","B","M","A","S","P","T"];
+const TM_FONTS=["Arial","Georgia","Verdana","Trebuchet MS","Times New Roman","Impact","Courier New"];
+const TM_CATS=["All","Business","Medical","Technology","Creative","Fitness","Food","Education","Security","Nature","Fashion","Luxury"];
+
+function tmRoundRect(ctx,x,y,w,h,r){const rr=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath();}
+function tmStar(ctx,cx,cy,outer,inner,points){ctx.beginPath();for(let i=0;i<points*2;i++){const a=-Math.PI/2+i*Math.PI/points;const r=i%2?inner:outer;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.closePath();}
+function tmShape(ctx,shape,cx,cy,size){
+  const s=size;
+  if(shape==="circle"){ctx.beginPath();ctx.arc(cx,cy,s,0,Math.PI*2);}
+  else if(shape==="rounded"){tmRoundRect(ctx,cx-s,cy-s,cx?2*s:2*s,2*s,34);}
+  else if(shape==="square"){ctx.rect(cx-s,cy-s,2*s,2*s);}
+  else if(shape==="hexagon"){ctx.beginPath();for(let i=0;i<6;i++){const a=-Math.PI/2+i*Math.PI/3;const x=cx+Math.cos(a)*s,y=cy+Math.sin(a)*s;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.closePath();}
+  else if(shape==="diamond"){ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s,cy);ctx.lineTo(cx,cy+s);ctx.lineTo(cx-s,cy);ctx.closePath();}
+  else if(shape==="triangle"){ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s,cy+s*.8);ctx.lineTo(cx-s,cy+s*.8);ctx.closePath();}
+  else if(shape==="star"){tmStar(ctx,cx,cy,s,s*.45,5);}
+  else if(shape==="shield"){ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s*.8,cy-s*.65);ctx.lineTo(cx+s*.7,cy+s*.25);ctx.quadraticCurveTo(cx,cy+s,cx-s*.7,cy+s*.25);ctx.lineTo(cx-s*.8,cy-s*.65);ctx.closePath();}
+  else if(shape==="badge"){ctx.beginPath();for(let i=0;i<12;i++){const a=-Math.PI/2+i*Math.PI/6;const r=i%2?s:s*.86;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.closePath();}
+  else {ctx.moveTo(cx-s,cy);ctx.lineTo(cx+s,cy);}
+}
 
 function LogoMaker({back,t}){
-  const canvasRef=useRef(null), uploadRef=useRef(null);
-  const [brand,setBrand]=useState('BRAND NAME'),[tag,setTag]=useState('TAGLINE HERE');
-  const [category,setCategory]=useState('Business'),[template,setTemplate]=useState('Royal');
-  const [font,setFont]=useState('Arial'),[weight,setWeight]=useState('700');
-  const [primary,setPrimary]=useState('#D4AF37'),[secondary,setSecondary]=useState('#E5E7EB');
-  const [textColor,setTextColor]=useState('#FFFFFF'),[background,setBackground]=useState('#101522');
-  const [icon,setIcon]=useState('♛'),[uploaded,setUploaded]=useState(null),[zoom,setZoom]=useState(100);
-  const [leftTab,setLeftTab]=useState('Templates'),[rightTab,setRightTab]=useState('Design'),[status,setStatus]=useState('');
-  const templates=[
-    {id:'Royal',name:'Royal',icon:'♛',bg:'#101522',p:'#D4AF37',s:'#E5E7EB'},
-    {id:'TechNova',name:'Tech Nova',icon:'⬡',bg:'#0b1324',p:'#22d3ee',s:'#60a5fa'},
-    {id:'Elegance',name:'Elegance',icon:'✦',bg:'#f4efe5',p:'#8b6b45',s:'#b8a07a'},
-    {id:'Fitness',name:'Fitness',icon:'✚',bg:'#101a14',p:'#84cc16',s:'#facc15'},
-    {id:'Coffee',name:'Coffee House',icon:'☕',bg:'#17120f',p:'#d6a15d',s:'#f5e0b8'},
-    {id:'Digital',name:'Digital',icon:'◈',bg:'#111529',p:'#8b5cf6',s:'#22d3ee'},
-    {id:'Nature',name:'Nature',icon:'✿',bg:'#101913',p:'#65a30d',s:'#bbf7d0'},
-    {id:'Cyber',name:'Cyber',icon:'⬢',bg:'#091522',p:'#38bdf8',s:'#a78bfa'},
-    {id:'Luxury',name:'Luxury',icon:'L',bg:'#15110b',p:'#d4af37',s:'#fff7d6'}
-  ];
-  const icons=['♛','★','✦','✚','☕','◈','✿','⬢','◆','⚕','⌂','♫','⚡','✈','♥','◉','C','D','B','M'];
-  const categories=['Business','Technology','Medical','Photography','Food','Education','Health','Security','Corporate','Music','Gaming','Nature','Travel','Real Estate','Fashion','Pets','Luxury'];
-  const fonts=['Arial','Georgia','Verdana','Trebuchet MS','Times New Roman','Impact'];
-  const loadTemplate=x=>{setTemplate(x.id);setIcon(x.icon);setBackground(x.bg);setPrimary(x.p);setSecondary(x.s);};
-  const uploadLogo=file=>{if(!file)return;if(!/^image\//i.test(file.type)){setStatus('Please upload an image file.');return;}const r=new FileReader();r.onload=()=>{setUploaded(String(r.result||''));setStatus('Image/logo uploaded successfully.');};r.readAsDataURL(file);};
+  const canvasRef=useRef(null),uploadRef=useRef(null);
+  const [brand,setBrand]=useState("IQRA GROUP"),[tag,setTag]=useState("OF LAB");
+  const [template,setTemplate]=useState("royal"),[shape,setShape]=useState("circle"),[icon,setIcon]=useState("♛");
+  const [font,setFont]=useState("Arial"),[weight,setWeight]=useState("700"),[primary,setPrimary]=useState("#D4AF37"),[secondary,setSecondary]=useState("#F8FAFC"),[textColor,setTextColor]=useState("#FFFFFF"),[background,setBackground]=useState("#070B14");
+  const [uploaded,setUploaded]=useState(null),[leftTab,setLeftTab]=useState("Templates"),[rightTab,setRightTab]=useState("Design"),[category,setCategory]=useState("All"),[search,setSearch]=useState(""),[zoom,setZoom]=useState(100),[effect,setEffect]=useState("none"),[bgMode,setBgMode]=useState("gradient"),[mockup,setMockup]=useState(false),[status,setStatus]=useState("");
+  const [shapeSize,setShapeSize]=useState(190),[iconSize,setIconSize]=useState(145),[textSize,setTextSize]=useState(66),[rotation,setRotation]=useState(0);
+  const visibleTemplates=TM_LOGO_TEMPLATES.filter(x=>(category==="All"||x.category===category)&&((x.name+" "+x.category).toLowerCase().includes(search.toLowerCase())));
+  const applyTemplate=x=>{setTemplate(x.id);setIcon(x.icon);setCategory(x.category);setPrimary(x.primary);setSecondary(x.secondary);setBackground(x.bg);setStatus(x.name+" template applied.");};
+  const uploadFile=file=>{if(!file)return;if(!/^image\//i.test(file.type)){setStatus("Please upload PNG, JPG, WEBP or SVG image.");return;}const r=new FileReader();r.onload=()=>{setUploaded(String(r.result||""));setStatus("Your logo/image has been uploaded.");};r.readAsDataURL(file);};
   const draw=()=>{
-    const c=canvasRef.current;if(!c)return;const w=900,h=900,dpr=2;c.width=w*dpr;c.height=h*dpr;
-    const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);ctx.fillStyle=background;ctx.fillRect(0,0,w,h);
-    const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,primary);bg.addColorStop(1,secondary);ctx.globalAlpha=.1;ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);ctx.globalAlpha=1;
-    ctx.textAlign='center';ctx.textBaseline='middle';ctx.strokeStyle=primary;ctx.lineWidth=7;ctx.beginPath();ctx.arc(450,350,190,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=.3;ctx.beginPath();ctx.arc(450,350,170,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
-    const drawText=()=>{ctx.fillStyle=textColor;ctx.font=weight+' 66px '+font;ctx.fillText(String(brand||'BRAND NAME').slice(0,22),450,610);ctx.fillStyle=secondary;ctx.font='400 28px '+font;ctx.fillText(String(tag||'TAGLINE HERE').slice(0,38),450,675);ctx.strokeStyle=primary;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(250,735);ctx.lineTo(650,735);ctx.stroke();ctx.fillStyle=secondary;ctx.font='600 18px '+font;ctx.fillText(String(category||'BUSINESS').toUpperCase(),450,775);};
-    if(uploaded){const im=new Image();im.onload=()=>{ctx.drawImage(im,360,205,180,180);drawText();};im.src=uploaded;}else{const g=ctx.createLinearGradient(370,220,530,410);g.addColorStop(0,primary);g.addColorStop(1,secondary);ctx.fillStyle=g;ctx.font='bold 150px '+font;ctx.fillText(icon,450,315);drawText();}
+    const c=canvasRef.current;if(!c)return;const W=1000,H=760,dpr=2;c.width=W*dpr;c.height=H*dpr;const ctx=c.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+    if(bgMode==="transparent"){ctx.clearRect(0,0,W,H);}else if(bgMode==="color"){ctx.fillStyle=background;ctx.fillRect(0,0,W,H);}else{const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,background);g.addColorStop(1,secondary);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);}
+    if(mockup){ctx.fillStyle="#111827";ctx.globalAlpha=.35;tmRoundRect(ctx,40,35,920,690,32);ctx.fill();ctx.globalAlpha=1;}
+    ctx.save();ctx.translate(500,335);ctx.rotate(rotation*Math.PI/180);
+    ctx.shadowColor=effect==="shadow"||effect==="3d"?"rgba(0,0,0,.55)":"transparent";ctx.shadowBlur=effect==="glow"?26:effect==="shadow"?22:effect==="3d"?10:0;ctx.shadowOffsetY=effect==="3d"?10:5;
+    ctx.strokeStyle=primary;ctx.fillStyle="rgba(255,255,255,.025)";ctx.lineWidth=10;tmShape(ctx,shape,0,0,shapeSize);if(shape!=="line")ctx.fill(),ctx.stroke();else ctx.stroke();ctx.shadowColor="transparent";
+    if(uploaded){const im=new Image();im.onload=()=>{ctx.drawImage(im,-90,-110,180,180);finish();};im.src=uploaded;}else{ctx.fillStyle=primary;ctx.font=weight+" "+iconSize+"px "+font;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(icon,0,0);finish();}
+    function finish(){ctx.restore();ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=textColor;ctx.font=weight+" "+textSize+"px "+font;ctx.fillText(String(brand||"BRAND NAME").slice(0,24),500,545);ctx.fillStyle=secondary;ctx.font="500 28px "+font;ctx.fillText(String(tag||"TAGLINE HERE").slice(0,36),500,600);ctx.strokeStyle=primary;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(315,645);ctx.lineTo(430,645);ctx.moveTo(570,645);ctx.lineTo(685,645);ctx.stroke();ctx.fillStyle=secondary;ctx.font="700 16px "+font;ctx.fillText((category==="All"?"BUSINESS":category).toUpperCase(),500,675);}
   };
-  useEffect(()=>{draw();},[brand,tag,category,template,font,weight,primary,secondary,textColor,background,icon,uploaded]);
-  const download=()=>{const c=canvasRef.current;if(!c)return;const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='toolmaster-pro-logo.png';a.click();setStatus('High quality PNG downloaded.');};
+  useEffect(()=>{draw();},[brand,tag,template,shape,icon,font,weight,primary,secondary,textColor,background,uploaded,zoom,effect,bgMode,mockup,shapeSize,iconSize,textSize,rotation,category]);
+  const download=()=>{const c=canvasRef.current;if(!c)return;const a=document.createElement("a");a.href=c.toDataURL("image/png");a.download="toolmaster-pro-logo.png";a.click();setStatus("High-quality PNG downloaded.");};
+  const aiAction=type=>{if(type==="enhance"){setEffect("3d");setTextSize(72);setIconSize(160);setStatus("AI Enhance applied: sharper scale, depth and stronger typography.");}else if(type==="background"){setBgMode("gradient");setBackground("#0B1020");setSecondary("#5B21B6");setStatus("AI Background applied: premium gradient background.");}else{setMockup(true);setEffect("shadow");setStatus("Professional mockup preview applied.");}};
   return <Shell back={back} t={t} status={status}>
-    <div style={{background:'#070b16',borderRadius:22,padding:18,color:'#eef2ff'}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,marginBottom:16,flexWrap:'wrap'}}><div><div style={{fontSize:12,color:'#9b8cff',fontWeight:800}}>TOOLMASTER PRO</div><h2 style={{margin:'4px 0',fontSize:30}}>Advanced Logo Maker ✨</h2><div style={{color:'#8d99ad'}}>Templates, icons, uploads, typography, colors, effects and high quality export.</div></div><div style={{display:'flex',gap:8}}><button className="btn" onClick={()=>{setBrand('BRAND NAME');setTag('TAGLINE HERE');setUploaded(null);setStatus('Editor reset.')}}>↶ Reset</button><button className="btn primary" onClick={download}><Download size={15}/> Download</button></div></div>
-      <div style={{display:'grid',gridTemplateColumns:'300px minmax(360px,1fr) 330px',gap:14}}>
-        <aside style={{background:'#0d1322',border:'1px solid #202944',borderRadius:18,padding:14}}>
-          <div style={{display:'flex',gap:6,marginBottom:12}}>{['Templates','Icons','Uploads'].map(x=><button key={x} onClick={()=>setLeftTab(x)} style={{flex:1,padding:'9px 5px',borderRadius:9,border:'1px solid #29324c',background:leftTab===x?'#6d4aff':'#11182a',color:'#fff',fontWeight:800,fontSize:11}}>{x}</button>)}</div>
-          {leftTab==='Templates'&&<><input placeholder="Search templates..." style={{width:'100%',boxSizing:'border-box',padding:11,borderRadius:10,border:'1px solid #29324c',background:'#080d18',color:'#fff',marginBottom:10}}/><div style={{display:'flex',gap:5,flexWrap:'wrap',marginBottom:12}}>{categories.slice(0,8).map(x=><button key={x} onClick={()=>setCategory(x)} style={{border:'1px solid #29324c',borderRadius:20,padding:'6px 8px',background:'#11182a',color:'#cbd5e1',fontSize:10}}>{x}</button>)}</div><div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>{templates.map(x=><button key={x.id} onClick={()=>loadTemplate(x)} style={{height:90,border:template===x.id?'2px solid #7c5cff':'1px solid #29324c',borderRadius:11,background:x.bg,color:'#fff',display:'grid',placeItems:'center',padding:5}}><span style={{fontSize:28,color:x.p}}>{x.icon}</span><small>{x.name}</small></button>)}</div></>}
-          {leftTab==='Icons'&&<div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>{icons.map(x=><button key={x} onClick={()=>{setIcon(x);setUploaded(null)}} style={{height:58,border:'1px solid #29324c',borderRadius:10,background:'#11182a',color:primary,fontSize:25}}>{x}</button>)}</div>}
-          {leftTab==='Uploads'&&<><div onClick={()=>uploadRef.current?.click()} style={{border:'1px dashed #705cff',borderRadius:13,padding:22,textAlign:'center',cursor:'pointer',background:'#10152b'}}><div style={{fontSize:30}}>☁</div><b>Upload Image / Logo</b><div style={{fontSize:11,color:'#8d99ad',marginTop:5}}>Click to upload or drag & drop<br/>PNG, JPG, WEBP, SVG • Max 10MB</div><input ref={uploadRef} type="file" accept="image/*" style={{display:'none'}} onChange={e=>uploadLogo(e.target.files?.[0])}/></div>{uploaded&&<div style={{marginTop:12}}><img src={uploaded} alt="Uploaded logo" style={{width:'100%',height:110,objectFit:'contain',background:'#070b16',borderRadius:8}}/><button className="btn" style={{width:'100%',marginTop:8}} onClick={()=>setUploaded(null)}>Remove Upload</button></div>}</>}
+    <div style={{background:"#050914",color:"#eef2ff",border:"1px solid #1d2740",borderRadius:22,overflow:"hidden",boxShadow:"0 25px 80px rgba(0,0,0,.18)"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 18px",borderBottom:"1px solid #1d2740",gap:10,flexWrap:"wrap"}}><div style={{fontWeight:900,fontSize:18}}>ToolMaster<span style={{color:"#8b5cf6"}}>Pro</span> <span style={{fontSize:11,color:"#9aa7bd",fontWeight:700}}>ADVANCED LOGO STUDIO</span></div><div style={{display:"flex",gap:8}}><button className="btn" onClick={()=>setStatus("All changes are saved locally in this browser.")}>Save</button><button className="btn" onClick={()=>setMockup(v=>!v)}>Mockup</button><button className="btn primary" onClick={download}><Download size={15}/> Download</button></div></div>
+      <div style={{display:"grid",gridTemplateColumns:"270px minmax(420px,1fr) 310px",minHeight:760}}>
+        <aside style={{borderRight:"1px solid #1d2740",padding:14,background:"#080D18"}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:5,marginBottom:12}}>{["Templates","Icons","Shapes"].map(x=><button key={x} onClick={()=>setLeftTab(x)} style={{border:0,borderRadius:9,padding:"9px 4px",background:leftTab===x?"#6d3df5":"#111827",color:"#fff",fontWeight:800,fontSize:11}}>{x}</button>)}</div>
+          {leftTab==="Templates"&&<><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search templates..." style={{width:"100%",boxSizing:"border-box",padding:10,borderRadius:9,border:"1px solid #26324d",background:"#0d1424",color:"#fff",marginBottom:8}}/><div style={{display:"flex",gap:5,overflowX:"auto",paddingBottom:8}}>{TM_CATS.map(x=><button key={x} onClick={()=>setCategory(x)} style={{whiteSpace:"nowrap",border:"1px solid #29334c",borderRadius:15,padding:"6px 9px",background:category===x?"#6d3df5":"#0d1424",color:"#fff",fontSize:10}}>{x}</button>)}</div><h4 style={{margin:"9px 0"}}>Premium Templates</h4><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>{visibleTemplates.map(x=><button key={x.id} onClick={()=>applyTemplate(x)} style={{textAlign:"center",minHeight:112,border:"1px solid "+(template===x.id?"#8b5cf6":"#25304a"),borderRadius:12,background:template===x.id?"#17102e":"#0d1422",color:"#fff",padding:8,cursor:"pointer"}}><div style={{fontSize:38,color:x.primary}}>{x.icon}</div><b style={{fontSize:11}}>{x.name}</b><small style={{display:"block",color:"#91a0b7",fontSize:9}}>{x.category}</small></button>)}</div></>}
+          {leftTab==="Icons"&&<><h4>Icon Library</h4><div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:7}}>{TM_ICONS.map((x,i)=><button key={i} onClick={()=>{setIcon(x);setUploaded(null)}} style={{fontSize:25,padding:8,border:"1px solid #27324b",borderRadius:9,background:icon===x&&!uploaded?"#24154d":"#0d1422",color:primary}}>{x}</button>)}</div></>}
+          {leftTab==="Shapes"&&<><h4>Shape Library</h4><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7}}>{TM_SHAPES.map(x=><button key={x} onClick={()=>setShape(x)} style={{padding:12,border:"1px solid #27324b",borderRadius:9,background:shape===x?"#24154d":"#0d1422",color:"#fff",textTransform:"capitalize"}}>{x}</button>)}</div><label style={{display:"block",marginTop:12}}>Shape size <input type="range" min="110" max="230" value={shapeSize} onChange={e=>setShapeSize(Number(e.target.value))}/></label></>}
+          <div style={{marginTop:14,border:"1px dashed #5140a8",borderRadius:12,padding:12,textAlign:"center"}} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();uploadFile(e.dataTransfer.files?.[0])}}><Upload size={22} color="#9b7cff"/><b style={{display:"block",marginTop:5}}>Upload Logo / Image</b><small style={{color:"#8795ad"}}>PNG, JPG, WEBP, SVG • Max 10MB</small><input ref={uploadRef} type="file" accept="image/*" hidden onChange={e=>uploadFile(e.target.files?.[0])}/><button className="btn primary" style={{marginTop:9,width:"100%"}} onClick={()=>uploadRef.current?.click()}>Upload from PC</button>{uploaded&&<button className="btn" style={{marginTop:6,width:"100%"}} onClick={()=>setUploaded(null)}>Remove Upload</button>}</div>
         </aside>
-        <section style={{background:'#0d1322',border:'1px solid #202944',borderRadius:18,padding:14}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12,flexWrap:'wrap',gap:8}}><b>Canvas</b><div style={{display:'flex',gap:5}}>{['1:1','16:9','4:3','3:4','Custom'].map(x=><button key={x} className="btn" style={{padding:'7px 10px',fontSize:11}}>{x}</button>)}</div></div><div style={{display:'grid',placeItems:'center',background:'#060a12',borderRadius:14,minHeight:620,padding:18,overflow:'auto'}}><canvas ref={canvasRef} style={{width:Math.round(520*zoom/100),height:Math.round(520*zoom/100),maxWidth:'100%',objectFit:'contain',borderRadius:10}}/></div><div style={{display:'flex',justifyContent:'center',gap:10,marginTop:12,alignItems:'center'}}><button className="btn" onClick={()=>setZoom(Math.max(60,zoom-10))}>−</button><span>{zoom}%</span><button className="btn" onClick={()=>setZoom(Math.min(140,zoom+10))}>+</button><button className="btn" onClick={()=>setZoom(100)}>Fit</button></div><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginTop:12}}>{[['◌','AI Enhance'],['✣','AI Background'],['▣','Mockup'],['◒','Shadows']].map(x=><button key={x[1]} className="btn" onClick={()=>setStatus(x[1]+' is available in the advanced editor.')}>{x[0]} {x[1]}</button>)}</div></section>
-        <aside style={{background:'#0d1322',border:'1px solid #202944',borderRadius:18,padding:14}}><div style={{display:'flex',gap:4,borderBottom:'1px solid #202944',paddingBottom:8,marginBottom:12}}>{['Design','Text','Effects','Layers'].map(x=><button key={x} onClick={()=>setRightTab(x)} style={{border:0,background:'transparent',color:rightTab===x?'#a996ff':'#aab4c8',fontWeight:800,padding:8}}>{x}</button>)}</div>{rightTab==='Layers'&&<div>{['Icon / Logo','Brand Name','Tagline','Frame'].map((x,i)=><div key={x} style={{padding:11,border:'1px solid #202944',borderRadius:10,background:'#11182a',marginBottom:7}}>{i===0?'♛': 'T'} &nbsp; {x} <span style={{float:'right'}}>◉ ⋮</span></div>)}</div>}{rightTab!=='Layers'&&<><h3 style={{margin:'5px 0 12px'}}>{rightTab==='Text'?'Typography & Text':rightTab==='Effects'?'Effects & Appearance':'Logo Design'}</h3><label style={{display:'block',marginTop:8}}>Brand Name<input value={brand} onChange={e=>setBrand(e.target.value)} style={{width:'100%',boxSizing:'border-box',padding:10,marginTop:5,borderRadius:9,border:'1px solid #29324c',background:'#080d18',color:'#fff'}}/></label><label style={{display:'block',marginTop:8}}>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} style={{width:'100%',boxSizing:'border-box',padding:10,marginTop:5,borderRadius:9,border:'1px solid #29324c',background:'#080d18',color:'#fff'}}/></label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:10}}><label>Primary<input type="color" value={primary} onChange={e=>setPrimary(e.target.value)} style={{width:'100%',height:38}}/></label><label>Secondary<input type="color" value={secondary} onChange={e=>setSecondary(e.target.value)} style={{width:'100%',height:38}}/></label></div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:10}}><label>Font<select value={font} onChange={e=>setFont(e.target.value)} style={{width:'100%',padding:9}}>{fonts.map(x=><option key={x}>{x}</option>)}</select></label><label>Weight<select value={weight} onChange={e=>setWeight(e.target.value)} style={{width:'100%',padding:9}}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label></div><label style={{display:'block',marginTop:10}}>Background<input type="color" value={background} onChange={e=>setBackground(e.target.value)} style={{width:'100%',height:38}}/></label><div style={{marginTop:12}}><b>Logo Category</b><select value={category} onChange={e=>setCategory(e.target.value)} style={{width:'100%',padding:9,marginTop:5}}>{categories.map(x=><option key={x}>{x}</option>)}</select></div></>}</aside>
+        <main style={{padding:14,background:"#060A13"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}><div><b>Canvas</b><span style={{marginLeft:12,color:"#8d9ab0",fontSize:12}}>1:1 • Professional logo workspace</span></div><div style={{display:"flex",gap:5}}>{["1:1","16:9","4:3","3:4","Custom"].map(x=><button key={x} className="btn" style={{padding:"6px 9px",fontSize:10}}>{x}</button>)}</div></div>
+          <div style={{display:"grid",placeItems:"center",minHeight:610,background:"radial-gradient(circle at 50% 40%,#151d31,#050914 68%)",border:"1px solid #202b45",borderRadius:16,padding:12,overflow:"auto"}}><canvas ref={canvasRef} style={{width:Math.round(650*zoom/100),maxWidth:"100%",height:"auto",borderRadius:12}}/></div>
+          <div style={{display:"flex",justifyContent:"center",gap:8,alignItems:"center",marginTop:10}}><button className="btn" onClick={()=>setZoom(Math.max(60,zoom-10))}>−</button><span style={{minWidth:45,textAlign:"center"}}>{zoom}%</span><button className="btn" onClick={()=>setZoom(Math.min(140,zoom+10))}>+</button><button className="btn" onClick={()=>setZoom(100)}>Fit</button></div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:7,marginTop:10}}>{[["AI Enhance","enhance"],["AI Background","background"],["Mockup","mockup"],["Shadows","shadow"],["Upload","upload"]].map(x=><button key={x[0]} className="btn" onClick={()=>x[1]==="upload"?uploadRef.current?.click():x[1]==="shadow"?(setEffect("shadow"),setStatus("Shadow effect applied.")):aiAction(x[1])}>{x[0]}</button>)}</div>
+        </main>
+        <aside style={{borderLeft:"1px solid #1d2740",padding:14,background:"#080D18"}}>
+          <div style={{display:"flex",gap:3,borderBottom:"1px solid #202a43",marginBottom:12}}>{["Design","Text","Effects","Layers"].map(x=><button key={x} onClick={()=>setRightTab(x)} style={{flex:1,border:0,padding:9,background:"transparent",color:rightTab===x?"#b9a6ff":"#8e9bb0",fontWeight:800}}>{x}</button>)}</div>
+          {rightTab!=="Layers"&&<>
+            <h3 style={{margin:"5px 0 12px"}}>{rightTab==="Text"?"Typography":rightTab==="Effects"?"Effects & Background":"Logo Design"}</h3>
+            <label>Brand Name<input value={brand} onChange={e=>setBrand(e.target.value)} style={{width:"100%",boxSizing:"border-box",padding:10,marginTop:5,borderRadius:9,border:"1px solid #29334c",background:"#0d1422",color:"#fff"}}/></label>
+            <label style={{display:"block",marginTop:9}}>Tagline<input value={tag} onChange={e=>setTag(e.target.value)} style={{width:"100%",boxSizing:"border-box",padding:10,marginTop:5,borderRadius:9,border:"1px solid #29334c",background:"#0d1422",color:"#fff"}}/></label>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7,marginTop:9}}><label>Font<select value={font} onChange={e=>setFont(e.target.value)} style={{width:"100%",padding:9}}>{TM_FONTS.map(x=><option key={x}>{x}</option>)}</select></label><label>Weight<select value={weight} onChange={e=>setWeight(e.target.value)} style={{width:"100%",padding:9}}><option value="400">Regular</option><option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option></select></label></div>
+            <label style={{display:"block",marginTop:9}}>Text size <input type="range" min="42" max="90" value={textSize} onChange={e=>setTextSize(Number(e.target.value))}/></label>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6,marginTop:9}}><label>Primary<input type="color" value={primary} onChange={e=>setPrimary(e.target.value)} style={{width:"100%",height:35}}/></label><label>Secondary<input type="color" value={secondary} onChange={e=>setSecondary(e.target.value)} style={{width:"100%",height:35}}/></label><label>Text<input type="color" value={textColor} onChange={e=>setTextColor(e.target.value)} style={{width:"100%",height:35}}/></label></div>
+            <div style={{marginTop:12}}><b>Background</b><div style={{display:"flex",gap:5,marginTop:7}}>{["#050914","#111827","#0F172A","#1E1B4B","#172554","#18181B"].map(x=><button key={x} onClick={()=>{setBackground(x);setBgMode("gradient")}} style={{width:30,height:30,borderRadius:8,border:background===x?"2px solid #a78bfa":"1px solid #334155",background:x}}/>)}</div></div>
+            <div style={{marginTop:12}}><b>Effects</b><div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:5,marginTop:7}}>{["none","shadow","glow","3d"].map(x=><button key={x} onClick={()=>setEffect(x)} style={{padding:7,borderRadius:8,border:"1px solid #2b3650",background:effect===x?"#5b21b6":"#0d1422",color:"#fff",fontSize:10}}>{x}</button>)}</div></div>
+          </>}
+          {rightTab==="Layers"&&<div>{[["♛","Logo / Icon"],["T","Brand Name"],["T","Tagline"],["◉","Shape / Frame"],["▣","Background"]].map(x=><div key={x[1]} style={{display:"flex",justifyContent:"space-between",padding:11,background:"#0d1422",border:"1px solid #26324c",borderRadius:9,marginBottom:7}}><span><b style={{marginRight:8}}>{x[0]}</b>{x[1]}</span><span>◉ ⋮</span></div>)}</div>}
+        </aside>
       </div>
     </div>
   </Shell>;
 }
 
-function SeoKeywordGenerator({back,t}){
-  const [seed,setSeed]=useState("");const [language,setLanguage]=useState("English");const [location,setLocation]=useState("");const [intent,setIntent]=useState("All");const [count,setCount]=useState(30);const [out,setOut]=useState([]);const [status,setStatus]=useState("");
-  const generate=()=>{
-    const base=seed.trim();if(!base){setStatus("Enter a seed keyword or topic first.");setOut([]);return;}const clean=base.replace(/\s+/g," ").trim();const loc=location.trim();
-    const core=[clean,clean+" online",clean+" free",clean+" tool",clean+" generator",clean+" software","best "+clean,clean+" for beginners",clean+" for small business",clean+" tutorial",clean+" guide",clean+" tips",clean+" examples",clean+" ideas",clean+" services",clean+" solutions","how to use "+clean,"how to "+clean,"what is "+clean,clean+" near me",clean+" price",clean+" cost",clean+" review",clean+" comparison",clean+" alternatives",clean+" vs",clean+" template",clean+" checklist",clean+" step by step",clean+" for students",clean+" for professionals",clean+" for business",clean+" in 2026"];
-    const modifiers={Informational:["what is","how to","guide","tutorial","examples","tips","learn"],Commercial:["best","review","comparison","alternatives","top","vs"],Transactional:["buy","price","cost","deal","service","quote"],Navigational:["official","login","website","app"]};
-    let ideas=[...core];if(intent!=="All")ideas=[...ideas,...(modifiers[intent]||[]).map(m=>m+" "+clean)];if(loc)ideas=[...ideas,clean+" in "+loc,clean+" near "+loc,"best "+clean+" in "+loc,clean+" services in "+loc,clean+" price in "+loc];if(language!=="English")ideas=[...ideas,clean+" "+language,clean+" tutorial "+language,clean+" guide "+language];
-    ideas=[...new Set(ideas.map(x=>x.trim()).filter(Boolean))].slice(0,Math.max(5,Math.min(100,Number(count)||30)));setOut(ideas);setStatus(ideas.length+" keyword ideas generated locally. No live search-volume data.");
+
+function SeoGeniusAI({back,user,openAuth}) {
+  const [url,setUrl]=useState("");
+  const [report,setReport]=useState(null);
+  const [ai,setAi]=useState(null);
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const [active,setActive]=useState("overview");
+  const [history,setHistory]=useState([]);
+  const [websites,setWebsites]=useState([]);
+  const [plan,setPlan]=useState({name:"FREE",limit:3,used:0,remaining:3});
+  const [saved,setSaved]=useState(false);
+
+  const fn=(name)=>SUPABASE_URL?`${SUPABASE_URL}/functions/v1/${name}`:"";
+  const authHeaders=async()=>{
+    const token=await getSupabaseAccessToken();
+    return {"Content-Type":"application/json",...(SUPABASE_KEY?{apikey:SUPABASE_KEY}:{}),...(token?{Authorization:`Bearer ${token}`}:{})};
   };
-  return <Shell back={back} t={t} status={status||"Browser-based keyword suggestions."}><div className="workspace"><div className="panel"><h3>SEO Keyword Generator</h3><label>Seed keyword / topic<input value={seed} onChange={e=>setSeed(e.target.value)} placeholder="e.g. PDF to Word"/></label><div className="videoOptions"><label>Language<select value={language} onChange={e=>setLanguage(e.target.value)}><option>English</option><option>Urdu</option><option>Hindi</option><option>Spanish</option><option>Arabic</option></select></label><label>Intent<select value={intent} onChange={e=>setIntent(e.target.value)}><option>All</option><option>Informational</option><option>Commercial</option><option>Transactional</option><option>Navigational</option></select></label></div><div className="videoOptions"><label>Location<input value={location} onChange={e=>setLocation(e.target.value)} placeholder="Pakistan"/></label><label>Ideas<select value={count} onChange={e=>setCount(Number(e.target.value))}><option value="20">20</option><option value="30">30</option><option value="50">50</option><option value="100">100</option></select></label></div><div className="actions"><button className="btn primary" onClick={generate}><Sparkles size={15}/> Generate</button><button className="btn" onClick={()=>{setSeed("");setLocation("");setOut([]);setStatus("")}}>Clear</button></div></div><div className="panel"><h3>Keyword Ideas</h3>{out.length?<div style={{display:"grid",gap:7,maxHeight:500,overflow:"auto"}}>{out.map((x,i)=><div key={x+"-"+i} style={{display:"flex",justifyContent:"space-between",gap:8,padding:"10px 12px",border:"1px solid #e5e7ed",borderRadius:9}}><span>{x}</span><button className="iconBtn" onClick={()=>navigator.clipboard?.writeText(x)}><Copy size={14}/></button></div>)}</div>:<div className="answer">Your keyword ideas will appear here.</div>}<div className="actions">{out.length>0&&<><button className="btn" onClick={()=>navigator.clipboard?.writeText(out.join("\n"))}><Copy size={15}/> Copy All</button><button className="btn primary" onClick={()=>downloadText(out.join("\n"),"seo-keyword-ideas.txt")}><Download size={15}/> Download TXT</button></>}</div></div></div></Shell>;
+  const loadData=async()=>{
+    if(!supabase||!user)return;
+    const [{data:scans},{data:sites}]=await Promise.all([
+      supabase.from("seo_scans").select("id,url,overall_score,created_at,status").order("created_at",{ascending:false}).limit(12),
+      supabase.from("websites").select("id,url,title,created_at").order("created_at",{ascending:false}).limit(20)
+    ]);
+    setHistory(scans||[]);setWebsites(sites||[]);
+  };
+  useEffect(()=>{loadData();},[user]);
+
+  const analyze=async()=>{
+    if(!user){openAuth?.("signin");return;}
+    let parsed;
+    try{parsed=new URL(url.trim());}catch{setStatus("Please enter a valid website URL, for example https://example.com");return;}
+    if(!/^https?:$/.test(parsed.protocol)){setStatus("Only http:// and https:// website URLs are allowed.");return;}
+    if(parsed.username||parsed.password){setStatus("URLs containing usernames or passwords are not allowed.");return;}
+    setBusy(true);setStatus("Securely validating URL and starting crawl…");setReport(null);setAi(null);
+    try{
+      const r=await fetch(fn("seo-audit"),{method:"POST",headers:await authHeaders(),body:JSON.stringify({url:parsed.href})});
+      const raw=await r.text();let d={};try{d=raw?JSON.parse(raw):{};}catch{}
+      if(!r.ok)throw new Error(d.error||d.message||`SEO audit failed (${r.status})`);
+      setReport(d);setPlan(d.usage||plan);setStatus("Audit completed from live website checks.");
+      if(d.scan_id){
+        setStatus("Audit complete. Generating AI recommendations…");
+        const ar=await fetch(fn("seo-ai-recommendations"),{method:"POST",headers:await authHeaders(),body:JSON.stringify({scan_id:d.scan_id})});
+        const araw=await ar.text();let ad={};try{ad=araw?JSON.parse(araw):{};}catch{}
+        if(ar.ok)setAi(ad);else setAi({available:false,error:ad.error||ad.message||`AI recommendations unavailable (${ar.status})`});
+      }
+      await loadData();setActive("overview");
+    }catch(e){setStatus(e?.message||"Website analysis failed.");}
+    finally{setBusy(false);}
+  };
+
+  const saveWebsite=async()=>{
+    if(!supabase||!user||!report?.url)return;
+    const {error}=await supabase.from("websites").upsert({user_id:user.id,url:report.url,title:report.meta?.title||report.url,updated_at:new Date().toISOString()},{onConflict:"user_id,url"});
+    setSaved(!error);if(!error){setStatus("Website saved to your account.");await loadData();}else setStatus(error.message||"Could not save website.");
+  };
+
+  const openScan=async(id)=>{
+    if(!supabase)return;
+    setStatus("Loading saved scan…");
+    const {data,error}=await supabase.from("seo_scans").select("*").eq("id",id).maybeSingle();
+    if(error||!data){setStatus(error?.message||"Scan not found.");return;}
+    setReport(data.result_json||data);setAi(data.ai_json||null);setActive("overview");setStatus("Saved scan loaded.");
+  };
+
+  const downloadPdf=async()=>{
+    if(!report)return;
+    try{
+      setStatus("Preparing PDF report…");
+      const {PDFDocument,StandardFonts,rgb}=await loadLib("pdf-lib");
+      const doc=await PDFDocument.create();const font=await doc.embedFont(StandardFonts.Helvetica);const bold=await doc.embedFont(StandardFonts.HelveticaBold);
+      const margin=42;let page=doc.addPage([595,842]);let y=800;
+      const add=(text,size=10,b=false)=>{const lines=String(text??"").split("\n");for(const line of lines){if(y<55){page=doc.addPage([595,842]);y=800;}page.drawText(line.slice(0,105),{x:margin,y,size,font:b?bold:font,color:rgb(.08,.12,.18)});y-=size+6;}};
+      add("SEO Genius AI — Website SEO & AI Visibility Report",18,true);y-=4;add(`Website: ${report.url}`,10);add(`Scan date: ${new Date(report.scan_date||Date.now()).toLocaleString()}`,10);y-=8;
+      add(`Overall SEO Score: ${report.scores?.overall??"Not available"}/100`,15,true);
+      for(const [k,v] of Object.entries(report.scores||{})){if(k!=="overall")add(`${labelScore(k)}: ${v==null?"Not available":v}/100`,11,true);}
+      y-=6;add("Critical / High Priority Issues",13,true);for(const x of (ai?.critical||report.issues?.filter(i=>i.severity==="critical")||[]).slice(0,12))add(`• ${typeof x==="string"?x:(x.title||x.what||x.message||"Issue")}`,10);
+      add("Passed Checks",13,true);for(const c of (report.checks||[]).filter(x=>x.status==="pass").slice(0,30))add(`• ${c.name}: ${c.detail||"Passed"}`,9);
+      add("Warnings / Failed Checks",13,true);for(const c of (report.checks||[]).filter(x=>x.status!=="pass").slice(0,30))add(`• ${c.name}: ${c.status} — ${c.detail||""}`,9);
+      add("Technical Findings",13,true);for(const c of (report.checks||[]).filter(x=>x.category==="technical").slice(0,35))add(`• ${c.name}: ${c.status}${c.detail?` — ${c.detail}`:""}`,9);
+      add("AI Search Visibility",13,true);add(`AI Visibility Score: ${report.scores?.ai_visibility??"Not available"}/100`,10,true);for(const x of (ai?.aiVisibility?.contentGaps||report.ai_visibility?.content_gaps||[]).slice(0,10))add(`• ${x}`,9);
+      add("Action Plan",13,true);for(const x of (ai?.actionPlan||[]).slice(0,15))add(`• ${x}`,9);
+      const bytes=await doc.save();const reportName=`seo-genius-${new URL(report.url).hostname}.pdf`;downloadBlob(new Blob([bytes],{type:"application/pdf"}),reportName);if(supabase&&user&&report.scan_id){await supabase.from("seo_reports").insert({user_id:user.id,scan_id:report.scan_id,report_name:reportName,report_json:{url:report.url,scan_date:report.scan_date,scores:report.scores,generated_at:new Date().toISOString()}});}setStatus("PDF report downloaded and report metadata saved.");
+    }catch(e){setStatus(e?.message||"PDF generation failed.");}
+  };
+
+  const score=report?.scores?.overall;const checks=report?.checks||[];
+  const count=(s)=>checks.filter(x=>x.status===s).length;
+  const nav=["overview","issues","recommendations","ai-visibility","keywords","performance","technical","reports","settings"];
+  const card=(title,value,sub)=> <div style={sg.card}><div style={sg.muted}>{title}</div><div style={sg.big}>{value}</div><div style={sg.muted}>{sub}</div></div>;
+  const progress=(label,value)=> <div style={{marginBottom:14}}><div style={sg.row}><b>{label}</b><span>{value==null?"Not available":`${value}/100`}</span></div><div style={sg.track}><div style={{...sg.fill,width:`${Math.max(0,Math.min(100,Number(value)||0))}%`}}/></div></div>;
+  const severity=(s)=> <span style={{...sg.badge,background:s==="critical"?"#3b1115":s==="high"?"#3a2509":s==="medium"?"#2d2808":"#0d2b20",color:s==="critical"?"#ff9a9a":s==="high"?"#ffc46b":s==="medium"?"#ffe37d":"#78e6b0"}}>{s}</span>;
+
+  return <main className="toolPage">
+    <style>{`
+      .seoGeniusResponsiveInput{flex-wrap:wrap}.seoGeniusResponsiveInput input{flex:1;min-width:180px;background:transparent;border:0;outline:0;color:#fff;font-size:16px}.seoGeniusResponsiveInput .btn{white-space:nowrap}
+      @media (max-width:700px){.seoGeniusResponsiveInput{padding:8px}.seoGeniusResponsiveInput input{width:100%;min-width:0;flex-basis:100%}.seoGeniusResponsiveInput .btn{width:100%;justify-content:center}.seoGeniusIssue{grid-template-columns:1fr!important}.seoGeniusTableRow{grid-template-columns:1fr!important}.seoGeniusHistory{grid-template-columns:1fr!important}}
+    `}</style>
+    <div style={sg.shell}>
+      <div style={sg.top}>
+        <button className="back" onClick={back}>← Back to tools</button>
+        <div style={sg.brandRow}><div style={sg.logo}><Sparkles size={18}/></div><div><b>SEO Genius AI</b><small>Website SEO & AI Visibility Auditor</small></div></div>
+      </div>
+      {!report ? <>
+        <section style={sg.hero}>
+          <span style={sg.pill}><ShieldCheck size={14}/> Real crawl-based checks · No guaranteed rankings</span>
+          <h1>Audit your website for <span style={sg.grad}>SEO + AI Search</span></h1>
+          <p>Analyze technical SEO, on-page signals, performance basics, crawlability, structured data and AI-readable content from the live page.</p>
+          <div className="seoGeniusResponsiveInput" style={sg.inputWrap}><Globe2 size={20}/><input value={url} onChange={e=>setUrl(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!busy&&analyze()} placeholder="https://example.com"/><button className="btn primary" disabled={busy||!url.trim()} onClick={analyze}>{busy?<RefreshCw size={16} className="spin"/>:<Sparkles size={16}/>} {busy?"Analyzing…":"Analyze My Website"}</button></div>
+          <div style={sg.note}>{status||`Plan: ${plan.name||"FREE"} · ${plan.remaining??3} scan${(plan.remaining??3)===1?"":"s"} remaining this month`}</div>
+        </section>
+        <div style={sg.featureGrid}>{[["Technical SEO","Meta, headings, canonical, robots, sitemap, schema, indexability"],["AI Search Visibility","Entity coverage, answer opportunities, expertise and content gaps"],["Real checks","Scores are calculated from performed checks; unavailable checks stay unavailable"],["Actionable report","WHAT is wrong · WHY it matters · HOW to fix it"],["Scan history","Keep your previous scans and saved websites in your account"],["PDF reports","Download a shareable audit report after each completed scan"]].map(([a,b])=><div style={sg.feature} key={a}><div style={sg.featureIcon}><CheckCircle2 size={17}/></div><div><b>{a}</b><p>{b}</p></div></div>)}</div>
+        <section style={sg.infoGrid}><div style={sg.info}><h3>How it works</h3><ol><li>Enter a public HTTP/HTTPS URL.</li><li>Our server validates the target and fetches it securely.</li><li>SEO Genius evaluates actual page signals and selected links.</li><li>AI turns the findings into prioritized recommendations.</li></ol></div><div style={sg.info}><h3>What we do not promise</h3><p>SEO Genius AI does not guarantee Google rankings, traffic, or AI citations. Search visibility depends on many external factors.</p></div></section>
+        <section style={{marginTop:18}}><h2 style={{textAlign:"center"}}>Simple SEO Genius pricing</h2><p style={{textAlign:"center",color:"#91a2bb"}}>Limits are enforced server-side. Actual billing activation should update the subscription only after a verified payment event.</p><div style={sg.priceGrid}>{[["FREE","$0/mo","3 scans/month","Basic audit"],["BASIC","$9.99/mo","30 scans/month","Full audit · AI recommendations · PDF reports"],["POPULAR","$19.99/mo","100 scans/month","Full audit · AI Visibility · competitor analysis · content recommendations"],["PREMIUM","$39.99/mo","High / 100,000 scans/month","Scheduled audits · monitoring · white-label · agency features"]].map(([a,b,c,d])=><div style={sg.price} key={a}><span style={sg.pill}>{a}</span><h3>{b}</h3><b>{c}</b><p>{d}</p></div>)}</div></section>
+        <section style={{marginTop:18}}><h2 style={{textAlign:"center"}}>FAQ</h2><div style={sg.faq}>{[["Does SEO Genius guarantee Google rankings?","No. It reports observed SEO signals and recommendations; it cannot guarantee rankings or AI citations."],["Are scores invented?","No. Scores are calculated from performed checks. Unsupported measurements such as real-browser Core Web Vitals are shown as Not available."],["Can I audit private or local URLs?","No. The server blocks localhost, private/internal IP ranges and credential-bearing URLs to reduce SSRF risk."],["Where is my AI key stored?","AI calls run in the Supabase Edge Function. The provider key is never shipped to the browser."]].map(([q,a])=><details style={sg.faqItem} key={q}><summary>{q}</summary><p>{a}</p></details>)}</div></section>
+      </> : <>
+        <div style={sg.dashboardTop}><div><span style={sg.pill}>Live audit</span><h1>{report.meta?.title||report.url}</h1><p>{report.url}</p></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button className="btn" onClick={saveWebsite}><Heart size={15}/> {saved?"Saved":"Save website"}</button><button className="btn primary" onClick={downloadPdf}><Download size={15}/> PDF Report</button><button className="btn" onClick={()=>{setReport(null);setAi(null);setStatus("")}}>New scan</button></div></div>
+          <div style={sg.nav}>{nav.map(x=><button key={x} onClick={()=>setActive(x)} style={active===x?sg.navActive:sg.navBtn}>{x.replace("ai-visibility","AI Visibility").replace("-"," ").replace(/\b\w/g,m=>m.toUpperCase())}</button>)}</div>
+          {active==="overview"&&<div>
+            <div style={sg.scoreGrid}>{card("Overall SEO Score",score==null?"Not available":`${score}/100`,`${count("pass")} passed · ${count("warn")} warnings · ${count("fail")} failed`)}{card("Technical SEO",report.scores?.technical==null?"Not available":`${report.scores.technical}/100`,"Based on performed technical checks")}{card("On-Page SEO",report.scores?.onpage==null?"Not available":`${report.scores.onpage}/100`,"Titles, headings, content and media")}{card("Performance",report.scores?.performance==null?"Not available":`${report.scores.performance}/100`,report.performance?.ttfb_ms!=null?`${report.performance.ttfb_ms} ms server response`:"Browser CWV not measured")}{card("Mobile SEO",report.scores?.mobile==null?"Not available":`${report.scores.mobile}/100`,"Viewport and mobile-readiness signals")}{card("AI Visibility",report.scores?.ai_visibility==null?"Not available":`${report.scores.ai_visibility}/100`,"AI Search readiness signals")}</div>
+            <div style={sg.two}><div style={sg.panel}><h3>Category scores</h3>{progress("Technical SEO",report.scores?.technical)}{progress("On-Page SEO",report.scores?.onpage)}{progress("Content SEO",report.scores?.content)}{progress("Performance",report.scores?.performance)}{progress("Mobile SEO",report.scores?.mobile)}{progress("AI Visibility",report.scores?.ai_visibility)}</div><div style={sg.panel}><h3>Audit status</h3><div style={sg.checkStats}><div><b>{count("pass")}</b><span>Passed</span></div><div><b>{count("warn")}</b><span>Warnings</span></div><div><b>{count("fail")}</b><span>Failed</span></div><div><b>{count("not_available")}</b><span>Not available</span></div></div><p style={sg.muted}>A score is only calculated from checks that were actually performed.</p></div></div>
+          </div>}
+          {active==="issues"&&<div style={sg.panel}><h2>Issues</h2><p style={sg.muted}>Every finding comes from a crawl check. Unavailable checks are not scored as failures.</p><div>{checks.filter(x=>x.status!=="pass").map((x,i)=><div style={sg.issue} key={i}><div>{severity(x.severity||"medium")}</div><div><b>{x.name}</b><p>{x.detail||"No additional detail available."}</p><small><b>WHAT:</b> {x.what||x.detail||"See finding"} · <b>WHY:</b> {x.why||"This can affect search usability or discoverability."} · <b>HOW:</b> {x.how||"Review and correct the finding."}</small></div></div>)}</div></div>}
+          {active==="recommendations"&&<div style={sg.panel}><h2>AI Recommendations</h2>{!ai?.available&&<div style={sg.notice}><AlertCircle size={16}/>{ai?.error||"AI recommendations are not available. Configure the server-side AI provider and credits."}</div>}<div style={sg.recGrid}>{["critical","high","medium","low"].map(level=><div key={level} style={sg.recCol}><h3>{severity(level)} {level}</h3>{(ai?.[level]||[]).map((x,i)=><div style={sg.rec} key={i}><b>{x.title||x.what||x.issue||"Recommendation"}</b><p><b>WHAT:</b> {x.what||x.issue||""}</p><p><b>WHY:</b> {x.why||""}</p><p><b>HOW:</b> {x.how||x.fix||""}</p></div>)}{!(ai?.[level]?.length)&&<div style={sg.empty}>No items in this priority.</div>}</div>)}</div>{ai?.suggestions&&<div style={sg.panelInner}><h3>Suggested metadata & content</h3><pre style={sg.pre}>{JSON.stringify(ai.suggestions,null,2)}</pre></div>}</div>}
+          {active==="ai-visibility"&&<div style={sg.two}><div style={sg.panel}><h2>AI Search Visibility</h2>{progress("AI visibility score",report.scores?.ai_visibility)}{progress("Content clarity",report.ai_visibility?.content_clarity)}{progress("Entity / topic coverage",report.ai_visibility?.entity_coverage)}{progress("Expertise signals",report.ai_visibility?.expertise)}<h3>Question-answer opportunities</h3><ul>{(report.ai_visibility?.question_opportunities||[]).map((x,i)=><li key={i}>{x}</li>)}</ul></div><div style={sg.panel}><h3>Content gaps</h3><ul>{(report.ai_visibility?.content_gaps||[]).map((x,i)=><li key={i}>{x}</li>)}</ul><h3>Recommended FAQ topics</h3><ul>{(ai?.aiVisibility?.faqTopics||report.ai_visibility?.faq_topics||[]).map((x,i)=><li key={i}>{x}</li>)}</ul><h3>Supporting pages</h3><ul>{(ai?.aiVisibility?.supportingPages||report.ai_visibility?.supporting_pages||[]).map((x,i)=><li key={i}>{x}</li>)}</ul></div></div>}
+          {active==="keywords"&&<div style={sg.panel}><h2>Keywords & Content</h2><p style={sg.muted}>Keyword extraction is heuristic and based on visible page text; it is not a search-volume database.</p><div style={sg.keywordGrid}>{(report.keywords||[]).map((x,i)=><div style={sg.keyword} key={i}><b>{x.term}</b><span>{x.count} uses · {x.density}%</span></div>)}</div><h3>Content quality signals</h3><pre style={sg.pre}>{JSON.stringify(report.content||{},null,2)}</pre></div>}
+          {active==="performance"&&<div style={sg.panel}><h2>Performance</h2>{progress("Performance score",report.scores?.performance)}<div style={sg.scoreGrid}>{card("Server response",report.performance?.ttfb_ms!=null?`${report.performance.ttfb_ms} ms`:"Not available","Measured by the audit server")}{card("Page size",report.performance?.bytes!=null?`${Math.round(report.performance.bytes/1024)} KB`:"Not available","HTML response bytes")}{card("Core Web Vitals","Not available","Requires a real browser/user session or a PageSpeed-style provider")}</div></div>}
+          {active==="technical"&&<div style={sg.panel}><h2>Technical SEO</h2><div style={sg.table}>{checks.map((x,i)=><div className="seoGeniusTableRow" style={sg.tr} key={i}><b>{x.name}</b><span style={x.status==="pass"?sg.pass:x.status==="fail"?sg.fail:x.status==="not_available"?sg.na:sg.warn}>{x.status}</span><small>{x.detail||"Not available"}</small></div>)}</div></div>}
+          {active==="reports"&&<div style={sg.panel}><h2>Reports & Scan History</h2><button className="btn primary" onClick={downloadPdf}><Download size={15}/> Download current PDF</button><div style={{marginTop:16}}>{history.map(x=><button className="seoGeniusHistory" key={x.id} onClick={()=>openScan(x.id)} style={sg.historyBtn}><span>{new URL(x.url).hostname}</span><b>{x.overall_score==null?"—":`${x.overall_score}/100`}</b><small>{new Date(x.created_at).toLocaleString()}</small></button>)}</div></div>}
+          {active==="settings"&&<div><div style={sg.two}><div style={sg.panel}><h2>Account</h2><p>{user?.email}</p><p>Plan: <b>{plan.name||"FREE"}</b></p><p>Monthly usage: <b>{plan.used??0}/{plan.limit??3}</b></p><p style={sg.muted}>Upgrades should be applied only by a verified billing webhook or administrator.</p></div><div style={sg.panel}><h2>Saved websites</h2>{websites.map(w=><div style={sg.site} key={w.id}><b>{w.title||w.url}</b><span>{w.url}</span></div>)}{!websites.length&&<p style={sg.muted}>No saved websites yet.</p>}</div></div><div style={{...sg.priceGrid,marginTop:14}}>{[["FREE","$0/mo","3 scans/month"],["BASIC","$9.99/mo","30 scans/month"],["POPULAR","$19.99/mo","100 scans/month"],["PREMIUM","$39.99/mo","High allowance"]].map(([a,b,c])=><div style={sg.price} key={a}><span style={sg.pill}>{a}</span><h3>{b}</h3><p>{c}</p></div>)}</div></div>}
+          <div style={sg.disclaimer}><ShieldCheck size={15}/> SEO Genius AI reports observed signals. It does not guarantee Google rankings, traffic, or AI citations.</div>
+        </>}
+    </div>
+  </main>;
 }
 
-class ToolErrorBoundary extends React.Component {
-  constructor(props){super(props);this.state={error:null};}
-  static getDerivedStateFromError(error){return {error};}
-  componentDidCatch(error,info){console.error("Tool runtime error",error,info);}
-  render(){
-    if(this.state.error) return <div className="toolPage"><div className="panel"><div className="formError"><AlertCircle size={18}/><div><b>Tool error</b><div style={{marginTop:5}}>{this.state.error.message||String(this.state.error)}</div></div></div><div className="actions"><button className="btn primary" onClick={()=>this.setState({error:null})}>Try Again</button><button className="btn" onClick={()=>window.location.reload()}>Reload Website</button></div></div></div>;
-    return this.props.children;
-  }
-}
+const labelScore=(k)=>({technical:"Technical SEO",onpage:"On-Page SEO",content:"Content SEO",performance:"Performance",mobile:"Mobile SEO",ai_visibility:"AI Visibility",overall:"Overall Score"}[k]||k);
+const sg={shell:{maxWidth:1240,margin:"0 auto",padding:"22px 18px 70px"},top:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,flexWrap:"wrap"},brandRow:{display:"flex",alignItems:"center",gap:10},logo:{width:38,height:38,borderRadius:12,display:"grid",placeItems:"center",background:"linear-gradient(135deg,#7c3aed,#06b6d4)",color:"white"},hero:{marginTop:28,padding:"46px 28px",borderRadius:28,border:"1px solid #26324b",background:"radial-gradient(circle at 80% 10%,rgba(124,58,237,.25),transparent 38%),linear-gradient(135deg,#0b1220,#101a2d)",textAlign:"center"},grad:{background:"linear-gradient(90deg,#a78bfa,#22d3ee)",WebkitBackgroundClip:"text",color:"transparent"},pill:{display:"inline-flex",alignItems:"center",gap:7,padding:"7px 10px",borderRadius:999,border:"1px solid #33415e",background:"#101a2b",color:"#b7c5dc",fontSize:12},inputWrap:{maxWidth:820,margin:"26px auto 0",display:"flex",alignItems:"center",gap:10,padding:9,borderRadius:16,background:"#07101e",border:"1px solid #31415f"},featureGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))",gap:12,marginTop:18},feature:{display:"flex",gap:11,padding:18,borderRadius:16,background:"#0d1625",border:"1px solid #22314b"},featureIcon:{width:32,height:32,borderRadius:10,display:"grid",placeItems:"center",background:"#102c25",color:"#6ee7b7",flex:"0 0 auto"},infoGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:14,marginTop:16},info:{padding:22,borderRadius:18,border:"1px solid #24334d",background:"#0c1422",color:"#c8d3e5"},dashboardTop:{display:"flex",justifyContent:"space-between",alignItems:"end",gap:16,flexWrap:"wrap",marginTop:20},nav:{display:"flex",gap:7,overflowX:"auto",padding:"16px 0",position:"sticky",top:0,zIndex:4,background:"rgba(7,12,21,.92)",backdropFilter:"blur(12px)"},navBtn:{border:"1px solid #25344d",background:"#0d1625",color:"#9fb0c8",padding:"9px 12px",borderRadius:10,whiteSpace:"nowrap",cursor:"pointer"},navActive:{border:"1px solid #7c3aed",background:"#28154f",color:"#fff",padding:"9px 12px",borderRadius:10,whiteSpace:"nowrap",cursor:"pointer"},scoreGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(175px,1fr))",gap:12,marginBottom:14},card:{padding:18,borderRadius:16,border:"1px solid #25344d",background:"#0d1625"},big:{fontSize:28,fontWeight:800,margin:"7px 0"},muted:{color:"#91a2bb",fontSize:13},two:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:14},panel:{padding:20,borderRadius:18,border:"1px solid #25344d",background:"#0c1422",color:"#d6e0ef",marginBottom:14},panelInner:{marginTop:14,padding:16,borderRadius:14,background:"#0a1120",border:"1px solid #22304a"},row:{display:"flex",justifyContent:"space-between",gap:10,fontSize:13},track:{height:8,borderRadius:99,background:"#1a2639",overflow:"hidden",marginTop:6},fill:{height:"100%",borderRadius:99,background:"linear-gradient(90deg,#7c3aed,#22d3ee)"},checkStats:{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:10},checkStatsItem:{},issue:{display:"grid",gridTemplateColumns:"90px 1fr",gap:14,padding:"16px 0",borderBottom:"1px solid #203047"},badge:{display:"inline-block",padding:"5px 8px",borderRadius:8,fontSize:11,textTransform:"uppercase",fontWeight:700},recGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:12},recCol:{padding:14,borderRadius:15,background:"#0a1120",border:"1px solid #22304a"},rec:{padding:13,borderRadius:12,background:"#0e192a",border:"1px solid #263650",marginTop:9},empty:{color:"#70829d",padding:16},notice:{display:"flex",gap:8,alignItems:"center",padding:12,borderRadius:12,background:"#2b2110",color:"#ffd68a",marginBottom:12},pre:{whiteSpace:"pre-wrap",overflowX:"auto",padding:14,borderRadius:12,background:"#07101c",color:"#b9c8dc",fontSize:12},keywordGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:9},keyword:{display:"flex",flexDirection:"column",gap:4,padding:13,borderRadius:12,border:"1px solid #24334c",background:"#0d1625"},table:{border:"1px solid #22304a",borderRadius:14,overflow:"hidden"},tr:{display:"grid",gridTemplateColumns:"1.2fr 110px 2fr",gap:10,padding:"12px 14px",borderBottom:"1px solid #203047",alignItems:"center"},pass:{color:"#6ee7b7"},fail:{color:"#ff8e8e"},warn:{color:"#ffd27a"},na:{color:"#8191a9"},historyBtn:{width:"100%",display:"grid",gridTemplateColumns:"1fr 90px 180px",gap:10,textAlign:"left",padding:13,marginTop:8,borderRadius:12,border:"1px solid #25344d",background:"#0d1625",color:"#d7e1ef",cursor:"pointer"},site:{display:"flex",flexDirection:"column",gap:3,padding:12,borderBottom:"1px solid #22304a"},disclaimer:{display:"flex",gap:8,alignItems:"center",marginTop:10,padding:12,borderRadius:12,background:"#0b1320",color:"#8191a9",fontSize:12}}
 
 function ToolPage({t,back,user,openAuth}) {
   if(t[3]==="student-ai-helper") return <StudentAIHelper back={back} user={user} openAuth={openAuth}/>;
   if(t[3]==="text-to-video") return <TextToVideo back={back} user={user} openAuth={openAuth}/>;
   if(t[3]==="edit-pdf") return <PdfEditorTool t={t} back={back}/>;
-  if(t[1]==="PDF Tools") return <PdfTool t={t} back={back}/>;
-  if(t[3]==="background-remover") return <BackgroundRemoverTool t={t} back={back}/>;
   if(t[3]==="stamp-generator") return <StampGenerator t={t} back={back}/>;
   if(t[3]==="logo-maker") return <LogoMaker t={t} back={back}/>;
-  if(t[3]==="seo-keyword-generator") return <SeoKeywordGenerator t={t} back={back}/>;
+  if(t[3]==="seo-genius") return <SeoGeniusAI back={back} user={user} openAuth={openAuth}/>;
+  if(t[1]==="PDF Tools") return <PdfTool t={t} back={back}/>;
+  if(t[3]==="background-remover") return <BackgroundRemoverTool t={t} back={back}/>;
   if(t[1]==="Image Tools") return <ImageTool t={t} back={back}/>;
   if(t[1]==="SEO & Marketing") return <SeoTool t={t} back={back}/>;
   return <GenericTool t={t} back={back}/>;
@@ -836,10 +1110,16 @@ function TextToVideo({back,user,openAuth}) {
         setStatus("MP4 is ready. You can play it or download it below.");
         return;
       }
-      if(d.status==="failed" || d.status==="cancelled") throw new Error(d.error?.message||d.error||"Video generation failed.");
-      await new Promise(resolve=>setTimeout(resolve,10000));
+      if(d.status==="failed" || d.status==="cancelled") {
+        const msg = d.error?.message || d.error || "Video generation failed on the video provider.";
+        setProgress(0);
+        setResult(prev=>({...prev, status:d.status, error:d.error||msg}));
+        throw new Error(msg);
+      }
+      setStatus(d.status === "in_progress" ? `Video is rendering… ${Number.isFinite(p)?p:0}%` : `Video is queued… ${Number.isFinite(p)?p:0}%`);
+      await new Promise(resolve=>setTimeout(resolve,5000));
     }
-    throw new Error("Video is still rendering. Please keep this page open and try again later.");
+    throw new Error("Video is taking longer than expected. The provider may be busy. Please try again in a moment.");
   };
 
   const downloadVideo=()=>{if(!result?.video_url)return;const a=document.createElement("a");a.href=result.video_url;a.download="toolmaster-video.mp4";document.body.appendChild(a);a.click();a.remove();};
@@ -859,52 +1139,11 @@ function TextToVideo({back,user,openAuth}) {
         <small style={{display:"block",marginTop:10,color:"#8a93a5"}}>Choose a video plan above. Shorter 4–8 second clips are best for quick testing. A signed-in account is required.</small>
       </div>
       <div className="aiCard"><h3>🎥 Video Preview</h3>
-        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
+        {result?.video_url?<><video controls style={{width:"100%",borderRadius:14}} src={result.video_url}/><button className="btn primary" onClick={downloadVideo} style={{marginTop:12}}><Download size={16}/> Download MP4</button></>:result?.status==="failed"||result?.status==="cancelled"?<div className="formError" style={{minHeight:220,display:"grid",placeItems:"center",textAlign:"center",padding:24}}><div><b>Video generation failed</b><small style={{display:"block",marginTop:8,color:"#b42318"}}>{result?.error?.message||result?.error||status||"The video provider rejected the generation job."}</small></div></div>:<div className="videoPlaceholder"><div><div className="playCircle" style={{margin:"0 auto 12px"}}>▶</div><b>{result?`Rendering: ${result.status||"queued"}`:"Ready for generation"}</b><small style={{display:"block",marginTop:7,color:"#92a4bf"}}>{result?`${progress}% complete · ${style} · ${duration} · ${aspect}`:"Enter a prompt and click Generate Video"}</small></div></div>}
       </div>
     </div>
     <PlanCards title="Text-to-Video Plans" plans={VIDEO_PLANS} selected={selectedPlan} onSelect={setSelectedPlan} openAuth={openAuth} user={user} kind="video"/>
   </Shell>;
-}
-
-
-function PdfCloudButtons({onStatus}) {
-  const drive = () => {
-    if (window.google?.picker && import.meta.env.VITE_GOOGLE_API_KEY && import.meta.env.VITE_GOOGLE_CLIENT_ID && import.meta.env.VITE_GOOGLE_APP_ID) {
-      onStatus?.("Google Drive Picker is configured, but OAuth picker setup must be completed for this deployment.");
-    } else {
-      window.open("https://drive.google.com/drive/my-drive","_blank","noopener,noreferrer");
-      onStatus?.("Google Drive opened. Download the PDF to your PC, then use Select PDF file.");
-    }
-  };
-  const dropbox = () => {
-    if (window.Dropbox?.choose && import.meta.env.VITE_DROPBOX_APP_KEY) {
-      window.Dropbox.choose({
-        success: files => { if(files?.[0]?.link) onStatus?.("Dropbox file selected. Direct import will be enabled when the Dropbox app key is configured."); },
-        cancel: () => {}, linkType: "direct", multiselect: false, extensions: [".pdf"]
-      });
-    } else {
-      window.open("https://www.dropbox.com/home","_blank","noopener,noreferrer");
-      onStatus?.("Dropbox opened. Download the PDF to your PC, then use Select PDF file.");
-    }
-  };
-  return <div className="pdfCloudButtons">
-    <button type="button" className="pdfCloudBtn" onClick={drive}><span className="cloudCircle">△</span><span>Select from Google Drive</span></button>
-    <button type="button" className="pdfCloudBtn" onClick={dropbox}><span className="cloudCircle">◇</span><span>Select from Dropbox</span></button>
-  </div>;
-}
-
-function PdfShell({back,t,children,status}) {
-  return <main className="pdfPage">
-    <div className="pdfBackRow"><button className="pdfBack" onClick={back}>← Back to tools</button></div>
-    <div className="pdfBrandHeader">
-      <div className="pdfBrand">ToolMaster<span>Pro</span></div>
-      <nav className="pdfBrandNav"><span>MERGE PDF</span><span>SPLIT PDF</span><span>COMPRESS PDF</span><span>CONVERT PDF</span><span>ALL PDF TOOLS</span></nav>
-      <div className="pdfHeaderActions"><button type="button" className="pdfHeaderBtn">Login</button><button type="button" className="pdfHeaderSignup">Sign up</button><button type="button" className="pdfGridBtn">⋮⋮⋮</button></div>
-    </div>
-    <section className="pdfPageIntro"><div className="pdfCategory">PDF TOOLS</div><h1>{t?.[0] || "PDF Tool"}</h1><p>{t?.[2] || "Work with PDF files online."}</p></section>
-    {children}
-    {status&&<div className="pdfStatus"><ShieldCheck size={16}/> {status}</div>}
-  </main>;
 }
 
 function PdfEditorTool({t,back}) {
@@ -1137,7 +1376,7 @@ function PdfEditorTool({t,back}) {
   const reset=()=>{setFile(null);setPdfDoc(null);setItems([]);setEdits({});setEditStyles({});setSelected(null);setEditing(false);setDraft('');setHasApplied(false);setFontSize(16);setBold(false);setItalic(false);setUnderline(false);setTextColor('#111827');setViewport({width:0,height:0});setPage(1);setScale(1);setStatus('');if(uploadRef.current)uploadRef.current.value='';};
   const changeScale=v=>setScale(Math.max(.6,Math.min(2,Number(v)||1)));
 
-  if(!file) return <PdfShell back={back} t={['Edit & Sign PDF','PDF Tools','Edit existing PDF text by clicking directly on the text. Add text, images, links, annotations and signatures.','']} status={status}>
+  if(!file) return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Edit existing PDF text by clicking directly on the text. Add text, images, links, annotations and signatures.','']} status={status}>
     <div className="pdfEmptyState" onClick={()=>uploadRef.current?.click()}>
       <input ref={uploadRef} type="file" accept="application/pdf,.pdf" onChange={onUpload} style={{display:'none'}}/>
       <div>
@@ -1147,9 +1386,9 @@ function PdfEditorTool({t,back}) {
         <button type="button" className="btn primary" onClick={e=>{e.stopPropagation();uploadRef.current?.click()}}><Upload size={16}/> Choose PDF</button>
       </div>
     </div>
-  </PdfShell>;
+  </Shell>;
 
-  return <PdfShell back={back} t={['Edit & Sign PDF','PDF Tools','Click any text directly in the document, change it inline, then download your edited PDF.','']} status={status}>
+  return <Shell back={back} t={['Edit & Sign PDF','PDF Tools','Click any text directly in the document, change it inline, then download your edited PDF.','']} status={status}>
     <div className="pdfEditor">
       <div className="pdfEditorTop"><div className="pdfTopTitle"><h2>Online PDF editor <span className="beta">BETA</span></h2><p>Edit PDF files. Click text to change it.</p></div><div className="pdfTopActions"><button type="button" className="btn" onClick={()=>uploadRef.current?.click()}><Upload size={16}/> Replace PDF</button><button type="button" className="btn primary" onClick={applyChanges} disabled={busy || !selected}><Check size={16}/> Apply Changes</button><button type="button" className="btn primary" onClick={()=>downloadEdited()} disabled={busy || !hasApplied || !Object.keys(edits).length}> <Download size={16}/> Download PDF</button><input ref={uploadRef} type="file" accept="application/pdf,.pdf" onChange={onUpload} style={{display:'none'}}/></div></div>
 
@@ -1206,7 +1445,7 @@ function PdfEditorTool({t,back}) {
       <div className="pdfFileBar"><div><strong>{file.name}</strong><span>{(file.size/1024).toFixed(1)} KB</span></div><span>{pdfDoc?.numPages||1} page{(pdfDoc?.numPages||1)===1?'':'s'} · {Object.keys(edits).length} change{Object.keys(edits).length===1?'':'s'}</span><button type="button" className="btn danger" onClick={reset}><Trash2 size={15}/>Remove</button></div>
       <div className="pdfPrivacy"><ShieldCheck size={15}/>Files stay in your browser while editing.</div>
     </div>
-  </PdfShell>;
+  </Shell>;
 }
 
 async function convertWithSecureBackend(file, target) {
@@ -1261,64 +1500,170 @@ async function convertWithSecureBackend(file, target) {
   return { message: data.message || `${ext.toUpperCase()} converted and downloaded.` };
 }
 
+
 function PdfTool({t,back}) {
-  const id=t[3]; const [files,setFiles]=useState([]); const [busy,setBusy]=useState(false); const [status,setStatus]=useState("");
-  const [watermark,setWatermark]=useState("ToolMaster Pro"); const [angle,setAngle]=useState("90"); const [quality,setQuality]=useState(.65); const [pages,setPages]=useState("1");
+  const id=t[3];
+  const [files,setFiles]=useState([]);
+  const [busy,setBusy]=useState(false);
+  const [status,setStatus]=useState("");
+  const [active,setActive]=useState(id);
+  const [watermark,setWatermark]=useState("ToolMaster Pro");
+  const [angle,setAngle]=useState("90");
+  const [quality,setQuality]=useState(.75);
+  const [pages,setPages]=useState("1");
+  const [thumbs,setThumbs]=useState([]);
+
+  const pdfTools=[
+    {id:"merge-pdf",name:"MERGE PDF",desc:"Combine multiple PDF files."},
+    {id:"split-pdf",name:"SPLIT PDF",desc:"Split PDF pages."},
+    {id:"compress-pdf",name:"COMPRESS PDF",desc:"Reduce PDF file size."},
+    {id:"pdf-word",name:"PDF TO WORD",desc:"Convert PDF to editable Word."},
+    {id:"word-pdf",name:"WORD TO PDF",desc:"Convert Word documents to PDF."},
+    {id:"pdf-jpg",name:"PDF TO JPG",desc:"Convert PDF pages to JPG."},
+    {id:"jpg-pdf",name:"JPG TO PDF",desc:"Create PDF from images."},
+    {id:"rotate-pdf",name:"ROTATE PDF",desc:"Rotate PDF pages."},
+    {id:"pdf-unlock",name:"UNLOCK PDF",desc:"Remove restrictions when supported."},
+    {id:"pdf-watermark",name:"WATERMARK",desc:"Add watermark to PDF."},
+    {id:"edit-pdf",name:"EDIT PDF",desc:"Edit and sign PDF."}
+  ];
+  const current=pdfTools.find(x=>x.id===active)||pdfTools[0];
+  const accepted=active==="word-pdf"?".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document":active==="jpg-pdf"?"image/jpeg,image/png,image/webp":"application/pdf,.pdf";
+  const multiple=active==="merge-pdf"||active==="jpg-pdf";
+
+  useEffect(()=>{
+    let dead=false;
+    (async()=>{
+      if(!files.length || !/\.pdf$/i.test(files[0].name)){setThumbs([]);return;}
+      try{
+        const pdfjs=await loadLib("pdfjs");
+        const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
+        const out=[];
+        for(let i=1;i<=Math.min(pdf.numPages,8);i++){
+          const pg=await pdf.getPage(i);const vp=pg.getViewport({scale:.34});
+          const c=document.createElement("canvas");c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
+          await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
+          out.push({page:i,url:c.toDataURL("image/jpeg",.86)});
+        }
+        if(!dead)setThumbs(out);
+      }catch{if(!dead)setThumbs([]);}
+    })();
+    return()=>{dead=true};
+  },[files]);
+
+  const cloudDrive=()=>{
+    window.open("https://drive.google.com/drive/my-drive","_blank","noopener,noreferrer");
+    setStatus("Google Drive opened. Download the PDF to your PC, then select it here. Direct Picker can be enabled with Google Picker credentials.");
+  };
+  const cloudDropbox=()=>{
+    if(window.Dropbox?.choose && import.meta.env.VITE_DROPBOX_APP_KEY){
+      window.Dropbox.choose({success:async picked=>{
+        const link=picked?.[0]?.link;
+        if(!link)return;
+        try{
+          const direct=link.replace(/\\?dl=0$/,"?dl=1");
+          const r=await fetch(direct);
+          if(!r.ok)throw new Error("Dropbox file could not be downloaded.");
+          const blob=await r.blob();
+          const f=new File([blob],picked[0].name||"dropbox-file.pdf",{type:blob.type||"application/pdf"});
+          setFiles([f]);setStatus("Dropbox PDF selected successfully.");
+        }catch(e){setStatus(e.message||"Dropbox import failed.");}
+      },cancel:()=>{},linkType:"direct",multiselect:multiple,extensions:[".pdf"]});
+    }else{
+      window.open("https://www.dropbox.com/home","_blank","noopener,noreferrer");
+      setStatus("Dropbox opened. Download the PDF to your PC, then select it here. Add VITE_DROPBOX_APP_KEY for direct import.");
+    }
+  };
+
+  const convertAndDownload=async(file,target)=>{
+    const base=import.meta.env.VITE_DOCUMENT_CONVERTER_URL||(SUPABASE_URL?`${SUPABASE_URL}/functions/v1/document-converter`:"");
+    if(!base)throw new Error("Document converter backend is not configured.");
+    const fd=new FormData();fd.append("file",file,file.name);fd.append("output_format",target);
+    const r=await fetch(base,{method:"POST",headers:SUPABASE_KEY?{apikey:SUPABASE_KEY}:{},body:fd});
+    const ct=r.headers.get("content-type")||"";
+    if(!r.ok){const msg=ct.includes("application/json")?((await r.json().catch(()=>({}))).error||"Converter failed."):await r.text().catch(()=>"");throw new Error(msg||`Converter failed (${r.status})`);}
+    if(ct.includes("application/pdf")||ct.includes("application/vnd.openxmlformats-officedocument.wordprocessingml.document")||ct.includes("application/msword")){
+      downloadBlob(await r.blob(),`${file.name.replace(/\.[^.]+$/,".")}${target}`);return;
+    }
+    const d=await r.json().catch(()=>({}));const u=d.download_url||d.url||d.file_url||d.result?.download_url||d.result?.url;
+    if(!u)throw new Error(d.error||"Converter returned no download URL.");
+    const fr=await fetch(u);if(!fr.ok)throw new Error(`Converted file download failed (${fr.status}).`);
+    downloadBlob(await fr.blob(),`${file.name.replace(/\.[^.]+$/,".")}${target}`);
+  };
 
   const run=async()=>{
-    if(!files.length) return setStatus("Please select the required PDF file first.");
+    if(!files.length)return setStatus(active==="word-pdf"?"Select a Word file first.":active==="jpg-pdf"?"Select JPG/PNG images first.":"Select a PDF file first.");
     setBusy(true);setStatus("");
     try{
-      const {PDFDocument,degrees,rgb}=await loadLib("pdf-lib");
-      if(id==="pdf-word"){await pdfToWord(files[0]);return}
-      if(id==="word-pdf"){await wordToPdf(files[0]);return}
-      if(id==="pdf-jpg"){await pdfToJpg(files[0]);return}
-      const src=await PDFDocument.load(await files[0].arrayBuffer(),{ignoreEncryption:id==="pdf-unlock"});
-      if(id==="merge-pdf"){
-        const out=await PDFDocument.create();
-        for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(d,d.getPageIndices())).forEach(pg=>out.addPage(pg))}
-        downloadBlob(new Blob([await out.save()],{type:"application/pdf"}),"merged.pdf");setStatus("Merged PDF downloaded.");return;
+      if(active==="pdf-word"){setStatus("Converting PDF to Word…");await convertAndDownload(files[0],"docx");setStatus("PDF converted to Word successfully.");return;}
+      if(active==="word-pdf"){setStatus("Converting Word to PDF…");await convertAndDownload(files[0],"pdf");setStatus("Word converted to PDF successfully.");return;}
+      if(active==="jpg-pdf"){
+        const {PDFDocument}=await loadLib("pdf-lib");const doc=await PDFDocument.create();
+        for(const f of files){const bytes=await f.arrayBuffer();let img;try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)}const pg=doc.addPage([img.width,img.height]);pg.drawImage(img,{x:0,y:0,width:img.width,height:img.height});}
+        downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images-to-pdf.pdf");setStatus(`${files.length} image(s) converted to PDF.`);return;
       }
-      if(id==="split-pdf"){
-        const nums=pages.split(",").map(x=>parseInt(x.trim(),10)-1).filter(Number.isInteger); const list=nums.length?nums:src.getPageIndices();
-        for(const n of list){if(n<0||n>=src.getPageCount())continue;const one=await PDFDocument.create();const [pg]=await one.copyPages(src,[n]);one.addPage(pg);downloadBlob(new Blob([await one.save()],{type:"application/pdf"}),`page-${n+1}.pdf`)}
+      if(active==="pdf-jpg"){
+        const pdfjs=await loadLib("pdfjs");const pdf=await pdfjs.getDocument({data:await files[0].arrayBuffer(),disableWorker:true}).promise;
+        for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const vp=pg.getViewport({scale:1.8});const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${files[0].name.replace(/\.pdf$/i,"")}-page-${i}.jpg`);}
+        setStatus(`${pdf.numPages} JPG page(s) downloaded.`);return;
+      }
+      const {PDFDocument,degrees,rgb}=await loadLib("pdf-lib");const src=await PDFDocument.load(await files[0].arrayBuffer(),{ignoreEncryption:active==="pdf-unlock"});
+      if(active==="merge-pdf"){
+        const out=await PDFDocument.create();for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(d,d.getPageIndices())).forEach(p=>out.addPage(p));}
+        downloadBlob(new Blob([await out.save()],{type:"application/pdf"}),"merged.pdf");setStatus(`${files.length} PDF files merged successfully.`);return;
+      }
+      if(active==="split-pdf"){
+        const nums=pages.split(",").map(x=>parseInt(x.trim(),10)-1).filter(Number.isInteger);const list=nums.length?nums:src.getPageIndices();
+        for(const n of list){if(n<0||n>=src.getPageCount())continue;const one=await PDFDocument.create();const [pg]=await one.copyPages(src,[n]);one.addPage(pg);downloadBlob(new Blob([await one.save()],{type:"application/pdf"}),`page-${n+1}.pdf`);}
         setStatus("Selected pages downloaded.");return;
       }
-      if(id==="compress-pdf"){downloadBlob(new Blob([await src.save({useObjectStreams:true,addDefaultPage:false})],{type:"application/pdf"}),"compressed.pdf");setStatus("Optimized PDF downloaded.");return}
-      if(id==="rotate-pdf"){src.getPages().forEach(pg=>pg.setRotation(degrees(Number(angle)||90)));downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"rotated.pdf");setStatus("Rotated PDF downloaded.");return}
-      if(id==="pdf-unlock"){downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"unlocked.pdf");setStatus("Unlocked copy downloaded when the source encryption is supported.");return}
-      if(id==="pdf-watermark"){src.getPages().forEach(pg=>{const {width,height}=pg.getSize();pg.drawText(watermark||"ToolMaster Pro",{x:width/2-60,y:height/2,size:28,color:rgb(.65,.65,.65),opacity:.35,rotate:degrees(35)})});downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"watermarked.pdf");setStatus("Watermarked PDF downloaded.");return}
-    }catch(e){setStatus("Error: "+(e?.message||String(e)))}finally{setBusy(false)}
+      if(active==="compress-pdf"){downloadBlob(new Blob([await src.save({useObjectStreams:true})],{type:"application/pdf"}),"compressed.pdf");setStatus("Optimized PDF downloaded.");return;}
+      if(active==="rotate-pdf"){src.getPages().forEach(pg=>pg.setRotation(degrees(Number(angle)||90)));downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"rotated.pdf");setStatus("Rotated PDF downloaded.");return;}
+      if(active==="pdf-unlock"){downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"unlocked.pdf");setStatus("Unlocked copy downloaded when supported.");return;}
+      if(active==="pdf-watermark"){src.getPages().forEach(pg=>{const {width,height}=pg.getSize();pg.drawText(watermark||"ToolMaster Pro",{x:width/2-60,y:height/2,size:28,color:rgb(.65,.65,.65),opacity:.35,rotate:degrees(35)});});downloadBlob(new Blob([await src.save()],{type:"application/pdf"}),"watermarked.pdf");setStatus("Watermarked PDF downloaded.");return;}
+      if(active==="edit-pdf"){
+        const target=tools.find(x=>x[3]==="edit-pdf");if(target)window.dispatchEvent(new CustomEvent("tm-open-tool",{detail:target}));return;
+      }
+    }catch(e){setStatus(`Error: ${e?.message||String(e)}`)}finally{setBusy(false);}
   };
-  async function pdfToJpg(file){const pdfjs=await loadLib("pdfjs");const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i),vp=pg.getViewport({scale:1.7});const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",Number(quality)));downloadBlob(blob,`${file.name.replace(/\.pdf$/i,"")}-page-${i}.jpg`)}setStatus(`${pdf.numPages} JPG page(s) downloaded.`)}
-  async function pdfToWord(file){setStatus("Uploading PDF to the secure document converter…");const data=await convertWithSecureBackend(file,"docx");setStatus(data.message||"PDF converted to Word and downloaded.")}
-  async function wordToPdf(file){setStatus("Uploading Word document to the secure document converter…");const data=await convertWithSecureBackend(file,"pdf");setStatus(data.message||"Word document converted to PDF and downloaded.")}
-  async function jpgToPdf(){const {PDFDocument}=await loadLib("pdf-lib");const doc=await PDFDocument.create();for(const f of files){const bytes=await f.arrayBuffer();let img;try{img=await doc.embedJpg(bytes)}catch{img=await doc.embedPng(bytes)}const pg=doc.addPage([img.width,img.height]);pg.drawImage(img,{x:0,y:0,width:img.width,height:img.height})}downloadBlob(new Blob([await doc.save()],{type:"application/pdf"}),"images.pdf");setStatus("PDF downloaded.")}
-  const accepted=id==="word-pdf"?".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document":".pdf,application/pdf";
-  const multiple=id==="merge-pdf";
-  return <PdfShell back={back} t={t} status={status||"Fast and simple PDF processing."}>
-    <div className="ilpPdfCard">
-      <div className="ilpTitleBlock"><h2>{id==="pdf-word"?"PDF to WORD Converter":id==="word-pdf"?"WORD to PDF Converter":id==="pdf-jpg"?"PDF to JPG Converter":id==="jpg-pdf"?"JPG to PDF Converter":t[0]}</h2><p>{id==="pdf-word"?"Convert your PDF to WORD documents with incredible accuracy.":t[2]}</p></div>
-      <div className="ilpUploadArea">
-        <label className="ilpSelectBtn"><Upload size={21}/>{multiple?"Select PDF files":"Select PDF file"}<input type="file" multiple={multiple} accept={accepted} onChange={e=>setFiles(Array.from(e.target.files||[]))}/></label>
-        <div className="ilpDropText">or drop PDF here</div>
-        <PdfCloudButtons onStatus={setStatus}/>
-        {files.length>0&&<div className="ilpSelectedFiles">{files.map(f=><div key={f.name}>✓ {f.name}<span>{(f.size/1024).toFixed(1)} KB</span></div>)}</div>}
+
+  return <Shell back={back} t={t} status={status}>
+    <div className="ilpPdfCard tmPdfRedCard">
+      <div className="ilpTitleBlock"><div className="pdfRedEyebrow">PDF TOOLS</div><h2>{current.name}</h2><p>{current.desc}</p></div>
+      <div className="tmPdfTopNav">
+        {pdfTools.slice(0,5).map(x=><button key={x.id} type="button" className={active===x.id?"tmPdfNavBtn active":"tmPdfNavBtn"} onClick={()=>{setActive(x.id);setStatus("");}}>{x.name}</button>)}
+        <button type="button" className="tmPdfNavBtn" onClick={()=>{setActive("edit-pdf");setStatus("");const target=tools.find(x=>x[3]==="edit-pdf");if(target)window.dispatchEvent(new CustomEvent("tm-open-tool",{detail:target}));}}>EDIT PDF</button>
+        <button type="button" className="tmPdfNavBtn" onClick={()=>setStatus("More PDF tools are available below.")}>ALL PDF TOOLS</button>
       </div>
-      <div className="ilpOptions">
-        {id==="split-pdf"&&<label>Pages (e.g. 1,3,5)<input value={pages} onChange={e=>setPages(e.target.value)}/></label>}
-        {id==="rotate-pdf"&&<label>Rotation<select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
-        {id==="pdf-watermark"&&<label>Watermark text<input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
-        {id==="pdf-jpg"&&<label>JPG quality<input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
+      <div className="tmPdfUploadWrap">
+        <label className="tmPdfSelectBtn"><Upload size={22}/>{multiple?"Select PDF files":"Select PDF file"}<input type="file" multiple={multiple} accept={accepted} onChange={e=>setFiles(Array.from(e.target.files||[]))}/></label>
+        <div className="tmPdfDropText">or drop {active==="word-pdf"?"Word":"PDF"} here</div>
+        <div className="tmPdfCloudRow">
+          <button type="button" className="tmPdfCloudBtn" onClick={cloudDrive}>▣ <b>Select from Google Drive</b></button>
+          <button type="button" className="tmPdfCloudBtn" onClick={cloudDropbox}>◈ <b>Select from Dropbox</b></button>
+        </div>
       </div>
-      <div className="ilpBottom"><div className="ilpHint">🔒 Files are processed securely. Select a file to begin.</div><button className="ilpProcessBtn" disabled={busy||!files.length} onClick={id==="jpg-pdf"?jpgToPdf:run}>{busy?<RefreshCw className="spin"/>:<Download size={20}/>} {busy?"Processing...":id==="jpg-pdf"?"Create PDF":"Process & Download"}</button></div>
+      {files.length>0&&<div className="tmPdfSelectedBox">
+        <div className="tmPdfSelectedHead"><strong>Selected file{files.length>1?"s":""}</strong><button type="button" onClick={()=>{setFiles([]);setThumbs([]);}}>Remove</button></div>
+        <div className="tmPdfFiles">{files.map(f=><div className="tmPdfFileRow" key={`${f.name}-${f.size}`}><FileText size={22}/><div><b>{f.name}</b><span>{(f.size/1024).toFixed(1)} KB</span></div><span className="tmPdfCheck">✓</span></div>)}</div>
+      </div>}
+      {files.length>0&&<div className="tmPdfPreview">
+        <div className="tmPdfPreviewTitle">PDF Preview</div>
+        <div className="tmPdfThumbGrid">{thumbs.length?thumbs.map(x=><div className="pdfThumb" key={x.page}><img src={x.url} alt={`Page ${x.page}`}/><small>Page {x.page}</small></div>):files.map(f=><div className="pdfThumb file" key={f.name}><FileText size={34}/><small>{f.name}</small></div>)}</div>
+      </div>}
+      <div className="tmPdfOptions">
+        {active==="split-pdf"&&<label>Pages<input value={pages} onChange={e=>setPages(e.target.value)} placeholder="1,3,5"/></label>}
+        {active==="rotate-pdf"&&<label>Rotation<select value={angle} onChange={e=>setAngle(e.target.value)}><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>}
+        {active==="pdf-watermark"&&<label>Watermark<input value={watermark} onChange={e=>setWatermark(e.target.value)}/></label>}
+        {active==="pdf-jpg"&&<label>JPG quality<input type="range" min=".3" max=".95" step=".05" value={quality} onChange={e=>setQuality(e.target.value)}/></label>}
+      </div>
+      <div className="tmPdfBottom"><span>{files.length?"Your file is ready for processing.":"Secure, simple PDF tools in one place."}</span><button type="button" className="tmPdfProcessBtn" disabled={busy||!files.length} onClick={run}>{busy?"Processing…":current.name}</button></div>
+      <div className="tmPdfToolStrip">{pdfTools.map(x=><button type="button" key={x.id} className={active===x.id?"tmPdfStripBtn active":"tmPdfStripBtn"} onClick={()=>setActive(x.id)}>{x.name}</button>)}</div>
     </div>
-  </PdfShell>;
+  </Shell>;
 }
 
 function BackgroundRemoverTool({t,back}) {
   const inputRef = useRef(null);
-  const bgUploadRef = useRef(null);
   const [file,setFile] = useState(null);
   const [originalUrl,setOriginalUrl] = useState("");
   const [resultUrl,setResultUrl] = useState("");
@@ -1339,6 +1684,8 @@ function BackgroundRemoverTool({t,back}) {
   const [design,setDesign] = useState("original");
   const [lastCutoutReady,setLastCutoutReady] = useState(false);
 
+  const wallpaperInputRef=useRef(null);
+
   const photoBackgrounds = [
     "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=85",
     "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=85",
@@ -1351,7 +1698,13 @@ function BackgroundRemoverTool({t,back}) {
     "https://images.unsplash.com/photo-1510784722466-f2aa9c52db6c?auto=format&fit=crop&w=900&q=85",
     "https://images.unsplash.com/photo-1526481280695-3c687fd643ed?auto=format&fit=crop&w=900&q=85",
     "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=85",
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=85"
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1473445361085-b9a07f55608b?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=900&q=85",
+    "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=85&sat=-20",
+    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=85&sat=-25&hue=15"
   ];
 
   const colorBackgrounds = ["#ffffff","#f3f4f6","#111827","#000000","#fde68a","#fecdd3","#bfdbfe","#c7d2fe","#bbf7d0","#ddd6fe"];
@@ -1438,6 +1791,17 @@ function BackgroundRemoverTool({t,back}) {
     doCutout(f);
   };
 
+  const uploadBackgroundWallpaper = e => {
+    const f=e.target.files?.[0];
+    e.target.value="";
+    if(!f)return;
+    if(!/^image\/(png|jpe?g|webp)$/i.test(f.type)){setStatus("Please upload a JPG, PNG or WebP wallpaper.");return;}
+    const url=URL.createObjectURL(f);
+    setBgMode("image");setBgImage(url);setBgCategory("photo");setTab("background");
+    if(lastCutoutReady||resultBlob||cutoutBlob) renderComposite({bgMode:"image",bgImage:url});
+    setStatus("Wallpaper uploaded from your PC and applied.");
+  };
+
   const renderComposite = async (overrides={}) => {
     if(!file && !resultBlob && !cutoutBlob) return setStatus("Upload an image first.");
     setBusy(true);
@@ -1485,16 +1849,6 @@ function BackgroundRemoverTool({t,back}) {
     }catch(e){
       setStatus(e?.message||"Could not apply image changes.");
     }finally{setBusy(false);}
-  };
-
-  const uploadBackground = e => {
-    const f=e.target.files?.[0]; e.target.value="";
-    if(!f) return;
-    if(!/^image\/(png|jpe?g|webp)$/i.test(f.type)){setStatus("Please upload a JPG, PNG or WebP wallpaper.");return;}
-    const url=URL.createObjectURL(f);
-    setBgMode("image");setBgImage(url);setBgCategory("photo");setTab("background");
-    if(lastCutoutReady||resultBlob||cutoutBlob) renderComposite({bgMode:"image",bgImage:url});
-    setStatus("Your PC wallpaper was uploaded and applied.");
   };
 
   const chooseBackground = async (mode, value="") => {
@@ -1564,16 +1918,19 @@ function BackgroundRemoverTool({t,back}) {
               <div style={{marginTop:16,padding:14,borderRadius:14,background:"#f8fafc",fontSize:13,color:"#667085"}}>Transparent PNG is kept as the base, so you can switch backgrounds without uploading the photo again.</div>
             </div>}
             {tab==="background" && <div>
-              <div style={{display:"flex",gap:6,marginBottom:14,borderBottom:"1px solid #eceef4",paddingBottom:10}}>
+              <div style={{display:"flex",gap:7,marginBottom:14,borderBottom:"1px solid #eceef4",paddingBottom:10,flexWrap:"wrap"}}>
                 <button type="button" className={bgCategory==="photo"?"btn primary":"btn"} onClick={()=>setBgCategory("photo")}>Magic</button>
                 <button type="button" className={bgCategory==="color"?"btn primary":"btn"} onClick={()=>setBgCategory("color")}>Color</button>
+                <button type="button" className="btn" onClick={()=>wallpaperInputRef.current?.click()}>Upload Wallpaper</button>
+                <input ref={wallpaperInputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={uploadBackgroundWallpaper} style={{display:"none"}}/>
               </div>
               {bgCategory==="photo" && <>
                 <p style={{fontWeight:700,margin:"0 0 10px"}}>Choose a background</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
                   {photoBackgrounds.map((src,i)=><button key={src} type="button" onClick={()=>chooseBackground("image",src)} style={{padding:0,border:bgImage===src?"3px solid #2563eb":"1px solid #e1e5eb",borderRadius:12,overflow:"hidden",background:"#fff",cursor:"pointer"}}><img src={src} alt={`Background ${i+1}`} style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/></button>)}
                 </div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:12}}>
+                <button type="button" className="btn" style={{width:"100%",justifyContent:"center",marginTop:12,borderStyle:"dashed"}} onClick={()=>wallpaperInputRef.current?.click()}>＋ Upload wallpaper from PC</button>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:10}}>
                   <button type="button" className={bgMode==="transparent"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("transparent")}>Transparent</button>
                   <button type="button" className={bgMode==="white"&&!bgImage?"btn primary":"btn"} onClick={()=>chooseBackground("white")}>White</button>
                 </div>
@@ -1952,13 +2309,20 @@ function placeholderFor(id){
 function Admin({user,profile}){
   const [tab,setTab]=useState("overview");const [msg,setMsg]=useState("");
   const [backend,setBackend]=useState("checking");const [toolsCount,setToolsCount]=useState(tools.length);const [plans,setPlans]=useState(PLANS);
+  const [seoStats,setSeoStats]=useState({scans:0,users:0,websites:0,issues:0,subscriptions:0});
+  const [seoEnabled,setSeoEnabled]=useState(true);const [seoLimits,setSeoLimits]=useState({free:3,basic:30,popular:100,premium:100000});
   useEffect(()=>{(async()=>{const base=import.meta.env.VITE_API_BASE_URL||import.meta.env.VITE_SUPABASE_FUNCTION_URL;if(!base)return setBackend("not configured");try{const r=await fetch(base,{method:"GET"});setBackend(String(r.status))}catch{setBackend("offline")}})()},[]);
+  useEffect(()=>{if(!supabase)return;(async()=>{const [{count:scans},{count:users},{count:websites},{count:issues},{count:subscriptions},{data:settings}]=await Promise.all([
+    supabase.from("seo_scans").select("id",{count:"exact",head:true}),supabase.from("profiles").select("id",{count:"exact",head:true}),supabase.from("websites").select("id",{count:"exact",head:true}),supabase.from("seo_issues").select("id",{count:"exact",head:true}),supabase.from("subscriptions").select("id",{count:"exact",head:true}),supabase.from("seo_settings").select("key,value").in("key",["enabled","limits"])
+  ]);setSeoStats({scans:scans||0,users:users||0,websites:websites||0,issues:issues||0,subscriptions:subscriptions||0});for(const s of settings||[]){if(s.key==="enabled")setSeoEnabled(s.value!==false);if(s.key==="limits"&&s.value)setSeoLimits(s.value);}})()},[tab]);
+  const saveSeo=async()=>{if(!supabase)return;await supabase.from("seo_settings").upsert([{key:"enabled",value:seoEnabled,updated_by:user?.id},{key:"limits",value:seoLimits,updated_by:user?.id}],{onConflict:"key"});setMsg("SEO Genius settings saved.");};
   return <main className="admin"><div className="adminTop"><div><div className="pill"><LayoutDashboard size={14}/> Admin Control Center</div><h1>ToolMaster Pro</h1><p>Signed in as <b>{profile?.full_name||user?.email}</b>. Admin access is based on the user's Supabase role.</p></div></div>
-    <div className="toolbar" style={{marginTop:24}}>{["overview","tools","plans","users"].map(x=><button key={x} className={tab===x?"cat active":"cat"} onClick={()=>setTab(x)}>{x==="overview"?<LayoutDashboard/>:x==="tools"?<Settings/>:x==="plans"?<CreditCard/>:<User/>}{x[0].toUpperCase()+x.slice(1)}</button>)}</div>
+    <div className="toolbar" style={{marginTop:24}}>{["overview","tools","plans","users","seo-genius"].map(x=><button key={x} className={tab===x?"cat active":"cat"} onClick={()=>setTab(x)}>{x==="overview"?<LayoutDashboard/>:x==="tools"?<Settings/>:x==="plans"?<CreditCard/>:x==="users"?<User/>:<Sparkles/>}{x==="seo-genius"?"SEO Genius":x[0].toUpperCase()+x.slice(1)}</button>)}</div>
     {tab==="overview"&&<div className="adminGrid"><div className="adminCard"><Wrench/><h3>Tool Engine</h3><p>{toolsCount} tools loaded in the frontend tool registry.</p><button className="btn primary" onClick={()=>setMsg("Tool registry check complete.")}>Check Tools</button></div><div className="adminCard"><LockKeyhole/><h3>Auth</h3><p>Supabase Auth is {supabase?"configured":"not configured"}.</p><strong className="ok">{supabase?"Connected":"Action required"}</strong></div><div className="adminCard"><Globe2/><h3>Backend</h3><p>AI / server backend status: {backend}.</p><button className="btn" onClick={()=>setMsg(`Backend status: ${backend}`)}>View Status</button></div><div className="adminCard"><CheckCircle2/><h3>System</h3><p>{msg||"Browser tool engine ready."}</p><strong className="ok">Ready</strong></div></div>}
-    {tab==="tools"&&<div className="panel" style={{marginTop:16}}><h3>Tool Management</h3><p style={{color:"#93a6bf"}}>The tool catalog is embedded in this build. Production CRUD can be connected to your `tools` table without exposing service-role keys.</p><div className="grid">{tools.slice(0,12).map(t=><div className="card" key={t[3]}><span>{t[1]}</span><h3>{t[0]}</h3><p>{t[2]}</p></div>)}</div></div>}
+    {tab==="tools"&&<div className="panel" style={{marginTop:16}}><h3>Tool Management</h3><p style={{color:"#93a6bf"}}>The tool catalog is embedded in this build. Production CRUD can be connected to your <code>tools</code> table without exposing service-role keys.</p><div className="grid">{tools.slice(0,12).map(t=><div className="card" key={t[3]}><span>{t[1]}</span><h3>{t[0]}</h3><p>{t[2]}</p></div>)}</div></div>}
     {tab==="plans"&&<div className="panel" style={{marginTop:16}}><h3>Student AI Helper Plans</h3><div className="grid">{plans.map(p=><div className="card" key={p.id}><div className="pill">{p.popular?"Popular":"Plan"}</div><h3>{p.name}</h3><p>{p.description}</p><b>{p.credits.toLocaleString()} credits · ${p.price}</b></div>)}</div></div>}
     {tab==="users"&&<div className="panel" style={{marginTop:16}}><h3>Current User</h3><p>Email: {user?.email}</p><p>User ID: {user?.id}</p><p>Role: {profile?.role || user?.app_metadata?.role || user?.user_metadata?.role || "user"}</p></div>}
+    {tab==="seo-genius"&&<div className="panel" style={{marginTop:16}}><h2>SEO Genius AI Administration</h2><div className="grid"><div className="adminCard"><Sparkles/><h3>System</h3><p>Enable or disable new SEO Genius scans.</p><label style={{display:"flex",gap:10,alignItems:"center"}}><input type="checkbox" checked={seoEnabled} onChange={e=>setSeoEnabled(e.target.checked)}/> Enabled</label></div><div className="adminCard"><History/><h3>Scans</h3><strong>{seoStats.scans}</strong><p>Total stored scans</p></div><div className="adminCard"><Globe2/><h3>Websites</h3><strong>{seoStats.websites}</strong><p>Saved websites</p></div><div className="adminCard"><AlertCircle/><h3>Issues</h3><strong>{seoStats.issues}</strong><p>Stored issue records</p></div><div className="adminCard"><CreditCard/><h3>Subscriptions</h3><strong>{seoStats.subscriptions}</strong><p>Subscription records</p></div></div><h3 style={{marginTop:20}}>Monthly scan limits</h3><div className="grid">{Object.entries(seoLimits).map(([k,v])=><label className="card" key={k}><b>{k.toUpperCase()}</b><input type="number" min="0" value={v} onChange={e=>setSeoLimits(p=>({...p,[k]:Number(e.target.value)}))}/></label>)}</div><button className="btn primary" onClick={saveSeo}><Check size={16}/> Save SEO settings</button><p style={{color:"#8191a9",marginTop:10}}>{msg||"Admin settings are stored in Supabase and protected by RLS."}</p></div>}
   </main>;
 }
 
