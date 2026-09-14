@@ -130,6 +130,8 @@ const tools = [
   ["ASCII Converter","Developer Tools","Convert text to ASCII codes.","ascii"],
   ["URL Slug Generator","SEO & Marketing","Create clean SEO slugs.","slug"],
   ["SEO Genius AI","SEO & Marketing","AI-powered website SEO and AI Search Visibility auditor with real crawl-based checks and reports.","seo-genius"],
+  ["Text to Audio","AI & Video","Convert text into spoken audio with your browser voice engine.","text-to-audio"],
+  ["Keyword Research","SEO & Marketing","Generate keyword ideas, long-tail variations and search-intent groups from a seed keyword.","keyword-research"],
   ["Stamp Generator","Design Tools","Create professional stamps and seals with instant PNG export.","stamp-generator"],
   ["Logo Maker","Design Tools","Create professional logos with templates, shapes, icons, uploads and advanced customization.","logo-maker"]
 ];
@@ -1044,9 +1046,58 @@ function SeoGeniusAI({back,user,openAuth}) {
 const labelScore=(k)=>({technical:"Technical SEO",onpage:"On-Page SEO",content:"Content SEO",performance:"Performance",mobile:"Mobile SEO",ai_visibility:"AI Visibility",overall:"Overall Score"}[k]||k);
 const sg={shell:{maxWidth:1240,margin:"0 auto",padding:"22px 18px 70px"},top:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,flexWrap:"wrap"},brandRow:{display:"flex",alignItems:"center",gap:10},logo:{width:38,height:38,borderRadius:12,display:"grid",placeItems:"center",background:"linear-gradient(135deg,#7c3aed,#06b6d4)",color:"white"},hero:{marginTop:28,padding:"46px 28px",borderRadius:28,border:"1px solid #26324b",background:"radial-gradient(circle at 80% 10%,rgba(124,58,237,.25),transparent 38%),linear-gradient(135deg,#0b1220,#101a2d)",textAlign:"center"},grad:{background:"linear-gradient(90deg,#a78bfa,#22d3ee)",WebkitBackgroundClip:"text",color:"transparent"},pill:{display:"inline-flex",alignItems:"center",gap:7,padding:"7px 10px",borderRadius:999,border:"1px solid #33415e",background:"#101a2b",color:"#b7c5dc",fontSize:12},inputWrap:{maxWidth:820,margin:"26px auto 0",display:"flex",alignItems:"center",gap:10,padding:9,borderRadius:16,background:"#07101e",border:"1px solid #31415f"},featureGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))",gap:12,marginTop:18},feature:{display:"flex",gap:11,padding:18,borderRadius:16,background:"#0d1625",border:"1px solid #22314b"},featureIcon:{width:32,height:32,borderRadius:10,display:"grid",placeItems:"center",background:"#102c25",color:"#6ee7b7",flex:"0 0 auto"},infoGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:14,marginTop:16},info:{padding:22,borderRadius:18,border:"1px solid #24334d",background:"#0c1422",color:"#c8d3e5"},dashboardTop:{display:"flex",justifyContent:"space-between",alignItems:"end",gap:16,flexWrap:"wrap",marginTop:20},nav:{display:"flex",gap:7,overflowX:"auto",padding:"16px 0",position:"sticky",top:0,zIndex:4,background:"rgba(7,12,21,.92)",backdropFilter:"blur(12px)"},navBtn:{border:"1px solid #25344d",background:"#0d1625",color:"#9fb0c8",padding:"9px 12px",borderRadius:10,whiteSpace:"nowrap",cursor:"pointer"},navActive:{border:"1px solid #7c3aed",background:"#28154f",color:"#fff",padding:"9px 12px",borderRadius:10,whiteSpace:"nowrap",cursor:"pointer"},scoreGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(175px,1fr))",gap:12,marginBottom:14},card:{padding:18,borderRadius:16,border:"1px solid #25344d",background:"#0d1625"},big:{fontSize:28,fontWeight:800,margin:"7px 0"},muted:{color:"#91a2bb",fontSize:13},two:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:14},panel:{padding:20,borderRadius:18,border:"1px solid #25344d",background:"#0c1422",color:"#d6e0ef",marginBottom:14},panelInner:{marginTop:14,padding:16,borderRadius:14,background:"#0a1120",border:"1px solid #22304a"},row:{display:"flex",justifyContent:"space-between",gap:10,fontSize:13},track:{height:8,borderRadius:99,background:"#1a2639",overflow:"hidden",marginTop:6},fill:{height:"100%",borderRadius:99,background:"linear-gradient(90deg,#7c3aed,#22d3ee)"},checkStats:{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:10},checkStatsItem:{},issue:{display:"grid",gridTemplateColumns:"90px 1fr",gap:14,padding:"16px 0",borderBottom:"1px solid #203047"},badge:{display:"inline-block",padding:"5px 8px",borderRadius:8,fontSize:11,textTransform:"uppercase",fontWeight:700},recGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:12},recCol:{padding:14,borderRadius:15,background:"#0a1120",border:"1px solid #22304a"},rec:{padding:13,borderRadius:12,background:"#0e192a",border:"1px solid #263650",marginTop:9},empty:{color:"#70829d",padding:16},notice:{display:"flex",gap:8,alignItems:"center",padding:12,borderRadius:12,background:"#2b2110",color:"#ffd68a",marginBottom:12},pre:{whiteSpace:"pre-wrap",overflowX:"auto",padding:14,borderRadius:12,background:"#07101c",color:"#b9c8dc",fontSize:12},keywordGrid:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:9},keyword:{display:"flex",flexDirection:"column",gap:4,padding:13,borderRadius:12,border:"1px solid #24334c",background:"#0d1625"},table:{border:"1px solid #22304a",borderRadius:14,overflow:"hidden"},tr:{display:"grid",gridTemplateColumns:"1.2fr 110px 2fr",gap:10,padding:"12px 14px",borderBottom:"1px solid #203047",alignItems:"center"},pass:{color:"#6ee7b7"},fail:{color:"#ff8e8e"},warn:{color:"#ffd27a"},na:{color:"#8191a9"},historyBtn:{width:"100%",display:"grid",gridTemplateColumns:"1fr 90px 180px",gap:10,textAlign:"left",padding:13,marginTop:8,borderRadius:12,border:"1px solid #25344d",background:"#0d1625",color:"#d7e1ef",cursor:"pointer"},site:{display:"flex",flexDirection:"column",gap:3,padding:12,borderBottom:"1px solid #22304a"},disclaimer:{display:"flex",gap:8,alignItems:"center",marginTop:10,padding:12,borderRadius:12,background:"#0b1320",color:"#8191a9",fontSize:12}}
 
+
+function TextToAudio({back}) {
+  const [text,setText]=useState("");
+  const [voices,setVoices]=useState([]);
+  const [voice,setVoice]=useState("");
+  const [rate,setRate]=useState(1);
+  const [pitch,setPitch]=useState(1);
+  const [status,setStatus]=useState("");
+  const [speaking,setSpeaking]=useState(false);
+  const loadVoices=()=>{if(typeof window!=="undefined"&&window.speechSynthesis){const v=window.speechSynthesis.getVoices();setVoices(v);if(!voice&&v[0])setVoice(v[0].name)}};
+  useEffect(()=>{loadVoices(); if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged=loadVoices; return ()=>{if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged=null}},[]);
+  const speak=()=>{
+    if(!text.trim()){setStatus("Please enter some text first.");return;}
+    if(!window.speechSynthesis){setStatus("Text to Speech is not supported in this browser.");return;}
+    window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); const v=voices.find(x=>x.name===voice); if(v)u.voice=v; u.rate=Number(rate);u.pitch=Number(pitch);u.onstart=()=>{setSpeaking(true);setStatus("Playing audio...")};u.onend=()=>{setSpeaking(false);setStatus("Audio finished.")};u.onerror=()=>{setSpeaking(false);setStatus("Could not play the selected voice.")};window.speechSynthesis.speak(u);
+  };
+  const stop=()=>{window.speechSynthesis?.cancel();setSpeaking(false);setStatus("Stopped.")};
+  const downloadText=()=>{if(!text.trim()){setStatus("Enter text first.");return;}downloadBlob(new Blob([text],{type:"text/plain;charset=utf-8"}),"toolmaster-text-to-audio.txt");setStatus("Text downloaded. Browser speech audio itself cannot be exported as MP3 without a server TTS provider.")};
+  return <Shell back={back} t={["Text to Audio","AI & Video","Convert text into spoken audio.",""]} status={status}>
+    <div className="panel" style={{maxWidth:1000,margin:"0 auto"}}>
+      <h2>Text to Audio</h2><p className="muted">Type or paste text, choose a voice, then play it instantly.</p>
+      <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Write your text here..." style={{minHeight:230,width:"100%",resize:"vertical"}}/>
+      <div className="grid" style={{marginTop:14}}>
+        <label>Voice<select value={voice} onChange={e=>setVoice(e.target.value)}>{voices.length?voices.map(v=><option key={v.name} value={v.name}>{v.name} — {v.lang}</option>):<option>Default browser voice</option>}</select></label>
+        <label>Speed<input type="range" min="0.5" max="2" step="0.1" value={rate} onChange={e=>setRate(e.target.value)}/><b>{rate}×</b></label>
+        <label>Pitch<input type="range" min="0.5" max="2" step="0.1" value={pitch} onChange={e=>setPitch(e.target.value)}/><b>{pitch}</b></label>
+      </div>
+      <div className="toolbar" style={{marginTop:16}}><button className="btn primary" onClick={speak}>{speaking?"Playing…":"▶ Play Audio"}</button><button className="btn" onClick={stop}>■ Stop</button><button className="btn" onClick={downloadText}>↓ Download Text</button></div>
+      <div className="notice" style={{marginTop:14}}><ShieldCheck size={17}/> Audio playback is generated locally by your browser; no text is uploaded.</div>
+    </div>
+  </Shell>;
+}
+
+function KeywordResearch({back}) {
+  const [seed,setSeed]=useState(""); const [market,setMarket]=useState("Global"); const [rows,setRows]=useState([]); const [status,setStatus]=useState("");
+  const modifiers=["best","top","cheap","free","online","near me","for beginners","for small business","how to","what is","guide","services","tools","software","2026","comparison","vs","alternatives","pricing","reviews","tips","ideas","examples","checklist","strategy","template","course","agency","company"];
+  const make=()=>{const k=seed.trim().replace(/\s+/g," ");if(!k){setStatus("Enter a seed keyword first.");setRows([]);return;}const seen=new Set();const out=[];const add=(kw,intent)=>{kw=kw.trim().replace(/\s+/g," ");if(!seen.has(kw.toLowerCase())){seen.add(kw.toLowerCase());out.push({keyword:kw,intent})}};add(k,"Informational / Mixed");modifiers.forEach((m,i)=>add(`${m} ${k}`,m.includes("buy")||m.includes("pricing")||m.includes("services")||m.includes("software")||m.includes("agency")?"Commercial":"Informational"));modifiers.slice(0,12).forEach(m=>add(`${k} ${m}`,m.includes("pricing")||m.includes("services")?"Commercial":"Informational"));["local","professional","advanced","simple","modern","enterprise"].forEach(m=>add(`${m} ${k}`,"Commercial"));setRows(out.slice(0,45));setStatus(`${Math.min(out.length,45)} keyword ideas generated for ${market}.`)};
+  const csv=()=>{if(!rows.length){setStatus("Generate keywords first.");return;}downloadBlob(new Blob(["Keyword,Search Intent\n"+rows.map(r=>`"${r.keyword.replace(/"/g,'""')}","${r.intent}"`).join("\n")],{type:"text/csv;charset=utf-8"}),"keyword-research.csv")};
+  return <Shell back={back} t={["Keyword Research","SEO & Marketing","Generate keyword ideas and search-intent groups.",""]} status={status}>
+    <div className="panel" style={{maxWidth:1100,margin:"0 auto"}}><h2>Keyword Research</h2><p className="muted">Generate seed-keyword variations, long-tail ideas and intent groups. Search-volume/CPC data requires a live keyword-data provider and is not fabricated here.</p>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 220px auto",gap:10,alignItems:"end"}}><label>Seed keyword<input value={seed} onChange={e=>setSeed(e.target.value)} onKeyDown={e=>e.key==="Enter"&&make()} placeholder="e.g. digital marketing"/></label><label>Market<select value={market} onChange={e=>setMarket(e.target.value)}><option>Global</option><option>Pakistan</option><option>United States</option><option>United Kingdom</option><option>India</option><option>Canada</option></select></label><button className="btn primary" onClick={make}>🔎 Research</button></div>
+      <div className="toolbar" style={{marginTop:14}}><button className="btn" onClick={()=>setRows([])}>Clear</button><button className="btn" onClick={csv}>↓ Export CSV</button></div>
+      {rows.length>0&&<div style={{overflowX:"auto",marginTop:18}}><table className="table"><thead><tr><th>#</th><th>Keyword</th><th>Search Intent</th></tr></thead><tbody>{rows.map((r,i)=><tr key={r.keyword}><td>{i+1}</td><td><b>{r.keyword}</b></td><td><span className="badge">{r.intent}</span></td></tr>)}</tbody></table></div>}
+    </div>
+  </Shell>;
+}
+
 function ToolPage({t,back,user,openAuth}) {
   if(t[3]==="student-ai-helper") return <StudentAIHelper back={back} user={user} openAuth={openAuth}/>;
   if(t[3]==="text-to-video") return <TextToVideo back={back} user={user} openAuth={openAuth}/>;
+  if(t[3]==="text-to-audio") return <TextToAudio back={back}/>;
+  if(t[3]==="keyword-research") return <KeywordResearch back={back}/>;
   if(t[3]==="edit-pdf") return <PdfEditorTool t={t} back={back}/>;
   if(t[3]==="stamp-generator") return <StampGenerator t={t} back={back}/>;
   if(t[3]==="logo-maker") return <LogoMaker t={t} back={back}/>;
