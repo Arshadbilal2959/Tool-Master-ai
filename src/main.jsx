@@ -136,6 +136,14 @@ const tools = [
   ["Logo Maker","Design Tools","Create professional logos with templates, shapes, icons, uploads and advanced customization.","logo-maker"]
 ];
 
+const categoryIcons = {
+  "All Tools": Wrench, "PDF Tools": FileText, "Image Tools": ImageIcon,
+  "SEO & Marketing": Globe2, "Text Tools": FileText, "Developer Tools": Code2,
+  "Calculator Tools": Calculator, "Converter Tools": Wrench, "Security Tools": ShieldCheck,
+  "Utility Tools": Sparkles, "Network Tools": Globe2, "AI & Video": Sparkles,
+  "AI & Education": Sparkles, "Design Tools": Sparkles
+};
+
 const categories = [
   "All Tools","PDF Tools","Image Tools","SEO & Marketing","Text Tools","Developer Tools",
   "Calculator Tools","Converter Tools","Security Tools","Utility Tools","Network Tools",
@@ -272,7 +280,8 @@ a{color:inherit;text-decoration:none}.app{min-height:100vh}
 .searchBox{max-width:760px;margin:28px auto 0;display:flex;align-items:center;gap:12px;border:1px solid #dfe2ea;padding:5px 7px 5px 16px;background:#fff;border-radius:14px;box-shadow:var(--shadow)}
 .searchBox input{flex:1;border:0;outline:0;background:transparent;color:var(--text);padding:13px 2px}.searchBox .kbd{font-size:11px;color:#8a94a7;border:1px solid #e4e6ee;padding:5px 8px;border-radius:8px}
 .stats{display:flex;justify-content:center;gap:52px;margin-top:26px}.stats b{display:block;font-size:22px}.stats small{color:#8b94a7}
-.main{padding-bottom:70px}.toolbar{display:flex;gap:8px;overflow:auto;padding:10px 0 18px;scrollbar-width:none}.toolbar::-webkit-scrollbar{display:none}
+.main{padding-bottom:70px}.toolbarWrap{display:flex;align-items:center;gap:8px;width:100%;padding:10px 0 18px}.toolbar{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;flex:1;min-width:0;padding:2px 2px 10px;scroll-behavior:smooth;scrollbar-width:auto;overscroll-behavior-x:contain}.toolbar::-webkit-scrollbar{height:8px}.toolbar::-webkit-scrollbar-thumb{background:#c7cbd6;border-radius:99px}.toolbar::-webkit-scrollbar-track{background:#f1f3f7;border-radius:99px}.cat{flex:0 0 auto}
+.catScrollBtn{flex:0 0 38px;width:38px;height:42px;border:1px solid #e2e5ed;background:#fff;border-radius:11px;color:#182033;font-size:25px;font-weight:900;cursor:pointer;box-shadow:0 2px 8px rgba(30,35,50,.05)}.catScrollBtn:hover{border-color:#c9c2ff;background:#f7f5ff}.catScrollBtn:active{transform:scale(.97)}
 .cat{white-space:nowrap;border:1px solid #e2e5ed;background:#fff;color:#606b80;border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(30,35,50,.03)}.cat.active{background:#f0edff;color:#684af0;border-color:#d8d1ff}.cat em{font-style:normal;font-size:11px;color:#96a0b2}
 .sectionHead{display:flex;justify-content:space-between;align-items:end;margin:18px 0 16px}.sectionHead h2{margin:0;font-size:27px;letter-spacing:-.02em}.sectionHead p{margin:5px 0 0;color:#8a93a5}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}.card{position:relative;padding:18px;border:1px solid #e4e6ed;background:#fff;border-radius:16px;min-height:168px;transition:.18s;cursor:pointer;overflow:hidden;box-shadow:0 4px 16px rgba(36,31,79,.035)}
@@ -481,8 +490,12 @@ function App() {
           <div className="stats"><div><b>{tools.length}+</b><small>Tools</small></div><div><b>13</b><small>Categories</small></div><div><b>{user?"Signed in":"Open"}</b><small>Access</small></div></div>
         </div></section>
         <main className="main container" id="tools">
-          <section id="categories"><div className="toolbar">
-            {categories.map(([name,count])=><button className={cat===name?"cat active":"cat"} onClick={()=>setCat(name)} key={name}>{iconForCategory(name)}<span>{name}</span><em>{count}</em></button>)}
+          <section id="categories"><div className="toolbarWrap">
+            <button type="button" className="catScrollBtn" aria-label="Scroll categories left" onClick={()=>document.getElementById("tm-category-scroll")?.scrollBy({left:-420,behavior:"smooth"})}>‹</button>
+            <div id="tm-category-scroll" className="toolbar" onWheel={e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.currentTarget.scrollLeft+=e.deltaY;e.preventDefault();}}}>
+              {categories.map(([name,count])=>{const I=categoryIcons[name]||Wrench;return <button className={cat===name?"cat active":"cat"} onClick={()=>setCat(name)} key={name}><I size={17}/><span>{name}</span><em>{count}</em></button>})}
+            </div>
+            <button type="button" className="catScrollBtn" aria-label="Scroll categories right" onClick={()=>document.getElementById("tm-category-scroll")?.scrollBy({left:420,behavior:"smooth"})}>›</button>
           </div></section>
           <div className="sectionHead"><div><h2>{cat}</h2><p>{filtered.length} tools available</p></div></div>
           <div className="grid">{filtered.map(t=><ToolCard key={t[3]} t={t} open={()=>openTool(t)} favorite={favorites.includes(t[3])} onFav={()=>toggleFav(t[3])}/>)}</div>
