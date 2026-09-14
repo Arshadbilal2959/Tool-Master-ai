@@ -455,6 +455,8 @@ function App() {
         <a href="#pricing" onClick={()=>{setTool(null);setAdmin(false)}}>Pricing</a>
         <a href="#about" onClick={()=>{setTool(null);setAdmin(false)}}>About</a>
         <a href="#contact" onClick={()=>{setTool(null);setAdmin(false)}}>Contact</a>
+        <a href="#terms" onClick={()=>{setTool(null);setAdmin(false)}}>Terms</a>
+        <a href="#notes" onClick={()=>{setTool(null);setAdmin(false)}}>Notes</a>
         <a href="#seo-genius" onClick={()=>{const x=tools.find(t=>t[3]==="seo-genius");if(x)openTool(x)}} style={{fontWeight:900,color:"#ef2b2d"}}>SEO Genius AI</a>
       </nav>
       <div className="navActions">
@@ -477,6 +479,8 @@ function App() {
       <a href="#pricing" onClick={()=>{setMobile(false);setTool(null);}}>Pricing</a>
       <a href="#about" onClick={()=>{setMobile(false);setTool(null);}}>About</a>
       <a href="#contact" onClick={()=>{setMobile(false);setTool(null);}}>Contact</a>
+      <a href="#terms" onClick={()=>{setMobile(false);setTool(null);}}>Terms</a>
+      <a href="#notes" onClick={()=>{setMobile(false);setTool(null);}}>Notes</a>
       <a href="#seo-genius" onClick={()=>{setMobile(false);const x=tools.find(t=>t[3]==="seo-genius");if(x)openTool(x);}}>SEO Genius AI</a>
     </div>}</header>
 
@@ -559,7 +563,31 @@ function App() {
         </div>
       </div>
     </section>
-    <footer className="footer"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
+    <section id="terms" className="container" style={{padding:"20px 24px 30px"}}>
+      <div className="panel" style={{padding:"28px"}}>
+        <div className="pill"><ShieldCheck size={14}/> Terms & Conditions</div>
+        <h2>Simple, transparent terms.</h2>
+        <div style={{display:"grid",gap:10,color:"#667085",lineHeight:1.7}}>
+          <p><b>1. Use of tools:</b> ToolMaster Pro provides online utilities for personal and business workflows. You are responsible for the files, URLs and content you submit.</p>
+          <p><b>2. Accuracy:</b> Results can vary by file, browser, third-party service and source website. Always review important output before use.</p>
+          <p><b>3. Privacy:</b> We aim to process browser-first tools locally where practical. Features requiring server processing may transmit the required data to the service that powers that feature.</p>
+          <p><b>4. AI features:</b> AI-generated results are suggestions and are not a guarantee of rankings, search visibility, accuracy or suitability.</p>
+          <p><b>5. Availability:</b> Tools may be updated, limited or temporarily unavailable while services are maintained.</p>
+        </div>
+      </div>
+    </section>
+    <section id="notes" className="container" style={{padding:"10px 24px 50px"}}>
+      <div className="panel" style={{padding:"28px"}}>
+        <div className="pill"><FileText size={14}/> Important Notes</div>
+        <h2>Before using a tool</h2>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:14}}>
+          <div className="card"><h3>Check your input</h3><p>Use the correct file type, URL or text for the selected tool.</p></div>
+          <div className="card"><h3>Review results</h3><p>Preview generated files and recommendations before publishing or sharing them.</p></div>
+          <div className="card"><h3>AI & SEO</h3><p>SEO scores and AI recommendations are analysis aids, not ranking or citation guarantees.</p></div>
+        </div>
+      </div>
+    </section>
+    <footer className="footer"><div className="footerInner"><div><div className="brand"><div className="brandIcon"><Wrench size={18}/></div><span>ToolMaster<span>Pro</span></span></div><p>Powerful online tools, made simple.</p></div><div style={{display:"flex",gap:14,flexWrap:"wrap",alignItems:"center"}}><a href="#about">About</a><a href="#contact">Contact</a><a href="#terms">Terms & Conditions</a><a href="#notes">Important Notes</a></div><small>© 2026 ToolMaster Pro · Browser-first processing where possible.</small></div></footer>
     {authOpen && <AuthModal mode={authMode} setMode={setAuthMode} close={()=>setAuthOpen(false)} onDone={()=>setAuthOpen(false)}/>}
   </div>;
 }
@@ -763,64 +791,61 @@ function drawRoundedRect(ctx,x,y,w,h,r){
 }
 
 const stampStyles=[
-  {id:"round",name:"Round Seal"},
-  {id:"square",name:"Classic"},
-  {id:"badge",name:"Badge"},
-  {id:"minimal",name:"Minimal"}
+  {id:"round",name:"Round Seal"},{id:"square",name:"Classic"},{id:"badge",name:"Badge"},{id:"minimal",name:"Minimal"}
+];
+const stampTextStyles=[
+  {id:"bold",name:"Bold"},{id:"classic",name:"Classic"},{id:"elegant",name:"Elegant"},{id:"compact",name:"Compact"}
 ];
 
 function StampGenerator({back,t}){
-  const [name,setName]=useState("");
-  const [title,setTitle]=useState("");
-  const [org,setOrg]=useState("");
-  const [extra,setExtra]=useState("");
-  const [style,setStyle]=useState("round");
-  const [color,setColor]=useState("#e53935");
-  const [opacity,setOpacity]=useState(100);
-  const canvasRef=useRef(null);
-
+  const [name,setName]=useState(""); const [title,setTitle]=useState(""); const [org,setOrg]=useState("");
+  const [extra,setExtra]=useState(""); const [style,setStyle]=useState("round"); const [textStyle,setTextStyle]=useState("bold");
+  const [color,setColor]=useState("#e53935"); const [opacity,setOpacity]=useState(100); const canvasRef=useRef(null);
+  const fontFor=(size,weight=700)=>{
+    const family=textStyle==="elegant"?"Georgia,serif":textStyle==="compact"?"Arial Narrow,Arial,sans-serif":"Arial,sans-serif";
+    const wt=textStyle==="classic"?600:weight; return `${wt} ${size}px ${family}`;
+  };
+  const fitText=(ctx,text,maxWidth,startSize,minSize=14,weight=700)=>{
+    let size=startSize; while(size>minSize){ctx.font=fontFor(size,weight);if(ctx.measureText(text).width<=maxWidth)return size;size-=1;} return size;
+  };
+  const drawText=(ctx,text,x,y,maxWidth,startSize,weight=700)=>{
+    const value=String(text||"").trim().toUpperCase(); if(!value)return;
+    const size=fitText(ctx,value,maxWidth,startSize,14,weight);ctx.font=fontFor(size,weight);ctx.fillText(value,x,y);
+  };
   const draw=()=>{
-    const c=canvasRef.current;if(!c)return;
-    const w=900,h=700,dpr=2;c.width=w*dpr;c.height=h*dpr;
+    const c=canvasRef.current;if(!c)return; const w=900,h=700,dpr=2;c.width=w*dpr;c.height=h*dpr;
     const ctx=c.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
     ctx.globalAlpha=opacity/100;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.textAlign="center";ctx.textBaseline="middle";
-    const n=name||"YOUR NAME",tl=title||"DESIGNATION",og=org||"YOUR ORGANIZATION",ex=extra||"APPROVED";
-    ctx.lineWidth=9;
+    const n=name||"YOUR NAME",tl=title||"DESIGNATION",og=org||"YOUR ORGANIZATION",ex=extra||"APPROVED";ctx.lineWidth=9;
     if(style==="round"){
-      ctx.beginPath();ctx.arc(450,350,260,0,Math.PI*2);ctx.stroke();
-      ctx.lineWidth=3;ctx.beginPath();ctx.arc(450,350,232,0,Math.PI*2);ctx.stroke();
-      ctx.font="700 27px Arial";ctx.fillText(og.toUpperCase(),450,150);
-      ctx.font="800 52px Arial";ctx.fillText(n.toUpperCase(),450,310);
-      ctx.font="700 28px Arial";ctx.fillText(tl.toUpperCase(),450,375);
-      ctx.font="600 22px Arial";ctx.fillText(ex.toUpperCase(),450,445);
-      ctx.font="700 18px Arial";ctx.fillText("TOOLMASTER PRO",450,520);
+      ctx.beginPath();ctx.arc(450,350,260,0,Math.PI*2);ctx.stroke();ctx.lineWidth=3;ctx.beginPath();ctx.arc(450,350,232,0,Math.PI*2);ctx.stroke();
+      drawText(ctx,og,450,145,390,30,700);drawText(ctx,n,450,300,400,52,800);drawText(ctx,tl,450,365,390,28,700);drawText(ctx,ex,450,430,390,22,600);drawText(ctx,"TOOLMASTER PRO",450,505,360,18,700);
     }else if(style==="square"){
       drawRoundedRect(ctx,125,105,650,490,30);ctx.stroke();ctx.lineWidth=3;drawRoundedRect(ctx,145,125,610,450,20);ctx.stroke();
-      ctx.font="800 34px Arial";ctx.fillText(n.toUpperCase(),450,255);ctx.font="700 24px Arial";ctx.fillText(tl.toUpperCase(),450,315);ctx.font="700 28px Arial";ctx.fillText(og.toUpperCase(),450,395);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,465);
+      drawText(ctx,n,450,245,520,34,800);drawText(ctx,tl,450,305,520,24,700);drawText(ctx,og,450,375,520,28,700);drawText(ctx,ex,450,445,520,21,600);
     }else if(style==="badge"){
       ctx.beginPath();ctx.moveTo(450,80);ctx.lineTo(700,165);ctx.lineTo(700,455);ctx.lineTo(450,620);ctx.lineTo(200,455);ctx.lineTo(200,165);ctx.closePath();ctx.stroke();
-      ctx.font="800 34px Arial";ctx.fillText(og.toUpperCase(),450,225);ctx.font="800 47px Arial";ctx.fillText(n.toUpperCase(),450,320);ctx.font="700 25px Arial";ctx.fillText(tl.toUpperCase(),450,385);ctx.font="600 21px Arial";ctx.fillText(ex.toUpperCase(),450,450);
+      drawText(ctx,og,450,210,400,34,800);drawText(ctx,n,450,305,440,47,800);drawText(ctx,tl,450,375,420,25,700);drawText(ctx,ex,450,445,400,21,600);
     }else{
       ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(170,180);ctx.lineTo(730,180);ctx.moveTo(170,520);ctx.lineTo(730,520);ctx.stroke();
-      ctx.font="800 48px Arial";ctx.fillText(n,450,280);ctx.font="700 26px Arial";ctx.fillText(tl,450,350);ctx.font="600 22px Arial";ctx.fillText(og,450,410);ctx.font="600 20px Arial";ctx.fillText(ex,450,465);
+      drawText(ctx,n,450,275,520,48,800);drawText(ctx,tl,450,345,520,26,700);drawText(ctx,og,450,405,520,22,600);drawText(ctx,ex,450,460,520,20,600);
     }
     ctx.globalAlpha=1;
   };
-  useEffect(()=>{draw()},[name,title,org,extra,style,color,opacity]);
-
+  useEffect(()=>{draw()},[name,title,org,extra,style,textStyle,color,opacity]);
   return <Shell back={back} t={t}>
     <div className="workspace">
       <div className="panel">
-        <h3>Stamp Generator</h3><p>Create your stamp and download it as PNG.</p>
+        <h3>Stamp Generator</h3><p>Create professional stamps and seals with automatic text fitting.</p>
         <label>Name<input value={name} onChange={e=>setName(e.target.value)} placeholder="Muhammad Arshad"/></label>
         <label>Designation<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Managing Director"/></label>
         <label>Company / Organization<input value={org} onChange={e=>setOrg(e.target.value)} placeholder="ABC Enterprises"/></label>
         <label>Extra text<input value={extra} onChange={e=>setExtra(e.target.value)} placeholder="Approved / Verified / Official"/></label>
-        <div className="videoOptions"><label>Style<select value={style} onChange={e=>setStyle(e.target.value)}>{stampStyles.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select></label><label>Color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label></div>
-        <label>Opacity <span>{opacity}%</span><input type="range" min="20" max="100" value={opacity} onChange={e=>setOpacity(Number(e.target.value))}/></label>
+        <div className="videoOptions"><label>Stamp Style<select value={style} onChange={e=>setStyle(e.target.value)}>{stampStyles.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select></label><label>Text Style<select value={textStyle} onChange={e=>setTextStyle(e.target.value)}>{stampTextStyles.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select></label></div>
+        <div className="videoOptions"><label>Color<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label><label>Opacity <span>{opacity}%</span><input type="range" min="20" max="100" value={opacity} onChange={e=>setOpacity(Number(e.target.value))}/></label></div>
         <div className="actions"><button className="btn" onClick={draw}><RefreshCw size={15}/> Refresh</button><button className="btn primary" onClick={()=>downloadCanvas(canvasRef.current,"toolmaster-stamp.png")}><Download size={15}/> Download PNG</button></div>
       </div>
-      <div className="panel"><h3>Live Preview</h3><div style={{display:"grid",placeItems:"center",minHeight:420,background:"#f8fafc",borderRadius:16}}><canvas ref={canvasRef} style={{maxWidth:"100%",height:"auto"}}/></div></div>
+      <div className="panel"><h3>Live Preview</h3><div style={{display:"grid",placeItems:"center",minHeight:420,background:"#f8fafc",borderRadius:16,padding:18,overflow:"hidden"}}><canvas ref={canvasRef} style={{maxWidth:"100%",height:"auto"}}/></div></div>
     </div>
   </Shell>;
 }
