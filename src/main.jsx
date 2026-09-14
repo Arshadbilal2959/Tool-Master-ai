@@ -1093,26 +1093,101 @@ function TextToAudio({back}) {
   const [pitch,setPitch]=useState(1);
   const [status,setStatus]=useState("");
   const [speaking,setSpeaking]=useState(false);
-  const loadVoices=()=>{if(typeof window!=="undefined"&&window.speechSynthesis){const v=window.speechSynthesis.getVoices();setVoices(v);if(!voice&&v[0])setVoice(v[0].name)}};
-  useEffect(()=>{loadVoices(); if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged=loadVoices; return ()=>{if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged=null}},[]);
+  const [language,setLanguage]=useState("All");
+  const [gender,setGender]=useState("Female");
+  const [region,setRegion]=useState("All");
+  const [plan,setPlan]=useState("Free");
+
+  const plans={
+    Free:{price:"$0",limit:5000,label:"5,000 characters/day"},
+    Starter:{price:"$7.99/mo",limit:50000,label:"50,000 characters/month"},
+    Pro:{price:"$14.99/mo",limit:200000,label:"200,000 characters/month"},
+    Business:{price:"$29.99/mo",limit:500000,label:"500,000 characters/month"}
+  };
+
+  const loadVoices=()=>{
+    if(typeof window!=="undefined"&&window.speechSynthesis){
+      const v=window.speechSynthesis.getVoices();
+      setVoices(v);
+      if(!voice&&v[0])setVoice(v[0].name);
+    }
+  };
+  useEffect(()=>{
+    loadVoices();
+    if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged=loadVoices;
+    return ()=>{if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged=null};
+  },[]);
+
+  const voiceRegion=(v)=>{
+    const n=(v.name||"").toLowerCase(), l=(v.lang||"").toLowerCase();
+    if(l.includes("pk")||/pakistan|urdu|pakistani/.test(n)) return "Pakistan";
+    if(l.includes("gb")||/united kingdom|british|uk |english.*uk/.test(n)) return "UK";
+    if(l.includes("us")||/united states|american|english.*us/.test(n)) return "USA";
+    if(l.startsWith("hi")||/hindi/.test(n)) return "India";
+    return "Other";
+  };
+  const voiceGender=(v)=>{
+    const n=(v.name||"").toLowerCase();
+    if(/female|woman|zira|samantha|ava|susan|karen|moira|victoria|hazel|heera|neerja|priya|veena/.test(n)) return "Female";
+    if(/male|man|david|daniel|mark|alex|george|ravi|hemant/.test(n)) return "Male";
+    return "Unknown";
+  };
+  const filteredVoices=voices.filter(v=>{
+    const l=(v.lang||"").toLowerCase();
+    const langOk=language==="All" || (language==="Urdu"?(l.startsWith("ur")||/urdu/i.test(v.name)):language==="Hindi"?(l.startsWith("hi")||/hindi/i.test(v.name)):language==="English"?l.startsWith("en"):true);
+    const genderOk=gender==="All" || voiceGender(v)===gender || voiceGender(v)==="Unknown";
+    const regOk=region==="All" || voiceRegion(v)===region;
+    return langOk&&genderOk&&regOk;
+  });
+
+  useEffect(()=>{
+    const list=filteredVoices;
+    if(list.length && !list.some(v=>v.name===voice)) setVoice(list[0].name);
+  },[language,gender,region,voices]);
+
   const speak=()=>{
     if(!text.trim()){setStatus("Please enter some text first.");return;}
     if(!window.speechSynthesis){setStatus("Text to Speech is not supported in this browser.");return;}
-    window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); const v=voices.find(x=>x.name===voice); if(v)u.voice=v; u.rate=Number(rate);u.pitch=Number(pitch);u.onstart=()=>{setSpeaking(true);setStatus("Playing audio...")};u.onend=()=>{setSpeaking(false);setStatus("Audio finished.")};u.onerror=()=>{setSpeaking(false);setStatus("Could not play the selected voice.")};window.speechSynthesis.speak(u);
+    if(text.length>plans[plan].limit){setStatus(`${plan} plan limit reached. Your current limit is ${plans[plan].limit.toLocaleString()} characters.`);return;}
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    const v=voices.find(x=>x.name===voice);
+    if(v)u.voice=v;
+    u.lang=v?.lang || (language==="Urdu"?"ur-PK":language==="Hindi"?"hi-IN":"en-US");
+    u.rate=Number(rate);u.pitch=Number(pitch);
+    u.onstart=()=>{setSpeaking(true);setStatus("Playing realistic browser voice...")};
+    u.onend=()=>{setSpeaking(false);setStatus("Audio finished.")};
+    u.onerror=()=>{setSpeaking(false);setStatus("The selected voice is not available in this browser. Try another installed voice.")};
+    window.speechSynthesis.speak(u);
   };
   const stop=()=>{window.speechSynthesis?.cancel();setSpeaking(false);setStatus("Stopped.")};
-  const downloadText=()=>{if(!text.trim()){setStatus("Enter text first.");return;}downloadBlob(new Blob([text],{type:"text/plain;charset=utf-8"}),"toolmaster-text-to-audio.txt");setStatus("Text downloaded. Browser speech audio itself cannot be exported as MP3 without a server TTS provider.")};
-  return <Shell back={back} t={["Text to Audio","AI & Video","Convert text into spoken audio.",""]} status={status}>
-    <div className="panel" style={{maxWidth:1000,margin:"0 auto"}}>
-      <h2>Text to Audio</h2><p className="muted">Type or paste text, choose a voice, then play it instantly.</p>
-      <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Write your text here..." style={{minHeight:230,width:"100%",resize:"vertical"}}/>
+  const downloadText=()=>{if(!text.trim()){setStatus("Enter text first.");return;}downloadBlob(new Blob([text],{type:"text/plain;charset=utf-8"}),"toolmaster-text-to-audio.txt");setStatus("Text downloaded. MP3 export requires a server TTS provider.")};
+  const selected=voices.find(v=>v.name===voice);
+
+  return <Shell back={back} t={["Text to Audio","AI & Video","Realistic multilingual text-to-speech with regional voice filters and plans.",""]} status={status}>
+    <div className="panel" style={{maxWidth:1100,margin:"0 auto"}}>
+      <div style={{display:"flex",justifyContent:"space-between",gap:15,alignItems:"center",flexWrap:"wrap"}}>
+        <div><h2>Text to Audio</h2><p className="muted">Natural-sounding female voices for Pakistani Urdu, Hindi, USA English and UK English — using voices available on the user's device/browser.</p></div>
+        <label style={{minWidth:170}}>Plan<select value={plan} onChange={e=>setPlan(e.target.value)}>{Object.entries(plans).map(([k,p])=><option key={k} value={k}>{k} — {p.price}</option>)}</select></label>
+      </div>
+      <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Write or paste Urdu, Hindi or English text here..." style={{minHeight:230,width:"100%",resize:"vertical",marginTop:12}}/>
       <div className="grid" style={{marginTop:14}}>
-        <label>Voice<select value={voice} onChange={e=>setVoice(e.target.value)}>{voices.length?voices.map(v=><option key={v.name} value={v.name}>{v.name} — {v.lang}</option>):<option>Default browser voice</option>}</select></label>
-        <label>Speed<input type="range" min="0.5" max="2" step="0.1" value={rate} onChange={e=>setRate(e.target.value)}/><b>{rate}×</b></label>
-        <label>Pitch<input type="range" min="0.5" max="2" step="0.1" value={pitch} onChange={e=>setPitch(e.target.value)}/><b>{pitch}</b></label>
+        <label>Language<select value={language} onChange={e=>setLanguage(e.target.value)}><option>All</option><option>Urdu</option><option>Hindi</option><option>English</option></select></label>
+        <label>Region<select value={region} onChange={e=>setRegion(e.target.value)}><option>All</option><option>Pakistan</option><option>USA</option><option>UK</option><option>India</option><option>Other</option></select></label>
+        <label>Voice type<select value={gender} onChange={e=>setGender(e.target.value)}><option>Female</option><option>Male</option><option>All</option></select></label>
+        <label>Voice<select value={voice} onChange={e=>setVoice(e.target.value)}>{filteredVoices.length?filteredVoices.map(v=><option key={v.name} value={v.name}>{v.name} — {v.lang}</option>):<option value="">No matching installed voice</option>}</select></label>
+      </div>
+      <div className="grid" style={{marginTop:14}}>
+        <label>Speed <input type="range" min="0.5" max="2" step="0.05" value={rate} onChange={e=>setRate(e.target.value)}/><b>{Number(rate).toFixed(2)}×</b></label>
+        <label>Pitch <input type="range" min="0.6" max="1.4" step="0.05" value={pitch} onChange={e=>setPitch(e.target.value)}/><b>{Number(pitch).toFixed(2)}</b></label>
+        <div className="notice" style={{margin:0}}><ShieldCheck size={17}/><span>{plans[plan].label}</span></div>
       </div>
       <div className="toolbar" style={{marginTop:16}}><button className="btn primary" onClick={speak}>{speaking?"Playing…":"▶ Play Audio"}</button><button className="btn" onClick={stop}>■ Stop</button><button className="btn" onClick={downloadText}>↓ Download Text</button></div>
-      <div className="notice" style={{marginTop:14}}><ShieldCheck size={17}/> Audio playback is generated locally by your browser; no text is uploaded.</div>
+      <div className="panelInner" style={{marginTop:16}}>
+        <b>Recommended voice setup</b>
+        <p className="muted" style={{marginBottom:0}}>Pakistan + Urdu + Female → choose an installed Urdu/Pakistani female voice. USA + English + Female → choose an en-US female voice. UK + English + Female → choose an en-GB female voice. Hindi + Female → choose an hi-IN female voice.</p>
+      </div>
+      <div className="notice" style={{marginTop:14}}><ShieldCheck size={17}/> Browser TTS uses the voices installed/provided by Chrome/Windows. A guaranteed studio-quality Pakistani/USA/UK female voice and MP3 download require a dedicated server TTS provider; this UI does not falsely claim a voice exists when the device does not provide it.</div>
     </div>
   </Shell>;
 }
